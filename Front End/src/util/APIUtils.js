@@ -1,0 +1,488 @@
+import axios from 'axios';
+import { API_BASE_URL, ACCESS_TOKEN } from '../constants';
+
+const api = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    }
+});
+
+api.interceptors.request.use(config => {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, error => {
+    return Promise.reject(error);
+});
+
+api.interceptors.response.use(response => {
+    return response.data;
+}, error => {
+    return Promise.reject(error.response ? error.response.data : error.message);
+});
+
+export function getCurrentUser() {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+
+    return api.get("/api/user/me");
+}
+
+export function getPrivileges(id) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+
+    return api.get("/api/user/privileges/"+id);
+}
+
+export function login(loginRequest) {
+    return api.post("/auth/login", loginRequest);
+}
+
+export function signup(signupRequest) {
+    return api.post("/auth/signup", signupRequest);
+}
+
+export function getUserList(page,size){
+    
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+
+    return api.get("/api/user/users?page="+page+"&size="+size+"&sort=id");
+}
+
+
+export function getCategories(page,size) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/category/getCategories?page="+page+"&size="+size+"&sort=order,asc");
+}
+
+export function fetchOrders(page,size) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/order/getOrders?page="+page+"&size="+size+"&sort=id,desc");
+}
+
+export function getForms(page,size) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/forms/getForms?page="+page+"&size="+size+"&sort=id,asc");
+}
+
+export  function getProducts(page,size) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/product/getProducts?page="+page+"&size="+size+"&sort=id,desc");
+}
+
+export  function getTestimonials(page,size) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/testimonial/getTestimonials?page="+page+"&size="+size+"&sort=id,desc");
+}
+
+export  function getCoupons(page,size) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/coupon/getCoupon?page="+page+"&size="+size+"&sort=id,desc");
+}
+
+
+
+export async function getCategoriesShort() {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/category/getCategories?page=0&size=1000&sort=id&sort=order,asc");
+}
+
+export function getOffersByProductId(productId){
+
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    
+    return api.get("/api/offer/getOffersByProductId/"+productId);
+}
+
+export function getAllOffers(page,size) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/offer/getOffers?page="+page+"&size="+size+"&sort=id,asc");
+}
+
+export function addCategory(categoryRequest) {
+    
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    
+    return api.post("/api/category/createCategory", categoryRequest);
+}
+
+export function addTestimonialImage(fileRequest) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/testimonial/upload", fileRequest, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+}
+
+export function addForm(formRequest) {
+    
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/forms/createForms", formRequest);
+}
+
+export function addTestimonial(formRequest) {
+    
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/testimonial/createTestimonial", formRequest);
+}
+
+export function addCoupon(formRequest) {
+    
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/coupon/createCoupon", formRequest);
+}
+
+
+export function addOffer(offerRequest) {
+    console.log(JSON.stringify(offerRequest));
+    return api.post("/api/offer/createOffer", offerRequest);
+}
+
+export function addUser(userRequest) {
+    console.log(JSON.stringify(userRequest));
+    return api.post("/api/user/users", userRequest);
+}
+
+export function updateUser(userRequest) {
+    return api.put("/api/user/users/"+userRequest.id, userRequest);
+}
+
+export function updateRole(id,role) {
+    return api.get("/api/user/profile/updateRole/"+id+"/"+role);
+}
+
+export function deleteUser(id) {
+    return api.get("/api/user/deleteUser/"+id);
+}
+
+export function deleteCategory(id) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.delete("/api/category/delete/"+id);
+}
+
+
+export function updateGeneralProfile(profileRequest) {
+    return api.put("/api/user/profile/"+profileRequest.id, profileRequest);
+}
+
+
+
+
+export function fetchUserById(id) {
+    return api.get("/api/user/users/" + id);
+}
+
+export function fetchCategoryById(id) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/category/fetchById/" + id);
+}
+
+export function fetchFormById(id) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/forms/fetchById/" + id);
+}
+
+export function fetchProductById(id) {
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/product/fetchById/" + id);
+}
+
+
+export function fetchGeneralProfileById(id) {
+    return api.get("/api/user/profile/" + id);
+}
+
+
+export function updateCategory(categoryRequest) {
+    return api.put("/api/category/"+categoryRequest.id, categoryRequest);
+}
+
+
+export function updateProduct(productRequest) {
+    return api.put("/api/product/"+productRequest.id, productRequest);
+}
+
+export function addProduct(productRequest) {
+    return api.post("/api/product/createProduct", productRequest);
+}
+
+export function updateForm(itemRequest) {
+    return api.put("/api/forms/"+itemRequest.id, itemRequest);
+}
+
+export function deleteOffer(offerId) {
+    return api.delete("/api/offer/delete/"+offerId);
+}
+
+export function deleteForm(itemRequest) {
+    return api.delete("/api/forms/delete/"+itemRequest.id, { data: itemRequest });
+}
+
+export function undeleteForm(itemRequest) {
+    return api.delete("/api/forms/undelete/"+itemRequest.id, { data: itemRequest });
+}
+
+export function deleteTestimonial(itemRequest) {
+    return api.delete("/api/testimonial/delete/"+itemRequest.id, { data: itemRequest });
+}
+
+export function undeleteTestimonial(itemRequest) {
+    return api.delete("/api/testimonial/undelete/"+itemRequest.id, { data: itemRequest });
+}
+
+export function deleteCoupon(itemRequest) {
+    return api.delete("/api/coupon/delete/"+itemRequest.id, { data: itemRequest });
+}
+
+export function undeleteCoupon(itemRequest) {
+    return api.delete("/api/coupon/undelete/"+itemRequest.id, { data: itemRequest });
+}
+
+export function deleteProduct(itemRequest) {
+    return api.delete("/api/product/delete/"+itemRequest.id, { data: itemRequest });
+}
+
+export function undeleteProduct(itemRequest) {
+    return api.delete("/api/product/undelete/"+itemRequest.id, { data: itemRequest });
+}
+
+
+export function fetchOverviewById(id) {
+    return api.get("/api/user/overviews/" + id);
+}
+
+export function getMissionList(){
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return api.get("/auth/missions?page=0&size=10&sort=id");
+    }
+    return api.get("/api/user/missions?page=0&size=10&sort=id");
+}
+
+export function addMission(missionRequest) {
+    return api.post("/api/user/missions", missionRequest);
+}
+
+export function updateMission(missionRequest) {
+    return api.put("/api/user/missions/"+missionRequest.id, missionRequest);
+}
+
+export function fetchMissionById(id) {
+    return api.get("/api/user/missions/" + id);
+}
+
+export function getLeadershipList(){
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return api.get("/auth/leaderships?page=0&size=10&sort=id");
+    }
+    return api.get("/api/user/leaderships?page=0&size=10&sort=id");
+}
+
+export function addLeadership(leadershipRequest) {
+    return api.post("/api/user/leaderships", leadershipRequest);
+}
+
+export function updateLeadership(leadershipRequest) {
+    return api.put("/api/user/leaderships/"+leadershipRequest.id, leadershipRequest);
+}
+
+export function fetchLeadershipById(id) {
+    return api.get("/api/user/leaderships/" + id);
+}
+
+export function getAwardList(){
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return api.get("/auth/awards?page=0&size=10&sort=id");
+    }
+    return api.get("/api/user/awards?page=0&size=10&sort=id");
+}
+
+export function addAward(awardRequest) {
+    return api.post("/api/user/awards", awardRequest);
+}
+
+export function updateAward(awardRequest) {
+    return api.put("/api/user/awards/"+awardRequest.id, awardRequest);
+}
+
+export function fetchAwardById(id) {
+    return api.get("/api/user/awards/" + id);
+}
+
+export function getTestimonialList(){
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return api.get("/auth/testimonials?page=0&size=10&sort=id");
+    }
+    return api.get("/api/user/testimonials?page=0&size=10&sort=id");
+}
+
+
+export function updateTestimonial(testimonialRequest) {
+    return api.put("/api/testimonial/"+testimonialRequest.id, testimonialRequest);
+}
+
+export function updateCoupon(testimonialRequest) {
+    return api.put("/api/coupon/"+testimonialRequest.id, testimonialRequest);
+}
+
+export function fetchTestimonialById(id) {
+    return api.get("/api/user/testimonials/" + id);
+}
+
+export function fetchSolrEntitiesDesc(page,size) {
+    return api.get("/api/solrSearchEntity/getAll?page="+page+"&size="+size+"&sort=id,desc");
+}
+
+export function fetchSolrEntitiesViewedDesc(page,size) {
+    return api.get("/api/solrSearchEntity/getAllViewedMe?page="+page+"&size="+size+"&sort=id,desc");
+}
+
+export function fetchSolrEntitiesViewedNotShortlistedDesc(page,size) {
+    return api.get("/api/solrSearchEntity/getAllViewedMeNotShortlisted?page="+page+"&size="+size+"&sort=id,desc");
+}
+
+export function fetchSolrEntitiesShortlistedDesc(page,size) {
+    return api.get("/api/solrSearchEntity/getAllShortlisted?page="+page+"&size="+size+"&sort=id,desc");
+}
+
+export function fetchByMaritalStatus(maritalStatus,page,size,orderBy) {
+    return api.post("/api/solrSearchEntity/findByMaritalStatusIn?page="+page+"&size="+size+"&sort="+orderBy+",desc", { data: [{ maritalStatus }] });
+}
+
+export function fetchByMotherTounge(motherTounge,page,size,orderBy) {
+    return api.post("/api/solrSearchEntity/findByMotherToungeIn?page="+page+"&size="+size+"&sort="+orderBy+",desc", { data: [{ motherTounge }] });
+}
+
+export function fetchByEducation(education,page,size,orderBy) {
+    return api.post("/api/solrSearchEntity/findByEducationIn?page="+page+"&size="+size+"&sort="+orderBy+",desc", { data: [{ education }] });
+}
+
+export function fetchByOccupation(occupation,page,size,orderBy) {
+    return api.post("/api/solrSearchEntity/findByOccupationIn?page="+page+"&size="+size+"&sort="+orderBy+",desc", { data: [{ occupation }] });
+}
+
+export function fetchByPhysicalStatus(physicalStatus,page,size,orderBy) {
+    return api.post("/api/solrSearchEntity/findByPhysicalStatusIn?page="+page+"&size="+size+"&sort="+orderBy+",desc", { data: [{ physicalStatus }] });
+}
+
+export function fetchByDiet(diet,page,size,orderBy) {
+    return api.post("/api/solrSearchEntity/findByDietIn?page="+page+"&size="+size+"&sort="+orderBy+",desc", { data: [{ diet }] });
+}
+
+export function fetchBySmoke(smoke,page,size,orderBy) {
+    return api.post("/api/solrSearchEntity/findBySmokeIn?page="+page+"&size="+size+"&sort="+orderBy+",desc", { data: [{ smoke }] });
+}
+
+export function fetchByDrink(drink,page,size,orderBy) {
+    return api.post("/api/solrSearchEntity/findByDrinkIn?page="+page+"&size="+size+"&sort="+orderBy+",desc", { data: [{ drink }] });
+}
+
+export function fetchWeeklyCount() {
+    return api.get("/api/user/users/weekly");
+}
+
+export function fetchMonthlyCount() {
+    return api.get("/api/user/users/monthly");
+}
+
+export function countwithImage() {
+    return api.get("/api/user/users/countwithImage");
+}
+
+export function isShortlisted(id){
+    return api.post("/api/user/profile/isShortlisted", { id });
+}
+
+export function shortlist(id){
+    return api.post("/api/user/profile/shortlist", { id });
+}
+
+export function view(id){
+    return api.post("/api/user/profile/view", { id });
+}
+
+export function getWeeklyEntities(page,size,sort) {
+    return api.get("/api/solrSearchEntity/getWeeklyEntities?page="+page+"&size="+size+"&sort="+sort+"");
+}
+
+export function getMonthlyEntities(page,size,sort) {
+    return api.get("/api/solrSearchEntity/getMonthlyEntities?page="+page+"&size="+size+"&sort="+sort+"");
+}
+
+export function findByImageUrl(page,size,sort) {
+    return api.get("/api/solrSearchEntity/findByImageUrlIsNotNullOrderByIdDesc?page="+page+"&size="+size+"&sort="+sort+"");
+}
+
+export function fetchDailyTransactionsCount(){
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+
+    return api.get("/api/order/fetchDailyTransactionsCount");
+}
+
+export function fetchDailyRevenueSum(){
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+
+    return api.get("/api/order/fetchDailyRevenueSum");
+}
+
+export function fetchMonthlySalesSum(){
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+
+    return api.get("/api/order/fetchMonthlySalesSum");
+}
+
+export function fetchWeeklySalesSum(){
+    if(!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+
+    return api.get("/api/order/fetchWeeklySalesSum");
+}

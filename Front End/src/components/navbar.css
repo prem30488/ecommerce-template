@@ -1,0 +1,113 @@
+.navbar {
+  overflow: hidden;
+  background-color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  z-index: 1;
+}
+
+.navbar a {
+  float: left;
+  font-size: 16px;
+  color: rgb(28, 27, 27);
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.menudropdown {
+  float: left;
+  overflow: auto;
+}
+
+.menudropdown .menudropbtn {
+  font-size: 16px;  
+  border: none;
+  outline: none;
+  color: dodgerblue;
+  padding: 14px 16px;
+  background-color: inherit;
+  font: inherit;
+  margin-left: -1000;
+}
+
+.navbar a:hover, .menudropdown:hover .menudropbtn {
+  background-color: #eee;
+}
+
+.menudropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  width: 100%;
+  left: 0;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 3;
+  float: left;
+  transform: rotate(360deg);
+}
+
+.menudropdown-content .menuheader {
+  background: dodgerblue;
+  padding: 5px;
+  color: white;
+}
+
+.menudropdown:hover .menudropdown-content {
+  display: flex;
+}
+
+/* Create three equal columns that floats next to each other */
+.menucolumn {
+  float: left;
+  width: 33.33%;
+  padding: 5px;
+  background-color: #ccc;
+  height: 100%;
+}
+
+.menucolumn a {
+  float: none;
+  color: black;
+  padding: 10px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.menucolumn a:hover {
+  background-color: #ddd;
+}
+
+/* Clear floats after the columns */
+.menurow:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.menucolumn h3{
+  color: dodgerblue;
+  background-color: white;
+  padding: 5px;
+}
+
+.badge {
+  padding-left: 9px;
+  padding-right: 9px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+}
+
+.label-warning[href],
+.badge-warning[href] {
+  background-color: #c67605;
+}
+#lblCartCount {
+    font-size: 12px;
+    background: #ff0000;
+    color: #fff;
+    padding: 0 5px;
+    vertical-align: top;
+    margin-left: -10px; 
+}

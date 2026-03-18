@@ -1,0 +1,35 @@
+/* CheckoutForm.css */
+
+.checkout-form {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .address-section {
+    margin-top: 10px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+  
+  .error {
+    border: 1px solid red;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 5px;
+  }
+  
+  /* Add more styles based on your design */
+  

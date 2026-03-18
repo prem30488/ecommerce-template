@@ -1,0 +1,4 @@
+username,email,role,password,phoneNumber
+superadmin,superadmin@example.com,superadmin,superpass123,1234567890
+admin,admin@example.com,admin,adminpass123,0987654321
+user,user@example.com,user,userpass123,1122334455
