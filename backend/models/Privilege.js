@@ -10,17 +10,23 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            // define association here
-            Privilege.belongsToMany(models.User, {
-                through: 'UserPrivileges',
-                foreignKey: 'privilege_id',
-                otherKey: 'user_id'
-            });
+            Privilege.belongsTo(models.User, { foreignKey: 'user_id' });
         }
     }
     Privilege.init({
-        name: DataTypes.STRING,
-        description: DataTypes.STRING
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        user_id: DataTypes.INTEGER,
+        categories: { type: DataTypes.BOOLEAN, defaultValue: false },
+        forms: { type: DataTypes.BOOLEAN, defaultValue: false },
+        products: { type: DataTypes.BOOLEAN, defaultValue: false },
+        orders: { type: DataTypes.BOOLEAN, defaultValue: false },
+        coupons: { type: DataTypes.BOOLEAN, defaultValue: false },
+        testimonials: { type: DataTypes.BOOLEAN, defaultValue: false },
+        deleteFlag: { type: DataTypes.BOOLEAN, defaultValue: false }
     }, {
         sequelize,
         modelName: 'Privilege',

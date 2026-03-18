@@ -16,6 +16,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 // Middleware
 app.use(cors());
 app.use(express.json());
+// Serve MDB5 static files from the frontend's public folder
+app.use('/MDB5-STANDARD-UI-KIT-Free-9.3.0', express.static(path.join(__dirname, '..', 'Front End', 'public', 'MDB5-STANDARD-UI-KIT-Free-9.3.0')));
 
 // Authentication middleware
 const authenticateToken = (req, res, next) => {
@@ -203,11 +205,11 @@ app.get('/api/forms/getForms', authenticateToken, async (req, res) => {
     res.json(getPaginatedResponse([], 0, req.query.page || 0, req.query.size || 10));
 });
 
-app.get('/api/testimonial/getTestimonials', authenticateToken, async (req, res) => {
+app.get('/api/testimonial/getTestimonials', async (req, res) => {
     res.json(getPaginatedResponse([], 0, req.query.page || 0, req.query.size || 10));
 });
 
-app.get('/api/coupon/getCoupon', authenticateToken, async (req, res) => {
+app.get('/api/coupon/getCoupon', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 10;
@@ -222,7 +224,7 @@ app.get('/api/coupon/getCoupon', authenticateToken, async (req, res) => {
     }
 });
 
-app.get('/api/offer/getOffers', authenticateToken, async (req, res) => {
+app.get('/api/offer/getOffers', async (req, res) => {
     res.json(getPaginatedResponse([], 0, req.query.page || 0, req.query.size || 10));
 });
 
@@ -530,23 +532,57 @@ app.get('/api/user/privileges/:id', authenticateToken, async (req, res) => {
     try {
         const userId = req.params.id;
 
-        // Check if user can access this (only superadmin can see all privileges, others can only see their own)
         if (req.user.role !== 'superadmin' && req.user.id != userId) {
             return res.status(403).json({ error: 'Access denied' });
         }
 
-        const user = await db.User.findByPk(userId, {
-            include: [{ model: db.Privilege, as: 'Privileges' }]
+        let privileges = await db.Privilege.findOne({
+            where: { user_id: userId }
         });
 
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+        if (!privileges) {
+            // Return default privileges if none exist
+            privileges = {
+                user_id: userId,
+                categories: false,
+                forms: false,
+                products: false,
+                orders: false,
+                coupons: false,
+                testimonials: false,
+                deleteFlag: false
+            };
         }
 
-        res.json(user.Privileges);
+        res.json(privileges);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to get privileges' });
+    }
+});
+
+app.put('/api/user/privileges/update/:id', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const privilegesData = req.body;
+
+        if (req.user.role !== 'superadmin') {
+            return res.status(403).json({ error: 'Access denied' });
+        }
+
+        let [privilege, created] = await db.Privilege.findOrCreate({
+            where: { user_id: userId },
+            defaults: { ...privilegesData, user_id: userId }
+        });
+
+        if (!created) {
+            await privilege.update(privilegesData);
+        }
+
+        res.json({ message: 'Privileges updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to update privileges' });
     }
 });
 
@@ -569,7 +605,7 @@ app.delete('/api/coupon/delete/:id', authenticateToken, (req, res) => res.json({
 // Offer CRUD Stubs
 app.post('/api/offer/createOffer', authenticateToken, (req, res) => res.status(201).json({ message: 'Offer created' }));
 app.delete('/api/offer/delete/:id', authenticateToken, (req, res) => res.json({ message: 'Offer deleted' }));
-app.get('/api/offer/getOffersByProductId/:id', authenticateToken, (req, res) => res.json([]));
+app.get('/api/offer/getOffersByProductId/:id', (req, res) => res.json([]));
 
 // Dashboard Stats Stubs
 app.get('/api/order/fetchDailyTransactionsCount', authenticateToken, (req, res) => res.json(10));

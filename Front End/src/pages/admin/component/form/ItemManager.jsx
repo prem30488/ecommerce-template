@@ -26,8 +26,11 @@ function ItemManager() {
       });
       }
       
-   const [items, setItems] = useState([]);
-   reloadCategoriesList();
+  const [items, setItems] = useState([]);
+  
+  React.useEffect(() => {
+    reloadCategoriesList();
+  }, []);
    //useState([
 //     { id: 1, title: 'Item 1', description: 'Description 1', deleteFlag: false },
 //     { id: 2, title: 'Item 2', description: 'Description 2', deleteFlag: false },
@@ -304,7 +307,12 @@ function ItemManager() {
             showDeleted ? items : items.filter((item) => !item.deleteFlag)
           }
           columns={columns}
-          pageSize={5}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5]}
           checkboxSelection={false}
           editable={true}
         />

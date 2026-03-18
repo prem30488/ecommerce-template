@@ -83,37 +83,45 @@ class AdvancedSearch extends Component {
             () => this.setState(prevState => ({ test: !prevState.test })),
             2000,
         );
-        //document.addEventListener("DOMContentLoaded", () => {
-          // The client class
-          new SolrClient({
+        
+        // Create root for manual rendering
+        const container = document.getElementById("solrDiv");
+        if (container && !this.solrRoot) {
+            const { createRoot } = require('react-dom/client');
+            this.solrRoot = createRoot(container);
+        }
+
+        new SolrClient({
               idField:"id",
-              // The solr index url to be queried by the client
               url: "http://localhost:8983/solr/hanley/select",
               searchFields: fields,
               sortFields: sortFields,
               pageStrategy: "paginate",
         
-              // The change handler passes the current query- and result state for render
-              // as well as the default handlers for interaction with the search component
-              onChange: (state, handlers) =>
-                  // Render the faceted search component
-                  ReactDOM.render(
-                      <React.Fragment>
-                        <SolrFacetedSearch 
-                          {...state}
-                          {...handlers}
-                          bootstrapCss={true}
-                          onSelectDoc={(doc) => this.editUser(doc.id)}
-                      />
-
-                      </React.Fragment>
-                      
-                      ,
-                      document.getElementById("solrDiv")
-                  )
-          }).initialize(); // this will send an initial search, fetching all results from solr
-        //});
+              onChange: (state, handlers) => {
+                  if (this.solrRoot) {
+                      this.solrRoot.render(
+                          <React.Fragment>
+                            <SolrFacetedSearch 
+                              {...state}
+                              {...handlers}
+                              bootstrapCss={true}
+                              onSelectDoc={(doc) => this.editUser(doc.id)}
+                            />
+                          </React.Fragment>
+                      );
+                  }
+              }
+          }).initialize();
         }    
+    componentWillUnmount() {
+        if (this.timer) clearInterval(this.timer);
+        if (this.solrRoot) {
+            // In React 18, we should unmount the root if needed, 
+            // but for this specific pattern it might be optional
+            // this.solrRoot.unmount();
+        }
+    }
 }
 
 

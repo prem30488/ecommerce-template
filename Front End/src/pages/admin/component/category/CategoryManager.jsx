@@ -30,7 +30,10 @@ function CategoryManager() {
   const [editTitle, setEditTitle] = useState('');
   const [ editType, setEditType] = useState(1);
   
-  reloadCategoriesList();
+  React.useEffect(() => {
+    reloadCategoriesList();
+  }, []);
+
   const handleAddCategory = () => {
     const newId = categories.length + 1;
     const newCategory = { id: newId,title, type, order: newId,description : "" };
@@ -285,9 +288,14 @@ function CategoryManager() {
           rows={categories}
           columns={columns}
           checkboxSelection={false}
-          totalElements={totalElements}
-          autoPageSize={true}
-          rowsPerPage = {rowsPerPage}
+          rowCount={totalElements}
+          paginationMode="server"
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: rowsPerPage, page: page },
+            },
+          }}
+          pageSizeOptions={[rowsPerPage]}
         />
       </div>
     </div>

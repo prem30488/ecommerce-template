@@ -37,7 +37,7 @@ const SalesValueChart = () => {
       
     };
     getData();
-  }, [data]);
+  }, []);
 
 
   return (

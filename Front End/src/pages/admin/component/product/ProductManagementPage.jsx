@@ -3,42 +3,39 @@ import React , {useState,useEffect} from 'react';
 import { Paper, Typography } from '@mui/material';
 import { CssBaseline, Container } from '@mui/material';
 import ProductManager from './ProductManager';
-import {getCurrentUser} from '../../../../util/APIUtils';
-import axios from 'axios';
+import {getCurrentUser, getPrivileges} from '../../../../util/APIUtils';
 import { API_BASE_URL } from '../../../../constants';
 import Alert from 'react-s-alert';
-const ProductManagementPage = () => {
 
+const ProductManagementPage = () => {
   const [privileges, setPrivileges] = useState({});  
   const [currentUser,setCurrentUser] = useState();
-  useEffect(() => {
-    const getPrivileges = async () => {
 
-       await getCurrentUser()
-      .then(response => {
-        setCurrentUser(response);
-        console.log(JSON.stringify(currentUser));
-        // Fetch user privileges from the backend when the component mounts
-      axios.get(API_BASE_URL+`/api/user/privileges/${currentUser.id}`)
-      .then(response => {
-        //console.log("privileges :"+ JSON.stringify(response.data));
-        setPrivileges({id:response.data.id,userId:response.data.id,
-          categories:response.data.categories, forms : response.data.forms, 
-          products: response.data.products, orders: response.data.orders,
-          coupons : response.data.coupons, testimonials : response.data.testimonials,
-          deleteFlag : response.data.deleteFlag
-          })
-      })
-      .catch(error => {
-        console.error('Error fetching user privileges:', error);
+  useEffect(() => {
+    const fetchPrivileges = async () => {
+      try {
+        const user = await getCurrentUser();
+        setCurrentUser(user);
+        
+        const privilegesData = await getPrivileges(user.id);
+        setPrivileges({
+          id: privilegesData.id,
+          userId: privilegesData.user_id,
+          categories: privilegesData.categories,
+          forms: privilegesData.forms, 
+          products: privilegesData.products,
+          orders: privilegesData.orders,
+          coupons: privilegesData.coupons,
+          testimonials: privilegesData.testimonials,
+          deleteFlag: privilegesData.deleteFlag
+        });
+      } catch (error) {
+        console.error('Error fetching data:', error);
         Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-      });
-      }).catch(error => {
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-      });  
+      }
     };
-    getPrivileges();
-  }, [currentUser,privileges]);
+    fetchPrivileges();
+  }, []);
 
   if(privileges && privileges.products === true || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"){
 

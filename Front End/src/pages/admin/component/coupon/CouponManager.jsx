@@ -11,15 +11,18 @@ const CouponManager = () => {
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-const fetchCoupons = async () => {
-    getCoupons(0,100)
-    .then((res) => {
+  const fetchCoupons = () => {
+    getCoupons(0, 100)
+      .then((res) => {
         setCoupons(res.content);
-    }).catch(error => {
+      }).catch(error => {
         Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-    });
+      });
   };
-  fetchCoupons();
+
+  React.useEffect(() => {
+    fetchCoupons();
+  }, []);
 
   const handleAddCoupon = () => {
     setSelectedCoupon(null);
@@ -149,10 +152,15 @@ const fetchCoupons = async () => {
         <DataGrid
           rows={coupons}
           columns={columns}
-          pageSize={5}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5]}
           checkboxSelection
-          onSelectionModelChange={(selection) => {
-            const selectedId = selection.selectionModel[0];
+          onRowSelectionModelChange={(newRowSelectionModel) => {
+            const selectedId = newRowSelectionModel[0];
             const selectedCoupon = coupons.find((c) => c.id === selectedId);
             setSelectedCoupon(selectedCoupon);
           }}

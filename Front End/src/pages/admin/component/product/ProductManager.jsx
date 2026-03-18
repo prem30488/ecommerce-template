@@ -100,17 +100,12 @@ function ProductManager() {
   const [forms, setForms] = useState([]);
   
     
-  reloadProductList();  
-  reloadCategoriesList();
+  useEffect(() => {
+    reloadProductList();
+    reloadCategoriesList();
     reloadFormsList();
-    reloadOffersList();    
-     useEffect(()=>{
-      const getData = async () => {
-           
-        };
-        getData();
-        
-        }, []);
+    reloadOffersList();
+  }, [page, pageSize]);
   
   const [name, setName] = useState('');
   const [active, setActive] = useState(true);
@@ -433,11 +428,19 @@ const initialProduct = {
         <DataGrid
           rows={products}
           columns={columns}
-          pageSize={pageSize}
-          page={page}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: pageSize, page: page },
+            },
+          }}
+          onPaginationModelChange={(model) => {
+            setPageSize(model.pageSize);
+            setPage(model.page);
+          }}
+          pageSizeOptions={[5, 10, 25, 50]}
           pagination
+          rowCount={totalElements}
+          paginationMode="server"
         />
       </div>
       <Dialog open={isPDialogOpen} onClose={handleCloseEditForm}>

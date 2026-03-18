@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography, Container, Paper, List, ListItem, ListItemText, Drawer, Divider, Card } from '@mui/material';
+import { AppBar, Toolbar, Typography, Container, Paper, List, ListItem, ListItemButton, ListItemText, Drawer, Divider, Card } from '@mui/material';
 import { Menu, Home, ShoppingCart, Assignment, People, Lock, GifTwoTone, Category } from '@mui/icons-material';
 import { FaBlog, FaFileContract, FaGoodreads } from 'react-icons/fa';
 import React , { useState , useEffect} from 'react';
@@ -56,7 +56,7 @@ const NavbarLoggedIn = () => {
       
     };
     getPrivilegesUser();
-  }, [currentUser,privileges]);
+  }, []);
  
     return (
         <>
@@ -68,68 +68,86 @@ const NavbarLoggedIn = () => {
       </AppBar>
       <Drawer open={open} onClose={() => toggleDrawer(false)}>
         <List>
-          <ListItem button>
-            <Home />
-            <ListItemText primary="Home" onClick={()=> navigate("/dashboard")} />
+          <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/dashboard")}>
+              <Home />
+              <ListItemText primary="Home" />
+            </ListItemButton>
           </ListItem>
           {currentUser && currentUser.roles.map((role) => {
             return role.name === "ROLE_SUPERADMIN"?
-            <ListItem button key={role.name}>
-            <People/>
-            <ListItemText primary="Users" onClick={()=> navigate("/userManagement")} />
-          </ListItem>
+            <ListItem key={role.name} disablePadding>
+              <ListItemButton onClick={()=> navigate("/userManagement")}>
+                <People/>
+                <ListItemText primary="Users" />
+              </ListItemButton>
+            </ListItem>
           :""
           })
           }
           
           {privileges && privileges.categories===true || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"?
-          <ListItem button>
-            <Category />
-            <ListItemText primary="Categories" onClick={()=> navigate("/categoryManagement")} />
+          <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/categoryManagement")}>
+              <Category />
+              <ListItemText primary="Categories" />
+            </ListItemButton>
           </ListItem>
           :""}
 
           {privileges && privileges.forms===true  || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"?
-          <ListItem button>
-            <Category />
-            <ListItemText primary="Forms" onClick={()=> navigate("/formManagement")} />
+          <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/formManagement")}>
+              <Category />
+              <ListItemText primary="Forms" />
+            </ListItemButton>
           </ListItem>
           :""}
 
           {privileges && privileges.products===true  || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"?
-          <ListItem button>
-            <ShoppingCart />
-            <ListItemText primary="Products" onClick={()=> navigate("/productManagement")} />
+          <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/productManagement")}>
+              <ShoppingCart />
+              <ListItemText primary="Products" />
+            </ListItemButton>
           </ListItem>
           :""}
 
           {privileges && privileges.orders===true  || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"? 
-          <ListItem button>
-            <Assignment />
-            <ListItemText primary="Orders" onClick={()=> navigate("/orderManagement")} />
+          <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/orderManagement")}>
+              <Assignment />
+              <ListItemText primary="Orders" />
+            </ListItemButton>
           </ListItem>
           :""}
 
           {privileges && privileges.coupons===true  || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"?
-          <ListItem button>
-            <GifTwoTone/>
-            <ListItemText primary="Coupons"  onClick={()=> navigate("/couponManagement")} />
+          <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/couponManagement")}>
+              <GifTwoTone/>
+              <ListItemText primary="Coupons" />
+            </ListItemButton>
           </ListItem>
           :""}
 
           {privileges && privileges.testimonials===true  || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"?
-          <ListItem button>
-            <FaGoodreads />
-            <ListItemText primary="Testimonials" onClick={()=> navigate("/testimonialManagement")}  />
+          <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/testimonialManagement")}>
+              <FaGoodreads />
+              <ListItemText primary="Testimonials" />
+            </ListItemButton>
           </ListItem>
           :""}
           {/* <ListItem button>
             <FaBlog />
             <ListItemText primary="Blogs" />
           </ListItem> */}
-          <ListItem button>
-            <Lock />
-            <ListItemText primary="SignOut" onClick={handleLogout} />
+          <ListItem disablePadding>
+            <ListItemButton onClick={handleLogout}>
+              <Lock />
+              <ListItemText primary="SignOut" />
+            </ListItemButton>
           </ListItem>
         </List>
       </Drawer>

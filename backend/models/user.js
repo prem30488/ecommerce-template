@@ -13,14 +13,15 @@ module.exports = (sequelize, DataTypes) => {
             // define association here
             User.hasMany(models.Order, { foreignKey: 'user_id' });
             User.hasMany(models.Cart, { foreignKey: 'user_id' });
-            User.belongsToMany(models.Privilege, {
-                through: 'UserPrivileges',
-                foreignKey: 'user_id',
-                otherKey: 'privilege_id'
-            });
+            User.hasOne(models.Privilege, { foreignKey: 'user_id', as: 'Privileges' });
         }
     }
     User.init({
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         username: DataTypes.STRING,
         email: DataTypes.STRING,
         password: DataTypes.STRING,

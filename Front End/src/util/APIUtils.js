@@ -33,11 +33,11 @@ export function getCurrentUser() {
 }
 
 export function getPrivileges(id) {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
-
     return api.get("/api/user/privileges/"+id);
+}
+
+export function updatePrivileges(id, privileges) {
+    return api.put("/api/user/privileges/update/"+id, privileges);
 }
 
 export function login(loginRequest) {
@@ -59,9 +59,6 @@ export function getUserList(page,size){
 
 
 export function getCategories(page,size) {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
     return api.get("/api/category/getCategories?page="+page+"&size="+size+"&sort=order,asc");
 }
 
@@ -80,48 +77,29 @@ export function getForms(page,size) {
 }
 
 export  function getProducts(page,size) {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
     return api.get("/api/product/getProducts?page="+page+"&size="+size+"&sort=id,desc");
 }
 
 export  function getTestimonials(page,size) {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
     return api.get("/api/testimonial/getTestimonials?page="+page+"&size="+size+"&sort=id,desc");
 }
 
 export  function getCoupons(page,size) {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
     return api.get("/api/coupon/getCoupon?page="+page+"&size="+size+"&sort=id,desc");
 }
 
 
 
 export async function getCategoriesShort() {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
     return api.get("/api/category/getCategories?page=0&size=1000&sort=id&sort=order,asc");
 }
 
 export function getOffersByProductId(productId){
-
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
     
     return api.get("/api/offer/getOffersByProductId/"+productId);
 }
 
 export function getAllOffers(page,size) {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
     return api.get("/api/offer/getOffers?page="+page+"&size="+size+"&sort=id,asc");
 }
 
@@ -210,9 +188,6 @@ export function fetchUserById(id) {
 }
 
 export function fetchCategoryById(id) {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
     return api.get("/api/category/fetchById/" + id);
 }
 
@@ -224,9 +199,6 @@ export function fetchFormById(id) {
 }
 
 export function fetchProductById(id) {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
     return api.get("/api/product/fetchById/" + id);
 }
 
@@ -295,9 +267,6 @@ export function fetchOverviewById(id) {
 }
 
 export function getMissionList(){
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return api.get("/auth/missions?page=0&size=10&sort=id");
-    }
     return api.get("/api/user/missions?page=0&size=10&sort=id");
 }
 
@@ -314,9 +283,6 @@ export function fetchMissionById(id) {
 }
 
 export function getLeadershipList(){
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return api.get("/auth/leaderships?page=0&size=10&sort=id");
-    }
     return api.get("/api/user/leaderships?page=0&size=10&sort=id");
 }
 
@@ -333,9 +299,6 @@ export function fetchLeadershipById(id) {
 }
 
 export function getAwardList(){
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return api.get("/auth/awards?page=0&size=10&sort=id");
-    }
     return api.get("/api/user/awards?page=0&size=10&sort=id");
 }
 
@@ -352,9 +315,6 @@ export function fetchAwardById(id) {
 }
 
 export function getTestimonialList(){
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return api.get("/auth/testimonials?page=0&size=10&sort=id");
-    }
     return api.get("/api/user/testimonials?page=0&size=10&sort=id");
 }
 

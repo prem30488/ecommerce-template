@@ -22,7 +22,7 @@ function UserManagementPage() {
       });  
     };
     getPrivileges();
-  }, [currentUser,privileges]);
+  }, []);
 
   if(currentUser && currentUser.roles[0].name === 'ROLE_SUPERADMIN'){
 

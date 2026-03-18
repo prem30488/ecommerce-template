@@ -23,7 +23,7 @@ const TestimonialManager = () => {
         Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
     });
   };
-  fetchTestimonials();
+
   const handleAddTestimonial = () => {
     setSelectedTestimonial(null);
     setIsFormOpen(true);
@@ -159,10 +159,15 @@ const TestimonialManager = () => {
         <DataGrid
           rows={testimonials}
           columns={columns}
-          pageSize={5}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5, 10, 20]}
           checkboxSelection
-          onSelectionModelChange={(selection) => {
-            const selectedId = selection.selectionModel[0];
+          onRowSelectionModelChange={(newRowSelectionModel) => {
+            const selectedId = newRowSelectionModel[0];
             const selectedTestimonial = testimonials.find((t) => t.id === selectedId);
             setSelectedTestimonial(selectedTestimonial);
           }}

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import UserForm from './UserForm';
-import { deleteUser, signup } from '../../../../util/APIUtils';
+import { deleteUser, signup, getCurrentUser, getPrivileges, updatePrivileges } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
 import { getCurrentDate } from '../../../../util/util';
 import {updateUser,getUserList,updateRole} from "../../../../util/APIUtils";
+import { API_BASE_URL, ACCESS_TOKEN } from '../../../../constants';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -12,8 +13,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
-import axios from 'axios';
-import { API_BASE_URL, ACCESS_TOKEN } from '../../../../constants';
 function UserManagement() {
   let flag = false;
   const initialUsers = [];
@@ -115,7 +114,9 @@ function UserManagement() {
     
     setSelectedUser(null);
   };
-  reloadUserList();
+  useEffect(() => {
+    reloadUserList();
+  }, []);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [openPrivilegesDialog, setOpenPrivilegesDialog] = useState(false);
 
@@ -142,15 +143,21 @@ function UserManagement() {
 
   const handleOpenDialog = (userId) => {
     // Fetch user privileges from the backend when the component mounts
-    axios.get(API_BASE_URL+`/api/user/privileges/${userId}`)
+    getPrivileges(userId)
       .then(response => {
-        console.log("privileges :"+ JSON.stringify(response.data));
-        setPrivileges({id:response.data.id,userId:response.data.id,
-          categories:response.data.categories, forms : response.data.forms, 
-          products: response.data.products, orders: response.data.orders,
-          coupons : response.data.coupons, testimonials : response.data.testimonials,
-          deleteFlag : response.data.deleteFlag
-          })
+        const data = response;
+        console.log("privileges :"+ JSON.stringify(data));
+        setPrivileges({
+          id: data.id,
+          userId: data.user_id,
+          categories: data.categories,
+          forms: data.forms, 
+          products: data.products,
+          orders: data.orders,
+          coupons: data.coupons,
+          testimonials: data.testimonials,
+          deleteFlag: data.deleteFlag
+        });
       })
       .catch(error => {
         console.error('Error fetching user privileges:', error);
@@ -165,7 +172,7 @@ function UserManagement() {
 
   const handleSavePrivileges = () => {
     // Save user privileges to the backend
-    axios.put(API_BASE_URL+`/api/user/privileges/update/${selectedUserId}`, privileges)
+    updatePrivileges(selectedUserId, privileges)
       .then(() => {
         console.log('User privileges updated successfully');
         handleCloseDialog();
@@ -184,27 +191,36 @@ function UserManagement() {
       <DataGrid
         autoHeight
         rows={users}
-        rowsPerPage = {rowsPerPage}
+        initialState={{
+          pagination: {
+            paginationModel: { pageSize: rowsPerPage, page: page },
+          },
+        }}
+        pageSizeOptions={[rowsPerPage, 20, 50]}
         columns={[
           { field: 'id', headerName: 'ID', width: 50 },
           { field: 'username', headerName: 'Username', flex: 1 },
           { field: 'email', headerName: 'Email', flex: 1 },
           { field: 'password', headerName: 'Password', width: 60 },
           { field: 'delFlag', headerName: 'Deleted?', width: 30 },
-          { field: 'roles' , headerName : 'Role', flex : 1 , renderCell: (params) => {
-            if(params && params.value.length>0){
-              switch(params.value[0].name){
-                case 'ROLE_SUPERADMIN' :
-                  return "Super Admin";
-                case 'ROLE_ADMIN' :
-                  return "Admin";
-                default:
-                  return 'User'
+          {
+            field: 'roles',
+            headerName: 'Role',
+            flex: 1,
+            renderCell: (params) => {
+              if (params.value && params.value.length > 0) {
+                switch (params.value[0].name) {
+                  case 'ROLE_SUPERADMIN':
+                    return 'Super Admin';
+                  case 'ROLE_ADMIN':
+                    return 'Admin';
+                  default:
+                    return 'User';
+                }
               }
-            return params.value[0].name;
-            }
-        },
-        },
+              return 'User';
+            },
+          },
           {
             field: 'actions',
             headerName: 'Actions',
@@ -212,15 +228,16 @@ function UserManagement() {
             width: 150,
             renderCell: (params) => (
               <div>
-                {params.row.id===1?"":<>
-                <button onClick={() => handleEdit(params.row.id)}>Edit</button> &nbsp;&nbsp;&nbsp;
-                <button onClick={() => handleDelete(params.row.id)}>Delete</button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button onClick={() => handleOpenPrivileges(params.row.id)}>View Privileges</button>
-                {/* <Button variant="outlined" onClick={handleOpenDialog}>
-                  View Privileges
-                </Button> */}
-                </>}
+                {params.row.id === 1 ? (
+                  ''
+                ) : (
+                  <>
+                    <button onClick={() => handleEdit(params.row.id)}>Edit</button> &nbsp;&nbsp;&nbsp;
+                    <button onClick={() => handleDelete(params.row.id)}>Delete</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button onClick={() => handleOpenPrivileges(params.row.id)}>View Privileges</button>
+                  </>
+                )}
               </div>
             ),
           },

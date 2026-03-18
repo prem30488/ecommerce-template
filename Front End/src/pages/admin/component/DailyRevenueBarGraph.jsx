@@ -42,7 +42,7 @@ const DailyRevenueBarGraph = () => {
       
     };
     getData();
-  }, [data]);
+  }, []);
   return (
     <Paper elevation={3} style={{ padding: '20px' }}>
       <Typography variant="h5" align="center">Daily Revenue Bar Graph</Typography>

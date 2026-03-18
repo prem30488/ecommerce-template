@@ -31,7 +31,7 @@ const WeeklySalesGraph = () => {
       
     };
     getData();
-  }, [data]);
+  }, []);
   return (
     <Paper elevation={3} style={{ padding: '20px' }}>
       <Typography variant="h5" align="center">Weekly Sales Graph</Typography>

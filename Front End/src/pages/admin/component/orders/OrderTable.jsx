@@ -44,7 +44,7 @@ export const OrderTable = ({  }) => {
       
     };
     getData();
-  }, [orders]);
+  }, []);
   const indexOfLastOrder = currentPage * perPage;
   const indexOfFirstOrder = indexOfLastOrder - perPage;
   const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);

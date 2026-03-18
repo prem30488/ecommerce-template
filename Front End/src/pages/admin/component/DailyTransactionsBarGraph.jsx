@@ -41,7 +41,7 @@ const DailyTransactionsBarGraph = () => {
       
     };
     getData();
-  }, [data]);
+  }, []);
   
   return (
     <Paper elevation={3} style={{ padding: '20px' }}>

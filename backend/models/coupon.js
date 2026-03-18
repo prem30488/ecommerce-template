@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     Coupon.init({
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         code: DataTypes.STRING,
         discount: DataTypes.FLOAT,
         from_date: DataTypes.DATE,
