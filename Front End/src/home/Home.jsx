@@ -37,7 +37,7 @@ class Home extends Component {
         wrapAround={true} 
         afterSlide={this.handleAfterSlide}
         items={colors.map((color,index) => (
-        <React.Fragment>
+        <React.Fragment key={index}>
         <li>
         <div className="col_1 slider-item"><a href="view_profile.html">
               <img key={index} src={`images/${index+1}.jpg`} alt="" className="hover-animation image-zoom-in img-responsive" style={{width:"300px",height: "auto"}}/>
@@ -75,11 +75,11 @@ class Home extends Component {
                   
                                 ): (
                                     <React.Fragment>
-                                    <div class="banner">
-  <div class="container">
-    <div class="banner_info">
+                                    <div className="banner">
+  <div className="container">
+    <div className="banner_info">
       <h3>Millions of verified Members</h3>
-      <a href="/signup" class="hvr-shutter-out-horizontal">Create your Profile</a>
+      <a href="/signup" className="hvr-shutter-out-horizontal">Create your Profile</a>
     </div>
   </div>
   </div>                            

@@ -16,7 +16,7 @@ export const LartItemFinal = (props) => {
         <p> Price: {priceLarge.toLocaleString()} INR/-</p>
         {offers?
       <div style={{color:"goldenrod"}}> 
-        <p style={{"--tw-text-opacity": "1;",textDecoration : "line-through", color : "rgb(156 163 175"}}>
+        <p style={{"--tw-text-opacity": "1",textDecoration : "line-through", color : "rgb(156, 163, 175)"}}>
           {priceLarge} INR/-
           </p>
           {offers[0]?priceLarge - (priceLarge * offers[0].discount/100):priceLarge} INR /-

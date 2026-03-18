@@ -53,7 +53,7 @@ export const CartItem = (props) => {
         .filter((offe) => offe.type === 0)
         .map((offer) => {
       <p style={{color:"goldenrod"}}> 
-        <div style={{"--tw-text-opacity": "1;",textDecoration : "line-through", color : "rgb(156 163 175"}}>
+        <div style={{"--tw-text-opacity": "1",textDecoration : "line-through", color : "rgb(156, 163, 175)"}}>
           {price} INR/-
           </div>
           {price - (price * offer.discount/100)} INR /-

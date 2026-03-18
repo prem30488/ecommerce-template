@@ -64,7 +64,7 @@ const SimilarProduct = ({ product }) => {
       </p>
       {product.offers  && product.offers.length>0?
       <div style={{color:"goldenrod"}}> 
-        <div style={{"--tw-text-opacity": "1;",textDecoration : "line-through", color : "rgb(156 163 175"}}>
+        <div style={{"--tw-text-opacity": "1",textDecoration : "line-through", color : "rgb(156, 163, 175)"}}>
           {price} INR/-
           </div>
           {price - (price * offers[0].discount/100)} INR /-

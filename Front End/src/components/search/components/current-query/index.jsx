@@ -28,7 +28,7 @@ class CurrentQuery extends React.Component {
 			case "list-facet": return searchField.value.map((val, i) => (
 				<span className={cx({ "label": bootstrapCss, "label-default": bootstrapCss })} key={i}
 					onClick={() => this.removeListFacetValue(searchField.field, searchField.value, val)}>
-					{val} &nbdsp;
+					{val}
 					<a>{bootstrapCss ? <span className="glyphicon glyphicon-remove-sign"></span> : "❌"}</a>
 				</span>
 			));

@@ -45,7 +45,7 @@ export const MartItem = (props) => {
         <p> Price: {priceMedium.toLocaleString()} INR/-</p>
         {offers && offers.length>0?
       <p style={{color:"goldenrod"}}> 
-        <div style={{"--tw-text-opacity": "1;",textDecoration : "line-through", color : "rgb(156 163 175"}}>
+        <div style={{"--tw-text-opacity": "1",textDecoration : "line-through", color : "rgb(156, 163, 175)"}}>
           {priceMedium} INR/-
           </div>
           {priceMedium - (priceMedium * offers[0].discount/100)} INR /-

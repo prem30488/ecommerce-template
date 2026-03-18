@@ -74,7 +74,7 @@ const NavbarLoggedIn = () => {
           </ListItem>
           {currentUser && currentUser.roles.map((role) => {
             return role.name === "ROLE_SUPERADMIN"?
-            <ListItem button>
+            <ListItem button key={role.name}>
             <People/>
             <ListItemText primary="Users" onClick={()=> navigate("/userManagement")} />
           </ListItem>

@@ -86,7 +86,7 @@ const TaxInvoice = ({ status }) => {
 							<span><img alt="" src="http://www.jonathantneal.com/examples/invoice/logo.png" /></span>
 						</header>
 						<article>
-							<table class="meta">
+							<table className="meta">
 								<tr>
 									<th><span>Invoice #</span></th>
 									<td><span>{orderId}</span></td>
@@ -96,7 +96,7 @@ const TaxInvoice = ({ status }) => {
 									<td><span >{getCurrentDateDDMMYYYY("-")}</span></td>
 								</tr>
 							</table>
-							<table class="inventory">
+							<table className="inventory">
 								<thead>
 									<tr>
 										<th><span >Item</span></th>
@@ -110,7 +110,7 @@ const TaxInvoice = ({ status }) => {
 									{products.filter((p1) => p1.active === true).map((product1) => {
 										if (cartItems[product1.id] > 0) {
 											//return <CartItemFinal data={product} />;
-											return <tr>
+											return <tr key={product1.id}>
 												<td><span >{product1.title}</span></td>
 												<td><span >{product1.hmscode}</span></td>
 												<td><span data-prefix>INR </span><span>{product1.price} - Small pack</span></td>
@@ -123,7 +123,7 @@ const TaxInvoice = ({ status }) => {
 									{products.filter((p2) => p2.active === true).map((product2) => {
 										if (martItems[product2.id] > 0) {
 											//return <CartItemFinal data={product} />;
-											return <tr>
+											return <tr key={product2.id}>
 												<td><span >{product2.title}</span></td>
 												<td><span >{product2.hmscode}</span></td>
 												<td><span data-prefix>INR </span><span>{product2.priceMedium} - Medium Pack</span></td>
@@ -136,7 +136,7 @@ const TaxInvoice = ({ status }) => {
 									{products.filter((p3) => p3.active === true).map((product3) => {
 										if (lartItems[product3.id] > 0) {
 											//return <CartItemFinal data={product} />;
-											return <tr>
+											return <tr key={product3.id}>
 												<td><span >{product3.title}</span></td>
 												<td><span >{product3.hmscode}</span></td>
 												<td><span data-prefix>INR </span><span>{product3.priceLarge} - Large Pack</span></td>
@@ -149,7 +149,7 @@ const TaxInvoice = ({ status }) => {
 								</tbody>
 							</table>
 							<div>Free Items (if any as per offers):</div>
-							<table class="inventory">
+							<table className="inventory">
 								<thead>
 									<tr>
 										<th><span >Item</span></th>
@@ -163,7 +163,7 @@ const TaxInvoice = ({ status }) => {
 									{products.filter((p1) => p1.active === true).map((product1) => {
 										if (freeCartItems[product1.id] > 0) {
 											//return <CartItemFinal data={product} />;
-											return <tr>
+											return <tr key={product1.id}>
 												<td><span >{product1.title}</span></td>
 												<td><span >{product1.hmscode}</span></td>
 												<td><span data-prefix>INR </span><span>0.0 - Small pack</span></td>
@@ -176,7 +176,7 @@ const TaxInvoice = ({ status }) => {
 									{products.filter((p2) => p2.active === true).map((product2) => {
 										if (freeMartItems[product2.id] > 0) {
 											//return <CartItemFinal data={product} />;
-											return <tr>
+											return <tr key={product2.id}>
 												<td><span >{product2.title}</span></td>
 												<td><span >{product2.hmscode}</span></td>
 												<td><span data-prefix>INR </span><span>0.0 - Medium Pack</span></td>
@@ -189,7 +189,7 @@ const TaxInvoice = ({ status }) => {
 									{products.filter((p3) => p3.active === true).map((product3) => {
 										if (freeLartItems[product3.id] > 0) {
 											//return <CartItemFinal data={product} />;
-											return <tr>
+											return <tr key={product3.id}>
 												<td><span >{product3.title}</span></td>
 												<td><span >{product3.hmscode}</span></td>
 												<td><span data-prefix>INR </span><span>0.0 - Large Pack</span></td>
@@ -201,7 +201,7 @@ const TaxInvoice = ({ status }) => {
 
 								</tbody>
 							</table>
-							<table class="balance">
+							<table className="balance">
 								<tr>
 									<th><span >Total</span></th>
 									<td><span data-prefix>INR </span><span>${total}</span></td>
@@ -213,7 +213,7 @@ const TaxInvoice = ({ status }) => {
 								</tr>
 								<tr>
 									<th><span >Amount Paid</span></th>
-									<td><span data-prefix>INR </span><span contenteditable>{status === "Paid" ? total + (total * 18 / 100) : 0.00} </span></td>
+									<td><span data-prefix>INR </span><span contentEditable>{status === "Paid" ? total + (total * 18 / 100) : 0.00} </span></td>
 								</tr>
 								<tr>
 									<th><span >Balance Due</span></th>
@@ -226,7 +226,7 @@ const TaxInvoice = ({ status }) => {
 				</table>
 				<aside>
 					<h1><span >Additional Notes</span></h1>
-					<div contenteditable>
+					<div contentEditable>
 						<p>A finance charge of 1.5% will be made on unpaid balances after 30 days.</p>
 					</div>
 				</aside>

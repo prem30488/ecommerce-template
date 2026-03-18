@@ -20,7 +20,7 @@
 }
 
 .menudropdown .menudropbtn {
-  font-size: 16px;  
+  font-size: 16px;
   border: none;
   outline: none;
   color: dodgerblue;
@@ -30,7 +30,8 @@
   margin-left: -1000;
 }
 
-.navbar a:hover, .menudropdown:hover .menudropbtn {
+.navbar a:hover,
+.menudropdown:hover .menudropbtn {
   background-color: #eee;
 }
 
@@ -38,9 +39,9 @@
   display: none;
   position: absolute;
   background-color: #f9f9f9;
-  width: 100%;
+  width: 90%;
   left: 0;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 3;
   float: left;
   transform: rotate(360deg);
@@ -85,7 +86,7 @@
   clear: both;
 }
 
-.menucolumn h3{
+.menucolumn h3 {
   color: dodgerblue;
   background-color: white;
   padding: 5px;
@@ -103,11 +104,12 @@
 .badge-warning[href] {
   background-color: #c67605;
 }
+
 #lblCartCount {
-    font-size: 12px;
-    background: #ff0000;
-    color: #fff;
-    padding: 0 5px;
-    vertical-align: top;
-    margin-left: -10px; 
+  font-size: 12px;
+  background: #ff0000;
+  color: #fff;
+  padding: 0 5px;
+  vertical-align: top;
+  margin-left: -10px;
 }

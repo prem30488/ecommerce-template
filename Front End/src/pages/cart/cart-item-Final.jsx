@@ -16,7 +16,7 @@ export const CartItemFinal = (props) => {
         <p> Price: {price.toLocaleString()} INR/-</p>
         {offers?
       <div style={{color:"goldenrod"}}> 
-        <p style={{"--tw-text-opacity": "1;",textDecoration : "line-through", color : "rgb(156 163 175"}}>
+        <p style={{"--tw-text-opacity": "1",textDecoration : "line-through", color : "rgb(156, 163, 175)"}}>
           {price} INR/-
           </p>
           {offers[0]?price - (price * offers[0].discount/100):price} INR /-

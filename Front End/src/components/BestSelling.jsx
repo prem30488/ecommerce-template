@@ -48,14 +48,14 @@ const BestSelling = () => {
       <p className="h-screen flex flex-col justify-center items-center text-2xl">
         <span>{err}</span>
         <Link to="/product" className="text-lg text-gray-500 font-semibold">
-          &larr;Refresh page
+          &larr; Refresh page
         </Link>
       </p>
     );
 
   return (
     <div className="container mx-auto pb-20">
-      <div style={{ position: "relative;", paddingTop: "100px;" }}></div>
+      <div style={{ position: "relative", paddingTop: "100px" }}></div>
       <h2 className="text-center text-3xl py-10">Bestselling Products</h2>
       <div className="flex justify-between gap-10">
 

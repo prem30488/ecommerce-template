@@ -139,53 +139,53 @@ class App extends Component {
 		return (
 			<div className="App">
 				<ShopContextProvider>
-						{this.state.authenticated ? <NavbarLoggedIn /> : <NavbarMain />}
-						<Routes>
-							<Route path="/" element={this.state.authenticated ? <Dashboard /> : <Shop />} />
-							<Route path="/about" element={<About />} />
-							<Route path="/contact" element={<Contact />} />
-							<Route path="/productMen" element={<Product />} />
-							<Route path="/productWomen" element={<ProductWomen />} />
-							<Route path="/productKids" element={<ProductKids />} />
-							{/* <Route path="/cart" element={<Cart />} />
+					{this.state.authenticated ? <NavbarLoggedIn /> : <NavbarMain />}
+					<Routes>
+						<Route path="/" element={this.state.authenticated ? <Dashboard /> : <Shop />} />
+						<Route path="/about" element={<About />} />
+						<Route path="/contact" element={<Contact />} />
+						<Route path="/productMen" element={<Product />} />
+						<Route path="/productWomen" element={<ProductWomen />} />
+						<Route path="/productKids" element={<ProductKids />} />
+						{/* <Route path="/cart" element={<Cart />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             {/* <Route path="/productdetails/:id" element={<ProductDetails />} /> */}
-							<Route path="/productDetails/:id" element={<ProductDetailsCart />} />
-							{/* <Route path="/booking" element={<Booking />} /> */}
-							<Route path="/about" element={<OurTeam />} />
-							<Route path="*" element={<Notfound />} />
-							<Route path="/cart" element={<Cart />} />
-							<Route path="/checkout" element={<FormDialog />} />
+						<Route path="/productDetails/:id" element={<ProductDetailsCart />} />
+						{/* <Route path="/booking" element={<Booking />} /> */}
+						<Route path="/about" element={<OurTeam />} />
+						<Route path="*" element={<Notfound />} />
+						<Route path="/cart" element={<Cart />} />
+						<Route path="/checkout" element={<FormDialog />} />
 
-							<Route path="/applyCoupon" element={<CouponCode />} />
-
-
-							<Route path="/previewInvoice/:orderId" element={<TaxInvoice />} />
-
-							<Route path="/byCategory/:id" element={<Categorywise />} />
-							<Route path="/Search/:query" element={<Search />} />
-
-							<Route path="/refundPolicy" element={<RefundPolicy />} />
-							<Route path="/privacyPolicy" element={<PrivacyPolicy />} />
-							<Route path="/shippinganddelievery" element={<Shipping />} />
-							<Route exact path="/advancedSearch"
-								element={<AdvancedSearch />}></Route>
-							<Route exact path="/trackOrder"
-								element={<TrackOrder />}></Route>
-							{/*  ////////////////////////////////////////////// Admin Pages /////////////////////////////////////////////*/}
-
-							<Route exact path="/SignIn" element={<SignIn />} />
-							<Route exact path="/dashboard" element={<Dashboard />} />
-							<Route exact path="/userManagement" element={<UserManagementPage />} />
-							<Route exact path="/categoryManagement" element={<CategoryManagementPage />} />
-							<Route exact path="/productManagement" element={<ProductManagementPage />} />
-							<Route exact path="/formManagement" element={<FormManagementPage />} />
-							<Route exact path="/testimonialManagement" element={<TestimonialManagementPage />} />
-							<Route exact path="/couponManagement" element={<CouponManagementPage />} />
-							<Route exact path="/orderManagement" element={<OrderManagementPage />} />
+						<Route path="/applyCoupon" element={<CouponCode />} />
 
 
-						</Routes>
+						<Route path="/previewInvoice/:orderId" element={<TaxInvoice />} />
+
+						<Route path="/byCategory/:id" element={<Categorywise />} />
+						<Route path="/Search/:query" element={<Search />} />
+
+						<Route path="/refundPolicy" element={<RefundPolicy />} />
+						<Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+						<Route path="/shippinganddelievery" element={<Shipping />} />
+						<Route exact path="/advancedSearch"
+							element={<AdvancedSearch />} />
+						<Route exact path="/trackOrder"
+							element={<TrackOrder />} />
+						{/*  ////////////////////////////////////////////// Admin Pages /////////////////////////////////////////////*/}
+
+						<Route exact path="/SignIn" element={<SignIn />} />
+						<Route exact path="/dashboard" element={<Dashboard />} />
+						<Route exact path="/userManagement" element={<UserManagementPage />} />
+						<Route exact path="/categoryManagement" element={<CategoryManagementPage />} />
+						<Route exact path="/productManagement" element={<ProductManagementPage />} />
+						<Route exact path="/formManagement" element={<FormManagementPage />} />
+						<Route exact path="/testimonialManagement" element={<TestimonialManagementPage />} />
+						<Route exact path="/couponManagement" element={<CouponManagementPage />} />
+						<Route exact path="/orderManagement" element={<OrderManagementPage />} />
+
+
+					</Routes>
 				</ShopContextProvider>
 				<Footer />
 				<Alert stack={{ limit: 3 }}

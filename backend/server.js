@@ -77,13 +77,7 @@ async function ensureDatabaseExists() {
 
 async function seedData() {
     try {
-        const userCount = await db.User.count();
-        if (userCount > 0) {
-            console.log('Database already has data, skipping seeding.');
-            return;
-        }
-
-        console.log('Seeding initial data...');
+        console.log('Checking for initial data seeding...');
 
         // Seed categories
         const categoriesPath = path.join(__dirname, '..', 'Front End', 'public', 'categories.json');
@@ -125,17 +119,36 @@ async function seedData() {
             }
         }
 
-        // Seed Admin User
-        const hashedAdminPassword = await bcrypt.hash('adminpass123', 10);
-        await db.User.findOrCreate({
-            where: { email: 'admin@example.com' },
-            defaults: {
-                username: 'admin',
-                password: hashedAdminPassword,
-                role: 'admin',
-                active: true
+        // Seed users from users.csv
+        const usersPath = path.join(__dirname, 'users.csv');
+        if (fs.existsSync(usersPath)) {
+            const usersData = fs.readFileSync(usersPath, 'utf8');
+            const lines = usersData.split('\n').filter(line => line.trim() !== '');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                if (values.length < headers.length) continue;
+                
+                const userObj = {};
+                headers.forEach((header, index) => {
+                    userObj[header] = values[index];
+                });
+
+                const existingUser = await db.User.findOne({ where: { email: userObj.email } });
+                if (!existingUser) {
+                    const hashedPassword = await bcrypt.hash(userObj.password, 10);
+                    await db.User.create({
+                        username: userObj.username,
+                        email: userObj.email,
+                        password: hashedPassword,
+                        role: userObj.role,
+                        phoneNumber: userObj.phoneNumber || '',
+                        active: true
+                    });
+                }
             }
-        });
+        }
 
         console.log('Seeding completed successfully.');
     } catch (error) {
@@ -239,7 +252,12 @@ app.get('/api/user/users', authenticateToken, async (req, res) => {
             order: [['id', 'ASC']],
             attributes: { exclude: ['password'] }
         });
-        res.json(getPaginatedResponse(rows, count, page, size));
+        const rowsWithRoles = rows.map(user => {
+            const userData = user.toJSON();
+            userData.roles = [{ name: 'ROLE_' + user.role.toUpperCase() }];
+            return userData;
+        });
+        res.json(getPaginatedResponse(rowsWithRoles, count, page, size));
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to fetch users' });
@@ -278,7 +296,11 @@ app.get('/api/user/deleteUser/:id', authenticateToken, async (req, res) => {
 app.get('/api/user/users/:id', authenticateToken, async (req, res) => {
     try {
         const user = await db.User.findByPk(req.params.id, { attributes: { exclude: ['password'] } });
-        if (user) res.json(user);
+        if (user) {
+            const userData = user.toJSON();
+            userData.roles = [{ name: 'ROLE_' + user.role.toUpperCase() }];
+            res.json(userData);
+        }
         else res.status(404).json({ error: 'User not found' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch user' });
@@ -385,13 +407,22 @@ app.delete('/api/category/delete/:id', authenticateToken, async (req, res) => {
 // Authentication Routes
 app.post('/auth/login', async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, email, password } = req.body;
+        const loginIdentifier = username || email;
 
-        if (!username || !password) {
-            return res.status(400).json({ error: 'Username and password are required' });
+        if (!loginIdentifier || !password) {
+            return res.status(400).json({ error: 'Username/Email and password are required' });
         }
 
-        const user = await db.User.findOne({ where: { username } });
+        const user = await db.User.findOne({ 
+            where: { 
+                [db.Sequelize.Op.or]: [
+                    { username: loginIdentifier },
+                    { email: loginIdentifier }
+                ]
+            } 
+        });
+
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -408,13 +439,16 @@ app.post('/auth/login', async (req, res) => {
             { expiresIn: '24h' }
         );
 
+        const roles = [{ name: 'ROLE_' + user.role.toUpperCase() }];
+
         res.json({
             accessToken: token,
             user: {
                 id: user.id,
                 username: user.username,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                roles: roles
             }
         });
     } catch (error) {
@@ -483,7 +517,9 @@ app.get('/api/user/me', authenticateToken, async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.json(user);
+        const userData = user.toJSON();
+        userData.roles = [{ name: 'ROLE_' + user.role.toUpperCase() }];
+        res.json(userData);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to get user' });
