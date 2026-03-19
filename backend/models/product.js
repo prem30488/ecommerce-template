@@ -43,7 +43,16 @@ module.exports = (sequelize, DataTypes) => {
         active: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
-        }
+        },
+        catIds: DataTypes.STRING,
+        formId: DataTypes.INTEGER,
+        hmsCode: DataTypes.STRING,
+        unit: DataTypes.STRING,
+        unitSmall: DataTypes.INTEGER,
+        unitMedium: DataTypes.INTEGER,
+        unitLarge: DataTypes.INTEGER,
+        priceMedium: DataTypes.FLOAT,
+        priceLarge: DataTypes.FLOAT
     }, {
         sequelize,
         modelName: 'Product',

@@ -21,8 +21,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         code: DataTypes.STRING,
         discount: DataTypes.FLOAT,
-        from_date: DataTypes.DATE,
-        to_date: DataTypes.DATE
+        from: DataTypes.DATE,
+        to: DataTypes.DATE,
+        deleteFlag: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        }
     }, {
         sequelize,
         modelName: 'Coupon',

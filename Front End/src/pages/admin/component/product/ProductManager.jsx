@@ -29,91 +29,91 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddOrEditProduct from './AddOrEditProduct';
 import Alert from 'react-s-alert';
-import {addProduct,getProducts,deleteProduct,undeleteProduct,fetchProductById,getCategories,updateProduct,
-  getForms,getOffersByProductId,getAllOffers,addOffer,deleteOffer} from '../../../../util/APIUtils';
-  
-  
-import {getCurrentDate} from '../../../../util/util';
+import {
+  addProduct, getProducts, deleteProduct, undeleteProduct, fetchProductById, getCategories, updateProduct,
+  getForms, getOffersByProductId, getAllOffers, addOffer, deleteOffer
+} from '../../../../util/APIUtils';
+
+
+import { getCurrentDate } from '../../../../util/util';
 
 function ProductManager() {
 
 
 
-    const [pageSize, setPageSize] = useState(25);
-    const [page, setPage] = useState(0);
-    const [totalElements, setTotalElements] = useState(0);
-    const reloadProductList = () => {
-      getProducts(page,pageSize)
+  const [pageSize, setPageSize] = useState(25);
+  const [page, setPage] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const reloadProductList = () => {
+    getProducts(page, pageSize)
       .then((res) => {
-            setProducts(res.content);
-            setTotalElements(res.totalElements);
+        setProducts(res.content);
+        setTotalElements(res.totalElements);
       }).catch(error => {
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-    });
-      }
-    const [products, setProducts] = useState([]);
+        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      });
+  }
+  const [products, setProducts] = useState([]);
 
   const [offers, setOffers] = useState([]);
   const reloadOffersList = () => {
-    getAllOffers(0,100)
-    .then(res => {
-      setOffers(res.content)
-  }).catch(error => {
-    Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-  });
+    getAllOffers(0, 100)
+      .then(res => {
+        setOffers(res.content)
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      });
   }
-  
+
   const reloadCategoriesList = () => {
-    getCategories(0,100)
-  .then((resCat) => {
+    getCategories(0, 100)
+      .then((resCat) => {
         let resultCat = [];
-        resCat.content.map((cat)=>
-        {
-            resultCat.push({id:cat.id,title:cat.title});
+        resCat.content.map((cat) => {
+          resultCat.push({ id: cat.id, title: cat.title });
         })
 
-      setCategories(resultCat);
-      
-  }).catch(error => {
-    Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-});
+        setCategories(resultCat);
+
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      });
   }
 
   const reloadFormsList = () => {
-    getForms(0,100)
-  .then((resForm) => {
+    getForms(0, 100)
+      .then((resForm) => {
         let resultForm = [];
-        resForm.content.map((fo)=>
-        {
-            resultForm.push({id:fo.id,title:fo.title});
-           // console.log("result :" + JSON.stringify(result))
+        resForm.content.map((fo) => {
+          resultForm.push({ id: fo.id, title: fo.title });
+          // console.log("result :" + JSON.stringify(result))
         })
 
-      setForms(resultForm);
-      
-  }).catch(error => {
-    Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-});
+        setForms(resultForm);
+
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      });
   }
 
   const [categories, setCategories] = useState([]);
   const [forms, setForms] = useState([]);
-  
-    
+
+
   useEffect(() => {
     reloadProductList();
     reloadCategoriesList();
     reloadFormsList();
     reloadOffersList();
   }, [page, pageSize]);
-  
+
   const [name, setName] = useState('');
   const [active, setActive] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedGenders, setSelectedGenders] = useState([]);
   const [currentProductId, setCurrentProductId] = useState(null);
   const [isAddOfferDialogOpen, setAddOfferDialogOpen] = useState(false);
-  const [isPDialogOpen,setIsPDialogOpen]= useState(false);
+  const [isPDialogOpen, setIsPDialogOpen] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [discount, setDiscount] = useState(0);
@@ -127,7 +127,7 @@ function ProductManager() {
   const [maxWidth, setMaxWidth] = React.useState('lg');
   const [freeProductid, setFreeProductid] = useState(1);
   const [freeProducttitle, setFreeProducttitle] = useState('');
-  const [freeProductsize,setFreeProductsize] = useState('S');
+  const [freeProductsize, setFreeProductsize] = useState('S');
   const columns = [
     { field: 'id', headerName: 'ID', width: 50 },
     { field: 'title', headerName: 'Name', width: 200 },
@@ -137,13 +137,13 @@ function ProductManager() {
       width: 180,
       renderCell: (params) => (
         <div>
-          {categories && categories.length>0 && params.row.categories && params.row.categories.length > 0? params.row.categories.map((categoryId) => 
-          
-             <span key={categoryId.id}>
-               {categories.find((category) => category.id === categoryId.id).title}
-               <br />
-             </span>
-          ):""}
+          {categories && categories.length > 0 && params.row.categories && params.row.categories.length > 0 ? params.row.categories.map((categoryId) =>
+
+            <span key={categoryId.id}>
+              {categories.find((category) => category.id === categoryId.id).title}
+              <br />
+            </span>
+          ) : ""}
         </div>
       ),
     },
@@ -153,12 +153,13 @@ function ProductManager() {
       width: 150,
       renderCell: (params) => (
         <div>
-          {params.row.audience.split(', ').map((gender) => (
+          {params.row.audience ? params.row.audience.split(', ').map((gender) => (
             <span key={gender}>
               {gender}
               <br />
             </span>
-          ))}
+          ))
+            : ""}
         </div>
       ),
     },
@@ -194,23 +195,23 @@ function ProductManager() {
           </Button>
           {params.row.active && (
             <>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleViewOffers(params.row.id)}
-            >
-              View Offers
-            </Button>
-            <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => handleEditProduct(params.row)}
-          >
-            Edit
-          </Button>
-          </>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleViewOffers(params.row.id)}
+              >
+                View Offers
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => handleEditProduct(params.row)}
+              >
+                Edit
+              </Button>
+            </>
           )}
-          
+
         </div>
       ),
     },
@@ -218,23 +219,22 @@ function ProductManager() {
 
   // Function to open the edit product form
   const handleEditProduct = product => {
-    
-    product.catIds=[];
-    
-    if(product.categories && product.categories.length>0)
-    {
-      product.categories.map(cat=>
+
+    product.catIds = [];
+
+    if (product.categories && product.categories.length > 0) {
+      product.categories.map(cat =>
         product.catIds.push(cat.id)
-    );
-    //console.log(product.catIds);
-    }else{
+      );
+      //console.log(product.catIds);
+    } else {
       //product.categories = [1];
       product.catIds = [1];
     }
-    if(!product.form || !product.form.id){
+    if (!product.form || !product.form.id) {
       product.form = 1;
-    }else{
-      product.formId=product.form.id;
+    } else {
+      product.formId = product.form.id;
       product.form = product.formId;
     }
     setEditingProduct(product);
@@ -245,69 +245,73 @@ function ProductManager() {
   const handleCloseEditForm = () => {
     setEditingProduct(null);
     setIsPDialogOpen(false);
-  } 
+  }
   const handleSaveEditForm = (editedProduct) => {
     let cid = "", fid = 1;
-    if(undefined !== editedProduct.catIds){
+    if (undefined !== editedProduct.catIds) {
       cid = editedProduct.catIds.join(",");
     }
     editedProduct.categories = [];
-    
-    if(undefined !== editedProduct.formId){
-      fid = editedProduct.formId; 
+
+    if (undefined !== editedProduct.formId) {
+      fid = editedProduct.formId;
     }
     editedProduct.form = null;
     let product = JSON.parse(JSON.stringify(editedProduct));
     product.catIds = cid;
     product.formId = fid;
     console.log(product);
-    if(product && product.id !==0){
+    if (product && product.id !== 0) {
       product.id = editingProduct.id;
-          updateProduct(product).then(res => {
-              Alert.success("Success!");
-        }).catch(error => {
-          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+      updateProduct(product).then(res => {
+        Alert.success("Success!");
+        reloadProductList();
+        setEditingProduct(null);
+        setIsPDialogOpen(false);
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
       });
-      }
-      else if (product.id === 0){
-        addProduct(product).then(res => {
-          Alert.success("Success!");
-    }).catch(error => {
-      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-  });
-      }
-      setEditingProduct(null);
-      setIsPDialogOpen(false);
+    }
+    else if (product.id === 0) {
+      addProduct(product).then(res => {
+        Alert.success("Success!");
+        reloadProductList();
+        setEditingProduct(null);
+        setIsPDialogOpen(false);
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      });
+    }
   };
 
   const handleToggleActive = (productId) => {
     const updatedProducts = products.map((product) =>
       product.id === productId ? { ...product, active: !product.active } : product
     );
-    
+
 
     fetchProductById(productId).then(res => {
-        let item = res;
-        if(item){
-            if(item.active === true){
-                undeleteProduct(item).then(res => {
-                    Alert.success("Success!");
-                }).catch(error => {
-                  Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-                });
-            }else{
-                deleteProduct(item).then(res => {
-                    Alert.success("Success!");
-                }).catch(error => {
-                  Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-                });
-            }
+      let item = res;
+      if (item) {
+        if (item.active === true) {
+          undeleteProduct(item).then(res => {
+            Alert.success("Success!");
+          }).catch(error => {
+            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+          });
+        } else {
+          deleteProduct(item).then(res => {
+            Alert.success("Success!");
+          }).catch(error => {
+            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+          });
         }
+      }
     }).catch(error => {
-      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-  });
- // setProducts(updatedProducts);
-  reloadProductList();
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+    });
+    // setProducts(updatedProducts);
+    reloadProductList();
   };
 
   const handleOpenAddOfferDialog = (productId) => {
@@ -328,30 +332,29 @@ function ProductManager() {
   };
 
   const handleAddOffer = () => {
-    if (currentProductId === null ) return;
+    if (currentProductId === null) return;
 
     const newOffer = {
       "productId": currentProductId,
       "from": startDate,
-      "to":  endDate,
+      "to": endDate,
       "discount": Number(discount),
       "buy": Number(buy),
       "buyget": Number(buyget),
-      "active" : true,
-      "size" : size,
-      "type" : type ,
-      "freeProductid" : freeProductid,
-      "freeProducttitle" : products.find((product) => product.id === freeProductid).title,
-      "freeProductsize" : freeProductsize,
+      "active": true,
+      "size": size,
+      "type": type,
+      "freeProductid": freeProductid,
+      "freeProducttitle": products.find((product) => product.id === freeProductid).title,
+      "freeProductsize": freeProductsize,
     };
     addOffer(newOffer).then((res) => {
       Alert.success("Success!");
+      reloadOffersList();
+      handleCloseAddOfferDialog();
     }).catch(error => {
-      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
     });
-    //setOffers([...offers, newOffer]);
-    reloadOffersList();
-    handleCloseAddOfferDialog();
   };
 
   const currentProduct = products.find((product) => product.id === currentProductId);
@@ -368,33 +371,33 @@ function ProductManager() {
     setViewingOffers(null);
   };
 
-  
-  
+
+
   const handleAddProduct = () => {
-const initialProduct = {
-    "title": '',
-    "active": false,
-    "categories": [1],
-    "audience": 'Men',
-    "stock": 0,
-    "bestseller" : false,
-    "featured" : false,
-    "rating" : "",
-    "form": 1,
-    "catIds": [1],
-    "formId":1,
-    "description":'',
-    "hmsCode":'',
-    "unit":"days",
-    "unitSmall" : 0,
-    "unitMedium" : 0,
-    "unitLarge" : 0,
-    "price" : 0,
-    "priceMedium" : 0,
-    "priceLarge" : 0
-  };
-  setEditingProduct(initialProduct);
-  setIsPDialogOpen(true);
+    const initialProduct = {
+      "title": '',
+      "active": false,
+      "categories": [1],
+      "audience": 'Men',
+      "stock": 0,
+      "bestseller": false,
+      "featured": false,
+      "rating": "",
+      "form": 1,
+      "catIds": [1],
+      "formId": 1,
+      "description": '',
+      "hmsCode": '',
+      "unit": "days",
+      "unitSmall": 0,
+      "unitMedium": 0,
+      "unitLarge": 0,
+      "price": 0,
+      "priceMedium": 0,
+      "priceLarge": 0
+    };
+    setEditingProduct(initialProduct);
+    setIsPDialogOpen(true);
   };
 
   const handleAddSaveProduct = (newProduct) => {
@@ -408,9 +411,9 @@ const initialProduct = {
       Alert.success("Success!");
       reloadOffersList();
     }).catch(error => {
-      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
     });
-    
+
   };
 
   const handlePageSizeChange = (params) => {
@@ -422,9 +425,9 @@ const initialProduct = {
   };
 
   return (
-    <div>      
+    <div>
       <div style={{ height: 500, width: '100%' }}>
-      <Button variant="contained" color="primary" onClick={handleAddProduct} >Add New Product</Button>
+        <Button variant="contained" color="primary" onClick={handleAddProduct} >Add New Product</Button>
         <DataGrid
           rows={products}
           columns={columns}
@@ -468,31 +471,31 @@ const initialProduct = {
         maxWidth={maxWidth}>
         <DialogTitle>Add Offer for {currentProduct ? currentProduct.title : ''}</DialogTitle>
         <DialogContent>
-        <DatePicker
-      className='form-control form-control-solid w-250px '
- showTimeSelect
- wrapperClassName="datePickerFrom"
- dateFormat="MMMM d, yyyy h:mmaa"
- selected={startDate}
- selectsStart
- startDate={startDate}
- endDate={endDate}
- onChange={date => setStartDate(date)}
-/>
-<DatePicker
-className='form-control form-control-solid w-250px '
- showTimeSelect
- wrapperClassName="datePickerFrom"
- dateFormat="MMMM d, yyyy h:mmaa"
- selected={endDate}
- selectsEnd
- startDate={startDate}
- endDate={endDate}
- minDate={startDate}
- onChange={date => setEndDate(date)}
-/>
-          
-        
+          <DatePicker
+            className='form-control form-control-solid w-250px '
+            showTimeSelect
+            wrapperClassName="datePickerFrom"
+            dateFormat="MMMM d, yyyy h:mmaa"
+            selected={startDate}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            onChange={date => setStartDate(date)}
+          />
+          <DatePicker
+            className='form-control form-control-solid w-250px '
+            showTimeSelect
+            wrapperClassName="datePickerFrom"
+            dateFormat="MMMM d, yyyy h:mmaa"
+            selected={endDate}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+            onChange={date => setEndDate(date)}
+          />
+
+
           <TextField
             label="Discount (%)"
             value={discount || 0}
@@ -513,70 +516,70 @@ className='form-control form-control-solid w-250px '
             onChange={(e) => setBuyget(e.target.value)}
             type="number"
           />
-        <InputLabel>Size</InputLabel>
-         <Select
-           name="size"
-           value={size || 'S'}
-           onChange={(e) => setSize(e.target.value)}
-         >
+          <InputLabel>Size</InputLabel>
+          <Select
+            name="size"
+            value={size || 'S'}
+            onChange={(e) => setSize(e.target.value)}
+          >
             <MenuItem key="0" value="S"         >
-               Small
-             </MenuItem>
-             <MenuItem key="1" value="M"         >
-               Medium
-             </MenuItem>
-             <MenuItem key="2" value="L"         >
-               Large
-             </MenuItem>
-         </Select>
-         <InputLabel>Type</InputLabel>
-         <Select
-           name="type"
-           value={type || 0}
-           onChange={(e) => setType(e.target.value)}
-         >
+              Small
+            </MenuItem>
+            <MenuItem key="1" value="M"         >
+              Medium
+            </MenuItem>
+            <MenuItem key="2" value="L"         >
+              Large
+            </MenuItem>
+          </Select>
+          <InputLabel>Type</InputLabel>
+          <Select
+            name="type"
+            value={type || 0}
+            onChange={(e) => setType(e.target.value)}
+          >
             <MenuItem key="3" value="0"         >
-               Flat x% off on selected product's selected size
-             </MenuItem>
-             <MenuItem key="4" value="1"         >
-               Buy x units get y units free, Example, buy 2 get 1 free
-             </MenuItem>
-             <MenuItem key="5" value="2"         >
-               Buy 1 item get same or another item's pack free, Exaple Buy bat get ball free
-             </MenuItem>
-             <MenuItem key="6" value="3"         >
-               Buy x thresold value quantity and get y % discount on billed amount, Example buy 5 qty get 30% discount free
-             </MenuItem>
-         </Select>
-         <InputLabel>Product (Small) size</InputLabel>
-         <Select
-           name="freeProductid"
-           value={freeProductid}
-           onChange={(e) => setFreeProductid(e.target.value)}
-         >
+              Flat x% off on selected product's selected size
+            </MenuItem>
+            <MenuItem key="4" value="1"         >
+              Buy x units get y units free, Example, buy 2 get 1 free
+            </MenuItem>
+            <MenuItem key="5" value="2"         >
+              Buy 1 item get same or another item's pack free, Exaple Buy bat get ball free
+            </MenuItem>
+            <MenuItem key="6" value="3"         >
+              Buy x thresold value quantity and get y % discount on billed amount, Example buy 5 qty get 30% discount free
+            </MenuItem>
+          </Select>
+          <InputLabel>Product (Small) size</InputLabel>
+          <Select
+            name="freeProductid"
+            value={freeProductid}
+            onChange={(e) => setFreeProductid(e.target.value)}
+          >
             {products.map((product) => (
-          <MenuItem key={product.id} value={product.id}>
-            {product.title}
-          </MenuItem>
-        ))}
-         </Select>
+              <MenuItem key={product.id} value={product.id}>
+                {product.title}
+              </MenuItem>
+            ))}
+          </Select>
 
-         <InputLabel>Size Free Product</InputLabel>
-         <Select
-           name="freeProductsize"
-           value={freeProduct.size || 'S'}
-           onChange={(e) => setFreeProductsize(e.target.value)}
-         >
+          <InputLabel>Size Free Product</InputLabel>
+          <Select
+            name="freeProductsize"
+            value={freeProduct.size || 'S'}
+            onChange={(e) => setFreeProductsize(e.target.value)}
+          >
             <MenuItem key="10" value="S"         >
-               Small
-             </MenuItem>
-             <MenuItem key="11" value="M"         >
-               Medium
-             </MenuItem>
-             <MenuItem key="12" value="L"         >
-               Large
-             </MenuItem>
-         </Select>
+              Small
+            </MenuItem>
+            <MenuItem key="11" value="M"         >
+              Medium
+            </MenuItem>
+            <MenuItem key="12" value="L"         >
+              Large
+            </MenuItem>
+          </Select>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAddOfferDialog} color="primary">

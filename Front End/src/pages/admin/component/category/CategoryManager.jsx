@@ -8,7 +8,7 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-import { getCategories, addCategory, fetchCategoryById, updateCategory , deleteCategory} from '../../../../util/APIUtils';
+import { getCategories, addCategory, fetchCategoryById, updateCategory, deleteCategory } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
 import { getCurrentDate } from '../../../../util/util';
 function CategoryManager() {
@@ -16,40 +16,37 @@ function CategoryManager() {
   const page = 0;
   const [totalElements, setTotalElements] = useState(0);
   const reloadCategoriesList = () => {
-    getCategories(page,rowsPerPage)
-  .then((res) => {
-      setCategories(res.content);
-      setTotalElements(res.totalElements);
-  });
+    getCategories(page, rowsPerPage)
+      .then((res) => {
+        setCategories(res.content);
+        setTotalElements(res.totalElements);
+      });
   }
   const [categories, setCategories] = useState([]);
-  
+
   const [title, setTitle] = useState('');
   const [type, setType] = useState(1);
   const [editCategoryId, setEditCategoryId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
-  const [ editType, setEditType] = useState(1);
-  
+  const [editType, setEditType] = useState(1);
+
   React.useEffect(() => {
     reloadCategoriesList();
   }, []);
 
   const handleAddCategory = () => {
     const newId = categories.length + 1;
-    const newCategory = { id: newId,title, type, order: newId,description : "" };
-    setCategories([...categories, newCategory]);
-    const categoryObj = { title : title, type : type, order: newId, description : ' ', createdAt : getCurrentDate('-') };
-    console.log("categoryObj :"+ JSON.stringify(categoryObj));
+    const categoryObj = { title: title, type: type, order: newId, description: ' ', createdAt: getCurrentDate('-') };
+    console.log("categoryObj :" + JSON.stringify(categoryObj));
     addCategory(categoryObj).then(res => {
       console.log(JSON.stringify(res));
       Alert.success("Success!");
       setTitle('');
       setType(1);
-  }).catch(error => {
-    Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-});
-
-    
+      reloadCategoriesList();
+    }).catch(error => {
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+    });
   };
 
   const handleEditCategory = (id) => {
@@ -69,10 +66,10 @@ function CategoryManager() {
           : category
       )
     );
-    
+
     fetchCategoryById(editCategoryId).then(res => {
       let cat = res;
-      if(cat){
+      if (cat) {
         cat.description = "''";
         cat.title = editTitle;
         cat.type = editType;
@@ -82,13 +79,13 @@ function CategoryManager() {
           setEditCategoryId(null);
           setEditTitle('');
           setEditType(1);
-      }).catch(error => {
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-      });
+        }).catch(error => {
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+        });
       }
-  }).catch(error => {
-    Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-});
+    }).catch(error => {
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+    });
 
 
   };
@@ -103,9 +100,9 @@ function CategoryManager() {
     );
     deleteCategory(id).then(res => {
       Alert.success("Success!");
-  }).catch(error => {
-    Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-  });
+    }).catch(error => {
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+    });
   };
 
   const handleMoveCategory = (id, direction) => {
@@ -114,66 +111,69 @@ function CategoryManager() {
     const movedCategory = updatedCategories[index];
     let cat = updatedCategories[index];
     let order = cat.order;
-    let prev = categories.findIndex((category) => category.order === order-1);
-    let next = categories.findIndex((category) => category.order === order+1);
-    
+    let prev = categories.findIndex((category) => category.order === order - 1);
+    let next = categories.findIndex((category) => category.order === order + 1);
+
     let catPrev = updatedCategories[prev];
     let catNext = updatedCategories[next];
     updatedCategories.splice(index, 1);
     if (direction === 'up') {
-      if(cat.order>1){
+      if (cat.order > 1) {
         catPrev.order = cat.order;
         cat.order = cat.order - 1;
       }
       updateCategory(catPrev).then(res => {
-        
-    }).catch(error => {
-      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-    });
+
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      });
       //console.log("up : " + JSON.stringify(cat));
       updatedCategories.splice(index - 1, 0, movedCategory);
-      
+
     } else if (direction === 'down') {
-      if(cat.order < categories.length){
+      if (cat.order < categories.length) {
         catNext.order = cat.order;
         cat.order = cat.order + 1;
         updateCategory(catNext).then(res => {
-        
+
         }).catch(error => {
-          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
       }
       //console.log("down : " + JSON.stringify(movedCategory));
       updatedCategories.splice(index + 1, 0, movedCategory);
     }
-      
+
 
     // Reorder the categories
     // updatedCategories.forEach((category, index) => {
     //   category.order = index + 1;
     // });
     updateCategory(cat).then(res => {
-            Alert.success("Success!");
-        }).catch(error => {
-          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-        });
-    
-    reloadCategoriesList();
+      Alert.success("Success!");
+      reloadCategoriesList();
+    }).catch(error => {
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+    });
+
+
     //setCategories(updatedCategories);
-   
+
   };
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'title', headerName: 'Title', width: 200 ,renderCell: (params) =>
-    editCategoryId === params.row.id ? (
-      <TextField
-        value={editTitle}
-       onChange={(e) => setEditTitle(e.target.value)}
-      />
-    ) : (
-      params.row.title
-    ),},
+    {
+      field: 'title', headerName: 'Title', width: 200, renderCell: (params) =>
+        editCategoryId === params.row.id ? (
+          <TextField
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+          />
+        ) : (
+          params.row.title
+        ),
+    },
     {
       field: 'type',
       headerName: 'Type',
@@ -256,7 +256,7 @@ function CategoryManager() {
 
   return (
     <div>
-      
+
       <div>
         <TextField
           label="Title"

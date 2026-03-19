@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   Button,
@@ -11,31 +11,32 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { getForms, fetchFormById, updateForm , addForm, deleteForm, undeleteForm} from '../../../../util/APIUtils';
+import { getForms, fetchFormById, updateForm, addForm, deleteForm, undeleteForm } from '../../../../util/APIUtils';
 import { getCurrentDate } from '../../../../util/util';
 import Alert from 'react-s-alert';
 function ItemManager() {
-    const rowsPerPage = 100;
-    const page = 0;
-    const [totalElements, setTotalElements] = useState(0);
-    const reloadCategoriesList = () => {
-        getForms(page,rowsPerPage)
+  const pageSize = 10;
+  const page = 0;
+  const [totalElements, setTotalElements] = useState(0);
+  const [items, setItems] = useState([]);
+
+
+  const reloadCategoriesList = () => {
+    getForms(page, pageSize)
       .then((res) => {
         setItems(res.content);
-          setTotalElements(res.totalElements);
+        setTotalElements(res.totalElements);
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
       });
-      }
-      
-  const [items, setItems] = useState([]);
-  
-  React.useEffect(() => {
+
+  }
+
+
+  useEffect(() => {
     reloadCategoriesList();
-  }, []);
-   //useState([
-//     { id: 1, title: 'Item 1', description: 'Description 1', deleteFlag: false },
-//     { id: 2, title: 'Item 2', description: 'Description 2', deleteFlag: false },
-//     { id: 3, title: 'Item 3', description: 'Description 3', deleteFlag: true },
-//   ]);
+  }, [page, pageSize]);
+
 
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
@@ -56,16 +57,15 @@ function ItemManager() {
     };
 
     addForm(newItem).then(res => {
-        Alert.success("Success!");
-        setTitle('');
-        setDescription('');
+      Alert.success("Success!");
+      setTitle('');
+      setDescription('');
+      setItems((prevItems) => [...prevItems, res]);
+      clearForm();
+      reloadCategoriesList();
     }).catch(error => {
-      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-  });
-
-    setItems((prevItems) => [...prevItems, newItem]);
-    clearForm();
-    reloadCategoriesList();
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+    });
   };
 
   const handleUpdateItem = (id) => {
@@ -80,48 +80,48 @@ function ItemManager() {
     const updatedItems = items.map((item) =>
       item.id === id ? { ...item, deleteFlag: true } : item
     );
-    
+
     fetchFormById(id).then(res => {
-        let item = res;
-        if(item){
-            
-          item.deleteFlag = true;
-          item.updatedAt = getCurrentDate('-');
-          deleteForm(item).then(res => {
-            Alert.success("Success!");
+      let item = res;
+      if (item) {
+
+        item.deleteFlag = true;
+        item.updatedAt = getCurrentDate('-');
+        deleteForm(item).then(res => {
+          Alert.success("Success!");
+          setItems(updatedItems);
+          reloadCategoriesList();
         }).catch(error => {
-          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
-        }
+      }
     }).catch(error => {
-      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-  });
-  setItems(updatedItems);
-  reloadCategoriesList();
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+    });
   };
 
   const handleUndeleteItem = (id) => {
     const updatedItems = items.map((item) =>
       item.id === id ? { ...item, deleteFlag: false } : item
     );
-    
-    
+
+
     fetchFormById(id).then(res => {
-        let item = res;
-        if(item){
-            
-            item.deleteFlag = false;
-          item.updatedAt = getCurrentDate('-');
-          undeleteForm(item).then(res => {
-            Alert.success("Success!");
+      let item = res;
+      if (item) {
+
+        item.deleteFlag = false;
+        item.updatedAt = getCurrentDate('-');
+        undeleteForm(item).then(res => {
+          Alert.success("Success!");
         }).catch(error => {
-          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
-        }
+      }
     }).catch(error => {
-      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-  });
-  setItems(updatedItems);
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+    });
+    setItems(updatedItems);
   };
 
   const handleEditForm = (id) => {
@@ -141,10 +141,10 @@ function ItemManager() {
           : item
       )
     );
-    
+
     fetchFormById(editItemId).then(res => {
       let item = res;
-      if(item){
+      if (item) {
         item.description = editDescription;
         item.title = editTitle;
         item.updatedAt = getCurrentDate('-');
@@ -153,13 +153,13 @@ function ItemManager() {
           setEditItemId(null);
           setEditTitle('');
           setEditDescription('');
-      }).catch(error => {
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-      });
+        }).catch(error => {
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+        });
       }
-  }).catch(error => {
-    Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-});
+    }).catch(error => {
+      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+    });
 
 
   };
@@ -178,24 +178,28 @@ function ItemManager() {
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'title', headerName: 'Title', width: 200 ,renderCell: (params) =>
-    editItemId === params.row.id ? (
-      <TextField
-        value={editTitle}
-       onChange={(e) => setEditTitle(e.target.value)}
-      />
-    ) : (
-      params.row.title
-    ),},
-    { field: 'description', headerName: 'Description', width: 400 ,renderCell: (params) =>
-    editItemId === params.row.id ? (
-      <TextField
-        value={editDescription}
-       onChange={(e) => setEditDescription(e.target.value)}
-      />
-    ) : (
-      params.row.description
-    ),},
+    {
+      field: 'title', headerName: 'Title', width: 200, renderCell: (params) =>
+        editItemId === params.row.id ? (
+          <TextField
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+          />
+        ) : (
+          params.row.title
+        ),
+    },
+    {
+      field: 'description', headerName: 'Description', width: 400, renderCell: (params) =>
+        editItemId === params.row.id ? (
+          <TextField
+            value={editDescription}
+            onChange={(e) => setEditDescription(e.target.value)}
+          />
+        ) : (
+          params.row.description
+        ),
+    },
     {
       field: 'deleteFlag',
       headerName: 'Delete Flag',
@@ -230,41 +234,41 @@ function ItemManager() {
       width: 150,
       renderCell: (params) => (
         editItemId === params.row.id ? (
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSaveEdit}
-              >
-                Save
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleCancelSaveEdit}
-              >
-                Cancel
-              </Button>
-            </div>
-          ) : (
-            <div>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => handleEditForm(params.row.id)}
-              >
-                Edit
-              </Button>
-              
-            </div>
-          )
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSaveEdit}
+            >
+              Save
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleCancelSaveEdit}
+            >
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => handleEditForm(params.row.id)}
+            >
+              Edit
+            </Button>
+
+          </div>
+        )
       ),
     },
   ];
 
   return (
     <div>
-      
+
       <div>
         <TextField
           label="Title"
@@ -303,18 +307,21 @@ function ItemManager() {
       </div>
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
-          rows={
-            showDeleted ? items : items.filter((item) => !item.deleteFlag)
-          }
+          rows={items}
           columns={columns}
           initialState={{
             pagination: {
-              paginationModel: { pageSize: 5 },
+              paginationModel: { pageSize: pageSize, page: page },
             },
           }}
-          pageSizeOptions={[5]}
-          checkboxSelection={false}
-          editable={true}
+          onPaginationModelChange={(model) => {
+            setPageSize(model.pageSize);
+            setPage(model.page);
+          }}
+          pageSizeOptions={[5, 10, 25, 50]}
+          pagination
+          rowCount={totalElements}
+          paginationMode="server"
         />
       </div>
     </div>
