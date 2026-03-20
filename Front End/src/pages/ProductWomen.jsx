@@ -95,7 +95,7 @@ const ProductWomen = () => {
             <div className="grid grid-cols-4 gap-lg-5 ">
               {filterProducts &&
                 filterProducts
-                  .filter(prod => prod.audience.match(new RegExp("(?:^|,)" + "Women" + "(?:,|$)")))
+                  .filter(prod => typeof prod.audience === 'string' && prod.audience.match(new RegExp("(?:^|,)" + "Women" + "(?:,|$)")))
                   .filter(p => p.active == true)
                   .map((product) => (
                     <SingleProduct key={product.id} product={product} />

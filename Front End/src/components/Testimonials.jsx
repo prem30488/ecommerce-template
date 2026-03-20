@@ -31,8 +31,46 @@ export const Testimonials = () => {
         const res = await fetch("//localhost:5000/api/testimonial/getTestimonials?page=0&size=1000&sort=id,asc");
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
-
-        setTestimonials(json.content);
+        // Add static testimonials here
+        const staticTestimonials = [
+          {
+            id: 'static-1',
+            title: 'Prembhai',
+            designation: 'Director',
+            organization: 'Ecommerce Inc.',
+            description: 'Excellent service and great support. Highly recommended!',
+            rating: 5,
+            imageURL: '/images/1/0.png',
+          },
+          {
+            id: 'static-2',
+            title: 'Rosie',
+            designation: 'CEO',
+            organization: 'Prem Micro Serv Pvt Ltd',
+            description: 'The team delivered beyond expectations. Will work again!',
+            rating: 5,
+            imageURL: '/images/0/ayo-ogunseinde-6W4F62sN_yI-unsplash.jpg',
+          },
+          {
+            id: 'static-3',
+            title: 'Roose',
+            designation: 'CA',
+            organization: 'Hzneley Pvt Ltd',
+            description: 'Professional and reliable service. Very satisfied.',
+            rating: 5,
+            imageURL: '/images/0/jimmy-fermin-bqe0J0b26RQ-unsplash.jpg',
+          },
+          {
+            id: 'static-4',
+            title: 'Foose',
+            designation: 'IT Head',
+            organization: 'Caamunda',
+            description: 'Great experience from start to finish. Highly recommend!',
+            rating: 5,
+            imageURL: '/images/0/philip-martin-5aGUyCW_PJw-unsplash.jpg',
+          },
+        ];
+        setTestimonials([...json.content, ...staticTestimonials]);
       } catch (err) {
         console.log(err.message);
       }
@@ -86,26 +124,24 @@ export const Testimonials = () => {
           >
 
             {chunks.map((testimonials, index) => (
-
-              <SwiperSlide>
-                <div key={index} className="row text-center" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <SwiperSlide key={index}>
+                <div className="row text-center" style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
                   {testimonials.map((testimonial) => (
-                    <div className="col-md-4 mb-4 mb-md-0">
-                      <div className="card">
+                    <div className="col-12 col-sm-6 col-md-4 mb-4 mb-md-0 d-flex align-items-stretch" key={testimonial.id || testimonial.title}>
+                      <div className="card w-100" style={{ minWidth: 0 }}>
                         <div className="card-body py-4 mt-2">
                           <div className="d-flex justify-content-center mb-4">
                             <img src={testimonial.imageURL} alt={testimonial.title}
                               className="rounded-circle shadow-1-strong" width="100" height="100" />
                           </div>
                           <h5 className="font-weight-bold">{testimonial.title}</h5>
-                          <h6 className="font-weight-bold my-3">{testimonial.designation} , {testimonial.organization}</h6>
+                          <h6 className="font-weight-bold my-3">{testimonial.designation} {testimonial.organization ? `, ${testimonial.organization}` : ''}</h6>
                           <ul className="list-unstyled d-flex justify-content-center">
                             <li>
                               {testimonial.rating >= 1 ? <FontAwesomeIcon icon="star" /> : <FontAwesomeIcon icon="star-half-alt" />}
                             </li>
                             <li>
                               {testimonial.rating >= 2 ? <FontAwesomeIcon icon="star" /> : <FontAwesomeIcon icon="star-half-alt" />}
-
                             </li>
                             <li>
                               {testimonial.rating >= 3 ? <FontAwesomeIcon icon="star" /> : <FontAwesomeIcon icon="star-half-alt" />}
@@ -115,7 +151,6 @@ export const Testimonials = () => {
                             </li>
                             <li>
                               {testimonial.rating === 5 ? <FontAwesomeIcon icon="star" /> : testimonial.rating === 4.5 ? <FontAwesomeIcon icon="star-half-alt" /> : ""}
-
                             </li>
                           </ul>
                           <p className="mb-2">
@@ -125,14 +160,9 @@ export const Testimonials = () => {
                         </div>
                       </div>
                     </div>
-
-
-
                   ))}
                 </div>
               </SwiperSlide>
-
-
             ))}
           </Swiper>
         </div>

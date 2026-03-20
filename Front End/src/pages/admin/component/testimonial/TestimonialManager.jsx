@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import TestimonialForm from './TestimonialForm';
 import Alert from 'react-s-alert';
-import {getTestimonials,deleteTestimonial,undeleteTestimonial,addTestimonial,updateTestimonial} from '../../../../util/APIUtils';
+import { getTestimonials, deleteTestimonial, undeleteTestimonial, addTestimonial, updateTestimonial } from '../../../../util/APIUtils';
 const TestimonialManager = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [selectedTestimonial, setSelectedTestimonial] = useState(null);
@@ -14,14 +14,14 @@ const TestimonialManager = () => {
   useEffect(() => {
     fetchTestimonials();
   }, []);
-  
+
   const fetchTestimonials = async () => {
-    getTestimonials(0,100)
-    .then((res) => {
+    getTestimonials(0, 100)
+      .then((res) => {
         setTestimonials(res.content);
-    }).catch(error => {
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
-    });
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      });
   };
 
   const handleAddTestimonial = () => {
@@ -38,13 +38,14 @@ const TestimonialManager = () => {
     if (selectedTestimonial) {
       try {
         await deleteTestimonial(selectedTestimonial).then((res) => {
-            Alert.success("Success!");
+          Alert.success("Success!");
+          fetchTestimonials();
+          setSelectedTestimonial(null);
         }).catch(error => {
-            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
         //await axios.delete(`/api/testimonials/${selectedTestimonial.id}`); // Replace with your API endpoint
-        fetchTestimonials();
-        setSelectedTestimonial(null);
+
       } catch (error) {
         console.error('Error deleting testimonial:', error);
       }
@@ -55,13 +56,13 @@ const TestimonialManager = () => {
     if (selectedTestimonial) {
       try {
         await undeleteTestimonial(selectedTestimonial).then((res) => {
-            Alert.success("Success!");
+          Alert.success("Success!");
+          fetchTestimonials();
+          setSelectedTestimonial(null);
         }).catch(error => {
-            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
         //await axios.put(`/api/testimonials/undelete/${selectedTestimonial.id}`); // Replace with your API endpoint
-        fetchTestimonials();
-        setSelectedTestimonial(null);
       } catch (error) {
         console.error('Error undeleting testimonial:', error);
       }
@@ -72,16 +73,16 @@ const TestimonialManager = () => {
     try {
       if (selectedTestimonial) {
         await updateTestimonial(formData).then((res) => {
-            Alert.success("Success!");
+          Alert.success("Success!");
         }).catch(error => {
-            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
         //await axios.put(`/api/testimonials/${selectedTestimonial.id}`, formData); // Replace with your API endpoint
       } else {
         await addTestimonial(formData).then((res) => {
-            Alert.success("Success!");
+          Alert.success("Success!");
         }).catch(error => {
-            Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');            
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
         //await axios.post('/api/testimonials', formData); // Replace with your API endpoint
       }
@@ -104,19 +105,21 @@ const TestimonialManager = () => {
     { field: 'description', headerName: 'Description', flex: 5 },
     { field: 'designation', headerName: 'Designation', width: 200 },
     { field: 'organization', headerName: 'Organization', width: 200 },
-    { field: 'imageURL', headerName: 'Image', width: 150 ,
-    renderCell: (params) => (
-            
-      params.row.imageURL?<img src ={params.row.imageURL} style = {{width:"100px",height:"100px"}} /> : ""
-      
-  )
+    {
+      field: 'imageURL', headerName: 'Image', width: 150,
+      renderCell: (params) => (
+
+        params.row.imageURL ? <img src={params.row.imageURL} style={{ width: "100px", height: "100px" }} /> : ""
+
+      )
     },
-    { field: 'deleteflag', headerName: 'Deleted?', width: 120 ,
-        renderCell: (params) => (
-            
-            params.row.deleteFlag?params.row.deleteFlag.toString():""
-            
-        )
+    {
+      field: 'deleteflag', headerName: 'Deleted?', width: 120,
+      renderCell: (params) => (
+
+        params.row.deleteFlag ? params.row.deleteFlag.toString() : ""
+
+      )
     },
     {
       field: 'actions',

@@ -252,7 +252,73 @@ async function seedData() {
             }
         }
 
+        // Seed sliders
+        const defaultSliders = [
+            {
+                id: 1,
+                src: "https://assets.mspimages.in/wp-content/uploads/2021/06/pjimage-1.jpg",
+                headline: "Power and Portability at your Fingertips",
+                body: "Discover our wide range of laptops for all your computing needs. From ultrabooks to gaming laptops, our selection offers the perfect combination of power and portability for your lifestyle.",
+                cta: "Shop now",
+                category: "laptop"
+            },
+            {
+                id: 2,
+                src: "https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+                headline: "Stay Connected on the Go",
+                body: "Keep up with the latest trends and stay connected on-the-go with our selection of smartphones. Choose from top brands and affordable options, with advanced features to enhance your mobile experience.",
+                cta: "Shop now",
+                category: "smartphone"
+            },
+            {
+                id: 3,
+                src: "https://images.unsplash.com/photo-1631281956016-3cdc1b2fe5fb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1032&q=80",
+                headline: "Track your Fitness and Stay Connected",
+                body: "Enhance your lifestyle with our range of smartwatches. Monitor your fitness goals and stay connected to your digital life with ease. Choose from popular brands and a variety of styles and features.",
+                cta: "Shop now",
+                category: "smartwatch"
+            },
+            {
+                id: 4,
+                src: "https://images.unsplash.com/photo-1600003263720-95b45a4035d5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+                headline: "The Ultimate Gaming Experience",
+                body: "Take your gaming experience to the next level with our high-performance graphics cards. Choose from top brands and the latest technology for smooth and fast gameplay.",
+                cta: "Shop now",
+                category: "graphics card"
+            },
+            {
+                id: 5,
+                src: "https://images.unsplash.com/photo-1526876798423-97e53fb23428?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
+                headline: "Listen in Style and Comfort",
+                body: "Elevate your audio experience with our selection of earbuds and headphones. Choose from the latest models and top brands, with noise-cancelling and wireless options for a customized listening experience.",
+                cta: "Shop now",
+                category: "earbuds"
+            }
+        ];
+        for (const slider of defaultSliders) {
+            await db.Slider.findOrCreate({
+                where: { id: slider.id },
+                defaults: slider
+            });
+        }
+
         console.log('Seeding completed successfully.');
+
+        // Reset sequences to prevent duplicate ID errors on next create
+        const tables = ['Sliders', 'Products', 'Categories', 'Forms', 'Testimonials', 'Coupons'];
+        for (const tableName of tables) {
+            try {
+                const [results] = await db.sequelize.query(`SELECT pg_get_serial_sequence('"${tableName}"', 'id') as seq;`);
+                if (results[0] && results[0].seq) {
+                    const seqName = results[0].seq;
+                    await db.sequelize.query(`SELECT setval('${seqName}', COALESCE((SELECT MAX(id)+1 FROM "${tableName}"), 1), false);`);
+                    console.log(`Reset sequence for ${tableName}`);
+                }
+            } catch (seqError) {
+                // Ignore if sequence doesn't exist or other minor issues
+                // console.error(`Error resetting sequence for ${tableName}:`, seqError.message);
+            }
+        }
     } catch (error) {
         console.error('Error seeding data:', error);
     }
@@ -898,6 +964,80 @@ app.get('/api/offer/getOffersByProductId/:id', async (req, res) => {
         res.json(offers);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch offers for product' });
+    }
+});
+
+// Slider CRUD
+app.get('/api/slider/getSliders', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 0;
+        const size = parseInt(req.query.size) || 10;
+        const activeOnly = req.query.active === 'true';
+
+        const where = { deleteFlag: false };
+        if (activeOnly) {
+            where.active = true;
+        }
+
+        const { count, rows } = await db.Slider.findAndCountAll({
+            where: where,
+            offset: page * size,
+            limit: size,
+            order: [['id', 'DESC']]
+        });
+        res.json(getPaginatedResponse(rows, count, page, size));
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch sliders' });
+    }
+});
+
+app.get('/api/slider/fetchById/:id', async (req, res) => {
+    try {
+        const slider = await db.Slider.findByPk(req.params.id);
+        if (slider) res.json(slider);
+        else res.status(404).json({ error: 'Slider not found' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch slider' });
+    }
+});
+
+app.post('/api/slider/createSlider', authenticateToken, async (req, res) => {
+    try {
+        delete req.body.id;
+        const slider = await db.Slider.create(req.body);
+        res.status(201).json(slider);
+    } catch (error) {
+        console.error('Error creating slider:', error);
+        require('fs').writeFileSync('slider_error.log', JSON.stringify(error, null, 2));
+        res.status(500).json({ error: 'Failed to create slider' });
+    }
+});
+
+app.put('/api/slider/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.Slider.update(req.body, { where: { id: req.params.id } });
+        res.json({ message: 'Slider updated' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update slider' });
+    }
+});
+
+app.delete('/api/slider/delete/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.Slider.update({ deleteFlag: true }, { where: { id: req.params.id } });
+        res.json({ message: 'Slider deleted' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete slider' });
+    }
+});
+
+app.delete('/api/slider/undelete/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.Slider.update({ deleteFlag: false }, { where: { id: req.params.id } });
+        res.json({ message: 'Slider undeleted' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to undelete slider' });
     }
 });
 

@@ -36,6 +36,7 @@ import FormManagementPage from './pages/admin/component/form/FormManagementPage'
 import TestimonialManagementPage from './pages/admin/component/testimonial/TestimonialManagementPage';
 import CouponManagementPage from './pages/admin/component/coupon/CouponManagementPage';
 import OrderManagementPage from './pages/admin/component/orders/OrderManagementPage';
+import SliderManagementPage from './pages/admin/component/slider/SliderManagementPage';
 import TaxInvoice from "./pages/checkout/TaxInvoice";
 
 import RefundPolicy from './pages/RefundPolicy';
@@ -183,6 +184,7 @@ class App extends Component {
 						<Route exact path="/testimonialManagement" element={<TestimonialManagementPage />} />
 						<Route exact path="/couponManagement" element={<CouponManagementPage />} />
 						<Route exact path="/orderManagement" element={<OrderManagementPage />} />
+						<Route exact path="/sliderManagement" element={<SliderManagementPage />} />
 
 
 					</Routes>

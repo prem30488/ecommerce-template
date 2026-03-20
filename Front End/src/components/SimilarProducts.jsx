@@ -26,7 +26,7 @@ const SimilarProducts = ({ productCat }) => {
     <div>
 
       <h2 className="text-4xl py-10 text-center font-medium text-gray-700">
-        Similar Products - {productCat && productCat.categories.length > 0 ?
+        Similar Products - {productCat && Array.isArray(productCat.categories) && productCat.categories.length > 0 ?
           productCat.categories.map(
             (cat) => <span>{cat.title}</span>)
           : ""}
@@ -37,10 +37,10 @@ const SimilarProducts = ({ productCat }) => {
         <Compare products={selectedItems} /> : ""
       }
       <div className="grid grid-cols-3 gap-10 w-[80%] mx-auto pb-20">
-        {productCat && productCat.categories.length > 0 &&
+        {productCat && Array.isArray(productCat.categories) && productCat.categories.length > 0 &&
           products &&
           products
-            .filter((p) => p.categories.length > 0 && p.categories && productCat.categories && p.categories[0].title === productCat.categories[0].title)
+            .filter((p) => Array.isArray(p.categories) && p.categories.length > 0 && Array.isArray(productCat.categories) && productCat.categories.length > 0 && p.categories[0].title === productCat.categories[0].title)
             .map((product) => {
               return <SimilarProduct key={product.id} product={product} selectedItems={selectedItems} />;
             })}

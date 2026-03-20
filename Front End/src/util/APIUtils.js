@@ -87,7 +87,45 @@ export function getTestimonials(page, size) {
 export function getCoupons(page, size) {
     return api.get("/api/coupon/getCoupon?page=" + page + "&size=" + size + "&sort=id,desc");
 }
+export const getSliders = (page, size, active) => {
+    let url = "/api/slider/getSliders?page=" + page + "&size=" + size + "&sort=id,desc";
+    if (active !== undefined) {
+        url += "&active=" + active;
+    }
+    return api.get(url);
+}
 
+export function addSlider(sliderRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/slider/createSlider", sliderRequest);
+}
+
+export function updateSlider(sliderRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put("/api/slider/" + sliderRequest.id, sliderRequest);
+}
+
+export function deleteSlider(id) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.delete("/api/slider/delete/" + id);
+}
+
+export function undeleteSlider(id) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.delete("/api/slider/undelete/" + id);
+}
+
+export function fetchSliderById(id) {
+    return api.get("/api/slider/fetchById/" + id);
+}
 
 
 export async function getCategoriesShort() {
@@ -206,15 +244,24 @@ export function fetchGeneralProfileById(id) {
 
 
 export function updateCategory(categoryRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.put("/api/category/" + categoryRequest.id, categoryRequest);
 }
 
 
 export function updateProduct(productRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.put("/api/product/" + productRequest.id, productRequest);
 }
 
 export function addProduct(productRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.post("/api/product/createProduct", productRequest);
 }
 
@@ -223,38 +270,65 @@ export function updateForm(itemRequest) {
 }
 
 export function deleteOffer(offerId) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.delete("/api/offer/delete/" + offerId);
 }
 
 export function deleteForm(itemRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.delete("/api/forms/delete/" + itemRequest.id, { data: itemRequest });
 }
 
 export function undeleteForm(itemRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.delete("/api/forms/undelete/" + itemRequest.id, { data: itemRequest });
 }
 
 export function deleteTestimonial(itemRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.delete("/api/testimonial/delete/" + itemRequest.id, { data: itemRequest });
 }
 
 export function undeleteTestimonial(itemRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.delete("/api/testimonial/undelete/" + itemRequest.id, { data: itemRequest });
 }
 
 export function deleteCoupon(itemRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.delete("/api/coupon/delete/" + itemRequest.id, { data: itemRequest });
 }
 
 export function undeleteCoupon(itemRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.delete("/api/coupon/undelete/" + itemRequest.id, { data: itemRequest });
 }
 
 export function deleteProduct(itemRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.delete("/api/product/delete/" + itemRequest.id, { data: itemRequest });
 }
 
 export function undeleteProduct(itemRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.delete("/api/product/undelete/" + itemRequest.id, { data: itemRequest });
 }
 
@@ -304,6 +378,9 @@ export function addAward(awardRequest) {
 }
 
 export function updateAward(awardRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.put("/api/user/awards/" + awardRequest.id, awardRequest);
 }
 
@@ -317,10 +394,16 @@ export function getTestimonialList() {
 
 
 export function updateTestimonial(testimonialRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.put("/api/testimonial/" + testimonialRequest.id, testimonialRequest);
 }
 
 export function updateCoupon(testimonialRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
     return api.put("/api/coupon/" + testimonialRequest.id, testimonialRequest);
 }
 

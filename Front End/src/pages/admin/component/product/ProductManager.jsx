@@ -294,24 +294,27 @@ function ProductManager() {
       let item = res;
       if (item) {
         if (item.active === true) {
-          undeleteProduct(item).then(res => {
+          deleteProduct(item).then(res => {
             Alert.success("Success!");
+            reloadProductList();
           }).catch(error => {
             Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
           });
         } else {
-          deleteProduct(item).then(res => {
+          undeleteProduct(item).then(res => {
             Alert.success("Success!");
+            reloadProductList();
           }).catch(error => {
             Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
           });
         }
       }
+
     }).catch(error => {
       Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
     });
     // setProducts(updatedProducts);
-    reloadProductList();
+
   };
 
   const handleOpenAddOfferDialog = (productId) => {

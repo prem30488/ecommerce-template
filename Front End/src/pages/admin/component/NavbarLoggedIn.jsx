@@ -1,5 +1,5 @@
 import { AppBar, Toolbar, Typography, Container, Paper, List, ListItem, ListItemButton, ListItemText, Drawer, Divider, Card } from '@mui/material';
-import { Menu, Home, ShoppingCart, Assignment, People, Lock, GifTwoTone, Category } from '@mui/icons-material';
+import { Menu, Home, ShoppingCart, Assignment, People, Lock, GifTwoTone, Category, ViewCarousel } from '@mui/icons-material';
 import { FaBlog, FaFileContract, FaGoodreads } from 'react-icons/fa';
 import React , { useState , useEffect} from 'react';
 import { ACCESS_TOKEN } from '../../../constants';
@@ -136,6 +136,14 @@ const NavbarLoggedIn = () => {
             <ListItemButton onClick={()=> navigate("/testimonialManagement")}>
               <FaGoodreads />
               <ListItemText primary="Testimonials" />
+            </ListItemButton>
+          </ListItem>
+          :""}
+          {privileges && privileges.testimonials===true  || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"?
+          <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/sliderManagement")}>
+              <ViewCarousel />
+              <ListItemText primary="Sliders" />
             </ListItemButton>
           </ListItem>
           :""}
