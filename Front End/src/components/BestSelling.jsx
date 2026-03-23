@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import BestSingleProduct from "../components/BestSingleProduct";
+import BestSellingCarousel from "../components/BestSellingCarousel";
 import { Link } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 
@@ -56,7 +57,8 @@ const BestSelling = () => {
   return (
     <div className="container mx-auto pb-20">
       <div style={{ position: "relative", paddingTop: "100px" }}></div>
-      <h2 className="text-center text-3xl py-10">Bestselling Products</h2>
+      {/* <h2 className="text-center text-3xl py-10">Bestselling Products</h2> */}
+      <BestSellingCarousel />
       <div className="flex justify-between gap-10">
 
         <div>

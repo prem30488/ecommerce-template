@@ -41,7 +41,7 @@ export const NavbarMain = () => {
   
   
   return (
-    <div className="navbar" id="navbar" style={{zIndex:"2", position:"fixed", width:"100%"}}>
+    <div className="navbar" id="navbar" style={{position:"fixed", width:"100%"}}>
       <Sidebar />
       <div className="logo">
       
@@ -74,6 +74,12 @@ export const NavbarMain = () => {
           Booking
         </Link> */}
         
+        <Link to="/bestsellers" className={location.pathname === "/bestsellers" ? "active-link" : ""}>
+          BestSellers
+        </Link>
+        <Link to="/featured" className={location.pathname === "/featured" ? "active-link" : ""}>
+          Featured
+        </Link>
         <Link to="/advancedSearch" className={location.pathname === "/advancedSearch" ? "active-link" : ""}>
           Search
         </Link>

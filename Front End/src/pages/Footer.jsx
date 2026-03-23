@@ -1,6 +1,7 @@
 import React from 'react';
 import "./Footer.css";
 import "./topbutton.css";
+import { WhatsappLogo } from "phosphor-react";
 export default function Footer() {
 
   // When the user scrolls down 20px from the top of the document, show the button
@@ -27,43 +28,84 @@ export default function Footer() {
   return (
     <React.Fragment>
       <button onClick={topFunction} id="myBtn" title="Go to top">Top</button>
-<footer>
-        <div className="footer-content">
-            <h3>Hanley Healthcare LLP</h3>
-            <p>Hanley Healthcare is a blog website where you will find great tutorials on web design and development. Here each tutorial is beautifully described step by step with the required source code.</p>
-            <ul className="socials">
-                <li><a href="#"><i className
-="fa fa-facebook"></i></a></li>
-                <li><a href="#"><i className
-="fa fa-twitter"></i></a></li>
-                <li><a href="#"><i className
-="fa fa-google-plus"></i></a></li>
-                <li><a href="#"><i className="fa fa-youtube"></i></a></li>
-                <li><a href="#"><i className="fa fa-linkedin-square"></i></a></li>
-            </ul>
+      <a 
+        href="https://api.whatsapp.com/send/?phone=917777936090&text=Hi" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="whatsapp-float-btn-global"
+        title="Chat with us on WhatsApp"
+      >
+        <WhatsappLogo size={32} weight="fill" />
+      </a>
+      
+      <footer className="hanley-footer">
+        <div className="footer-container">
+          <div className="footer-top">
+            
+            <div className="footer-col">
+              <h4>About Hanley</h4>
+              <p>
+                At Hanley, we're dedicated to empowering your wellness journey with natural, science-backed supplements. Through cutting-edge research, we create products that truly impact lives, led by our liquid collagen supplement. Join us and become #UnstoppableYou.
+              </p>
+              <div className="footer-contact-info">
+                <span>Ahmedabad, India</span>
+                <span>+91 7777936090</span>
+                <span>info@hanleyhealthcare.com</span>
+              </div>
+              <ul className="footer-socials">
+                <li><a href="#"><i className="fa fa-instagram"></i></a></li>
+                <li><a href="#"><i className="fa fa-youtube-play"></i></a></li>
+                <li><a href="#"><i className="fa fa-facebook"></i></a></li>
+              </ul>
+            </div>
+
+            <div className="footer-col">
+              <h4>Quick links</h4>
+              <ul className="footer-links">
+                <li><a href="/advancedSearch">Search</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/productMen">All Products</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="#">Wishlist</a></li>
+                <li><a href="#">Blog</a></li>
+              </ul>
+            </div>
+
+            <div className="footer-col">
+              <h4>Policies</h4>
+              <ul className="footer-links">
+                <li><a href="/contact">Contact Information</a></li>
+                <li><a href="/privacyPolicy">Privacy Policy</a></li>
+                <li><a href="/refundPolicy">Refund Policy</a></li>
+                <li><a href="/shippinganddelievery">Terms Of Service</a></li>
+              </ul>
+            </div>
+
+            <div className="footer-col footer-newsletter">
+              <h4>Sign Up to Newsletter</h4>
+              <p>
+                Sign up for our newsletter to receive ₹500 off your first order and exclusive updates on new products and sales.
+              </p>
+              <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
+                <input 
+                  type="email" 
+                  className="newsletter-input" 
+                  placeholder="Enter your email..." 
+                  required 
+                />
+                <button type="submit" className="newsletter-btn">SUBSCRIBE</button>
+              </form>
+            </div>
+
+          </div>
+
+          <div className="footer-bottom">
+            <span>© 2024 Hanley Healthcare. All Rights Reserved</span>
+            <span>Lovingly built by Labs</span>
+          </div>
         </div>
-        <div className="footer-bottom">
-            <p>copyright &copy; 2023 <a href="#">Hanley Healthcare LLP</a>  powered by Parth Microsys</p>
-                    <div className="footer-menu">
-                      <ul className="f-menu">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/about">About Us</a></li>
-                        <li><a href="/contact">Contact Us</a></li>
-
-                        <li><a href="/refundPolicy">Refund policy</a></li>
-                        <li><a href="/privacyPolicy">Privacy Policy</a></li>
-                        <li><a href="/shippinganddelievery">Shipping & Delivery</a></li>
-                        <li><a href="#">Track Order</a></li>
-
-
-
-                        <li><a href="/productMen">Products</a></li>
-                         <li><a href="/Signin">Signin</a></li> 
-                      </ul>
-                    </div>
-        </div>
-
-    </footer>
+      </footer>
     </React.Fragment>
   );
 }

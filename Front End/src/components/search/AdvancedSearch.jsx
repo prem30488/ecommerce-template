@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
  import SolrFacetedSearch from "./components/solr-faceted-search";
  import defaultComponentPack from "./components/component-pack";
  import { SolrClient } from "./api/solr-client";
@@ -52,7 +53,7 @@ class AdvancedSearch extends Component {
     <div className="col-lg-2">
         <div className="row">
             <div className="col-sm-10">
-                <ul style={{marginLeft: "50px;"}}>
+                <ul style={{marginLeft: "50px"}}>
                     
                 </ul>
             </div>
@@ -62,8 +63,8 @@ class AdvancedSearch extends Component {
         </div>
     </div>
     <div className="col-lg-9">
-    <div className='shop'style={{position:"relative", maxHeight:"100%;", width:"100%;", height:"100%;"}}>
-          <div id="solrDiv" className="solrDiv" style={{position:"relative", maxHeight:"100%;", width:"100%;", height:"100%;"}}> 
+    <div className='shop'style={{position:"relative", maxHeight:"100%", width:"100%", height:"100%"}}>
+          <div id="solrDiv" className="solrDiv" style={{position:"relative", maxHeight:"100%", width:"100%", height:"100%"}}> 
           </div></div>
     </div>
 </div>
@@ -87,7 +88,6 @@ class AdvancedSearch extends Component {
         // Create root for manual rendering
         const container = document.getElementById("solrDiv");
         if (container && !this.solrRoot) {
-            const { createRoot } = require('react-dom/client');
             this.solrRoot = createRoot(container);
         }
 

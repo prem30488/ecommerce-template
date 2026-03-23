@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
         active: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
-        }
+        },
+        type: DataTypes.INTEGER
     }, {
         sequelize,
         modelName: 'Category',

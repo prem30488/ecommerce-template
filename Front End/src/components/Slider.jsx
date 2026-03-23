@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import Slide from "./Slide";
 import { getSliders } from "../util/APIUtils";
-import Alert from 'react-s-alert';
 import "../pages/product.css";
 
 const Slider = () => {
@@ -64,13 +63,22 @@ const Slider = () => {
       </div>
 
       {/* Progress indicators at bottom */}
-      <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-[10]">
-        {data.map((_, index) => (
+      <div className="thumbnail absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-[20] px-4 w-full justify-center">
+        {data.map((item, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`h-1.5 md:h-2 rounded-full transition-all duration-500 ${index === currentSlide ? 'bg-white w-8 md:w-12' : 'bg-white/30 w-3 md:w-4 hover:bg-white/60'}`}
-          />
+            className={`relative flex-shrink-0 h-4 w-4 md:h-6 md:w-6 group rounded-full border transition-all duration-500 ${index === currentSlide ? 'border-sky-400 scale-125 bg-white/40' : 'border-white/20 opacity-40 hover:opacity-100 hover:border-white/50'}`}
+            style={{ width: '100px', height: '100px' }}
+          >
+            <img
+              src={item.src}
+              alt=""
+              className="w-full h-full object-cover rounded-full"
+              style={{ width: '100px', height: '100px' }}
+            />
+            {index === currentSlide && <div className="absolute inset-0 bg-sky-400/10 rounded-full" />}
+          </button>
         ))}
       </div>
     </div>

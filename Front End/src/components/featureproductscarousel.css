@@ -1,0 +1,552 @@
+/* ==========================================================
+   FeatureProductsCarousel – featureproductscarousel.css
+   All classes prefixed .fpc- to avoid leaking to other components
+   ========================================================== */
+
+/* ── Section ── */
+.fpc-section {
+  padding: 3rem 1.5rem 4rem;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.fpc-header {
+  margin-bottom: 1.25rem;
+}
+
+.fpc-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #2563eb;
+  text-transform: uppercase;
+  margin-bottom: 0.45rem;
+}
+
+.fpc-title {
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* ── Marquee ── */
+.fpc-marquee-wrapper {
+  overflow: hidden;
+  background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #1e3a8a 100%);
+  padding: 0.55rem 0;
+  margin: 0 auto 1.75rem;
+  border-radius: 0.55rem;
+  max-width: 1096px;
+  position: relative;
+  /* subtle fade edges */
+  mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
+}
+
+.fpc-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: fpc-marquee 32s linear infinite;
+}
+
+.fpc-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes fpc-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Each product's marquee pill */
+.fpc-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  padding: 0 1.75rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Separator diamond */
+.fpc-marquee-sep {
+  font-size: 0.45rem;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+/* Product name */
+.fpc-marquee-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.01em;
+}
+
+/* Em-dash */
+.fpc-marquee-divider {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+/* Active label — bright & bold */
+.fpc-marquee-label--offer {
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-style: normal;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+  padding: 0.1rem 0.5rem;
+  border-radius: 100px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Muted item — slightly lower opacity overall */
+.fpc-marquee-item--muted {
+  opacity: 0.7;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Card-level mini marquee (per-product, below image)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Wrapper — flush to card edges, no padding */
+.fpc-card-marquee {
+  width: 100%;
+  overflow: hidden;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  position: relative;
+  /* fade edges for a polished look */
+  mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+
+/* Featured variant — vibrant blue strip */
+.fpc-card-marquee--featured {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  /* Vibrant Blue */
+}
+
+/* Scrolling track */
+.fpc-card-marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: fpc-card-marquee 14s linear infinite;
+  will-change: transform;
+}
+
+.fpc-card-marquee:hover .fpc-card-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes fpc-card-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Each item */
+.fpc-card-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  padding: 0 0.9rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #eff6ff;
+}
+
+/* 💎 tag emoji */
+.fpc-card-marquee-tag {
+  font-size: 0.7rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* · separator */
+.fpc-card-marquee-sep {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.8rem;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+/* ── Carousel row ── */
+.fpc-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Viewport: exactly 5 × 200px + 4 × 16px = 1064px ── */
+.fpc-viewport {
+  width: 1064px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ── Track ── */
+.fpc-track {
+  display: flex;
+  gap: 16px;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+/* ── Slide ── */
+.fpc-slide {
+  min-width: 200px;
+  max-width: 200px;
+  flex-shrink: 0;
+}
+
+/* ── Card ── */
+.fpc-card {
+  background: #fff;
+  border-radius: 1.1rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08), 0 1px 6px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  box-sizing: border-box;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  cursor: default;
+}
+
+.fpc-card:hover {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.13);
+  transform: translateY(-4px);
+}
+
+/* ── Featured badge ── */
+.fpc-featured-badge {
+  position: absolute;
+  top: 0.55rem;
+  left: 0.55rem;
+  z-index: 10;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.65rem;
+  border-radius: 100px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ── Image area ── */
+.fpc-main-img-wrap {
+  position: relative;
+  width: 200px;
+  height: 170px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.fpc-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.fpc-main-img-wrap:hover .fpc-main-img {
+  transform: scale(1.06);
+}
+
+/* ── + button ── */
+.fpc-plus-btn {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  z-index: 10;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #3b82f6;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.45);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.fpc-plus-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: scale(1.15);
+  box-shadow: 0 5px 18px rgba(37, 99, 235, 0.5);
+}
+
+.fpc-plus-btn:active:not(:disabled) {
+  transform: scale(0.93);
+}
+
+.fpc-plus-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.fpc-plus-icon {
+  font-size: 1.25rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-top: -1px;
+}
+
+.fpc-plus-count {
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* ── Card info ── */
+.fpc-card-info {
+  padding: 0.65rem 0.75rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  text-align: left;
+  flex: 1;
+}
+
+.fpc-card-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  cursor: pointer;
+  margin: 0;
+  line-height: 1.3;
+  transition: color 0.2s;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fpc-card-title:hover {
+  color: #2563eb;
+}
+
+/* Stars */
+.fpc-stars {
+  display: flex;
+  gap: 1px;
+}
+
+.fpc-star {
+  font-size: 0.75rem;
+  color: #d1d5db;
+  line-height: 1;
+}
+
+.fpc-star--on {
+  color: #f59e0b;
+}
+
+.fpc-star--half {
+  color: #fbbf24;
+  opacity: 0.75;
+}
+
+/* Price */
+.fpc-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.fpc-price-now {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+/* More Info button (contained to fpc cards only) */
+.fpc-info-btn {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.2rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid #2563eb;
+  color: #2563eb;
+  background: transparent;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.fpc-info-btn:hover {
+  background: rgba(37, 99, 235, 0.07);
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.1);
+}
+
+/* ── Nav buttons ── */
+.fpc-nav {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: #0f172a;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.11);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s, opacity 0.2s;
+}
+
+.fpc-nav:hover:not(:disabled) {
+  background: #2563eb;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.32);
+  transform: scale(1.08);
+}
+
+.fpc-nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.fpc-nav svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Dots ── */
+.fpc-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 1.25rem;
+}
+
+.fpc-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  background: #cbd5e1;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s, width 0.3s;
+}
+
+.fpc-dot--active {
+  background: #2563eb;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* ── Skeleton row ── */
+.fpc-skeleton-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 2rem auto;
+}
+
+.fpc-skeleton {
+  width: 200px;
+  height: 300px;
+  border-radius: 1.1rem;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: fpc-shimmer 1.4s infinite;
+}
+
+@keyframes fpc-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 1140px) {
+
+  /* Show 4 cards: 4×200 + 3×16 = 848px */
+  .fpc-viewport {
+    width: 848px;
+  }
+}
+
+@media (max-width: 920px) {
+
+  /* Show 3 cards: 3×200 + 2×16 = 632px */
+  .fpc-viewport {
+    width: 632px;
+  }
+}
+
+@media (max-width: 700px) {
+
+  /* Show 2 cards: 2×200 + 1×16 = 416px */
+  .fpc-viewport {
+    width: 416px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Show 1 card */
+  .fpc-viewport {
+    width: 200px;
+  }
+
+  .fpc-nav {
+    width: 34px;
+    height: 34px;
+  }
+}

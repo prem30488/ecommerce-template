@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import FeaturedSingleProduct from "../components/FeaturedSingleProduct";
+import FeatureProductsCarousel from "../components/FeatureProductsCarousel";
 import { Link } from "react-router-dom";
-import Alert from 'react-s-alert';
 const FeatureProducts = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +53,7 @@ const FeatureProducts = () => {
 
   return (
     <div className="container mx-auto pb-20">
-      <h2 className="text-center text-3xl py-10">Featured Products</h2>
+      <FeatureProductsCarousel />
       <div className="flex justify-between gap-10">
         <div>
           <p className="text-gray-500 pb-4">
@@ -61,11 +61,6 @@ const FeatureProducts = () => {
             <span className="text-sky-400 px-1">Featured Products</span>
           </p>
           <div className="grid grid-cols-4 gap-lg-5 ">
-            {/* {filterProducts &&
-              filterProducts.map((product) => (
-                <SingleProduct key={product.id} product={product} />
-              ))} */}
-
             {products &&
               products
                 .filter((product) => product.featured === true && product.active === true)

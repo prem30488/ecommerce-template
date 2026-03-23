@@ -2,7 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
 
 .active {
     color: rgb(56 189 248);
@@ -40,8 +48,9 @@
 
 .slider {
     height: calc(60vh - 5rem);
-    width: 500vw;
-    display: flex;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     transition: 1s ease;
 }
 

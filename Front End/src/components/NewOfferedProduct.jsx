@@ -42,12 +42,12 @@ const BestSingleProduct = ({ product }) => {
           state={product}
           className="hover:text-rose-50 text-gray-900 duration-300 flex justify-between items-center"
         >
-          <button className="text-sky-400 px-2 py-1 border border-sky-400 rounded-md hover:bg-sky-400 hover:text-sky-50 duration-300">
+          <button className="btn-info">
             More Info
           </button>
         </Link>
         
-        <button className="bg-sky-400 text-sky-50 hover:bg-sky-50 hover:text-sky-400 duration-300 border border-sky-400 px-2 py-1 rounded-md" onClick={() => addToCart(id)}>
+        <button className="btn-cart" onClick={() => addToCart(id)}>
         Add To Cart {cartItemCount > 0 && <> ({cartItemCount})</>}
       </button>
       </div>

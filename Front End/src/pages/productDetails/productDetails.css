@@ -1,51 +1,41 @@
+/* Using Tailwind CSS - minimal overrides only */
 .product-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    background-color: grey;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 
-  }
-  
-  .product-image-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    margin: 50px;
-  }
-  
+/* Responsive image carousel */
+@media (max-width: 1024px) {
   .product-image {
     max-width: 100%;
-    width: 800px;
-    min-width: 500px;
-    max-height: 100%;
   }
+}
 
+@media (min-width: 768px) {
+  .product-details-row {
+    flex-direction: row !important;
+  }
+}
 
-  
-  .product-details-container {
-    flex: 2;
-    padding: 1rem;
-    min-width: 400px;
+/* keep carousel/details side-by-side on desktop */
+@media (min-width: 1024px) {
+  .product-details-row {
+    flex-direction: row !important;
+    align-items: flex-start;
   }
-  
-  .product-name {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    margin-top:-120px;
-  }
-  
-  .product-details {
-    margin-top: 1rem;
-    margin-left: 10px;
-    font-size: 18px;
-  }
-  
-  .product-details p {
-    margin: 0.5rem 0;
-    max-width: 500px;
-  }
-  
-  .product-details button {
-    margin-top: 1rem;
-  }
-  
+}
+
+.row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row>[class*='col-'] {
+  display: flex;
+  flex-direction: column;
+  min-height: max-content;
+}

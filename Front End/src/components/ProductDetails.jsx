@@ -1,114 +1,131 @@
-import React, { useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import SimilarProducts from "./SimilarProducts"
 import Compare from "./Compare";
+import ImageCarousel from "../pages/productDetails/ImageCarousel";
 
 const ProductDetails = ({ compare }) => {
-  const { state: product } = useLocation();
-  const { id, img, title, description, category, brand, rating, price } = product;
+  const { id: paramId } = useParams();
+  const { state: locationProduct } = useLocation();
+  const [product, setProduct] = useState(locationProduct || null);
   const { addToCart, cartItems } = useContext(ShopContext);
   const [products, setProducts] = useState([]);
-  const cartItemCount = cartItems[id];
-
-  const actions = this.props;
-  const compareProducts = {};
+  const [isLoading, setIsLoading] = useState(false);
+  const [err, setErr] = useState(null);
+  const [filterProducts, setFilterProducts] = useState([]);
 
   useEffect(() => {
-    const getData = async () => {
+    const getProductData = async () => {
+      if (!paramId) return;
       try {
         setIsLoading(true);
-        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true");
-        if (!res.ok) throw new Error("Oops! An error has occured");
+        const res = await fetch(`//localhost:5000/api/product/fetchById/${paramId}`);
+        if (!res.ok) throw new Error("Product not found");
         const json = await res.json();
+        setProduct(json);
         setIsLoading(false);
-        setProducts(json);
-        setFilterProducts(json);
-        compareProducts = products.filter(product => product.compare)
       } catch (err) {
         setIsLoading(false);
         setErr(err.message);
       }
     };
-    getData();
-    this.props.actions.getProducts();
-  }, []);
 
-  if (isLoading)
+    const getAllProducts = async () => {
+      try {
+        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true");
+        if (!res.ok) throw new Error("Oops! An error has occured");
+        const json = await res.json();
+        setProducts(json.content || json);
+        setFilterProducts(json.content || json);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    getProductData();
+    getAllProducts();
+  }, [paramId]);
+
+  if (isLoading || !product)
     return (
       <p className="h-screen flex flex-col justify-center items-center text-2xl">
         Loading...
       </p>
     );
+
   if (err)
     return (
       <p className="h-screen flex flex-col justify-center items-center text-2xl">
         <span>{err}</span>
         <Link to="/product" className="text-lg text-gray-500 font-semibold">
-          &larr;Refresh page
+          &larr;Go back to products
         </Link>
       </p>
     );
 
+  const { id, img, title, description, category, brand, rating, price, ProductImages } = product;
+  const cartItemCount = cartItems[id];
+  const compareProducts = products.filter(p => p.compare);
 
   return (
     <section className="flex flex-col gap-16 py-10 bg-gray-100">
-      <div className="container mx-auto flex justify-around  items-center w-[80%]">
-        <div className="w-96 flex justify-end">
-          <img src={img} alt={title} className="w-full select-none" />
-        </div>
-        <div className="flex flex-col gap-3">
-          <p className="text-gray-500">
-            {"Home/"}
-            {<Link to="/productMen">Products</Link>}
-            {`/${title}`}
-          </p>
-          <h2 className="text-4xl">{title.slice(0, 30)}</h2>
-          <span className="font-semibold">
-            Price: <span className="text-2xl">{price}</span>
-          </span>
-          {/* <span className="font-semibold">Brand: {brand}</span> */}
-          <p className={product.bestseller ? "bestseller" : "text-sm text-gray-600"}>
-            Bestseller: <span className="font-semibold capitalize"> {product.bestseller ? "Yes" : "No"}</span>
+      <div className="container mx-auto flex justify-around items-start w-[100%]">
+        <div className="flex flex-col gap-3 max-w-[100%] w-[100%]">
+          <div className="flex-shrink-0 w-[100%]">
+            <p className="text-gray-500">
+              {"Home/"}
+              {<Link to="/productMen">Products</Link>}
+              {`/${title}`}
+            </p>
+            <h2 className="text-4xl font-bold">{title.slice(0, 60)}</h2>
+            {/* <ImageCarousel
+              id={id}
+              title={title}
+              mainImage={img}
+              additionalImages={ProductImages}
+            /> */}
 
-          </p>
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl">Key features</h1>
-            <p className="text-gray-800">{description.slice(0, 35)}</p>
-            <p className="text-gray-800">{description.slice(36, 70)}</p>
-            <p className="text-gray-800">{description.slice(71, 100)}</p>
-            <p className="text-gray-800">{description.slice(101, 130)}</p>
-            <p className="text-gray-800">{description.slice(131, 170)}</p>
-            <p className="text-gray-800">{description.slice(170, 201)}</p>
-          </div>
-          <h3 className="flex justify-between text-gray-700 text-lg">
-            <span>Category: {category}</span>
-            <span>
-              Rating:{" "}
-              <span className="text-rose-500 font-bold">
-                {rating.slice(0, 3)}
-              </span>
-              <span>{rating.slice(3)}</span>
+
+            <span className="font-semibold text-xl">
+              Price: <span className="text-2xl text-sky-600">${price}</span>
             </span>
-          </h3>
-          <button className="bg-sky-400 text-sky-50 hover:bg-sky-50 hover:text-sky-400 duration-300 border border-sky-400 px-2 py-1 rounded-md" onClick={() => addToCart(id)}>
-            Add To Cart {cartItemCount > 0 && <> ({cartItemCount})</>}
-          </button>
+            <p className={product.bestseller ? "text-orange-600 font-bold" : "text-sm text-gray-600"}>
+              Bestseller: <span className="font-semibold capitalize"> {product.bestseller ? "Yes" : "No"}</span>
+            </p>
+            <div className="flex flex-col gap-2 bg-white p-4 rounded-lg shadow-sm">
+              <h1 className="text-2xl font-semibold text-gray-800 border-b pb-2">Key features</h1>
+              <p className="text-gray-700 leading-relaxed mt-2">{description}</p>
+            </div>
+            <h3 className="flex justify-between text-gray-700 text-lg mt-4">
+              <span>Category: <span className="font-semibold">{category}</span></span>
+              <span>
+                Rating:{" "}
+                <span className="text-rose-500 font-bold text-xl">
+                  {rating ? rating.toString().slice(0, 3) : "N/A"}
+                </span>
+              </span>
+            </h3>
+            <button className="bg-sky-500 text-white hover:bg-sky-600 transition-colors duration-300 px-6 py-3 rounded-md text-lg font-semibold mt-4 shadow-md" onClick={() => addToCart(id)}>
+              Add To Cart {cartItemCount > 0 && <> ({cartItemCount})</>}
+            </button>
+          </div>
         </div>
+        <Link
+          to="/product"
+          className="text-xl py-4 text-center hover:text-sky-600 duration-300 select-none border-t border-gray-200"
+        >
+          &larr; Back to Products Catalog
+        </Link>
+
+        {compareProducts.length >= 2 &&
+          <Compare products={compareProducts} />
+        }
+        <SimilarProducts productCat={product} />
       </div>
-      <Link
-        to="/product"
-        className="text-xl py-1 text-center hover:text-cyan-500 duration-300 select-none"
-      >
-        &larr; Go to Products
-      </Link>
 
-      {compareProducts.length >= 2 &&
-        <Compare products={compareProducts} />
-      }
-      <SimilarProducts productCat={product} />
+
     </section>
-
   );
 };
 

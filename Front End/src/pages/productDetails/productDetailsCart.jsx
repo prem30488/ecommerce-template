@@ -4,11 +4,15 @@ import SimilarProducts from "../../components/SimilarProducts"
 import "./productDetails.css";
 import ImageCarousel from './ImageCarousel';
 import ProductSelector from './ProductSelector';
+import StarRating from './StarRating';
+import FrequentlyBoughtCarousel from './FrequentlyBoughtCarousel';
+import { findFrequentlyBoughtTogether } from './eclatAlgorithm';
 import Alert from 'react-s-alert';
 export const ProductDetailsCart = () => {
-  const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(null);
+  const [frequentProducts, setFrequentProducts] = useState([]);
 
   const { id } = useParams();
 
@@ -16,10 +20,11 @@ export const ProductDetailsCart = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sort=id,asc");
-        if (!res.ok) throw new Error("Oops! An error has occured");
+        // Fetch specific product with images from the improved route
+        const res = await fetch(`http://localhost:5000/api/product/fetchById/${id}`);
+        if (!res.ok) throw new Error("Oops! Product not found");
         const json = await res.json();
-        setProducts(json.content);
+        setProduct(json);
         setIsLoading(false);
       } catch (err) {
         setIsLoading(false);
@@ -27,7 +32,42 @@ export const ProductDetailsCart = () => {
       }
     };
     getData();
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    const fetchFrequent = async () => {
+      if (!product) return;
+      try {
+        const res = await fetch("http://localhost:5000/api/product/getProducts?page=0&size=20");
+        const json = await res.json();
+        const allProducts = (json.content || json);
+
+        // Use Eclat algorithm to find frequently bought together items
+        const eclatRecommendations = findFrequentlyBoughtTogether(product, allProducts);
+
+        // Fallback to random selection if Eclat doesn't return enough items
+        if (eclatRecommendations.length < 3) {
+          const remainingProducts = allProducts.filter(p => p.id !== product.id && !eclatRecommendations.find(r => r.id === p.id));
+          const randomItems = remainingProducts.sort(() => 0.5 - Math.random()).slice(0, 3 - eclatRecommendations.length);
+          eclatRecommendations.push(...randomItems);
+        }
+
+        setFrequentProducts(eclatRecommendations.slice(0, 4));
+      } catch (e) {
+        console.error(e);
+        // Fallback to simple random selection
+        try {
+          const res = await fetch("http://localhost:5000/api/product/getProducts?page=0&size=10");
+          const json = await res.json();
+          const items = (json.content || json).filter(p => p.id !== product.id).sort(() => 0.5 - Math.random()).slice(0, 4);
+          setFrequentProducts(items);
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError);
+        }
+      }
+    }
+    fetchFrequent();
+  }, [product?.id]);
 
   if (isLoading)
     return (
@@ -35,81 +75,126 @@ export const ProductDetailsCart = () => {
         Loading...
       </p>
     );
-  if (err)
+
+  if (err || !product)
     return (
-      <p className="h-screen flex flex-col justify-center items-center text-2xl">
-        <span>{err}</span>
-        <Link to="/product" className="text-lg text-gray-500 font-semibold">
-          &larr;Refresh page
+      <p className="h-screen flex flex-col justify-center items-center text-2xl px-4 text-center">
+        <span>{err || "Product not found"}</span>
+        <Link to="/product" className="text-lg text-sky-500 font-semibold mt-4">
+          &larr; Back to Products
         </Link>
       </p>
     );
 
+  const { title, description, price, rating, ProductImages, img, categoryId } = product;
 
-  const product = products.find((p) => Number(p.id) === Number(id));
-
-  // If the product doesn't exist, return an error message
-  if (!product) {
-    return <div>Product not found</div>;
-  }
-
-  const { title, active, description, price, stock, offers, rating, categories, imageURLs } = product;
   return (
-
     <React.Fragment>
+      <div className="container flex" style={{ paddingTop: '120px', minHeight: '100%' }}>
+        <div className="col-md-12" style={{ minHeight: '100%' }}>
+          <div className="row" style={{ minHeight: '100%' }}>
+            {/* LEFT SIDE: CAROUSEL */}
+            <div className="col-md-4 mt-8 w-full lg:w-[300px] lg:mt-0 flex-shrink-0 h-full" style={{ minHeight: '100%' }}>
+              <div class="p-3 pt-8 border bg-light h-auto" style={{ minHeight: '100%' }} >
+                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-full" style={{ minHeight: '100%' }} >
+                  <ImageCarousel
+                    id={id}
+                    title={title}
+                    mainImage={img}
+                    additionalImages={ProductImages}
+                  />
 
-      <h2 className="text-4xl py-10 text-center font-medium text-gray-700">
-        Product Details - {product.title}
-      </h2>
-      <div className="product-container" style={{ height: "1000px" }}>
-        <div className="product-image-container">
-          <ImageCarousel
-            id={id}
-            title={title}
-            className=""
-            thumbs={true}
-            imageList={imageURLs}
-          />
-        </div>
-        <div className="product-details-container">
-          <h1 className="product-name">{title}</h1>
-          <div className="product-details">
-            {/* <p><b>ID:</b> {id}</p> */}
-            <p>Free Shipping Across India.
-              Delivery in 3-5 business days.
-            </p>
-            <p><b>Name:</b> {title}</p>
-            <p><b>Price:</b> {price} INR/-  </p>
-            {product.offers && product.offers.length > 0 ?
-              <div style={{ color: "goldenrod" }}>
-                <div style={{ "--tw-text-opacity": "1", textDecoration: "line-through", color: "rgb(156, 163, 175)" }}>
-                  {price} INR/-
+                  {/* Price and Rating */}
+
+                  <div className="flex items-center justify-between mt-6">
+                    <br />
+                    <span className="text-3xl md:text-4xl font-bold text-sky-600">Price : {price} INR/-</span>
+                    {product.offers && product.offers.length > 0 && (
+                      <span className="text-gray-400 line-through text-lg">
+                        ${(price / (1 - (product.offers[0].discount / 100))).toFixed(2)}
+                      </span>
+                    )}
+
+                    <div className="sm:ml-auto flex items-center bg-rose-50 rounded-full">
+                      <StarRating rating={rating || 4.5} />
+                    </div>
+                  </div>
                 </div>
-                {price - (price * offers[0].discount / 100)} INR /-
               </div>
-              : ""
-            }
-            <span>
-              Rating:{" "}
-              <span className="text-rose-500 font-bold">
-                {rating.slice(0, 3)}
-              </span>
-              <span>{rating.slice(3)}</span>
-            </span>
-            <p className="text-sm text-gray-600" >
-              Audience: <span className="font-semibold capitalize">{product.audience.slice(0, 20)}</span>
-            </p>
-            <p><b>Description:</b></p>
-            <p>{description}</p>
-            <ProductSelector product={product} />
+            </div>
+
+
+            {/* RIGHT SIDE: DETAILS */}
+            <div className="col-md-8 mt-8 w-full lg:w-[300px] lg:mt-0 flex-shrink-0">
+              <div class="p-3 pt-8 border bg-light">
+                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                  <div className="space-y-6">
+                    {/* Product Title */}
+                    <div className="border-b pb-4">
+                      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+                        {title}
+                      </h1>
+                    </div>
+
+
+
+                    {/* Shipping Info */}
+                    <div className="bg-sky-50 p-4 rounded-lg border border-sky-100">
+                      <p className="text-sky-800 text-sm flex items-center gap-2">
+                        <span className="text-sky-500 font-bold">✓</span> Free Shipping Across India
+                      </p>
+                      <p className="text-sky-800 text-sm flex items-center gap-2 mt-2">
+                        <span className="text-sky-500 font-bold">✓</span> Delivery in 3-5 business days
+                      </p>
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">Description</h3>
+                      <p className="text-gray-600 leading-relaxed text-sm">{description}</p>
+                    </div>
+
+                    {/* Product Selector */}
+                    <div className="pt-4 border-t border-gray-100">
+                      <ProductSelector product={product} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* FREQUENTLY BOUGHT TOGETHER */}
+          {frequentProducts.length > 0 && (
+            <div className="mt-16">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-sky-400 inline-block">
+                Frequently Bought Together
+              </h2>
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                <FrequentlyBoughtCarousel
+                  currentProduct={product}
+                  frequentProducts={frequentProducts}
+                />
+                <div className="mt-6 text-center">
+                  <p className="text-gray-500 text-sm mb-2">Total Price (All Items)</p>
+                  <p className="text-3xl font-bold text-sky-600 mb-4">
+                    ${(Number(product.price) + frequentProducts.reduce((sum, p) => sum + Number(p.price), 0)).toFixed(2)}
+                  </p>
+                  <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition-transform hover:scale-105 active:scale-95">
+                    Add All To Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SIMILAR PRODUCTS */}
+          <div className="mt-16">
+            <SimilarProducts productCat={product} />
           </div>
         </div>
       </div>
-
-      <SimilarProducts productCat={product} />
-
-    </React.Fragment>
-
+    </React.Fragment >
   );
 };
 

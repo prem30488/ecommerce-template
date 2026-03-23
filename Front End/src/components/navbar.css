@@ -1,8 +1,8 @@
 .navbar {
-  overflow: hidden;
   background-color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
-  z-index: 1;
+  font-family: 'Inter', sans-serif;
+  z-index: 1000;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .navbar a {
@@ -16,80 +16,115 @@
 
 .menudropdown {
   float: left;
-  overflow: auto;
 }
 
 .menudropdown .menudropbtn {
   font-size: 16px;
   border: none;
   outline: none;
-  color: dodgerblue;
+  color: #0284c7; /* Sky 600 */
   padding: 14px 16px;
   background-color: inherit;
-  font: inherit;
-  margin-left: -1000;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
-.navbar a:hover,
 .menudropdown:hover .menudropbtn {
-  background-color: #eee;
+  color: #0369a1; /* Sky 700 */
+  background-color: #f8fafc;
 }
 
 .menudropdown-content {
   display: none;
   position: absolute;
-  background-color: #f9f9f9;
-  width: 90%;
+  background-color: #ffffff;
+  width: 100vw;
   left: 0;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 3;
-  float: left;
-  transform: rotate(360deg);
+  top: 100%;
+  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  border-top: 1px solid #f1f5f9;
+  padding: 3rem 5rem;
+  flex-direction: column;
 }
 
-.menudropdown-content .menuheader {
-  background: dodgerblue;
-  padding: 5px;
-  color: white;
+/* Bridge the gap between navbar and dropdown to prevent disappearing */
+.menudropdown-content::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: transparent;
 }
 
 .menudropdown:hover .menudropdown-content {
+  display: flex !important;
+}
+
+.menurow {
   display: flex;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  gap: 4rem;
+  justify-content: flex-start;
 }
 
-/* Create three equal columns that floats next to each other */
 .menucolumn {
-  float: left;
-  width: 33.33%;
-  padding: 5px;
-  background-color: #ccc;
-  height: 100%;
-}
-
-.menucolumn a {
-  float: none;
-  color: black;
-  padding: 10px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-}
-
-.menucolumn a:hover {
-  background-color: #ddd;
-}
-
-/* Clear floats after the columns */
-.menurow:after {
-  content: "";
-  display: table;
-  clear: both;
+  flex: 1;
 }
 
 .menucolumn h3 {
-  color: dodgerblue;
-  background-color: white;
-  padding: 5px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #f1f5f9;
+  width: 100%;
+}
+
+/* Sub-column layout for category items */
+.category-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.25rem 2.5rem;
+  min-width: 350px;
+}
+
+.menucolumn a {
+  display: block;
+  font-size: 0.9375rem;
+  color: #334155 !important;
+  padding: 0.5rem 0 !important;
+  text-decoration: none;
+  text-align: left !important;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.menucolumn a:hover {
+  color: #0284c7 !important;
+  background-color: transparent !important;
+  padding-left: 0.4rem !important;
+}
+
+.menuheader {
+  width: 100%;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.menuheader h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a; /* Slate 900 */
+  margin: 0;
 }
 
 .badge {

@@ -525,5 +525,20 @@
       "audience" : "Men,Women,Kids",
       "stock" : 9,
       "compare" : false
+    },
+    {
+      "id": 31,
+      "title": "Hanley Whey Protein",
+      "description": "Hanley Whey Protein delivers 24g of highly-absorbable protein enhanced with probiotics and enzymes to fuel muscle recovery and support digestive health. Ideal for post-workout recovery and lean muscle building.",
+      "img": "/images/hanley-whey-protein.jpg",
+      "category": "protein",
+      "brand": "Hanley",
+      "price": 1999.00,
+      "rating": "4.9/5",
+      "bestseller": true,
+      "featured": true,
+      "audience": "Men,Women",
+      "stock": 100,
+      "compare": false
     }
   ]

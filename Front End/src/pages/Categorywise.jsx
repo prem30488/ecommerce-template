@@ -12,7 +12,7 @@ const Categorywise = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(null);
 
-  const [catPath, setCatPath] = useState("all categories");
+  const [category, setCategory] = useState(null);
   const { id } = useParams();
   const para = useRef(null);
 
@@ -20,7 +20,15 @@ const Categorywise = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true");
+        // Fetch category details
+        const catRes = await fetch(`//localhost:5000/api/category/fetchById/${id}`);
+        if (catRes.ok) {
+          const catJson = await catRes.json();
+          setCategory(catJson);
+        }
+
+        // Fetch products for this category
+        const res = await fetch(`//localhost:5000/api/product/getProducts?categoryId=${id}&page=0&size=1000`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);
@@ -31,7 +39,7 @@ const Categorywise = () => {
       }
     };
     getData();
-  }, []);
+  }, [id]);
 
   if (isLoading)
     return (
@@ -43,8 +51,8 @@ const Categorywise = () => {
     return (
       <p className="h-screen flex flex-col justify-center items-center text-2xl">
         <span>{err}</span>
-        <Link to="/productMen" className="text-lg text-gray-500 font-semibold">
-          &larr;Refresh page
+        <Link to="/" className="text-lg text-gray-500 font-semibold">
+          &larr; Home
         </Link>
       </p>
     );
@@ -53,31 +61,32 @@ const Categorywise = () => {
     <React.Fragment>
       <div style={{ paddingTop: "100px" }}></div>
       <div className="container mx-auto pb-20">
-        <h2 className="text-center text-3xl py-10">Products For Categories</h2>
-        <div className="flex justify-between gap-10">
+        <h2 className="text-center text-3xl py-10">
+          {category ? `Products for ${category.title}` : "Products For Categories"}
+        </h2>
+        <div className="flex flex-col gap-10">
           <div>
             <p className="text-gray-500 pb-4">
               {<Link to="/">Home </Link>}/
-              <span className="text-sky-400 px-1">{catPath}</span>
+              <span className="text-sky-400 px-1">{category?.title || "all categories"}</span>
             </p>
-            <div className="grid grid-cols-4 gap-lg-5 ">
 
-              {products &&
-                products
+            {products && products.filter((prod) => prod.active === true).length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {products
                   .filter((prod) => prod.active === true)
                   .map((product) => (
-
-
-                    product.categories && product.categories.length > 0 ?
-                      product.categories.map((cat) =>
-                        Number(cat.id) === Number(id) ?
-                          <SingleProduct key={product.id} product={product} />
-                          : "")
-                      : ""
-
-
+                    <SingleProduct key={product.id} product={product} />
                   ))}
-            </div>
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <h3 className="text-2xl text-gray-400">No products found for this category.</h3>
+                <Link to="/" className="text-sky-400 hover:underline mt-4 inline-block">
+                  Continue Shopping
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

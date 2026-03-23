@@ -219,6 +219,38 @@ async function seedData() {
                     }
                 });
             }
+
+            // Seed one random offer per product (only if none exists yet)
+            const offerTemplates = [
+                { type: 0, discount: 5,  buy: null, buyget: null, label: '5% OFF'          },
+                { type: 0, discount: 10, buy: null, buyget: null, label: '10% OFF'         },
+                { type: 0, discount: 15, buy: null, buyget: null, label: '15% OFF'         },
+                { type: 0, discount: 20, buy: null, buyget: null, label: '20% OFF'         },
+                { type: 0, discount: 25, buy: null, buyget: null, label: '25% OFF'         },
+                { type: 0, discount: 30, buy: null, buyget: null, label: '30% OFF'         },
+                { type: 1, discount: 0,  buy: 2,   buyget: 1,    label: 'Buy 2 Get 1 Free' },
+                { type: 1, discount: 0,  buy: 3,   buyget: 1,    label: 'Buy 3 Get 1 Free' },
+                { type: 2, discount: 0,  buy: 2,   buyget: 1,    label: 'Buy 2 Get 1 Free' },
+                { type: 0, discount: 12, buy: null, buyget: null, label: '12% OFF'         },
+            ];
+            const allProducts = await db.Product.findAll();
+            for (const prod of allProducts) {
+                const existingOffer = await db.Offer.findOne({ where: { productId: prod.id } });
+                if (!existingOffer) {
+                    const tpl = offerTemplates[(prod.id - 1) % offerTemplates.length];
+                    await db.Offer.create({
+                        productId: prod.id,
+                        type:      tpl.type,
+                        discount:  tpl.discount,
+                        buy:       tpl.buy,
+                        buyget:    tpl.buyget,
+                        size:      'S',
+                        active:    true,
+                        from:      new Date(),
+                        to:        new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+                    });
+                }
+            }
         }
 
         // Seed users from users.csv
@@ -335,14 +367,72 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
+app.get('/api/product/weeklyBestSeller', async (req, res) => {
+    try {
+        const { Op } = db.Sequelize;
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        // Try to find the most ordered product in the last 7 days
+        // Orders store items as JSON in an 'items' field; we parse and tally product IDs
+        const recentOrders = await db.Order.findAll({
+            where: { createdAt: { [Op.gte]: oneWeekAgo } }
+        });
+
+        const tally = {};
+        for (const order of recentOrders) {
+            try {
+                const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+                for (const item of items) {
+                    const pid = item.productId || item.id;
+                    if (pid) tally[pid] = (tally[pid] || 0) + (item.quantity || 1);
+                }
+            } catch (_) {}
+        }
+
+        let product = null;
+        if (Object.keys(tally).length > 0) {
+            const topId = Object.keys(tally).reduce((a, b) => tally[a] > tally[b] ? a : b);
+            product = await db.Product.findByPk(topId);
+        }
+
+        // Fallback: find Whey Protein by title
+        if (!product) {
+            product = await db.Product.findOne({
+                where: { title: { [Op.iLike]: '%whey%' } }
+            });
+        }
+
+        // Final fallback: first bestseller
+        if (!product) {
+            product = await db.Product.findOne({ where: { bestseller: true } });
+        }
+
+        if (product) res.json(product);
+        else res.status(404).json({ error: 'No product found' });
+    } catch (error) {
+        console.error('Error fetching weekly best seller:', error);
+        res.status(500).json({ error: 'Failed to fetch weekly best seller' });
+    }
+});
+
 app.get('/api/product/getProducts', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 10;
+        const { categoryId } = req.query;
+
+        const where = {};
+        if (categoryId) {
+            where.category_id = categoryId;
+        }
+
         const { count, rows } = await db.Product.findAndCountAll({
+            where,
             offset: page * size,
             limit: size,
-            order: [['id', 'DESC']]
+            order: [['id', 'DESC']],
+            include: [{ model: db.Offer, as: 'offers', required: false }]
         });
         res.json(getPaginatedResponse(rows, count, page, size));
     } catch (error) {
@@ -466,7 +556,9 @@ app.get('/api/user/users/:id', authenticateToken, async (req, res) => {
 // Product CRUD
 app.get('/api/product/fetchById/:id', async (req, res) => {
     try {
-        const product = await db.Product.findByPk(req.params.id);
+        const product = await db.Product.findByPk(req.params.id, {
+            include: [{ model: db.ProductImage }]
+        });
         if (product) res.json(product);
         else res.status(404).json({ error: 'Product not found' });
     } catch (error) {

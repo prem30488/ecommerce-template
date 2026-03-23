@@ -1,76 +1,110 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 // Import Swiper styles
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
-import 'swiper/css/thumbs';
 
 import './styles.css';
-import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
+import { Navigation } from 'swiper/modules';
 import { useId } from 'react'
-const ImageCarousel = ({ id, title, className, thumbs, imageList }) => {
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+
+const ImageCarousel = ({ id, title, mainImage, additionalImages }) => {
   const uId = useId();
-  // Split the comma-separated string into an array of image URLs
-  if(imageList === undefined)
-  {
-    
+  const mainSwiperRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  let images = [
+    mainImage,
+    ...(additionalImages?.map(img => img.url) || [])
+  ].filter(Boolean);
+
+  // Ensure at least 10 unique images per product
+  if (images.length < 10) {
+    const fillCount = 10 - images.length;
+    for (let i = 0; i < fillCount; i++) {
+      images.push(`https://picsum.photos/seed/${encodeURIComponent(id)}-${i}/900/600`);
+    }
+  }
+
+  // Deduplicate in case there are duplicates (not required, but safer)
+  images = Array.from(new Set(images));
+
+  if (images.length === 0) {
     return (
-        <div>
-          No Images to display...
-            {/* LIST:{JSON.stringify(imageList)}. */}
-        </div>
+      <div className="flex items-center justify-center p-10 bg-gray-200 rounded-lg text-gray-500">
+        No images available
+      </div>
     );
-  } 
-  const images = imageList?imageList.split(','):[];
-  const thumbsSwiperParams = {
-    spaceBetween: 10,
-    slidesPerView: 4,
-    freeMode: true,
-    watchSlidesVisibility: true,
-    watchSlidesProgress: true,
-  };
-  
+  }
+
   return (
-    <>
-    <Swiper
+    <div className="product-carousel-container" style={{ minHeight: '100%' }}>
+      <Swiper
         style={{
-          '--swiper-navigation-color': '#fff',
-          '--swiper-pagination-color': '#fff',
+          '--swiper-navigation-color': '#000',
+          borderRadius: '8px',
+          overflow: 'hidden'
         }}
         loop={false}
         spaceBetween={10}
         navigation={true}
-        thumbs={{ swiper: thumbsSwiper }}
-        modules={[FreeMode, Navigation, Thumbs]}
-        className="mySwiper2"
-        key={uId}
+        modules={[Navigation]}
+        className="main-swiper mb-2"
+        onSwiper={(swiper) => { mainSwiperRef.current = swiper; }}
+        onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+        key={`${uId}-main`}
       >
-
-{images.map((imageUrl, index) => (
-  index<5 && index< images.length ?
-  images.length===1 ?<><SwiperSlide> 
-  <img src={imageUrl}/>
-</SwiperSlide><SwiperSlide>
-          <img src={imageUrl} />
-        </SwiperSlide></> :<>
-        <SwiperSlide>
-          <img src={imageUrl} />
-        </SwiperSlide>
-        </>
-        :""
-))}         
+        {images.map((imageUrl, index) => (
+          <SwiperSlide key={`${uId}-slide-${index}`}>
+            <img
+              src={imageUrl}
+              alt={`${title || 'Product'} - view ${index + 1}`}
+              className="w-full h-auto object-cover rounded-md shadow-sm"
+              loading="lazy"
+              onError={(e) => {
+                console.error(`Failed to load image: ${imageUrl}`);
+                e.target.style.display = 'none';
+              }}
+            />
+          </SwiperSlide>
+        ))}
       </Swiper>
-      <br/>
-      {/* <Swiper {...thumbsSwiperParams}>
-      {images.map((image, index) => (
-        <SwiperSlide key={index}>
-          <img src={image} alt={`Thumbnail ${index}`} />
-        </SwiperSlide>
-      ))}
-    </Swiper> */}
-    </>
+
+      <div className="thumbs-scroll overflow-x-auto overflow-y-hidden whitespace-nowrap py-2" style={{ scrollbarWidth: 'thin' }}>
+        {images.map((imageUrl, index) => {
+          const isActive = index === activeIndex;
+          return (
+            <button
+              key={`${uId}-thumb-button-${index}`}
+              onClick={() => {
+                mainSwiperRef.current?.slideTo(index);
+                setActiveIndex(index);
+              }}
+              className="inline-block p-0 border-0 bg-transparent cursor-pointer mr-2"
+              style={{
+                width: 92,
+                height: 92,
+                opacity: isActive ? 1 : 0.4,
+                transform: isActive ? 'scale(1.04)' : 'scale(1)',
+                transition: 'opacity 0.2s ease, transform 0.2s ease',
+              }}
+            >
+              <img
+                src={imageUrl}
+                alt={`${title || 'Product'} thumb ${index + 1}`}
+                className="w-full h-full object-cover rounded-md"
+                loading="lazy"
+                onError={(e) => {
+                  console.error(`Failed to load thumb: ${imageUrl}`);
+                  e.target.style.display = 'none';
+                }}
+                style={{ display: 'block', width: '100%', height: '100%' }}
+              />
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 

@@ -108,3 +108,61 @@ footer p {
   flex-grow: 1;
 }
 
+/* ── Global product-card button styles ──────────────────────────────────────
+   Shared by: SingleProduct, SingleProductHorizontal, SimilarProduct,
+              BestSingleProduct, FeaturedSingleProduct, NewOfferedProduct
+   ─────────────────────────────────────────────────────────────────────────*/
+.btn-cart,
+.btn-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 1.1rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: background 0.22s ease, color 0.22s ease,
+              box-shadow 0.22s ease, transform 0.15s ease,
+              border-color 0.22s ease;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.btn-cart:active,
+.btn-info:active {
+  transform: scale(0.97);
+}
+
+.btn-cart:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Add To Cart – teal filled */
+.btn-cart {
+  background: #0d9488;
+  color: #fff;
+  border-color: #0d9488;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.28);
+}
+
+.btn-cart:hover:not(:disabled) {
+  background: #fff;
+  color: #0d9488;
+  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.16);
+}
+
+/* More Info – teal outline */
+.btn-info {
+  background: transparent;
+  color: #0d9488;
+  border-color: #0d9488;
+}
+
+.btn-info:hover {
+  background: rgba(13, 148, 136, 0.07);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1);
+}

@@ -1,18 +1,162 @@
-.card {
-  border-radius: .7rem;
-}
-.testimonial-card .card-up {
-  height: 120px;
+/* ==========================================================
+   Testimonials - testimonials.css
+   ========================================================== */
+
+.testi-section {
+  padding: 5rem 1.5rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  position: relative;
   overflow: hidden;
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
 }
-.testimonial-card .avatar {
-  width: 110px;
-  margin-top: -60px;
-  overflow: hidden;
-  border: 3px solid #fff;
+
+.testi-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.testi-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #0d9488;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.testi-title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Fixed rectangle card */
+.testi-card {
+  background: #ffffff;
+  border-radius: 0.5rem; /* sharper corners for "rectangle" look */
+  padding: 2.5rem 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  min-height: 440px; /* Flex-stretch handles rectangle shape, min-height allows safety */
+  height: 100%;
+  width: 100%; /* Forces it to fill the grid column */
+  min-width: 280px; /* Prevents Swiper from crushing isolated elements */
+  display: flex !important;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  margin: 1rem 0;
+}
+
+.testi-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border-color: #0d9488;
+}
+
+/* Avatar fixed width & height */
+.testi-avatar-wrap {
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
+  margin: 0 auto 1.25rem;
+  padding: 4px;
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease;
+  flex-shrink: 0;
 }
 
+.testi-card:hover .testi-avatar-wrap {
+  border-color: #0d9488;
+}
 
+.testi-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.testi-card:hover .testi-avatar {
+  transform: scale(1.08);
+}
+
+.testi-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
+}
+
+.testi-role {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.testi-org {
+  display: block;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+/* Yellow Stars */
+.testi-stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  color: #eab308; /* Vibrant yellow */
+  font-size: 1.15rem;
+  margin-bottom: 1.25rem;
+  list-style: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.testi-star-empty {
+  color: #cbd5e1;
+}
+
+/* Description / Quote area */
+.testi-text-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1; /* expands to fill remaining space */
+}
+
+.testi-quote-mark {
+  color: #0d9488;
+  font-size: 1.75rem;
+  opacity: 0.15;
+  margin-bottom: 0.75rem;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.testi-card:hover .testi-quote-mark {
+  opacity: 0.6;
+  transform: scale(1.1);
+}
+
+.testi-text {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #475569;
+  font-style: italic;
+  opacity: 0.85; /* Required proper opacity */
+  margin: 0;
+  transition: opacity 0.3s ease;
+}
+
+.testi-card:hover .testi-text {
+  opacity: 1;
+}

@@ -5,7 +5,7 @@ import { NavbarMain } from "./components/navbarMain";
 import { Shop } from "./pages/shop/shop";
 import { Contact } from "./pages/Contact";
 import { Cart } from "./pages/cart/cart";
-import { ProductDetailsCart } from "./pages/productDetails/productDetailsCart";
+import ProductDetailsCart from "./pages/productDetails/ProductDetailsCart";
 import { ShopContextProvider } from "./context/shop-context";
 
 import About from "./pages/About";
@@ -17,6 +17,8 @@ import ProductWomen from "./pages/ProductWomen";
 import ProductKids from "./pages/ProductKids";
 import CouponCode from './pages/checkout/CouponCode';
 import AdvancedSearch from "./components/search/AdvancedSearch";
+import BestSellersPage from "./pages/BestSellersPage";
+import FeaturedPage from "./pages/FeaturedPage";
 import { Component, useContext } from "react";
 import { getCurrentUser } from './util/APIUtils';
 import { ACCESS_TOKEN } from './constants/index';
@@ -148,6 +150,8 @@ class App extends Component {
 						<Route path="/productMen" element={<Product />} />
 						<Route path="/productWomen" element={<ProductWomen />} />
 						<Route path="/productKids" element={<ProductKids />} />
+						<Route path="/bestsellers" element={<BestSellersPage />} />
+						<Route path="/featured" element={<FeaturedPage />} />
 						{/* <Route path="/cart" element={<Cart />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             {/* <Route path="/productdetails/:id" element={<ProductDetails />} /> */}
