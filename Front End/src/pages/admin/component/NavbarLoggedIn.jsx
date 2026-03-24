@@ -147,11 +147,18 @@ const NavbarLoggedIn = () => {
             </ListItemButton>
           </ListItem>
           :""}
-          {/* <ListItem button>
-            <FaBlog />
-            <ListItemText primary="Blogs" />
-          </ListItem> */}
+
+          {currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"?
           <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/leadershipManagement")}>
+              <People />
+              <ListItemText primary="Leadership" />
+            </ListItemButton>
+          </ListItem>
+          :""}
+
+          <ListItem disablePadding>
+
             <ListItemButton onClick={handleLogout}>
               <Lock />
               <ListItemText primary="SignOut" />

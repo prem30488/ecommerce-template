@@ -1,135 +1,188 @@
-// ContactForm.js
 import React from 'react';
 import { useFormik } from 'formik';
 import Alert from 'react-s-alert';
 import axios from 'axios';
-import { API_BASE_URL} from '../constants/index';
-export const Contact = () => {
+import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../constants/index';
+import styles from './Contact.module.css';
 
-  const sendEmail = async (to, subject, text) => {
+export const Contact = () => {
+  const sendEmail = async (values) => {
     try {
       const formData = new FormData();
-      formData.append('to', to);
-      formData.append('subject', subject);
-      formData.append('text', text);
-  
-      // Adjust the URL based on your actual API endpoint
-      const apiUrl = API_BASE_URL+'/api/email/send';
-  
-      // Make a POST request using Axios
-      const response = await axios.post(apiUrl, formData);
-  
-      // Handle the response as needed
-      console.log('Response:', response.data);
+      formData.append('to', 'Info@hanelyhealthcare.com');
+      formData.append('subject', 'New Contact Form Inquiry');
+      formData.append('text', `Name: ${values.name}\nEmail: ${values.email}\nPhone: ${values.phoneNumber}\nMessage: ${values.message}`);
 
-      Alert.success("Success!");
+      const apiUrl = API_BASE_URL + '/api/email/send';
+      await axios.post(apiUrl, formData);
+
+      Alert.success("Message sent successfully!");
     } catch (error) {
-      // Handle errors
       console.error('Error:', error.message);
       Alert.error(error.message || 'Oops! Some error occurred!');
     }
   };
-  
 
   const formik = useFormik({
     initialValues: {
       name: '',
       email: '',
+      phoneNumber: '',
       message: '',
+      saveInfo: false,
+      agreePolicy: false,
     },
     validate: (values) => {
       const errors = {};
 
-      if (!values.name) {
-        errors.name = 'Required';
-      }
-
+      if (!values.name) errors.name = 'Required';
       if (!values.email) {
         errors.email = 'Required';
       } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
         errors.email = 'Invalid email address';
       }
-
-      if (!values.message) {
-        errors.message = 'Required';
+      if (!values.message) errors.message = 'Required';
+      if (!values.agreePolicy) {
+        errors.agreePolicy = 'You must agree to the Privacy Policy';
       }
 
       return errors;
     },
-    onSubmit: (values) => {
-      // This is where you would typically make an API call to a server to send the email
-      // For example, using fetch or axios to send a POST request to a server endpoint
-      // The server would then handle sending the email
-      sendEmail("Nikul@hanelyhealthcare.com","Inquiry or Query from Hanely Healthcare website!",values.name + " " + values.email + " " +values.message);
+    onSubmit: (values, { resetForm }) => {
+      sendEmail(values);
       console.log('Form submitted:', values);
+      resetForm();
     },
   });
 
   return (
-    <><div style={{paddingTop:"150px"}}></div> <h1>Contact Us</h1>
-    
-    <form onSubmit={formik.handleSubmit} style={{ maxWidth: '400px', margin: 'auto', backgroundColor: '#c4f2b2', padding: '20px', borderRadius: '10px' }}>
-      <div style={{ marginBottom: '15px' }}>
-      
-        <label htmlFor="name" style={{ display: 'block', marginBottom: '5px', color: '#333' }}>
-          Name:
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.name}
-          style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
-        />
-        {formik.touched.name && formik.errors.name ? (
-          <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.name}</div>
-        ) : null}
+    <div className={styles.contactPage}>
+      <div className={styles.contactHeader}>
+        <h1>Hanley - India</h1>
+        <div className={styles.contactInfo}>
+          <p>Plot No. 233, Pushpam Industrial Estate, Vatwa G.I.D.C. Phase 1, Vatwa, Ahmedabad, Gujarat-382445</p>
+          <p>+91 7777936090</p>
+          <p>Info@hanleyhealthcare.com</p>
+        </div>
+      </div>
+      <div className={styles.mapContainer}>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7382.910864552293!2d72.63761048663011!3d22.97321218415783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e89cb954b6c89%3A0xb01c3551fd30a292!2sHanley%20Healthcare!5e0!3m2!1sen!2sin!4v1774378103451!5m2!1sen!2sin"
+          width="100%"
+          height="400"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Hanley Healthcare Location"
+        ></iframe>
       </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <label htmlFor="email" style={{ display: 'block', marginBottom: '5px', color: '#333' }}>
-          Email:
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.email}
-          style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
-        />
-        {formik.touched.email && formik.errors.email ? (
-          <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.email}</div>
-        ) : null}
-      </div>
 
-      <div style={{ marginBottom: '15px' }}>
-        <label htmlFor="message" style={{ display: 'block', marginBottom: '5px', color: '#333' }}>
-          Message:
-        </label>
-        <textarea
-          id="message"
-          name="message"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.message}
-          style={{ width: '100%', padding: '8px', borderRadius: '5px', border: '1px solid #ccc', resize: 'vertical' }}
-        />
-        {formik.touched.message && formik.errors.message ? (
-          <div style={{ color: 'red', marginTop: '5px' }}>{formik.errors.message}</div>
-        ) : null}
-      </div>
 
-      <div>
-        <button type="submit" style={{ backgroundColor: '#4CAF50', color: 'white', padding: '10px', borderRadius: '5px', border: 'none', cursor: 'pointer' }}>
-          Submit
-        </button>
-      </div>
-    </form>
-    </>
+
+      <form onSubmit={formik.handleSubmit} className={styles.formContainer}>
+        <div>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Name"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.name}
+            className={styles.inputField}
+          />
+          {formik.touched.name && formik.errors.name ? (
+            <div className={styles.error}>{formik.errors.name}</div>
+          ) : null}
+        </div>
+
+        <div>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Email"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.email}
+            className={styles.inputField}
+          />
+          {formik.touched.email && formik.errors.email ? (
+            <div className={styles.error}>{formik.errors.email}</div>
+          ) : null}
+        </div>
+
+        <div className={styles.fullWidth}>
+          <input
+            type="text"
+            id="phoneNumber"
+            name="phoneNumber"
+            placeholder="Phone number"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.phoneNumber}
+            className={styles.inputField}
+            style={{ maxWidth: '50%' }}
+          />
+        </div>
+
+        <div className={styles.fullWidth}>
+          <textarea
+            id="message"
+            name="message"
+            placeholder="Comment"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.message}
+            className={styles.textareaField}
+          />
+          {formik.touched.message && formik.errors.message ? (
+            <div className={styles.error}>{formik.errors.message}</div>
+          ) : null}
+        </div>
+
+        <div className={styles.checkboxContainer}>
+          <label className={styles.checkboxItem}>
+            <input
+              type="checkbox"
+              id="saveInfo"
+              name="saveInfo"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              checked={formik.values.saveInfo}
+            />
+            <span>Save my name, email, and website in this browser for the next time I comment.</span>
+          </label>
+
+          <label className={styles.checkboxItem}>
+            <input
+              type="checkbox"
+              id="agreePolicy"
+              name="agreePolicy"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              checked={formik.values.agreePolicy}
+            />
+            <span style={{ lineHeight: '1.4' }}>
+              By Submitting the form, I agree to the <Link to="/policies/privacy-policy" target="_blank" style={{ color: '#114b43', fontWeight: 'bold', textDecoration: 'underline' }}>Privacy Policy</Link> and Website <Link to="/policies/terms-of-use" target="_blank" style={{ color: '#114b43', fontWeight: 'bold', textDecoration: 'underline' }}>Terms of Use</Link>
+            </span>
+
+          </label>
+          {formik.touched.agreePolicy && formik.errors.agreePolicy ? (
+            <div className={styles.error} style={{ marginTop: '-5px' }}>{formik.errors.agreePolicy}</div>
+          ) : null}
+        </div>
+
+        <div className={styles.fullWidth}>
+          <button type="submit" className={styles.submitBtn}>
+            SEND MESSAGE
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

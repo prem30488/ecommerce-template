@@ -334,10 +334,32 @@ async function seedData() {
             });
         }
 
+        // Seed leadership team
+        const defaultLeaders = [
+            { name: 'Jaymin Patel', designation: 'Partner', image: '/images/leadership/jaymin_patel.png', order: 1 },
+            { name: 'Nikul Sisodiya', designation: 'Partner', image: '/images/leadership/nikul_sisodiya.png', order: 2 },
+            { name: 'Parth Trivedi', designation: 'CEO', image: '/images/leadership/parth_trivedi.png', order: 3 },
+            { name: 'Miraj Trivedi', designation: 'VP', image: '/images/leadership/miraj_trivedi.png', order: 4 },
+            { name: 'Jay Patel', designation: 'VP', image: '/images/leadership/jay_patel.png', order: 5 }
+        ];
+
+        try {
+            await db.LeadershipTeam.sync();
+            const leaderCount = await db.LeadershipTeam.count();
+            if (leaderCount === 0) {
+                for (const leader of defaultLeaders) {
+                    await db.LeadershipTeam.create(leader);
+                }
+                console.log('Seeded Leadership Team');
+            }
+        } catch (err) {
+            console.error('Error seeding Leadership Team:', err);
+        }
+
         console.log('Seeding completed successfully.');
 
         // Reset sequences to prevent duplicate ID errors on next create
-        const tables = ['Sliders', 'Products', 'Categories', 'Forms', 'Testimonials', 'Coupons'];
+        const tables = ['Sliders', 'Products', 'Categories', 'Forms', 'Testimonials', 'Coupons', 'leadership_teams'];
         for (const tableName of tables) {
             try {
                 const [results] = await db.sequelize.query(`SELECT pg_get_serial_sequence('"${tableName}"', 'id') as seq;`);
@@ -653,6 +675,50 @@ app.delete('/api/category/delete/:id', authenticateToken, async (req, res) => {
         res.json({ message: 'Category deleted' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete category' });
+    }
+});
+
+// Leadership CRUD
+app.get('/api/leadership/getTeams', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 0;
+        const size = parseInt(req.query.size) || 12;
+        const { count, rows } = await db.LeadershipTeam.findAndCountAll({
+            offset: page * size,
+            limit: size,
+            order: [['order', 'ASC']]
+        });
+        res.json(getPaginatedResponse(rows, count, page, size));
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch leadership team' });
+    }
+});
+
+app.post('/api/leadership/create', authenticateToken, async (req, res) => {
+    try {
+        const team = await db.LeadershipTeam.create(req.body);
+        res.status(201).json(team);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create leadership team' });
+    }
+});
+
+app.put('/api/leadership/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.LeadershipTeam.update(req.body, { where: { id: req.params.id } });
+        res.json({ message: 'Leadership team updated' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update leadership team' });
+    }
+});
+
+app.delete('/api/leadership/delete/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.LeadershipTeam.destroy({ where: { id: req.params.id } });
+        res.json({ message: 'Leadership team deleted' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete leadership team' });
     }
 });
 

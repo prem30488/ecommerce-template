@@ -526,3 +526,28 @@ export function fetchWeeklySalesSum() {
 
     return api.get("/api/order/fetchWeeklySalesSum");
 }
+
+export function getLeadershipTeams(page, size) {
+    return api.get("/api/leadership/getTeams?page=" + page + "&size=" + size);
+}
+
+export function addLeadershipTeam(teamRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/leadership/create", teamRequest);
+}
+
+export function updateLeadershipTeam(teamRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put("/api/leadership/" + teamRequest.id, teamRequest);
+}
+
+export function deleteLeadershipTeam(id) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.delete("/api/leadership/delete/" + id);
+}

@@ -39,10 +39,14 @@ import TestimonialManagementPage from './pages/admin/component/testimonial/Testi
 import CouponManagementPage from './pages/admin/component/coupon/CouponManagementPage';
 import OrderManagementPage from './pages/admin/component/orders/OrderManagementPage';
 import SliderManagementPage from './pages/admin/component/slider/SliderManagementPage';
+import LeadershipManagementPage from './pages/admin/component/leadership/LeadershipManagementPage';
+
 import TaxInvoice from "./pages/checkout/TaxInvoice";
+
 
 import RefundPolicy from './pages/RefundPolicy';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfUse from './pages/TermsOfUse';
 import Shipping from './pages/Shipping';
 import FormDialog from './pages/checkout/FormDialog';
 import TrackOrder from './pages/TrackOrder';
@@ -156,8 +160,6 @@ class App extends Component {
             <Route path="/product/:id" element={<ProductDetails />} />
             {/* <Route path="/productdetails/:id" element={<ProductDetails />} /> */}
 						<Route path="/productDetails/:id" element={<ProductDetailsCart />} />
-						{/* <Route path="/booking" element={<Booking />} /> */}
-						<Route path="/about" element={<OurTeam />} />
 						<Route path="*" element={<Notfound />} />
 						<Route path="/cart" element={<Cart />} />
 						<Route path="/checkout" element={<FormDialog />} />
@@ -171,8 +173,13 @@ class App extends Component {
 						<Route path="/Search/:query" element={<Search />} />
 
 						<Route path="/refundPolicy" element={<RefundPolicy />} />
+						<Route path="/policies/refund-policy" element={<RefundPolicy />} />
 						<Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+
+						<Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
+						<Route path="/policies/terms-of-use" element={<TermsOfUse />} />
 						<Route path="/shippinganddelievery" element={<Shipping />} />
+
 						<Route exact path="/advancedSearch"
 							element={<AdvancedSearch />} />
 						<Route exact path="/trackOrder"
@@ -189,9 +196,11 @@ class App extends Component {
 						<Route exact path="/couponManagement" element={<CouponManagementPage />} />
 						<Route exact path="/orderManagement" element={<OrderManagementPage />} />
 						<Route exact path="/sliderManagement" element={<SliderManagementPage />} />
+						<Route exact path="/leadershipManagement" element={<LeadershipManagementPage />} />
 
 
 					</Routes>
+
 				</ShopContextProvider>
 				<Footer />
 				<Alert stack={{ limit: 3 }}

@@ -76,9 +76,10 @@ export default function Footer() {
               <h4>Policies</h4>
               <ul className="footer-links">
                 <li><a href="/contact">Contact Information</a></li>
-                <li><a href="/privacyPolicy">Privacy Policy</a></li>
-                <li><a href="/refundPolicy">Refund Policy</a></li>
-                <li><a href="/shippinganddelievery">Terms Of Service</a></li>
+                <li><a href="/policies/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/policies/refund-policy">Refund Policy</a></li>
+                <li><a href="/policies/terms-of-use">Terms of Use</a></li>
+
               </ul>
             </div>
 
