@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import Alert from "react-s-alert";
 import "./weeklyhighlight.css";
+import WishlistIcon from "./WishlistIcon";
 
 /* ── Fallback product when API returns nothing ── */
 const WHEY_FALLBACK = {
@@ -170,6 +171,13 @@ const WeeklyHighlight = () => {
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
               </button>
+            )}
+
+            {/* Wishlist Icon */}
+            {id && (
+              <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '8px' }}>
+                <WishlistIcon productId={id} size="large" />
+              </div>
             )}
           </div>
 

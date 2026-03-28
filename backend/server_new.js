@@ -3,13 +3,20 @@ const cors = require('cors');
 const db = require('./models');
 const fs = require('fs');
 const path = require('path');
+const emailService = require('./utils/emailService');
+const sessionTracker = require('./utils/sessionTracker');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Initialize database if not exists
 async function initializeDatabase() {
-    console.log('Database initialization skipped');
+    try {
+        await db.sequelize.sync({ alter: true });
+        console.log('Database synchronized/altered');
+    } catch (err) {
+        console.error('Failed to sync DB:', err);
+    }
 }
 
 
@@ -126,6 +133,7 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'Failed to load product' });
     }
+});
 
     // Get products by category
     app.get('/api/products/category/:category', async (req, res) => {
@@ -484,6 +492,155 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
 
         app.get('/api/solrEntities/fetchSolrEntitiesViewedDesc', requireAuth, (req, res) => {
             res.json([]);
+        });
+
+        // ==================== WISHLIST ENDPOINTS ====================
+
+        // Get all wishlist items for user
+        app.get('/api/wishlist', requireAuth, async (req, res) => {
+            try {
+                const userId = req.query.user_id || 1; // Default to user 1 for mock
+                const wishlistItems = await db.Wishlist.findAll({
+                    where: { user_id: userId },
+                    include: [{
+                        model: db.Product,
+                        attributes: ['id', 'title', 'price', 'priceMedium', 'priceLarge', 'img', 'category', 'description']
+                    }],
+                    order: [['created_at', 'DESC']]
+                });
+                res.json(wishlistItems);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Failed to load wishlist' });
+            }
+        });
+
+        // Add item to wishlist
+        app.post('/api/wishlist', requireAuth, async (req, res) => {
+            try {
+                const { product_id, session_id } = req.body;
+                const userId = req.query.user_id || 1; // Default to user 1 for mock
+
+                // Check if item already exists
+                const existing = await db.Wishlist.findOne({
+                    where: { user_id: userId, product_id: product_id }
+                });
+
+                if (existing) {
+                    return res.status(400).json({ error: 'Item already in wishlist' });
+                }
+
+                const wishlistItem = await db.Wishlist.create({
+                    user_id: userId,
+                    product_id: product_id,
+                    session_id: session_id
+                });
+
+                res.json(wishlistItem);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Failed to add to wishlist' });
+            }
+        });
+
+        // Remove item from wishlist
+        app.delete('/api/wishlist/:product_id', requireAuth, async (req, res) => {
+            try {
+                const userId = req.query.user_id || 1; // Default to user 1 for mock
+                await db.Wishlist.destroy({
+                    where: { user_id: userId, product_id: req.params.product_id }
+                });
+                res.json({ message: 'Removed from wishlist' });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Failed to remove from wishlist' });
+            }
+        });
+
+        // Clear entire wishlist
+        app.delete('/api/wishlist', requireAuth, async (req, res) => {
+            try {
+                const userId = req.query.user_id || 1; // Default to user 1 for mock
+                await db.Wishlist.destroy({
+                    where: { user_id: userId }
+                });
+                res.json({ message: 'Wishlist cleared' });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Failed to clear wishlist' });
+            }
+        });
+
+        // Get wishlist by user ID for sharing
+        app.get('/api/wishlist/shared/:userId', async (req, res) => {
+            try {
+                const wishlistItems = await db.Wishlist.findAll({
+                    where: { user_id: req.params.userId },
+                    include: [{
+                        model: db.Product,
+                        attributes: ['id', 'title', 'price', 'priceMedium', 'priceLarge', 'img', 'category', 'description']
+                    }],
+                    order: [['created_at', 'DESC']]
+                });
+                res.json(wishlistItems);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Failed to load shared wishlist' });
+            }
+        });
+
+        // Send email on session close with wishlist items
+        app.post('/api/wishlist/email-on-close', requireAuth, async (req, res) => {
+            try {
+                const { user_id, session_id, wishlist_items } = req.body;
+
+                // Get user email
+                const user = await db.User.findByPk(user_id);
+                if (!user || !user.email) {
+                    return res.status(404).json({ error: 'User not found or email not available' });
+                }
+
+                // Get wishlist items details
+                const items = await db.Wishlist.findAll({
+                    where: { user_id: user_id, product_id: wishlist_items },
+                    include: [{
+                        model: db.Product,
+                        attributes: ['id', 'title', 'price', 'priceMedium', 'priceLarge', 'img', 'category', 'description']
+                    }]
+                });
+
+                if (items.length === 0) {
+                    return res.json({ message: 'No wishlist items to send' });
+                }
+
+                // Send email using email service
+                try {
+                    await emailService.sendWishlistNotification(
+                        user.email,
+                        user.username,
+                        items,
+                        process.env.APP_URL || 'http://localhost:3000'
+                    );
+                } catch (emailError) {
+                    console.error('Email sending failed, but continuing:', emailError);
+                    // Don't fail the request if email fails
+                }
+
+                // Mark items as email sent
+                await db.Wishlist.update(
+                    { email_sent: true },
+                    { where: { user_id: user_id } }
+                );
+
+                res.json({ 
+                    message: 'Wishlist email prepared and sent',
+                    recipientEmail: user.email,
+                    itemsCount: items.length
+                });
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Failed to send wishlist email' });
+            }
         });
 
         // Start server with database initialization

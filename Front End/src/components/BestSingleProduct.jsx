@@ -4,6 +4,7 @@ import { ShopContext } from "../context/shop-context";
 import { useNavigate } from "react-router-dom";
 import ImageCarousel from "../pages/productDetails/ImageCarousel";
 import Alert from 'react-s-alert';
+import WishlistIcon from "./WishlistIcon";
 const BestSingleProduct = ({ product }) => {
   const { id, stock, title, price, imageURLs } = product;
 
@@ -36,15 +37,12 @@ const BestSingleProduct = ({ product }) => {
       </Link>
       <p className={product.bestseller ? "bestseller" : "text-sm text-gray-600"}>
         Bestseller : <span className="font-semibold capitalize">{product.bestseller ? "Yes" : "No"}</span>
-
       </p>
       <p className="text-sm text-gray-600">
         Price: <span className="text-rose-500 font-semibold">{price}</span>
       </p>
-
       <div className="flex justify-between items-center">
         <button className="btn-info" onClick={() => navigate("/productDetails/" + product.id)}>More Info</button>
-
         <button className="btn-cart" onClick={() => {
           if (cartItemCount < stock) { addToCart(id, "S"); } else {
             Alert.info('Item Out of stock!');
@@ -52,6 +50,10 @@ const BestSingleProduct = ({ product }) => {
         }}>
           Add To Cart {cartItemCount > 0 && <> ({cartItemCount})</>}
         </button>
+      </div>
+      {/* Wishlist icon below Add to Cart */}
+      <div style={{ padding: '8px', display: 'flex', justifyContent: 'center' }}>
+        <WishlistIcon productId={id} size="large" showText={true} />
       </div>
     </div>
   );

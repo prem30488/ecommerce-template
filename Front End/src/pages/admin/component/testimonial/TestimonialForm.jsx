@@ -1,11 +1,15 @@
 // TestimonialForm.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import FileUploader from '../product/FileUploader';
 
 const TestimonialForm = ({ onSubmit, onCancel, initialData }) => {
   const [formData, setFormData] = useState(initialData || {});
+
+  useEffect(() => {
+    setFormData(initialData || {});
+  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,9 +25,9 @@ const TestimonialForm = ({ onSubmit, onCancel, initialData }) => {
   };
 
   const returnFileArray = (fileURL) => {
-    console.log("parent :"+JSON.stringify(fileURL));
-    formData.imageURL=fileURL;
-  }
+    console.log("parent :" + JSON.stringify(fileURL));
+    setFormData((prev) => ({ ...prev, imageURL: fileURL }));
+  };
 
   return (
     <form onSubmit={handleSubmit}>

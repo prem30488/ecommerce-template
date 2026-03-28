@@ -4,7 +4,7 @@ import { ShopContext } from "../context/shop-context";
 import SimilarProducts from "./SimilarProducts"
 import Compare from "./Compare";
 import ImageCarousel from "../pages/productDetails/ImageCarousel";
-
+import WishlistIcon from "./WishlistIcon";
 const ProductDetails = ({ compare }) => {
   const { id: paramId } = useParams();
   const { state: locationProduct } = useLocation();
@@ -106,9 +106,16 @@ const ProductDetails = ({ compare }) => {
                 </span>
               </span>
             </h3>
-            <button className="bg-sky-500 text-white hover:bg-sky-600 transition-colors duration-300 px-6 py-3 rounded-md text-lg font-semibold mt-4 shadow-md" onClick={() => addToCart(id)}>
-              Add To Cart {cartItemCount > 0 && <> ({cartItemCount})</>}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '16px' }}>
+              <button className="bg-sky-500 text-white hover:bg-sky-600 transition-colors duration-300 px-6 py-3 rounded-md text-lg font-semibold shadow-md" onClick={() => addToCart(id)}>
+                Add To Cart {cartItemCount > 0 && <> ({cartItemCount})</>}
+              </button>
+              {/* Wishlist icon next to Add to Cart */}
+              <div style={{ padding: '4px', display: 'flex', alignItems: 'center' }}>
+                {/* Use large size for visibility */}
+                <WishlistIcon productId={id} size="large" />
+              </div>
+            </div>
           </div>
         </div>
         <Link

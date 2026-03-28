@@ -57,9 +57,12 @@ newFiles.forEach((file) => {
     
   formData.append('file', file);
     
+  const token = localStorage.getItem('accessToken');
+  
   axios.post( API_BASE_URL + '/api/testimonial/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ' + token,
     },
     onUploadProgress: (progressEvent) => {
       const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);

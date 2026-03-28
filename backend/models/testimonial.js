@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         designation: DataTypes.STRING,
         organization: DataTypes.STRING,
         imageURL: DataTypes.STRING,
+        rating: {
+            type: DataTypes.FLOAT,
+            defaultValue: 5
+        },
         deleteFlag: {
             type: DataTypes.BOOLEAN,
             defaultValue: false

@@ -4,6 +4,7 @@ import { ShopContext } from "../context/shop-context";
 import { useNavigate } from "react-router";
 import ImageCarousel from "../pages/productDetails/ImageCarousel";
 import Alert from 'react-s-alert';
+import WishlistIcon from "./WishlistIcon";
 const SingleProduct = ({ product }) => {
 
 
@@ -100,6 +101,9 @@ const SingleProduct = ({ product }) => {
             }>
             Add To Cart {cartItemCount > 0 && <> ({cartItemCount})</>}
           </button>
+          <div style={{ padding: '4px' }}>
+            <WishlistIcon productId={id} size="medium" />
+          </div>
 
         </div>
       </div>

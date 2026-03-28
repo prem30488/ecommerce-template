@@ -7,6 +7,9 @@ import { Contact } from "./pages/Contact";
 import { Cart } from "./pages/cart/cart";
 import ProductDetailsCart from "./pages/productDetails/ProductDetailsCart";
 import { ShopContextProvider } from "./context/shop-context";
+import { WishlistContextProvider } from "./context/wishlist-context";
+import Wishlist from "./pages/wishlist/wishlist";
+import SharedWishlist from "./pages/wishlist/shared-wishlist";
 
 import About from "./pages/About";
 import Product from "./pages/Product";
@@ -146,61 +149,66 @@ class App extends Component {
 		return (
 			<div className="App">
 				<ShopContextProvider>
-					{this.state.authenticated ? <NavbarLoggedIn /> : <NavbarMain />}
-					<Routes>
-						<Route path="/" element={this.state.authenticated ? <Dashboard /> : <Shop />} />
-						<Route path="/about" element={<About />} />
-						<Route path="/contact" element={<Contact />} />
-						<Route path="/productMen" element={<Product />} />
-						<Route path="/productWomen" element={<ProductWomen />} />
-						<Route path="/productKids" element={<ProductKids />} />
-						<Route path="/bestsellers" element={<BestSellersPage />} />
-						<Route path="/featured" element={<FeaturedPage />} />
-						{/* <Route path="/cart" element={<Cart />} />
+					<WishlistContextProvider>
+						{this.state.authenticated ? <NavbarLoggedIn /> : <NavbarMain />}
+						<Routes>
+							<Route path="/" element={this.state.authenticated ? <Dashboard /> : <Shop />} />
+							<Route path="/about" element={<About />} />
+							<Route path="/contact" element={<Contact />} />
+							<Route path="/productMen" element={<Product />} />
+							<Route path="/productWomen" element={<ProductWomen />} />
+							<Route path="/productKids" element={<ProductKids />} />
+							<Route path="/bestsellers" element={<BestSellersPage />} />
+							<Route path="/featured" element={<FeaturedPage />} />
+							{/* <Route path="/cart" element={<Cart />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             {/* <Route path="/productdetails/:id" element={<ProductDetails />} /> */}
-						<Route path="/productDetails/:id" element={<ProductDetailsCart />} />
-						<Route path="*" element={<Notfound />} />
-						<Route path="/cart" element={<Cart />} />
-						<Route path="/checkout" element={<FormDialog />} />
+							<Route path="/productDetails/:id" element={<ProductDetailsCart />} />
+							<Route path="*" element={<Notfound />} />
+							<Route path="/cart" element={<Cart />} />
+							<Route path="/checkout" element={<FormDialog />} />
 
-						<Route path="/applyCoupon" element={<CouponCode />} />
-
-
-						<Route path="/previewInvoice/:orderId" element={<TaxInvoice />} />
-
-						<Route path="/byCategory/:id" element={<Categorywise />} />
-						<Route path="/Search/:query" element={<Search />} />
-
-						<Route path="/refundPolicy" element={<RefundPolicy />} />
-						<Route path="/policies/refund-policy" element={<RefundPolicy />} />
-						<Route path="/privacyPolicy" element={<PrivacyPolicy />} />
-
-						<Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
-						<Route path="/policies/terms-of-use" element={<TermsOfUse />} />
-						<Route path="/shippinganddelievery" element={<Shipping />} />
-
-						<Route exact path="/advancedSearch"
-							element={<AdvancedSearch />} />
-						<Route exact path="/trackOrder"
-							element={<TrackOrder />} />
-						{/*  ////////////////////////////////////////////// Admin Pages /////////////////////////////////////////////*/}
-
-						<Route exact path="/SignIn" element={<SignIn />} />
-						<Route exact path="/dashboard" element={<Dashboard />} />
-						<Route exact path="/userManagement" element={<UserManagementPage />} />
-						<Route exact path="/categoryManagement" element={<CategoryManagementPage />} />
-						<Route exact path="/productManagement" element={<ProductManagementPage />} />
-						<Route exact path="/formManagement" element={<FormManagementPage />} />
-						<Route exact path="/testimonialManagement" element={<TestimonialManagementPage />} />
-						<Route exact path="/couponManagement" element={<CouponManagementPage />} />
-						<Route exact path="/orderManagement" element={<OrderManagementPage />} />
-						<Route exact path="/sliderManagement" element={<SliderManagementPage />} />
-						<Route exact path="/leadershipManagement" element={<LeadershipManagementPage />} />
+							<Route path="/applyCoupon" element={<CouponCode />} />
 
 
-					</Routes>
+							<Route path="/previewInvoice/:orderId" element={<TaxInvoice />} />
 
+							<Route path="/byCategory/:id" element={<Categorywise />} />
+							<Route path="/Search/:query" element={<Search />} />
+
+							<Route path="/refundPolicy" element={<RefundPolicy />} />
+							<Route path="/policies/refund-policy" element={<RefundPolicy />} />
+							<Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+
+							<Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
+							<Route path="/policies/terms-of-use" element={<TermsOfUse />} />
+							<Route path="/shippinganddelievery" element={<Shipping />} />
+
+							<Route exact path="/advancedSearch"
+								element={<AdvancedSearch />} />
+							<Route exact path="/trackOrder"
+								element={<TrackOrder />} />
+							{/*  ////////////////////////////////////////////// Admin Pages /////////////////////////////////////////////*/}
+
+							<Route exact path="/SignIn" element={<SignIn />} />
+							<Route exact path="/dashboard" element={<Dashboard />} />
+							<Route exact path="/userManagement" element={<UserManagementPage />} />
+							<Route exact path="/categoryManagement" element={<CategoryManagementPage />} />
+							<Route exact path="/productManagement" element={<ProductManagementPage />} />
+							<Route exact path="/formManagement" element={<FormManagementPage />} />
+							<Route exact path="/testimonialManagement" element={<TestimonialManagementPage />} />
+							<Route exact path="/couponManagement" element={<CouponManagementPage />} />
+							<Route exact path="/orderManagement" element={<OrderManagementPage />} />
+							<Route exact path="/sliderManagement" element={<SliderManagementPage />} />
+							<Route exact path="/leadershipManagement" element={<LeadershipManagementPage />} />
+
+							{/* Wishlist Routes */}
+							<Route path="/wishlist" element={<Wishlist />} />
+							<Route path="/your-wishlist" element={<Wishlist />} />
+							<Route path="/wishlist/shared" element={<SharedWishlist />} />
+
+						</Routes>
+					</WishlistContextProvider>
 				</ShopContextProvider>
 				<Footer />
 				<Alert stack={{ limit: 3 }}

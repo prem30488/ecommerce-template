@@ -3,18 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import Alert from "react-s-alert";
 import "./featureproductscarousel.css";
+import WishlistIcon from "./WishlistIcon";
+import { FaEye } from "react-icons/fa";
+import QuickViewModal from "./QuickViewModal";
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 const CARD_WIDTH = 200;   // px
-const GAP        = 16;    // px between cards
-const VISIBLE    = 5;     // cards shown at once
+const GAP = 16;    // px between cards
+const VISIBLE = 5;     // cards shown at once
 const SLIDE_STEP = CARD_WIDTH + GAP;
 
 /* ── Star rating ─────────────────────────────────────────────────────────── */
 const Stars = ({ rating }) => {
   const score = parseFloat((rating || "0").split("/")[0]);
-  const full  = Math.floor(score);
-  const half  = score - full >= 0.5;
+  const full = Math.floor(score);
+  const half = score - full >= 0.5;
   return (
     <span className="fpc-stars">
       {Array.from({ length: 5 }, (_, i) => (
@@ -22,8 +25,8 @@ const Stars = ({ rating }) => {
           key={i}
           className={
             i < full ? "fpc-star fpc-star--on"
-            : i === full && half ? "fpc-star fpc-star--half"
-            : "fpc-star"
+              : i === full && half ? "fpc-star fpc-star--half"
+                : "fpc-star"
           }
         >★</span>
       ))}
@@ -51,16 +54,14 @@ const MarqueeStrip = ({ products }) => {
         {doubled.map((item, i) => (
           <span
             key={i}
-            className={`fpc-marquee-item${
-              item.hasOffer ? "" : " fpc-marquee-item--muted"
-            }`}
+            className={`fpc-marquee-item${item.hasOffer ? "" : " fpc-marquee-item--muted"
+              }`}
           >
             <span className="fpc-marquee-sep">◆</span>
             <span className="fpc-marquee-name">{item.name}</span>
             <span className="fpc-marquee-divider">—</span>
-            <span className={`fpc-marquee-label${
-              item.hasOffer ? " fpc-marquee-label--offer" : ""
-            }`}>
+            <span className={`fpc-marquee-label${item.hasOffer ? " fpc-marquee-label--offer" : ""
+              }`}>
               {item.label}
             </span>
           </span>
@@ -90,12 +91,12 @@ const CardMarquee = () => {
 };
 
 /* ── Single card ─────────────────────────────────────────────────────────── */
-const FpcCard = ({ product }) => {
+const FpcCard = ({ product, onQuickView }) => {
   const navigate = useNavigate();
   const { addToCart, cartItems } = useContext(ShopContext);
 
   const { id, title, price, stock, rating, img } = product;
-  const cartCount   = cartItems[id] || 0;
+  const cartCount = cartItems[id] || 0;
 
   // Fallback image from picsum if img is missing
   const imgSrc = img || `https://picsum.photos/seed/${encodeURIComponent(id)}/400/400`;
@@ -129,18 +130,51 @@ const FpcCard = ({ product }) => {
             e.target.src = `https://placehold.co/400x400?text=Product`;
           }}
         />
-        {/* + button */}
+        {/* Plus Button - Top */}
         <button
           className="fpc-plus-btn"
           onClick={handleAdd}
           title="Add to cart"
           aria-label="Add to cart"
           disabled={stock === 0}
+          style={{ top: '0.55rem' }}
         >
           {cartCount > 0
             ? <span className="fpc-plus-count">{cartCount}</span>
             : <span className="fpc-plus-icon">+</span>}
         </button>
+
+        {/* Quick View Button - Middle */}
+        <button
+          className="fpc-eye-btn"
+          onClick={(e) => { e.stopPropagation(); onQuickView(product); }}
+          title="Quick View"
+          aria-label="Quick View"
+          style={{ top: 'calc(0.55rem + 30px + 8px)' }}
+        >
+          <FaEye />
+        </button>
+
+        {/* Wishlist icon - Bottom */}
+        <WishlistIcon
+          productId={id}
+          size="medium"
+          showText={false}
+          customStyle={{
+            position: 'absolute',
+            top: 'calc(0.55rem + 60px + 16px)',
+            right: '0.55rem',
+            zIndex: 10,
+            background: '#fff',
+            boxShadow: '0 3px 12px rgba(0,0,0,0.1)',
+            width: '30px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 0
+          }}
+        />
       </div>
 
       {/* Card-level feature marquee */}
@@ -180,9 +214,16 @@ const FALLBACK_PRODUCT = {
 /* ── Main carousel ───────────────────────────────────────────────────────── */
 const FeatureProductsCarousel = () => {
   const [products, setProducts] = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [current,  setCurrent]  = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [current, setCurrent] = useState(0);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const autoRef = useRef(null);
+
+  const openQuickView = (product) => {
+    setQuickViewProduct(product);
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true")
@@ -256,7 +297,7 @@ const FeatureProductsCarousel = () => {
           >
             {products.map((p, i) => (
               <div key={p.id ?? i} className="fpc-slide">
-                <FpcCard product={p} />
+                <FpcCard product={p} onQuickView={openQuickView} />
               </div>
             ))}
           </div>
@@ -285,6 +326,13 @@ const FeatureProductsCarousel = () => {
           />
         ))}
       </div>
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };

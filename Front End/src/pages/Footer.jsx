@@ -5,13 +5,13 @@ import { WhatsappLogo } from "phosphor-react";
 export default function Footer() {
 
   // When the user scrolls down 20px from the top of the document, show the button
-  window.onscroll = function() {
+  window.onscroll = function () {
     scrollFunction()
   };
 
   function scrollFunction() {
     if (document.body.scrollTop > 20
-        || document.documentElement.scrollTop > 20) {
+      || document.documentElement.scrollTop > 20) {
       document.getElementById("myBtn").style.display = "block";
     } else {
       document.getElementById("myBtn").style.display = "none";
@@ -28,20 +28,20 @@ export default function Footer() {
   return (
     <React.Fragment>
       <button onClick={topFunction} id="myBtn" title="Go to top">Top</button>
-      <a 
-        href="https://api.whatsapp.com/send/?phone=917777936090&text=Hi" 
-        target="_blank" 
+      <a
+        href="https://api.whatsapp.com/send/?phone=917777936090&text=Hi"
+        target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-float-btn-global"
         title="Chat with us on WhatsApp"
       >
         <WhatsappLogo size={32} weight="fill" />
       </a>
-      
+
       <footer className="hanley-footer">
         <div className="footer-container">
           <div className="footer-top">
-            
+
             <div className="footer-col">
               <h4>About Hanley</h4>
               <p>
@@ -67,8 +67,8 @@ export default function Footer() {
                 <li><a href="/productMen">All Products</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/contact">Contact</a></li>
-                <li><a href="#">Wishlist</a></li>
-                <li><a href="#">Blog</a></li>
+                <li><a href="/your-wishlist">Wishlist</a></li>
+                <li><a href="/SignIn">SignIn</a></li>
               </ul>
             </div>
 
@@ -89,11 +89,11 @@ export default function Footer() {
                 Sign up for our newsletter to receive ₹500 off your first order and exclusive updates on new products and sales.
               </p>
               <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
-                <input 
-                  type="email" 
-                  className="newsletter-input" 
-                  placeholder="Enter your email..." 
-                  required 
+                <input
+                  type="email"
+                  className="newsletter-input"
+                  placeholder="Enter your email..."
+                  required
                 />
                 <button type="submit" className="newsletter-btn">SUBSCRIBE</button>
               </form>

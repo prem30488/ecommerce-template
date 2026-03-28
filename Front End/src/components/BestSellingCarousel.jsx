@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import Alert from "react-s-alert";
 import "./bestsellingcarousel.css";
+import WishlistIcon from "./WishlistIcon";
+import { FaEye } from "react-icons/fa";
+import QuickViewModal from "./QuickViewModal";
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 const CARD_WIDTH = 200;   // px
-const GAP        = 16;    // px between cards
-const VISIBLE    = 5;     // cards shown at once
+const GAP = 16;    // px between cards
+const VISIBLE = 5;     // cards shown at once
 const SLIDE_STEP = CARD_WIDTH + GAP;
 
 /* ── Offer label ────────────────────────────────────────────────────────── */
@@ -24,8 +27,8 @@ const getOfferLabel = (offers) => {
 /* ── Star rating ─────────────────────────────────────────────────────────── */
 const Stars = ({ rating }) => {
   const score = parseFloat((rating || "0").split("/")[0]);
-  const full  = Math.floor(score);
-  const half  = score - full >= 0.5;
+  const full = Math.floor(score);
+  const half = score - full >= 0.5;
   return (
     <span className="bsc-stars">
       {Array.from({ length: 5 }, (_, i) => (
@@ -33,8 +36,8 @@ const Stars = ({ rating }) => {
           key={i}
           className={
             i < full ? "bsc-star bsc-star--on"
-            : i === full && half ? "bsc-star bsc-star--half"
-            : "bsc-star"
+              : i === full && half ? "bsc-star bsc-star--half"
+                : "bsc-star"
           }
         >★</span>
       ))}
@@ -64,16 +67,14 @@ const MarqueeStrip = ({ products }) => {
         {doubled.map((item, i) => (
           <span
             key={i}
-            className={`bsc-marquee-item${
-              item.hasOffer ? "" : " bsc-marquee-item--muted"
-            }`}
+            className={`bsc-marquee-item${item.hasOffer ? "" : " bsc-marquee-item--muted"
+              }`}
           >
             <span className="bsc-marquee-sep">◆</span>
             <span className="bsc-marquee-name">{item.name}</span>
             <span className="bsc-marquee-divider">—</span>
-            <span className={`bsc-marquee-label${
-              item.hasOffer ? " bsc-marquee-label--offer" : ""
-            }`}>
+            <span className={`bsc-marquee-label${item.hasOffer ? " bsc-marquee-label--offer" : ""
+              }`}>
               {item.hasOffer ? item.label : "No active offers"}
             </span>
           </span>
@@ -120,15 +121,15 @@ const CardMarquee = ({ offers }) => {
 };
 
 /* ── Single card (compact for multi-item layout) ─────────────────────────── */
-const BscCard = ({ product }) => {
+const BscCard = ({ product, onQuickView }) => {
   const navigate = useNavigate();
   const { addToCart, cartItems } = useContext(ShopContext);
 
   const { id, title, price, stock, rating, img, offers } = product;
-  const cartCount   = cartItems[id] || 0;
-  const offerLabel  = getOfferLabel(offers);
+  const cartCount = cartItems[id] || 0;
+  const offerLabel = getOfferLabel(offers);
   const activeOffer = offers?.find((o) => o.active);
-  const discPrice   =
+  const discPrice =
     activeOffer && activeOffer.type === 0 && activeOffer.discount > 0
       ? (price - (price * activeOffer.discount) / 100).toFixed(0)
       : null;
@@ -165,18 +166,51 @@ const BscCard = ({ product }) => {
             e.target.src = `https://placehold.co/400x400?text=Product`;
           }}
         />
-        {/* + button */}
+        {/* Plus Button - Top */}
         <button
           className="bsc-plus-btn"
           onClick={handleAdd}
           title="Add to cart"
           aria-label="Add to cart"
           disabled={stock === 0}
+          style={{ top: '0.55rem' }}
         >
           {cartCount > 0
             ? <span className="bsc-plus-count">{cartCount}</span>
             : <span className="bsc-plus-icon">+</span>}
         </button>
+
+        {/* Quick View Button - Middle */}
+        <button
+          className="bsc-eye-btn"
+          onClick={(e) => { e.stopPropagation(); onQuickView(product); }}
+          title="Quick View"
+          aria-label="Quick View"
+          style={{ top: 'calc(0.55rem + 30px + 8px)' }}
+        >
+          <FaEye />
+        </button>
+
+        {/* Wishlist icon - Bottom */}
+        <WishlistIcon
+          productId={id}
+          size="medium"
+          showText={false}
+          customStyle={{
+            position: 'absolute',
+            top: 'calc(0.55rem + 60px + 16px)',
+            right: '0.55rem',
+            zIndex: 10,
+            background: '#fff',
+            boxShadow: '0 3px 12px rgba(0,0,0,0.1)',
+            width: '30px',
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 0
+          }}
+        />
       </div>
 
       {/* Card-level offer marquee */}
@@ -201,6 +235,7 @@ const BscCard = ({ product }) => {
         <button className="bsc-info-btn" onClick={() => navigate("/productDetails/" + id)}>
           More Info
         </button>
+
       </div>
     </article>
   );
@@ -222,9 +257,16 @@ const WHEY_FALLBACK = {
 /* ── Main carousel ───────────────────────────────────────────────────────── */
 const BestSellingCarousel = () => {
   const [products, setProducts] = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [current,  setCurrent]  = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [current, setCurrent] = useState(0);
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const autoRef = useRef(null);
+
+  const openQuickView = (product) => {
+    setQuickViewProduct(product);
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true")
@@ -298,7 +340,7 @@ const BestSellingCarousel = () => {
           >
             {products.map((p, i) => (
               <div key={p.id ?? i} className="bsc-slide">
-                <BscCard product={p} />
+                <BscCard product={p} onQuickView={openQuickView} />
               </div>
             ))}
           </div>
@@ -327,6 +369,13 @@ const BestSellingCarousel = () => {
           />
         ))}
       </div>
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };

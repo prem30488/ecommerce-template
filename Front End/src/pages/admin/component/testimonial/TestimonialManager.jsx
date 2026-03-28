@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import axios from 'axios';
 import TestimonialForm from './TestimonialForm';
 import Alert from 'react-s-alert';
@@ -69,6 +71,28 @@ const TestimonialManager = () => {
     }
   };
 
+  const handleToggleDeleted = async (testimonial, isDeleted) => {
+    try {
+      if (isDeleted) {
+        await deleteTestimonial(testimonial).then((res) => {
+          Alert.success("Testimonial deleted successfully!");
+          fetchTestimonials();
+        }).catch(error => {
+          Alert.error((error && error.message) || 'Oops! Something went wrong.');
+        });
+      } else {
+        await undeleteTestimonial(testimonial).then((res) => {
+          Alert.success("Testimonial restored successfully!");
+          fetchTestimonials();
+        }).catch(error => {
+          Alert.error((error && error.message) || 'Oops! Something went wrong.');
+        });
+      }
+    } catch (error) {
+      console.error('Error toggling deleted state:', error);
+    }
+  };
+
   const handleFormSubmit = async (formData) => {
     try {
       if (selectedTestimonial) {
@@ -114,11 +138,18 @@ const TestimonialManager = () => {
       )
     },
     {
-      field: 'deleteflag', headerName: 'Deleted?', width: 120,
+      field: 'deleteflag', headerName: 'Status', width: 140,
       renderCell: (params) => (
-
-        params.row.deleteFlag ? params.row.deleteFlag.toString() : ""
-
+        <FormControlLabel
+          control={
+            <Switch
+              color="error"
+              checked={params.row.deleteFlag || false}
+              onChange={(e) => handleToggleDeleted(params.row, e.target.checked)}
+            />
+          }
+          label={params.row.deleteFlag ? 'Deleted' : 'Active'}
+        />
       )
     },
     {
@@ -178,6 +209,7 @@ const TestimonialManager = () => {
       </div>
       {isFormOpen && (
         <TestimonialForm
+          key={selectedTestimonial ? selectedTestimonial.id : 'new'}
           onSubmit={handleFormSubmit}
           onCancel={handleFormCancel}
           initialData={selectedTestimonial}

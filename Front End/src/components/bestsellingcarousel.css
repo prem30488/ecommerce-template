@@ -369,6 +369,37 @@
   line-height: 1;
 }
 
+/* ── Eye button (Quick View) ── */
+.bsc-eye-btn {
+  position: absolute;
+  top: calc(0.55rem + 30px + 8px);
+  right: 0.55rem;
+  z-index: 10;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: #0d9488;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.bsc-eye-btn:hover {
+  background: #f8fafc;
+  transform: scale(1.15);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
+  color: #0f766e;
+}
+
+.bsc-eye-btn:active {
+  transform: scale(0.93);
+}
+
 /* ── Card info ── */
 .bsc-card-info {
   padding: 0.65rem 0.75rem 0.75rem;

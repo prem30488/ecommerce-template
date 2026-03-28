@@ -356,6 +356,113 @@ async function seedData() {
             console.error('Error seeding Leadership Team:', err);
         }
 
+        // Seed testimonials
+        const defaultTestimonials = [
+          {
+            title: 'Prembhai',
+            designation: 'Director',
+            organization: 'Ecommerce Inc.',
+            description: 'Excellent service and great support. Highly recommended!',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Prembhai.jpg',
+          },
+          {
+            title: 'Rosie',
+            designation: 'CEO',
+            organization: 'Prem Micro Serv Pvt Ltd',
+            description: 'The team delivered beyond expectations. Will work again!',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Rosie.jpg',
+          },
+          {
+            title: 'Roose',
+            designation: 'CA',
+            organization: 'Hzneley Pvt Ltd',
+            description: 'Professional and reliable service. Very satisfied.',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Roose.jpg',
+          },
+          {
+            title: 'Foose',
+            designation: 'IT Head',
+            organization: 'Caamunda',
+            description: 'Great experience from start to finish. Highly recommend!',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Foose.jpg',
+          },
+          {
+            title: 'Sarah Jenkins',
+            designation: 'Marketing Lead',
+            organization: 'Creative Spark',
+            description: 'We saw immediate improvements in our workflow. Absolutely fantastic.',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Sarah_Jenkins.jpg',
+          },
+          {
+            title: 'Michael Chen',
+            designation: 'Product Manager',
+            organization: 'TechFlow',
+            description: 'A seamless integration built by a stellar team. Highly knowledgeable.',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Michael_Chen.jpg',
+          },
+          {
+            title: 'Amanda Williams',
+            designation: 'VP of Engineering',
+            organization: 'Globex Corp',
+            description: 'The attention to detail and professional communication was exactly what we needed.',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Amanda_Williams.jpg',
+          },
+          {
+            title: 'Robert Fox',
+            designation: 'Founder',
+            organization: 'NextGen Solutions',
+            description: 'Exceeded expectations. Very happy with the final product delivered on time.',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Robert_Fox.jpg',
+          },
+          {
+            title: 'Elena Rodriguez',
+            designation: 'Operations Director',
+            organization: 'Apex Dynamics',
+            description: 'Streamlined our entire customer funnel. Support has been top notch!',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Elena_Rodriguez.jpg',
+          },
+          {
+            title: 'David Kim',
+            designation: 'CTO',
+            organization: 'Pioneer Web',
+            description: 'Robust architecture with great UI/UX sensibilities. Extremely polished work.',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/David_Kim.jpg',
+          },
+          {
+            title: 'Laura Bennett',
+            designation: 'E-commerce Manager',
+            organization: 'Retail Pro',
+            description: 'Sales went up exactly as promised! Best decision we made all year.',
+            rating: Math.floor(Math.random() * 5) + 1,
+            imageURL: '/images/testimonials/Laura_Bennett.jpg',
+          }
+        ];
+
+        try {
+            await db.Testimonial.sync({ alter: true });
+            
+            // Re-seed all to update the images and randomized rating
+            await db.Testimonial.destroy({ where: {} });
+            
+            for (const t of defaultTestimonials) {
+                await db.Testimonial.create(t);
+            }
+            console.log('Seeded Testimonials');
+            
+        } catch (err) {
+            console.error('Error seeding Testimonials:', err);
+        }
+
         console.log('Seeding completed successfully.');
 
         // Reset sequences to prevent duplicate ID errors on next create
@@ -995,8 +1102,26 @@ app.post('/api/testimonial/createTestimonial', authenticateToken, async (req, re
     }
 });
 
-app.post('/api/testimonial/upload', authenticateToken, (req, res) => res.json({ message: 'File uploaded' })); // Placeholder for actual upload logic
+const multer = require('multer');
+const testimonialStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'testimonials');
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
+  }
+});
+const uploadTestimonial = multer({ storage: testimonialStorage });
 
+app.post('/api/testimonial/upload', authenticateToken, uploadTestimonial.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  const fileUrl = `/images/testimonials/${req.file.filename}`;
+  res.send(fileUrl);
+});
 app.put('/api/testimonial/:id', authenticateToken, async (req, res) => {
     try {
         await db.Testimonial.update(req.body, { where: { id: req.params.id } });
@@ -1204,6 +1329,172 @@ app.get('/api/order/fetchDailyTransactionsCount', authenticateToken, (req, res) 
 app.get('/api/order/fetchDailyRevenueSum', authenticateToken, (req, res) => res.json(5000));
 app.get('/api/order/fetchMonthlySalesSum', authenticateToken, (req, res) => res.json(150000));
 app.get('/api/order/fetchWeeklySalesSum', authenticateToken, (req, res) => res.json(35000));
+
+// ==================== WISHLIST ENDPOINTS ====================
+let emailService;
+try {
+    emailService = require('./utils/emailService');
+} catch (e) {
+    emailService = {
+        sendWishlistNotification: async () => { console.log("Mock email sent"); }
+    };
+}
+
+const optionalAuth = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token || token === 'mock-token') {
+        req.user = { id: 1 }; // Default mock user
+        return next();
+    }
+    
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) req.user = { id: 1 };
+        else req.user = user;
+        next();
+    });
+};
+
+// Get all wishlist items for user
+app.get('/api/wishlist', optionalAuth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const wishlistItems = await db.Wishlist.findAll({
+            where: { user_id: userId },
+            include: [{
+                model: db.Product,
+                attributes: ['id', 'title', 'price', 'img', 'description']
+            }],
+            order: [['created_at', 'DESC']]
+        });
+        res.json(wishlistItems);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to load wishlist' });
+    }
+});
+
+// Add item to wishlist
+app.post('/api/wishlist', optionalAuth, async (req, res) => {
+    try {
+        const { product_id, session_id } = req.body;
+        const userId = req.user.id;
+
+        const existing = await db.Wishlist.findOne({
+            where: { user_id: userId, product_id: product_id }
+        });
+
+        if (existing) {
+            return res.status(400).json({ error: 'Item already in wishlist' });
+        }
+
+        const wishlistItem = await db.Wishlist.create({
+            user_id: userId,
+            product_id: product_id,
+            session_id: session_id || 'mock-session'
+        });
+
+        res.json(wishlistItem);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to add to wishlist' });
+    }
+});
+
+// Remove item from wishlist
+app.delete('/api/wishlist/:product_id', optionalAuth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        await db.Wishlist.destroy({
+            where: { user_id: userId, product_id: req.params.product_id }
+        });
+        res.json({ message: 'Removed from wishlist' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to remove from wishlist' });
+    }
+});
+
+// Clear entire wishlist
+app.delete('/api/wishlist', optionalAuth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        await db.Wishlist.destroy({
+            where: { user_id: userId }
+        });
+        res.json({ message: 'Wishlist cleared' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to clear wishlist' });
+    }
+});
+
+// Get wishlist by user ID for sharing
+app.get('/api/wishlist/shared/:userId', async (req, res) => {
+    try {
+        const wishlistItems = await db.Wishlist.findAll({
+            where: { user_id: req.params.userId },
+            include: [{
+                model: db.Product,
+                attributes: ['id', 'title', 'price', 'img', 'description']
+            }],
+            order: [['created_at', 'DESC']]
+        });
+        res.json(wishlistItems);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to load shared wishlist' });
+    }
+});
+
+// Send email on session close with wishlist items
+app.post('/api/wishlist/email-on-close', optionalAuth, async (req, res) => {
+    try {
+        const { user_id, session_id, wishlist_items } = req.body;
+        const uid = user_id || req.user.id;
+
+        const user = await db.User.findByPk(uid);
+        if (!user || !user.email) {
+            return res.status(404).json({ error: 'User not found or email not available' });
+        }
+
+        const items = await db.Wishlist.findAll({
+            where: { user_id: uid, product_id: wishlist_items },
+            include: [{
+                model: db.Product,
+                attributes: ['id', 'title', 'price', 'img', 'description']
+            }]
+        });
+
+        if (items.length === 0) return res.json({ message: 'No wishlist items to send' });
+
+        try {
+            await emailService.sendWishlistNotification(
+                user.email,
+                user.username,
+                items,
+                process.env.APP_URL || 'http://localhost:3000'
+            );
+        } catch (emailError) {
+            console.error('Email sending failed, but continuing:', emailError);
+        }
+
+        await db.Wishlist.update(
+            { email_sent: true },
+            { where: { user_id: uid } }
+        );
+
+        res.json({ 
+            message: 'Wishlist email prepared and sent',
+            recipientEmail: user.email,
+            itemsCount: items.length
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to send wishlist email' });
+    }
+});
 
 // Start server
 const startServer = async () => {

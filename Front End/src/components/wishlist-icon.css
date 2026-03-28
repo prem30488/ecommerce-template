@@ -1,0 +1,67 @@
+.wishlist-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  position: relative;
+}
+
+.wishlist-icon-btn:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  transform: scale(1.1);
+}
+
+.wishlist-icon-small {
+  font-size: 16px;
+}
+
+.wishlist-icon-medium {
+  font-size: 20px;
+}
+
+.wishlist-icon-large {
+  font-size: 24px;
+}
+
+.wishlist-icon {
+  color: #ff4757;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.wishlist-icon-btn:not(.in-wishlist) .wishlist-icon {
+  color: #999;
+}
+
+.wishlist-icon-btn.in-wishlist {
+  animation: heartBeat 0.6s ease;
+}
+
+.wishlist-icon-btn:hover .wishlist-icon {
+  color: #ff4757;
+}
+
+@keyframes heartBeat {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Custom styling for the "Removed from wishlist" toast notification */
+.s-alert-box.wishlist-removed-toast {
+  background-color: #ff7f50 !important; /* Coral / Orange-Pink color */
+  color: #ffffff !important;
+}

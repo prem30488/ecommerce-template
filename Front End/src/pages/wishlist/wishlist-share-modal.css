@@ -1,0 +1,264 @@
+.wishlist-share-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.wishlist-share-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.share-image {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
+  background: #f5f5f5;
+}
+
+.share-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.share-info {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border-left: 4px solid #ff4757;
+}
+
+.share-price {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.share-price strong {
+  color: #ff4757;
+  font-size: 18px;
+}
+
+.share-description {
+  margin: 0;
+  font-size: 13px;
+  color: #999;
+  line-height: 1.4;
+}
+
+.social-share-section {
+  margin-bottom: 20px;
+}
+
+.social-share-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.social-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.social-btn {
+  padding: 12px 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.social-btn svg {
+  font-size: 20px;
+}
+
+.social-btn.facebook {
+  background-color: #1877f2;
+}
+
+.social-btn.facebook:hover {
+  background-color: #0a66c2;
+}
+
+.social-btn.twitter {
+  background-color: #1da1f2;
+}
+
+.social-btn.twitter:hover {
+  background-color: #1a8cd8;
+}
+
+.social-btn.whatsapp {
+  background-color: #25d366;
+}
+
+.social-btn.whatsapp:hover {
+  background-color: #1fb855;
+}
+
+.social-btn.instagram {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.link-share-section {
+  margin-top: 20px;
+}
+
+.link-share-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.link-copy-group {
+  display: flex;
+  gap: 8px;
+}
+
+.link-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: monospace;
+  background: #f9f9f9;
+  color: #666;
+}
+
+.link-input:focus {
+  outline: none;
+  border-color: #2196F3;
+  background: white;
+}
+
+.copy-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #2196F3;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .wishlist-share-modal {
+    width: 95%;
+  }
+
+  .modal-header h3 {
+    font-size: 16px;
+  }
+
+  .social-buttons {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .share-image {
+    height: 150px;
+  }
+}
