@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import Alert from 'react-s-alert';
 
 export const WishlistContext = createContext(null);
 
@@ -64,11 +65,26 @@ export const WishlistContextProvider = (props) => {
 
   // Add item to wishlist
   const addToWishlist = async (productId) => {
-    console.log('addToWishlist called for product:', productId);
-    if (wishlistItems[productId]) {
+    const idStr = String(productId);
+    console.log('addToWishlist called for product:', idStr);
+    
+    if (wishlistItems[idStr]) {
       console.log('Item already in wishlist');
       return;
     }
+
+    // Optimistic update
+    const tempItem = {
+      id: Date.now(), // temporary ID
+      productId: idStr,
+      addedAt: new Date().toISOString(),
+      isOptimistic: true
+    };
+    
+    setWishlistItems(prev => ({
+      ...prev,
+      [idStr]: tempItem
+    }));
 
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
@@ -79,70 +95,104 @@ export const WishlistContextProvider = (props) => {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          product_id: productId,
+          product_id: idStr,
           session_id: sessionId
         })
       });
 
-      console.log('Add to wishlist response:', response.status);
-
       if (response.ok) {
         const data = await response.json();
+        // Update with real data from server
         setWishlistItems(prev => ({
           ...prev,
-          [productId]: {
+          [idStr]: {
             id: data.id,
-            productId: productId,
+            productId: idStr,
             addedAt: data.createdAt
           }
         }));
-        console.log('Added to wishlist successfully:', productId);
       } else {
-        console.error('Failed to add to wishlist:', response.status);
+        const errorData = await response.json().catch(() => ({}));
+        if (response.status === 400 && errorData.error === 'Item already in wishlist') {
+            console.log('Item already in wishlist on server, keeping local state.');
+            // Remove optimistic flag if you use one, or just keep as is
+            return; 
+        }
+
+        // Rollback on other failure
+        setWishlistItems(prev => {
+          const updated = { ...prev };
+          delete updated[idStr];
+          return updated;
+        });
+        console.error('Failed to add to wishlist:', response.status, errorData);
+        Alert.error('Failed to add to wishlist');
       }
     } catch (err) {
+      // Rollback on network error
+      setWishlistItems(prev => {
+        const updated = { ...prev };
+        delete updated[idStr];
+        return updated;
+      });
       console.error('Failed to add to wishlist:', err);
+      Alert.error('Network error. Failed to add to wishlist');
     }
   };
 
   // Remove item from wishlist
   const removeFromWishlist = async (productId) => {
-    console.log('removeFromWishlist called for product:', productId);
-    const wishlistItem = wishlistItems[productId];
+    const idStr = String(productId);
+    console.log('removeFromWishlist called for product:', idStr);
+    
+    const wishlistItem = wishlistItems[idStr];
     if (!wishlistItem) {
       console.log('Item not in wishlist');
       return;
     }
 
+    // Capture the item for potential rollback
+    const previousItem = { ...wishlistItem };
+
+    // Optimistic update
+    setWishlistItems(prev => {
+      const updated = { ...prev };
+      delete updated[idStr];
+      return updated;
+    });
+
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
-      const response = await fetch(`http://localhost:5000/api/wishlist/${productId}`, {
+      const response = await fetch(`http://localhost:5000/api/wishlist/${idStr}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
 
-      console.log('Remove from wishlist response:', response.status);
-
-      if (response.ok) {
-        setWishlistItems(prev => {
-          const updated = { ...prev };
-          delete updated[productId];
-          return updated;
-        });
-        console.log('Removed from wishlist successfully:', productId);
-      } else {
+      if (!response.ok) {
+        // Rollback on failure
+        setWishlistItems(prev => ({
+          ...prev,
+          [idStr]: previousItem
+        }));
         console.error('Failed to remove from wishlist:', response.status);
+        Alert.error('Failed to remove from wishlist');
       }
     } catch (err) {
+      // Rollback on network error
+      setWishlistItems(prev => ({
+        ...prev,
+        [idStr]: previousItem
+      }));
       console.error('Failed to remove from wishlist:', err);
+      Alert.error('Network error. Failed to remove from wishlist');
     }
   };
 
   // Check if item is in wishlist
   const isInWishlist = (productId) => {
-    return !!wishlistItems[productId];
+    return !!wishlistItems[String(productId)];
   };
 
   // Get wishlist count

@@ -120,7 +120,15 @@ const SharedWishlist = () => {
           {wishlistItems.map((item) => (
             <div key={item.id} className="wishlist-card">
               <div className="card-image">
-                <img src={item.Product?.img} alt={item.Product?.title} />
+                <img 
+                    src={item.Product?.img || (item.Product?.imageURLs ? (item.Product?.imageURLs.split(',')[0].startsWith('http') ? item.Product?.imageURLs.split(',')[0] : `http://localhost:5000/api/product/image/${item.product_id}/${item.Product?.imageURLs.split(',')[0]}`) : `https://picsum.photos/seed/${item.product_id}/400/400`)} 
+                    alt={item.Product?.title} 
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff' }}
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://placehold.co/400x400?text=${encodeURIComponent(item.Product?.title || 'Product')}`;
+                    }}
+                />
                 <span className="category-badge">{item.Product?.category}</span>
               </div>
               <div className="card-body">

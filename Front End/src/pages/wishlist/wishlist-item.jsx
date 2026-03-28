@@ -31,11 +31,31 @@ const WishlistItem = ({ item }) => {
 
   // Get image URL - handle both old and new backend formats
   const getImageUrl = () => {
-    if (item.imageURLs) {
-      const firstImage = item.imageURLs.split(',')[0];
-      return `http://localhost:5000/api/product/image/${item.id}/${firstImage}`;
+    // 1. If 'img' exists (absolute URL or relative path), use it
+    if (item.img) {
+      return item.img;
     }
-    return `images/${item.id}.png`;
+
+    // 2. If 'imageURLs' exists, try to get the first image from the list
+    if (item.imageURLs) {
+      // imageURLs could be a string "img1.png,img2.png" or an array
+      const imagesArr = Array.isArray(item.imageURLs) 
+        ? item.imageURLs 
+        : item.imageURLs.split(',').map(u => u.trim());
+      
+      const firstImage = imagesArr[0];
+      if (firstImage) {
+        // If it looks like a full URL, use it
+        if (firstImage.startsWith('http')) {
+          return firstImage;
+        }
+        // Otherwise use the backend endpoint
+        return `http://localhost:5000/api/product/image/${item.id}/${firstImage}`;
+      }
+    }
+
+    // 3. Fallback to picsum with a deterministic seed based on product ID
+    return `https://picsum.photos/seed/${item.id}/400/400`;
   };
 
   return (
@@ -45,7 +65,11 @@ const WishlistItem = ({ item }) => {
           <img
             src={getImageUrl()}
             alt={item.title}
-            onError={(e) => { e.target.src = `images/${item.id}.png`; }}
+            loading="lazy"
+            onError={(e) => { 
+                e.target.onerror = null; 
+                e.target.src = `https://placehold.co/400x400?text=${encodeURIComponent(item.title)}`; 
+            }}
           />
         </div>
         <div className="wishlist-item-details">

@@ -2,12 +2,13 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import SimilarProducts from "../../components/SimilarProducts"
 import "./productDetails.css";
-import ImageCarousel from './ImageCarousel';
+import VerticalProductCarousel from './VerticalProductCarousel';
 import ProductSelector from './ProductSelector';
 import StarRating from './StarRating';
 import FrequentlyBoughtCarousel from './FrequentlyBoughtCarousel';
 import { findFrequentlyBoughtTogether } from './eclatAlgorithm';
 import Alert from 'react-s-alert';
+
 export const ProductDetailsCart = () => {
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -71,117 +72,131 @@ export const ProductDetailsCart = () => {
 
   if (isLoading)
     return (
-      <p className="h-screen flex flex-col justify-center items-center text-2xl">
-        Loading...
-      </p>
+      <div className="h-screen flex flex-col justify-center items-center">
+         <div className="w-16 h-16 border-4 border-sky-400 border-t-transparent rounded-full animate-spin"></div>
+         <p className="mt-4 text-slate-500 font-bold">Loading product details...</p>
+      </div>
     );
 
   if (err || !product)
     return (
-      <p className="h-screen flex flex-col justify-center items-center text-2xl px-4 text-center">
-        <span>{err || "Product not found"}</span>
-        <Link to="/product" className="text-lg text-sky-500 font-semibold mt-4">
+      <div className="h-screen flex flex-col justify-center items-center text-center px-4">
+        <h2 className="text-2xl font-bold text-slate-800">{err || "Product not found"}</h2>
+        <Link to="/product" className="mt-6 px-8 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-colors">
           &larr; Back to Products
         </Link>
-      </p>
+      </div>
     );
 
-  const { title, description, price, rating, ProductImages, img, categoryId } = product;
+  const [selectedFlavorId, setSelectedFlavorId] = useState(null);
+
+  const { title, description, price, rating, ProductImages, img } = product;
 
   return (
     <React.Fragment>
-      <div className="container flex" style={{ paddingTop: '120px', minHeight: '100%' }}>
-        <div className="col-md-12" style={{ minHeight: '100%' }}>
-          <div className="row" style={{ minHeight: '100%' }}>
-            {/* LEFT SIDE: CAROUSEL */}
-            <div className="col-md-4 mt-8 w-full lg:w-[300px] lg:mt-0 flex-shrink-0 h-full" style={{ minHeight: '100%' }}>
-              <div class="p-3 pt-8 border bg-light h-auto" style={{ minHeight: '100%' }} >
-                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-full" style={{ minHeight: '100%' }} >
-                  <ImageCarousel
-                    id={id}
-                    title={title}
-                    mainImage={img}
-                    additionalImages={ProductImages}
-                  />
+      <div className="bg-slate-50/30">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-10 py-12 md:py-24">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-stretch">
+            {/* LEFT SIDE: CAROUSEL (60%) */}
+            <div className="w-full lg:w-[60%] flex-shrink-0">
+              <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl p-6 md:p-8 transition-all duration-700 hover:shadow-sky-200/20">
+                <VerticalProductCarousel
+                  id={id}
+                  title={title}
+                  mainImage={img}
+                  additionalImages={ProductImages}
+                  selectedFlavorId={selectedFlavorId}
+                />
 
-                  {/* Price and Rating */}
-
-                  <div className="flex items-center justify-between mt-6">
-                    <br />
-                    <span className="text-3xl md:text-4xl font-bold text-sky-600">Price : {price} INR/-</span>
-                    {product.offers && product.offers.length > 0 && (
-                      <span className="text-gray-400 line-through text-lg">
-                        ${(price / (1 - (product.offers[0].discount / 100))).toFixed(2)}
-                      </span>
-                    )}
-
-                    <div className="sm:ml-auto flex items-center bg-rose-50 rounded-full">
-                      <StarRating rating={rating || 4.5} />
+                {/* Price and Rating Area */}
+                <div className="flex flex-col sm:flex-row items-center justify-between mt-12 p-8 bg-slate-50/50 backdrop-blur-sm rounded-[2.5rem] border border-slate-100 gap-8">
+                  <div>
+                    <span className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mb-2 block">Premium Product</span>
+                    <div className="flex items-baseline gap-3">
+                       <span className="text-5xl lg:text-6xl font-black text-slate-900 tracking-tighter">
+                         {price}
+                       </span>
+                       <span className="text-2xl font-black text-sky-500">INR</span>
                     </div>
+                  </div>
+
+                  <div className="flex items-center gap-6 px-8 py-6 bg-white rounded-3xl border border-slate-100 shadow-sm transition-transform hover:scale-105 duration-300">
+                    <div className="flex flex-col items-center">
+                      <span className="text-slate-900 font-black text-2xl leading-none">{rating || 4.5}</span>
+                      <span className="text-slate-400 text-[9px] uppercase font-black mt-2 tracking-widest">Score</span>
+                    </div>
+                    <div className="h-10 w-[1.5px] bg-slate-100" />
+                    <StarRating rating={rating || 4.5} />
                   </div>
                 </div>
               </div>
             </div>
 
-
-            {/* RIGHT SIDE: DETAILS */}
-            <div className="col-md-8 mt-8 w-full lg:w-[300px] lg:mt-0 flex-shrink-0">
-              <div class="p-3 pt-8 border bg-light">
-                <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                  <div className="space-y-6">
-                    {/* Product Title */}
-                    <div className="border-b pb-4">
-                      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-                        {title}
-                      </h1>
+            {/* RIGHT SIDE: DETAILS (40%) */}
+            <div className="w-full lg:w-[40%] flex flex-col">
+              <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-50 shadow-2xl shadow-slate-200/40 min-h-full flex flex-col transition-all duration-700 hover:shadow-sky-200/30">
+                <div className="space-y-10 flex-grow">
+                  {/* Product Title */}
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                       <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+                       <span className="text-sky-500 text-[11px] font-black uppercase tracking-widest">In Stock & Ready to Ship</span>
                     </div>
+                    <h1 className="text-4xl md:text-5xl font-black text-slate-900 leading-[1.1] tracking-tight">
+                      {title}
+                    </h1>
+                  </div>
 
-
-
-                    {/* Shipping Info */}
-                    <div className="bg-sky-50 p-4 rounded-lg border border-sky-100">
-                      <p className="text-sky-800 text-sm flex items-center gap-2">
-                        <span className="text-sky-500 font-bold">✓</span> Free Shipping Across India
-                      </p>
-                      <p className="text-sky-800 text-sm flex items-center gap-2 mt-2">
-                        <span className="text-sky-500 font-bold">✓</span> Delivery in 3-5 business days
-                      </p>
+                  {/* Shipping Badges */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50 flex items-center gap-3">
+                      <div className="w-8 h-8 flex items-center justify-center bg-emerald-500 text-white rounded-full text-xs shadow-md shadow-emerald-200">✓</div>
+                      <span className="text-emerald-900 text-[13px] font-bold">Free Shipping</span>
                     </div>
-
-                    {/* Description */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">Description</h3>
-                      <p className="text-gray-600 leading-relaxed text-sm">{description}</p>
+                    <div className="bg-sky-50/50 p-4 rounded-2xl border border-sky-100/50 flex items-center gap-3">
+                      <div className="w-8 h-8 flex items-center justify-center bg-sky-500 text-white rounded-full text-xs shadow-md shadow-sky-200">✓</div>
+                      <span className="text-sky-900 text-[13px] font-bold">Express Delivery</span>
                     </div>
+                  </div>
 
-                    {/* Product Selector */}
-                    <div className="pt-4 border-t border-gray-100">
-                      <ProductSelector product={product} />
-                    </div>
+                  {/* Description */}
+                  <div className="bg-slate-50/40 p-6 rounded-3xl border border-slate-100/50">
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Manufacturer Notes</h3>
+                    <p className="text-slate-700 leading-relaxed text-[15px] italic">"{description}"</p>
+                  </div>
+
+                  {/* Product Selector (Buttons & Options) */}
+                  <div className="pt-4">
+                    <ProductSelector 
+                      product={product} 
+                      onFlavorChange={setSelectedFlavorId}
+                    />
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* FREQUENTLY BOUGHT TOGETHER */}
+          {/* BELOW THE FOLD: BUNDLES */}
           {frequentProducts.length > 0 && (
-            <div className="mt-16">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-sky-400 inline-block">
-                Frequently Bought Together
+            <div className="mt-24 lg:mt-32">
+              <h2 className="text-4xl font-black text-slate-850 mb-12 flex items-center gap-6">
+                Complete Your Stack
+                <div className="flex-grow h-[2px] bg-slate-100 rounded-full" />
               </h2>
-              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+              <div className="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-2xl shadow-slate-200/30 border border-slate-50 transition-all hover:scale-[1.01] duration-500">
                 <FrequentlyBoughtCarousel
                   currentProduct={product}
                   frequentProducts={frequentProducts}
                 />
-                <div className="mt-6 text-center">
-                  <p className="text-gray-500 text-sm mb-2">Total Price (All Items)</p>
-                  <p className="text-3xl font-bold text-sky-600 mb-4">
+                <div className="mt-12 pt-10 border-t border-slate-100 text-center flex flex-col items-center">
+                  <span className="text-slate-400 text-xs font-black uppercase tracking-[0.25em] mb-4">Combo Value Price</span>
+                  <p className="text-5xl md:text-6xl font-black text-sky-600 mb-10 tracking-tighter">
                     ${(Number(product.price) + frequentProducts.reduce((sum, p) => sum + Number(p.price), 0)).toFixed(2)}
                   </p>
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition-transform hover:scale-105 active:scale-95">
-                    Add All To Cart
+                  <button className="bg-slate-900 hover:bg-sky-600 text-white px-16 py-6 rounded-[2rem] font-black shadow-[0_20px_40px_rgba(14,165,233,0.2)] transition-all duration-500 hover:scale-105 active:scale-95 group flex items-center gap-4">
+                    ADD BUNDLE TO COLLECTION
+                    <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                   </button>
                 </div>
               </div>
@@ -189,15 +204,13 @@ export const ProductDetailsCart = () => {
           )}
 
           {/* SIMILAR PRODUCTS */}
-          <div className="mt-16">
+          <div className="mt-24 lg:mt-32 pt-20 border-t border-slate-100">
             <SimilarProducts productCat={product} />
           </div>
         </div>
       </div>
-    </React.Fragment >
+    </React.Fragment>
   );
 };
-
-
 
 export default ProductDetailsCart;

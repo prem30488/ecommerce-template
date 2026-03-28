@@ -17,7 +17,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 // Middleware
 app.use(cors());
 app.use(express.json());
-// Serve MDB5 static files from the frontend's public folder
+// Serve static files from the frontend's public folder
+app.use(express.static(path.join(__dirname, '..', 'Front End', 'public')));
+// Serve MDB5 static files specifically if needed
 app.use('/MDB5-STANDARD-UI-KIT-Free-9.3.0', express.static(path.join(__dirname, '..', 'Front End', 'public', 'MDB5-STANDARD-UI-KIT-Free-9.3.0')));
 
 // Authentication middleware
@@ -686,7 +688,13 @@ app.get('/api/user/users/:id', authenticateToken, async (req, res) => {
 app.get('/api/product/fetchById/:id', async (req, res) => {
     try {
         const product = await db.Product.findByPk(req.params.id, {
-            include: [{ model: db.ProductImage }]
+            include: [
+              { 
+                model: db.ProductImage,
+                include: [{ model: db.Flavor }] 
+              },
+              { model: db.Offer, as: 'offers' }
+            ]
         });
         if (product) res.json(product);
         else res.status(404).json({ error: 'Product not found' });
@@ -698,20 +706,47 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
 app.post('/api/product/createProduct', authenticateToken, async (req, res) => {
     try {
         delete req.body.id;
-        const product = await db.Product.create(req.body);
+        const productData = req.body;
+        // If ProductImages provided, handle them
+        const product = await db.Product.create(productData, {
+            include: [{ model: db.ProductImage }]
+        });
         res.status(201).json(product);
     } catch (error) {
         console.error('Error creating product:', error);
-        require('fs').writeFileSync('product_error.log', JSON.stringify(error, null, 2));
         res.status(500).json({ error: 'Failed to create product' });
     }
 });
 
 app.put('/api/product/:id', authenticateToken, async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
-        await db.Product.update(req.body, { where: { id: req.params.id } });
+        const productData = req.body;
+        await db.Product.update(productData, { 
+            where: { id: req.params.id },
+            transaction: t
+        });
+
+        // If ProductImages are provided, sync them
+        if (productData.ProductImages) {
+            await db.ProductImage.destroy({ 
+                where: { product_id: req.params.id },
+                transaction: t
+            });
+            
+            const imagesToCreate = productData.ProductImages.map(img => ({
+                ...img,
+                product_id: req.params.id
+            }));
+            
+            await db.ProductImage.bulkCreate(imagesToCreate, { transaction: t });
+        }
+
+        await t.commit();
         res.json({ message: 'Product updated' });
     } catch (error) {
+        await t.rollback();
+        console.error('Error updating product:', error);
         res.status(500).json({ error: 'Failed to update product' });
     }
 });
@@ -782,6 +817,50 @@ app.delete('/api/category/delete/:id', authenticateToken, async (req, res) => {
         res.json({ message: 'Category deleted' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete category' });
+    }
+});
+
+// Flavor CRUD
+app.get('/api/flavor/getFlavors', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 0;
+        const size = parseInt(req.query.size) || 100;
+        const { count, rows } = await db.Flavor.findAndCountAll({
+            offset: page * size,
+            limit: size,
+            order: [['name', 'ASC']]
+        });
+        res.json(getPaginatedResponse(rows, count, page, size));
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch flavors' });
+    }
+});
+
+app.post('/api/flavor/createFlavor', authenticateToken, async (req, res) => {
+    try {
+        const flavor = await db.Flavor.create(req.body);
+        res.status(201).json(flavor);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create flavor' });
+    }
+});
+
+app.put('/api/flavor/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.Flavor.update(req.body, { where: { id: req.params.id } });
+        res.json({ message: 'Flavor updated' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update flavor' });
+    }
+});
+
+app.delete('/api/flavor/delete/:id', authenticateToken, async (req, res) => {
+    try {
+        await db.Flavor.destroy({ where: { id: req.params.id } });
+        res.json({ message: 'Flavor deleted' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete flavor' });
     }
 });
 
@@ -1103,6 +1182,31 @@ app.post('/api/testimonial/createTestimonial', authenticateToken, async (req, re
 });
 
 const multer = require('multer');
+const flavorStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const flavorId = req.query.flavorId || 'temp';
+    const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'flavor', String(flavorId));
+    
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
+  }
+});
+
+const uploadFlavorIcon = multer({ storage: flavorStorage });
+
+app.post('/api/flavor/upload', authenticateToken, uploadFlavorIcon.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  
+  const flavorId = req.query.flavorId || 'temp';
+  const fileUrl = `/images/flavor/${flavorId}/${req.file.filename}`;
+  res.send(fileUrl);
+});
+
 const testimonialStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'testimonials');
@@ -1115,6 +1219,50 @@ const testimonialStorage = multer.diskStorage({
     cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
   }
 });
+const productStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const productId = req.query.productId || 'temp';
+    const flavorId = req.query.flavorId || 'default';
+    const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId), String(flavorId));
+    
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
+  }
+});
+
+const uploadProductImage = multer({ storage: productStorage });
+
+app.post('/api/product/upload', authenticateToken, uploadProductImage.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  
+  const productId = req.query.productId || 'temp';
+  const flavorId = req.query.flavorId || 'default';
+  const fileUrl = `/images/${productId}/${flavorId}/${req.file.filename}`;
+  res.send(fileUrl);
+});
+
+app.get('/api/product/images/:productId/:flavorId', authenticateToken, (req, res) => {
+  const { productId, flavorId } = req.params;
+  const dirPath = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId), String(flavorId));
+  
+  if (!fs.existsSync(dirPath)) {
+    return res.json([]);
+  }
+
+  try {
+    const files = fs.readdirSync(dirPath).filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f));
+    const imageUrls = files.map(file => `/images/${productId}/${flavorId}/${file}`);
+    res.json(imageUrls);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to read directory' });
+  }
+});
+
 const uploadTestimonial = multer({ storage: testimonialStorage });
 
 app.post('/api/testimonial/upload', authenticateToken, uploadTestimonial.single('file'), (req, res) => {

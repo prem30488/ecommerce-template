@@ -43,6 +43,7 @@ import CouponManagementPage from './pages/admin/component/coupon/CouponManagemen
 import OrderManagementPage from './pages/admin/component/orders/OrderManagementPage';
 import SliderManagementPage from './pages/admin/component/slider/SliderManagementPage';
 import LeadershipManagementPage from './pages/admin/component/leadership/LeadershipManagementPage';
+import FlavorManagementPage from './pages/admin/component/flavor/FlavorManagementPage';
 
 import TaxInvoice from "./pages/checkout/TaxInvoice";
 
@@ -201,6 +202,7 @@ class App extends Component {
 							<Route exact path="/orderManagement" element={<OrderManagementPage />} />
 							<Route exact path="/sliderManagement" element={<SliderManagementPage />} />
 							<Route exact path="/leadershipManagement" element={<LeadershipManagementPage />} />
+							<Route exact path="/flavorManagement" element={<FlavorManagementPage />} />
 
 							{/* Wishlist Routes */}
 							<Route path="/wishlist" element={<Wishlist />} />

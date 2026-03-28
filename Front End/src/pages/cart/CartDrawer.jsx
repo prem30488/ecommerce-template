@@ -8,12 +8,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import { Cart } from './cart';
-
+import { ShoppingCart } from "phosphor-react";
 import { ShopContext } from '../../context/shop-context';
-import { useContext,useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 
 export default function CartDrawer() {
     let countCart = 0;
@@ -78,7 +76,12 @@ export default function CartDrawer() {
         
       
         <React.Fragment key={'right'}>
-          <i className="fa" onClick={toggleDrawer('right', true)} style={{fontSize:"24px"}}>&#xf07a;</i><span className='badge badge-warning' id='lblCartCount'> {getTotalCartCount()} </span>
+          <span className="cart-header-trigger" onClick={toggleDrawer('right', true)} title="View Cart" style={{ fontSize: "24px", cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}>
+            <ShoppingCart style={{ color: '#0ea5e9' }} />
+            <span className='badge badge-warning' id='lblCartCount' style={{ marginLeft: 6 }}>
+              {getTotalCartCount()}
+            </span>
+          </span>
           <Drawer
             anchor={'right'}
             open={state['right']}

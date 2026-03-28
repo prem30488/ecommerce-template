@@ -35,7 +35,7 @@ const thumbsContainer = {
     height: '100%'
   };
 
-const FileUploader = ({maxNoFiles,onSave, onCancel}) => {
+const FileUploader = ({maxNoFiles, onSave, onCancel, productId, flavorId}) => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   let fileURL = '';
@@ -59,7 +59,12 @@ newFiles.forEach((file) => {
     
   const token = localStorage.getItem('accessToken');
   
-  axios.post( API_BASE_URL + '/api/testimonial/upload', formData, {
+  // Use product upload if IDs are present, otherwise fallback
+  const uploadUrl = (productId || flavorId) 
+    ? API_BASE_URL + `/api/product/upload?productId=${productId || 'temp'}&flavorId=${flavorId || 'default'}`
+    : API_BASE_URL + '/api/testimonial/upload';
+
+  axios.post( uploadUrl, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
       'Authorization': 'Bearer ' + token,
@@ -71,9 +76,8 @@ newFiles.forEach((file) => {
   })
     .then((response) => {
       console.log('File uploaded successfully:', response.data);
-      
-      fileURL=response.data;
-      onSave(fileURL);
+      fileURL = response.data;
+      onSave(fileURL, flavorId);
     })
     .catch((error) => {
       console.error('Error uploading file:', error);
@@ -81,7 +85,7 @@ newFiles.forEach((file) => {
     });
     
 });
-}, [uploadedFiles]);
+}, [uploadedFiles, flavorId, productId]);
 
   const {getRootProps, getInputProps} = useDropzone({
     accept: 'image/png', maxFiles: maxNoFiles,

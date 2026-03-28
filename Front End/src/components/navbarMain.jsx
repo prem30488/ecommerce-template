@@ -16,32 +16,6 @@ export const NavbarMain = () => {
   const { wishlistItems } = useContext(WishlistContext);
   const { products } = useContext(ShopContext);
   const location = useLocation();
-  let countCart = 0;
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        getCountCart();
-      } catch (err) {
-      }
-    };
-    getData();
-  }, []);
-
-
-
-  const getCountCart = () => {
-    countCart = 0;
-
-    if (cartItems.length > 0) {
-      for (const i in cartItems) {
-        if (cartItems[i] > 0) {
-          countCart = countCart + cartItems[i];
-        }
-      }
-    }
-    return countCart;
-  }
 
 
   return (

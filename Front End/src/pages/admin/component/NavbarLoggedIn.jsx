@@ -113,6 +113,15 @@ const NavbarLoggedIn = () => {
           </ListItem>
           :""}
 
+          {currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"?
+          <ListItem disablePadding>
+            <ListItemButton onClick={()=> navigate("/flavorManagement")}>
+              <Category />
+              <ListItemText primary="Flavors" />
+            </ListItemButton>
+          </ListItem>
+          :""}
+
           {privileges && privileges.orders===true  || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"? 
           <ListItem disablePadding>
             <ListItemButton onClick={()=> navigate("/orderManagement")}>
