@@ -1,5 +1,5 @@
 // ProductSelector.js
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { ShopContext } from '../../context/shop-context';
 import { WishlistContext } from '../../context/wishlist-context';
 import WishlistIcon from '../../components/WishlistIcon';

@@ -10,33 +10,61 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Box,
+  TablePagination,
 } from '@mui/material';
+import { Clear as ClearIcon } from '@mui/icons-material';
 import { getForms, fetchFormById, updateForm, addForm, deleteForm, undeleteForm } from '../../../../util/APIUtils';
 import { getCurrentDate } from '../../../../util/util';
 import Alert from 'react-s-alert';
 function ItemManager() {
-  const pageSize = 10;
-  const page = 0;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalElements, setTotalElements] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
 
-
-  const reloadCategoriesList = () => {
-    getForms(page, pageSize)
-      .then((res) => {
-        setItems(res.content);
-        setTotalElements(res.totalElements);
-      }).catch(error => {
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-      });
-
-  }
-
+  const fetchFormsList = async (page = 0, search = '') => {
+    setLoading(true);
+    try {
+      const res = await getForms(page, rowsPerPage, search);
+      setItems(res.content || []);
+      setTotalElements(res.totalElements || 0);
+    } catch (error) {
+      Alert.error((error && error.message) || 'Failed to fetch forms');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    reloadCategoriesList();
-  }, [page, pageSize]);
+    fetchFormsList(0, searchQuery);
+  }, []);
 
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setCurrentPage(0);
+    fetchFormsList(0, query);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setCurrentPage(0);
+    fetchFormsList(0, '');
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+    fetchFormsList(newPage, searchQuery);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(0);
+    fetchFormsList(0, searchQuery);
+  };
 
   const [id, setId] = useState('');
   const [title, setTitle] = useState('');
@@ -62,7 +90,7 @@ function ItemManager() {
       setDescription('');
       setItems((prevItems) => [...prevItems, res]);
       clearForm();
-      reloadCategoriesList();
+      fetchFormsList(currentPage, searchQuery);
     }).catch(error => {
       Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
     });
@@ -90,7 +118,7 @@ function ItemManager() {
         deleteForm(item).then(res => {
           Alert.success("Success!");
           setItems(updatedItems);
-          reloadCategoriesList();
+          fetchFormsList(currentPage, searchQuery);
         }).catch(error => {
           Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
@@ -153,6 +181,7 @@ function ItemManager() {
           setEditItemId(null);
           setEditTitle('');
           setEditDescription('');
+          fetchFormsList(currentPage, searchQuery);
         }).catch(error => {
           Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
@@ -305,25 +334,59 @@ function ItemManager() {
           label="Show Deleted Items"
         />
       </div>
+
+      <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+        <TextField
+          fullWidth
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={handleSearch}
+          placeholder="Search by title/description..."
+        />
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={handleClearSearch}
+          startIcon={<ClearIcon />}
+        >
+          Clear
+        </Button>
+      </Box>
+
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
           rows={items}
           columns={columns}
+          loading={loading}
+          rowCount={totalElements}
+          paginationMode="server"
+          onPaginationModelChange={(newModel) => {
+            handleChangePage(null, newModel.page);
+            if (newModel.pageSize !== rowsPerPage) {
+              setRowsPerPage(newModel.pageSize);
+            }
+          }}
           initialState={{
             pagination: {
-              paginationModel: { pageSize: pageSize, page: page },
+              paginationModel: { pageSize: rowsPerPage, page: currentPage },
             },
-          }}
-          onPaginationModelChange={(model) => {
-            setPageSize(model.pageSize);
-            setPage(model.page);
           }}
           pageSizeOptions={[5, 10, 25, 50]}
           pagination
-          rowCount={totalElements}
-          paginationMode="server"
         />
       </div>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        component="div"
+        count={totalElements}
+        rowsPerPage={rowsPerPage}
+        page={currentPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 }

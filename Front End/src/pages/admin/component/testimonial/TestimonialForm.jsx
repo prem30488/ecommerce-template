@@ -1,7 +1,9 @@
-// TestimonialForm.js
 import React, { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Rating from '@mui/material/Rating';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import FileUploader from '../product/FileUploader';
 
 const TestimonialForm = ({ onSubmit, onCancel, initialData }) => {
@@ -71,6 +73,22 @@ const TestimonialForm = ({ onSubmit, onCancel, initialData }) => {
         margin="normal"
         required
       />
+      <Box sx={{ mt: 2, mb: 2 }}>
+        <Typography component="legend" color="textSecondary" sx={{ mb: 1 }}>
+          Feedback Rating
+        </Typography>
+        <Rating
+          name="rating"
+          value={Number(formData.rating) || 5}
+          onChange={(event, newValue) => {
+            setFormData((prevData) => ({
+              ...prevData,
+              rating: newValue,
+            }));
+          }}
+          size="large"
+        />
+      </Box>
       {formData.imageURL?<img src ={formData.imageURL} style = {{width:"100px",height:"100px"}} /> : ""}
       <FileUploader maxNoFiles={1} onSave = {returnFileArray} />
       <Button variant="contained" color="primary" type="submit">

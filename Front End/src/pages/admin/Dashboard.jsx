@@ -1,4 +1,4 @@
-import React , { useState } from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Container, Paper, List, ListItem, ListItemText, Drawer, Divider, Card } from '@mui/material';
 import { Menu, Home, ShoppingCart, Assignment, People, Lock, GifTwoTone, Category } from '@mui/icons-material';
 
@@ -11,7 +11,7 @@ import CustomerChurnRateGraph from './component/CustomerChurnRateGraph';
 import { FaBlog, FaFileContract, FaGoodreads } from 'react-icons/fa';
 
 const Dashboard = () => {
-  
+
   return (
     <div>
       <Container>

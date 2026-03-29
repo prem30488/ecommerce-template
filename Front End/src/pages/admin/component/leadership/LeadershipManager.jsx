@@ -4,17 +4,22 @@ import {
   Button,
   TextField,
   Box,
-  Typography
+  Typography,
+  TablePagination
 } from '@mui/material';
+import { Clear as ClearIcon } from '@mui/icons-material';
 import { getLeadershipTeams, addLeadershipTeam, updateLeadershipTeam, deleteLeadershipTeam } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
 
 function LeadershipManager() {
-  const rowsPerPage = 50;
-  const page = 0;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [totalElements, setTotalElements] = useState(0);
   const [teams, setTeams] = useState([]);
-  
+
   const [name, setName] = useState('');
   const [designation, setDesignation] = useState('');
   const [image, setImage] = useState('');
@@ -26,17 +31,51 @@ function LeadershipManager() {
   const [editImage, setEditImage] = useState('');
   const [editOrder, setEditOrder] = useState(0);
 
+  const fetchLeadershipList = async (page = 0, search = '') => {
+    setLoading(true);
+    try {
+      const res = await getLeadershipTeams(page, rowsPerPage, search);
+      setTeams(res.content || []);
+      setTotalCount(res.totalElements || 0);
+    } catch (error) {
+      console.error('Error fetching leadership teams:', error);
+      Alert.error('Failed to load leadership teams');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const reloadList = () => {
-    getLeadershipTeams(page, rowsPerPage)
-      .then((res) => {
-        setTeams(res.content);
-        setTotalElements(res.totalElements);
-      });
+    fetchLeadershipList(currentPage, searchQuery);
   }
 
   React.useEffect(() => {
-    reloadList();
+    fetchLeadershipList(0, searchQuery);
   }, []);
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setCurrentPage(0);
+    fetchLeadershipList(0, query);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setCurrentPage(0);
+    fetchLeadershipList(0, '');
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+    fetchLeadershipList(newPage, searchQuery);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(0);
+    fetchLeadershipList(0, searchQuery);
+  };
 
   const handleAdd = () => {
     const obj = { name, designation, image, order: parseInt(order) };
@@ -65,17 +104,17 @@ function LeadershipManager() {
     updateLeadershipTeam(obj).then(res => {
       Alert.success("Updated!");
       setEditId(null);
-      reloadList();
+      fetchLeadershipList(currentPage, searchQuery);
     }).catch(error => {
       Alert.error((error && error.message) || 'Failed to update.');
     });
   };
 
   const handleDelete = (id) => {
-    if(window.confirm("Are you sure?")) {
+    if (window.confirm("Are you sure?")) {
       deleteLeadershipTeam(id).then(res => {
         Alert.success("Deleted!");
-        reloadList();
+        fetchLeadershipList(currentPage, searchQuery);
       }).catch(error => {
         Alert.error((error && error.message) || 'Failed to delete.');
       });
@@ -104,7 +143,7 @@ function LeadershipManager() {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h5" sx={{ mb: 3 }}>Leadership Team Manager</Typography>
-      
+
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 4, bgcolor: '#f9f9f9', p: 2, borderRadius: 2 }}>
         <TextField size="small" label="Name" value={name} onChange={(e) => setName(e.target.value)} />
         <TextField size="small" label="Designation" value={designation} onChange={(e) => setDesignation(e.target.value)} />
@@ -127,13 +166,57 @@ function LeadershipManager() {
         </Box>
       )}
 
+      <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+        <TextField
+          fullWidth
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={handleSearch}
+          placeholder="Search by name, designation..."
+        />
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={handleClearSearch}
+          startIcon={<ClearIcon />}
+        >
+          Clear
+        </Button>
+      </Box>
+
       <Box sx={{ height: 400, width: '100%' }}>
         <DataGrid
           rows={teams}
           columns={columns}
-          pageSize={rowsPerPage}
+          loading={loading}
+          rowCount={totalCount}
+          paginationMode="server"
+          onPaginationModelChange={(newModel) => {
+            handleChangePage(null, newModel.page);
+            if (newModel.pageSize !== rowsPerPage) {
+              setRowsPerPage(newModel.pageSize);
+            }
+          }}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: rowsPerPage, page: currentPage },
+            },
+          }}
+          pageSizeOptions={[5, 10, 25, 50]}
         />
       </Box>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        component="div"
+        count={totalCount}
+        rowsPerPage={rowsPerPage}
+        page={currentPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Box>
   );
 }

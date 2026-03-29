@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import {
   Button,
@@ -7,21 +7,34 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  TablePagination,
+  Box,
 } from '@mui/material';
+import { Clear as ClearIcon, Search as SearchIcon } from '@mui/icons-material';
 import { getCategories, addCategory, fetchCategoryById, updateCategory, deleteCategory } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
 import { getCurrentDate } from '../../../../util/util';
 function CategoryManager() {
-  const rowsPerPage = 100;
-  const page = 0;
-  const [totalElements, setTotalElements] = useState(0);
-  const reloadCategoriesList = () => {
-    getCategories(page, rowsPerPage)
-      .then((res) => {
-        setCategories(res.content);
-        setTotalElements(res.totalElements);
-      });
-  }
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const fetchCategoriesList = async (page = 0, search = '') => {
+    setLoading(true);
+    try {
+      const res = await getCategories(page, rowsPerPage, search);
+      setCategories(res.content || []);
+      setTotalCount(res.totalElements || 0);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      Alert.error('Failed to load categories');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const [categories, setCategories] = useState([]);
 
   const [title, setTitle] = useState('');
@@ -30,9 +43,33 @@ function CategoryManager() {
   const [editTitle, setEditTitle] = useState('');
   const [editType, setEditType] = useState(1);
 
-  React.useEffect(() => {
-    reloadCategoriesList();
+  useEffect(() => {
+    fetchCategoriesList(0, searchQuery);
   }, []);
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setCurrentPage(0);
+    fetchCategoriesList(0, query);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setCurrentPage(0);
+    fetchCategoriesList(0, '');
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+    fetchCategoriesList(newPage, searchQuery);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(0);
+    fetchCategoriesList(0, searchQuery);
+  };
 
   const handleAddCategory = () => {
     const newId = categories.length + 1;
@@ -43,7 +80,7 @@ function CategoryManager() {
       Alert.success("Success!");
       setTitle('');
       setType(1);
-      reloadCategoriesList();
+      fetchCategoriesList(currentPage, searchQuery);
     }).catch(error => {
       Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
     });
@@ -79,6 +116,7 @@ function CategoryManager() {
           setEditCategoryId(null);
           setEditTitle('');
           setEditType(1);
+          fetchCategoriesList(currentPage, searchQuery);
         }).catch(error => {
           Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
@@ -100,6 +138,7 @@ function CategoryManager() {
     );
     deleteCategory(id).then(res => {
       Alert.success("Success!");
+      fetchCategoriesList(currentPage, searchQuery);
     }).catch(error => {
       Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
     });
@@ -151,7 +190,7 @@ function CategoryManager() {
     // });
     updateCategory(cat).then(res => {
       Alert.success("Success!");
-      reloadCategoriesList();
+      fetchCategoriesList(currentPage, searchQuery);
     }).catch(error => {
       Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
     });
@@ -283,23 +322,62 @@ function CategoryManager() {
           Add Category
         </Button>
       </div>
+
+      <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+        <TextField
+          fullWidth
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={handleSearch}
+          placeholder="Search by title..."
+        />
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={handleClearSearch}
+          startIcon={<ClearIcon />}
+        >
+          Clear
+        </Button>
+      </Box>
+
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
           rows={categories}
           columns={columns}
           checkboxSelection={false}
-          rowCount={totalElements}
+          rowCount={totalCount}
+          loading={loading}
           paginationMode="server"
+          onPaginationModelChange={(newModel) => {
+            handleChangePage(null, newModel.page);
+            if (newModel.pageSize !== rowsPerPage) {
+              setRowsPerPage(newModel.pageSize);
+            }
+          }}
           initialState={{
             pagination: {
-              paginationModel: { pageSize: rowsPerPage, page: page },
+              paginationModel: { pageSize: rowsPerPage, page: currentPage },
             },
           }}
-          pageSizeOptions={[rowsPerPage]}
+          pageSizeOptions={[5, 10, 25, 50]}
         />
       </div>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        component="div"
+        count={totalCount}
+        rowsPerPage={rowsPerPage}
+        page={currentPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 }
+
 
 export default CategoryManager;

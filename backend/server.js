@@ -224,16 +224,16 @@ async function seedData() {
 
             // Seed one random offer per product (only if none exists yet)
             const offerTemplates = [
-                { type: 0, discount: 5,  buy: null, buyget: null, label: '5% OFF'          },
-                { type: 0, discount: 10, buy: null, buyget: null, label: '10% OFF'         },
-                { type: 0, discount: 15, buy: null, buyget: null, label: '15% OFF'         },
-                { type: 0, discount: 20, buy: null, buyget: null, label: '20% OFF'         },
-                { type: 0, discount: 25, buy: null, buyget: null, label: '25% OFF'         },
-                { type: 0, discount: 30, buy: null, buyget: null, label: '30% OFF'         },
-                { type: 1, discount: 0,  buy: 2,   buyget: 1,    label: 'Buy 2 Get 1 Free' },
-                { type: 1, discount: 0,  buy: 3,   buyget: 1,    label: 'Buy 3 Get 1 Free' },
-                { type: 2, discount: 0,  buy: 2,   buyget: 1,    label: 'Buy 2 Get 1 Free' },
-                { type: 0, discount: 12, buy: null, buyget: null, label: '12% OFF'         },
+                { type: 0, discount: 5, buy: null, buyget: null, label: '5% OFF' },
+                { type: 0, discount: 10, buy: null, buyget: null, label: '10% OFF' },
+                { type: 0, discount: 15, buy: null, buyget: null, label: '15% OFF' },
+                { type: 0, discount: 20, buy: null, buyget: null, label: '20% OFF' },
+                { type: 0, discount: 25, buy: null, buyget: null, label: '25% OFF' },
+                { type: 0, discount: 30, buy: null, buyget: null, label: '30% OFF' },
+                { type: 1, discount: 0, buy: 2, buyget: 1, label: 'Buy 2 Get 1 Free' },
+                { type: 1, discount: 0, buy: 3, buyget: 1, label: 'Buy 3 Get 1 Free' },
+                { type: 2, discount: 0, buy: 2, buyget: 1, label: 'Buy 2 Get 1 Free' },
+                { type: 0, discount: 12, buy: null, buyget: null, label: '12% OFF' },
             ];
             const allProducts = await db.Product.findAll();
             for (const prod of allProducts) {
@@ -242,14 +242,14 @@ async function seedData() {
                     const tpl = offerTemplates[(prod.id - 1) % offerTemplates.length];
                     await db.Offer.create({
                         productId: prod.id,
-                        type:      tpl.type,
-                        discount:  tpl.discount,
-                        buy:       tpl.buy,
-                        buyget:    tpl.buyget,
-                        size:      'S',
-                        active:    true,
-                        from:      new Date(),
-                        to:        new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+                        type: tpl.type,
+                        discount: tpl.discount,
+                        buy: tpl.buy,
+                        buyget: tpl.buyget,
+                        size: 'S',
+                        active: true,
+                        from: new Date(),
+                        to: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
                     });
                 }
             }
@@ -360,115 +360,211 @@ async function seedData() {
 
         // Seed testimonials
         const defaultTestimonials = [
-          {
-            title: 'Prembhai',
-            designation: 'Director',
-            organization: 'Ecommerce Inc.',
-            description: 'Excellent service and great support. Highly recommended!',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Prembhai.jpg',
-          },
-          {
-            title: 'Rosie',
-            designation: 'CEO',
-            organization: 'Prem Micro Serv Pvt Ltd',
-            description: 'The team delivered beyond expectations. Will work again!',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Rosie.jpg',
-          },
-          {
-            title: 'Roose',
-            designation: 'CA',
-            organization: 'Hzneley Pvt Ltd',
-            description: 'Professional and reliable service. Very satisfied.',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Roose.jpg',
-          },
-          {
-            title: 'Foose',
-            designation: 'IT Head',
-            organization: 'Caamunda',
-            description: 'Great experience from start to finish. Highly recommend!',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Foose.jpg',
-          },
-          {
-            title: 'Sarah Jenkins',
-            designation: 'Marketing Lead',
-            organization: 'Creative Spark',
-            description: 'We saw immediate improvements in our workflow. Absolutely fantastic.',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Sarah_Jenkins.jpg',
-          },
-          {
-            title: 'Michael Chen',
-            designation: 'Product Manager',
-            organization: 'TechFlow',
-            description: 'A seamless integration built by a stellar team. Highly knowledgeable.',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Michael_Chen.jpg',
-          },
-          {
-            title: 'Amanda Williams',
-            designation: 'VP of Engineering',
-            organization: 'Globex Corp',
-            description: 'The attention to detail and professional communication was exactly what we needed.',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Amanda_Williams.jpg',
-          },
-          {
-            title: 'Robert Fox',
-            designation: 'Founder',
-            organization: 'NextGen Solutions',
-            description: 'Exceeded expectations. Very happy with the final product delivered on time.',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Robert_Fox.jpg',
-          },
-          {
-            title: 'Elena Rodriguez',
-            designation: 'Operations Director',
-            organization: 'Apex Dynamics',
-            description: 'Streamlined our entire customer funnel. Support has been top notch!',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Elena_Rodriguez.jpg',
-          },
-          {
-            title: 'David Kim',
-            designation: 'CTO',
-            organization: 'Pioneer Web',
-            description: 'Robust architecture with great UI/UX sensibilities. Extremely polished work.',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/David_Kim.jpg',
-          },
-          {
-            title: 'Laura Bennett',
-            designation: 'E-commerce Manager',
-            organization: 'Retail Pro',
-            description: 'Sales went up exactly as promised! Best decision we made all year.',
-            rating: Math.floor(Math.random() * 5) + 1,
-            imageURL: '/images/testimonials/Laura_Bennett.jpg',
-          }
+            {
+                title: 'Prembhai',
+                designation: 'Director',
+                organization: 'Ecommerce Inc.',
+                description: 'Excellent service and great support. Highly recommended!',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Prembhai.jpg',
+            },
+            {
+                title: 'Rosie',
+                designation: 'CEO',
+                organization: 'Prem Micro Serv Pvt Ltd',
+                description: 'The team delivered beyond expectations. Will work again!',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Rosie.jpg',
+            },
+            {
+                title: 'Roose',
+                designation: 'CA',
+                organization: 'Hzneley Pvt Ltd',
+                description: 'Professional and reliable service. Very satisfied.',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Roose.jpg',
+            },
+            {
+                title: 'Foose',
+                designation: 'IT Head',
+                organization: 'Caamunda',
+                description: 'Great experience from start to finish. Highly recommend!',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Foose.jpg',
+            },
+            {
+                title: 'Sarah Jenkins',
+                designation: 'Marketing Lead',
+                organization: 'Creative Spark',
+                description: 'We saw immediate improvements in our workflow. Absolutely fantastic.',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Sarah_Jenkins.jpg',
+            },
+            {
+                title: 'Michael Chen',
+                designation: 'Product Manager',
+                organization: 'TechFlow',
+                description: 'A seamless integration built by a stellar team. Highly knowledgeable.',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Michael_Chen.jpg',
+            },
+            {
+                title: 'Amanda Williams',
+                designation: 'VP of Engineering',
+                organization: 'Globex Corp',
+                description: 'The attention to detail and professional communication was exactly what we needed.',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Amanda_Williams.jpg',
+            },
+            {
+                title: 'Robert Fox',
+                designation: 'Founder',
+                organization: 'NextGen Solutions',
+                description: 'Exceeded expectations. Very happy with the final product delivered on time.',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Robert_Fox.jpg',
+            },
+            {
+                title: 'Elena Rodriguez',
+                designation: 'Operations Director',
+                organization: 'Apex Dynamics',
+                description: 'Streamlined our entire customer funnel. Support has been top notch!',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Elena_Rodriguez.jpg',
+            },
+            {
+                title: 'David Kim',
+                designation: 'CTO',
+                organization: 'Pioneer Web',
+                description: 'Robust architecture with great UI/UX sensibilities. Extremely polished work.',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/David_Kim.jpg',
+            },
+            {
+                title: 'Laura Bennett',
+                designation: 'E-commerce Manager',
+                organization: 'Retail Pro',
+                description: 'Sales went up exactly as promised! Best decision we made all year.',
+                rating: Math.floor(Math.random() * 5) + 1,
+                imageURL: '/images/testimonials/Laura_Bennett.jpg',
+            }
         ];
 
         try {
             await db.Testimonial.sync({ alter: true });
-            
+
             // Re-seed all to update the images and randomized rating
             await db.Testimonial.destroy({ where: {} });
-            
+
             for (const t of defaultTestimonials) {
                 await db.Testimonial.create(t);
             }
             console.log('Seeded Testimonials');
-            
+
         } catch (err) {
             console.error('Error seeding Testimonials:', err);
+        }
+
+        // Seed FAQs
+        const defaultFAQs = [
+            {
+                question: 'What are your shipping options?',
+                answer: 'We offer free shipping on orders over $50, standard shipping (5-7 business days), express shipping (2-3 business days), and overnight shipping.',
+                askedBy: 'Customer Service',
+                isActive: true
+            },
+            {
+                question: 'How long does delivery take?',
+                answer: 'Standard delivery typically takes 5-7 business days. Express delivery takes 2-3 business days. International orders may take 10-21 business days depending on the destination.',
+                askedBy: 'Support Team',
+                isActive: true
+            },
+            {
+                question: 'What is your return policy?',
+                answer: 'We accept returns within 30 days of purchase. Items must be in original condition with all packaging and accessories. Once received and inspected, refunds are processed within 5-10 business days.',
+                askedBy: 'Returns Department',
+                isActive: true
+            },
+            {
+                question: 'Do you offer international shipping?',
+                answer: 'Yes, we ship to over 100 countries worldwide. International shipping rates and delivery times vary by destination. Please check our shipping rates page for your specific location.',
+                askedBy: 'Logistics Team',
+                isActive: true
+            },
+            {
+                question: 'How can I track my order?',
+                answer: 'After your order ships, you will receive a tracking number via email. You can use this number to track your package in real-time on our website or the carrier\'s website.',
+                askedBy: 'Customer Support',
+                isActive: true
+            },
+            {
+                question: 'What payment methods do you accept?',
+                answer: 'We accept all major credit cards (Visa, MasterCard, American Express), PayPal, Apple Pay, Google Pay, and bank transfers for qualifying orders.',
+                askedBy: 'Billing Team',
+                isActive: true
+            },
+            {
+                question: 'Is my personal information secure?',
+                answer: 'Yes, we use industry-standard SSL encryption to protect your personal and payment information. Your data is never shared with third parties without your consent.',
+                askedBy: 'Security Team',
+                isActive: true
+            },
+            {
+                question: 'Can I modify or cancel my order?',
+                answer: 'Orders can be modified or cancelled within 1 hour of placement. After that, the order enters our fulfillment process and cannot be changed. Please contact support for special requests.',
+                askedBy: 'Order Management',
+                isActive: true
+            },
+            {
+                question: 'Do you offer gift wrapping?',
+                answer: 'Yes! We offer complimentary gift wrapping for orders. You can select this option at checkout. A personalized gift message can also be included.',
+                askedBy: 'Customer Service',
+                isActive: true
+            },
+            {
+                question: 'How do I use a discount code?',
+                answer: 'During checkout, enter your promotional code in the "Discount Code" field and click "Apply". The discount will be reflected in your order total before completing payment.',
+                askedBy: 'Sales Team',
+                isActive: true
+            },
+            {
+                question: 'What is your price match guarantee?',
+                answer: 'We match competitor prices on identical items. Contact our sales team with a screenshot of the lower price, and we will match it along with an additional 5% discount.',
+                askedBy: 'Pricing Team',
+                isActive: true
+            },
+            {
+                question: 'Do you have a loyalty program?',
+                answer: 'Yes! Join our rewards program to earn points on every purchase. Points can be redeemed for discounts, free shipping, or exclusive products.',
+                askedBy: 'Customer Loyalty',
+                isActive: true
+            }
+        ];
+
+        try {
+            // FAQ table should already be created and synced by startServer
+            // Check if FAQs already exist
+            const faqCount = await db.FAQ.count();
+            if (faqCount === 0) {
+                // Seed with default FAQs
+                const firstProduct = await db.Product.findOne();
+                if (firstProduct) {
+                    for (const faq of defaultFAQs) {
+                        await db.FAQ.create({ ...faq, productId: firstProduct.id });
+                    }
+                    console.log('Seeded FAQs');
+                } else {
+                    console.log('No products found, skipping FAQ seeding');
+                }
+            }
+        } catch (err) {
+            console.error('Error seeding FAQs:', err);
         }
 
         console.log('Seeding completed successfully.');
 
         // Reset sequences to prevent duplicate ID errors on next create
-        const tables = ['Sliders', 'Products', 'Categories', 'Forms', 'Testimonials', 'Coupons', 'leadership_teams'];
+        const tables = ['Sliders', 'Products', 'Categories', 'Forms', 'Testimonials', 'Coupons', 'leadership_teams', 'FAQs'];
         for (const tableName of tables) {
             try {
                 const [results] = await db.sequelize.query(`SELECT pg_get_serial_sequence('"${tableName}"', 'id') as seq;`);
@@ -518,7 +614,7 @@ app.get('/api/product/weeklyBestSeller', async (req, res) => {
                     const pid = item.productId || item.id;
                     if (pid) tally[pid] = (tally[pid] || 0) + (item.quantity || 1);
                 }
-            } catch (_) {}
+            } catch (_) { }
         }
 
         let product = null;
@@ -576,7 +672,18 @@ app.get('/api/category/getCategories', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 10;
+        const search = req.query.search || '';
+        const { Op } = db.Sequelize;
+
+        let where = {};
+        if (search && search.trim()) {
+            where = {
+                title: { [Op.iLike]: `%${search}%` }
+            };
+        }
+
         const { count, rows } = await db.Category.findAndCountAll({
+            where,
             offset: page * size,
             limit: size,
             order: [['order', 'ASC']]
@@ -592,7 +699,22 @@ app.get('/api/coupon/getCoupon', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 10;
+        const search = req.query.search || '';
+        const { Op } = db.Sequelize;
+
+        let where = {};
+        if (search && search.trim()) {
+            where = {
+                [Op.or]: [
+                    { code: { [Op.iLike]: `%${search}%` } },
+                    { title: { [Op.iLike]: `%${search}%` } },
+                    { description: { [Op.iLike]: `%${search}%` } }
+                ]
+            };
+        }
+
         const { count, rows } = await db.Coupon.findAndCountAll({
+            where,
             offset: page * size,
             limit: size,
             order: [['id', 'DESC']]
@@ -623,7 +745,22 @@ app.get('/api/user/users', authenticateToken, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 10;
+        const search = req.query.search || '';
+        const { Op } = db.Sequelize;
+
+        let where = {};
+        if (search && search.trim()) {
+            where = {
+                [Op.or]: [
+                    { username: { [Op.iLike]: `%${search}%` } },
+                    { email: { [Op.iLike]: `%${search}%` } },
+                    { phoneNumber: { [Op.iLike]: `%${search}%` } }
+                ]
+            };
+        }
+
         const { count, rows } = await db.User.findAndCountAll({
+            where,
             offset: page * size,
             limit: size,
             order: [['id', 'ASC']],
@@ -689,11 +826,11 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
     try {
         const product = await db.Product.findByPk(req.params.id, {
             include: [
-              { 
-                model: db.ProductImage,
-                include: [{ model: db.Flavor }] 
-              },
-              { model: db.Offer, as: 'offers' }
+                {
+                    model: db.ProductImage,
+                    include: [{ model: db.Flavor }]
+                },
+                { model: db.Offer, as: 'offers' }
             ]
         });
         if (product) res.json(product);
@@ -722,23 +859,23 @@ app.put('/api/product/:id', authenticateToken, async (req, res) => {
     const t = await db.sequelize.transaction();
     try {
         const productData = req.body;
-        await db.Product.update(productData, { 
+        await db.Product.update(productData, {
             where: { id: req.params.id },
             transaction: t
         });
 
         // If ProductImages are provided, sync them
         if (productData.ProductImages) {
-            await db.ProductImage.destroy({ 
+            await db.ProductImage.destroy({
                 where: { product_id: req.params.id },
                 transaction: t
             });
-            
+
             const imagesToCreate = productData.ProductImages.map(img => ({
                 ...img,
                 product_id: req.params.id
             }));
-            
+
             await db.ProductImage.bulkCreate(imagesToCreate, { transaction: t });
         }
 
@@ -824,8 +961,20 @@ app.delete('/api/category/delete/:id', authenticateToken, async (req, res) => {
 app.get('/api/flavor/getFlavors', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
-        const size = parseInt(req.query.size) || 100;
+        const size = parseInt(req.query.size) || 10;
+        const search = req.query.search ? req.query.search.trim() : '';
+        const { Op } = db.Sequelize;
+
+        let where = {};
+
+        if (search) {
+            where = {
+                name: { [Op.iLike]: `%${search}%` }
+            };
+        }
+
         const { count, rows } = await db.Flavor.findAndCountAll({
+            where,
             offset: page * size,
             limit: size,
             order: [['name', 'ASC']]
@@ -869,7 +1018,21 @@ app.get('/api/leadership/getTeams', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 12;
+        const search = req.query.search || '';
+        const { Op } = db.Sequelize;
+
+        let where = {};
+        if (search && search.trim()) {
+            where = {
+                [Op.or]: [
+                    { name: { [Op.iLike]: `%${search}%` } },
+                    { designation: { [Op.iLike]: `%${search}%` } }
+                ]
+            };
+        }
+
         const { count, rows } = await db.LeadershipTeam.findAndCountAll({
+            where,
             offset: page * size,
             limit: size,
             order: [['order', 'ASC']]
@@ -1093,7 +1256,21 @@ app.get('/api/forms/getForms', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 10;
+        const search = req.query.search || '';
+        const { Op } = db.Sequelize;
+
+        let where = {};
+        if (search && search.trim()) {
+            where = {
+                [Op.or]: [
+                    { title: { [Op.iLike]: `%${search}%` } },
+                    { description: { [Op.iLike]: `%${search}%` } }
+                ]
+            };
+        }
+
         const { count, rows } = await db.Form.findAndCountAll({
+            where,
             offset: page * size,
             limit: size,
             order: [['id', 'ASC']]
@@ -1159,7 +1336,22 @@ app.get('/api/testimonial/getTestimonials', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 10;
+        const search = req.query.search || '';
+        const { Op } = db.Sequelize;
+
+        let where = {};
+        if (search && search.trim()) {
+            where = {
+                [Op.or]: [
+                    { title: { [Op.iLike]: `%${search}%` } },
+                    { organization: { [Op.iLike]: `%${search}%` } },
+                    { description: { [Op.iLike]: `%${search}%` } }
+                ]
+            };
+        }
+
         const { count, rows } = await db.Testimonial.findAndCountAll({
+            where,
             offset: page * size,
             limit: size,
             order: [['id', 'DESC']]
@@ -1183,92 +1375,92 @@ app.post('/api/testimonial/createTestimonial', authenticateToken, async (req, re
 
 const multer = require('multer');
 const flavorStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const flavorId = req.query.flavorId || 'temp';
-    const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'flavor', String(flavorId));
-    
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
+    destination: (req, file, cb) => {
+        const flavorId = req.query.flavorId || 'temp';
+        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'flavor', String(flavorId));
+
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
     }
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
-  }
 });
 
 const uploadFlavorIcon = multer({ storage: flavorStorage });
 
 app.post('/api/flavor/upload', authenticateToken, uploadFlavorIcon.single('file'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  
-  const flavorId = req.query.flavorId || 'temp';
-  const fileUrl = `/images/flavor/${flavorId}/${req.file.filename}`;
-  res.send(fileUrl);
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+    const flavorId = req.query.flavorId || 'temp';
+    const fileUrl = `/images/flavor/${flavorId}/${req.file.filename}`;
+    res.send(fileUrl);
 });
 
 const testimonialStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'testimonials');
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
+    destination: (req, file, cb) => {
+        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'testimonials');
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
     }
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
-  }
 });
 const productStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const productId = req.query.productId || 'temp';
-    const flavorId = req.query.flavorId || 'default';
-    const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId), String(flavorId));
-    
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
+    destination: (req, file, cb) => {
+        const productId = req.query.productId || 'temp';
+        const flavorId = req.query.flavorId || 'default';
+        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId), String(flavorId));
+
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
     }
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
-  }
 });
 
 const uploadProductImage = multer({ storage: productStorage });
 
 app.post('/api/product/upload', authenticateToken, uploadProductImage.single('file'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  
-  const productId = req.query.productId || 'temp';
-  const flavorId = req.query.flavorId || 'default';
-  const fileUrl = `/images/${productId}/${flavorId}/${req.file.filename}`;
-  res.send(fileUrl);
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+    const productId = req.query.productId || 'temp';
+    const flavorId = req.query.flavorId || 'default';
+    const fileUrl = `/images/${productId}/${flavorId}/${req.file.filename}`;
+    res.send(fileUrl);
 });
 
 app.get('/api/product/images/:productId/:flavorId', authenticateToken, (req, res) => {
-  const { productId, flavorId } = req.params;
-  const dirPath = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId), String(flavorId));
-  
-  if (!fs.existsSync(dirPath)) {
-    return res.json([]);
-  }
+    const { productId, flavorId } = req.params;
+    const dirPath = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId), String(flavorId));
 
-  try {
-    const files = fs.readdirSync(dirPath).filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f));
-    const imageUrls = files.map(file => `/images/${productId}/${flavorId}/${file}`);
-    res.json(imageUrls);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to read directory' });
-  }
+    if (!fs.existsSync(dirPath)) {
+        return res.json([]);
+    }
+
+    try {
+        const files = fs.readdirSync(dirPath).filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f));
+        const imageUrls = files.map(file => `/images/${productId}/${flavorId}/${file}`);
+        res.json(imageUrls);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to read directory' });
+    }
 });
 
 const uploadTestimonial = multer({ storage: testimonialStorage });
 
 app.post('/api/testimonial/upload', authenticateToken, uploadTestimonial.single('file'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  const fileUrl = `/images/testimonials/${req.file.filename}`;
-  res.send(fileUrl);
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const fileUrl = `/images/testimonials/${req.file.filename}`;
+    res.send(fileUrl);
 });
 app.put('/api/testimonial/:id', authenticateToken, async (req, res) => {
     try {
@@ -1404,10 +1596,19 @@ app.get('/api/slider/getSliders', async (req, res) => {
         const page = parseInt(req.query.page) || 0;
         const size = parseInt(req.query.size) || 10;
         const activeOnly = req.query.active === 'true';
+        const search = req.query.search || '';
+        const { Op } = db.Sequelize;
 
-        const where = { deleteFlag: false };
+        let where = { deleteFlag: false };
         if (activeOnly) {
             where.active = true;
+        }
+
+        if (search && search.trim()) {
+            where[Op.or] = [
+                { headline: { [Op.iLike]: `%${search}%` } },
+                { category: { [Op.iLike]: `%${search}%` } }
+            ];
         }
 
         const { count, rows } = await db.Slider.findAndCountAll({
@@ -1491,12 +1692,12 @@ try {
 const optionalAuth = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    
+
     if (!token || token === 'mock-token') {
         req.user = { id: 1 }; // Default mock user
         return next();
     }
-    
+
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) req.user = { id: 1 };
         else req.user = user;
@@ -1633,7 +1834,7 @@ app.post('/api/wishlist/email-on-close', optionalAuth, async (req, res) => {
             { where: { user_id: uid } }
         );
 
-        res.json({ 
+        res.json({
             message: 'Wishlist email prepared and sent',
             recipientEmail: user.email,
             itemsCount: items.length
@@ -1644,10 +1845,139 @@ app.post('/api/wishlist/email-on-close', optionalAuth, async (req, res) => {
     }
 });
 
+// API route for FAQs
+app.get('/api/faq', async (req, res) => {
+    try {
+        const { page = 0, size = 10, search = '' } = req.query;
+        const pageNum = parseInt(page) || 0;
+        const pageSize = parseInt(size) || 10;
+        const offset = pageNum * pageSize;
+
+        const { Op } = db.Sequelize;
+        let where = {};
+
+        if (req.query.productId) {
+            where.productId = req.query.productId;
+        }
+
+        if (search && search.trim()) {
+            const searchCondition = {
+                [Op.or]: [
+                    { question: { [Op.iLike]: `%${search}%` } },
+                    { answer: { [Op.iLike]: `%${search}%` } },
+                    { askedBy: { [Op.iLike]: `%${search}%` } }
+                ]
+            };
+            if (where.productId) {
+                where = { [Op.and]: [where, searchCondition] };
+            } else {
+                where = searchCondition;
+            }
+        }
+
+        const { count, rows: faqs } = await db.FAQ.findAndCountAll({
+            where,
+            order: [['id', 'DESC']],
+            limit: pageSize,
+            offset: offset
+        });
+
+        res.json(getPaginatedResponse(faqs, count, pageNum, pageSize));
+    } catch (error) {
+        console.error('Error fetching FAQs:', error);
+        res.status(500).json({ error: 'Failed to load FAQs' });
+    }
+});
+
+// CRUD API routes for FAQs
+
+// Create FAQ
+app.post('/api/faq', authenticateToken, async (req, res) => {
+    try {
+        const { question, answer, askedBy, isActive, productId } = req.body;
+        if (!productId) {
+            return res.status(400).json({ error: 'productId is required' });
+        }
+        const newFAQ = await db.FAQ.create({
+            question,
+            answer: answer || 'COMING SOON',
+            askedBy: askedBy || '',
+            isActive: isActive !== false,
+            isDeleted: false,
+            productId: productId
+        });
+        res.status(201).json(newFAQ);
+    } catch (error) {
+        console.error('Error creating FAQ:', error);
+        res.status(500).json({ error: 'Failed to create FAQ' });
+    }
+});
+
+// Read FAQ by ID
+app.get('/api/faq/:id', async (req, res) => {
+    try {
+        const faq = await db.FAQ.findByPk(req.params.id);
+        if (!faq) {
+            return res.status(404).json({ error: 'FAQ not found' });
+        }
+        res.json(faq);
+    } catch (error) {
+        console.error('Error fetching FAQ:', error);
+        res.status(500).json({ error: 'Failed to fetch FAQ' });
+    }
+});
+
+// Update FAQ
+app.put('/api/faq/:id', authenticateToken, async (req, res) => {
+    try {
+        const { question, answer, askedBy, isActive, isDeleted, productId } = req.body;
+        const faq = await db.FAQ.findByPk(req.params.id);
+        if (!faq) {
+            return res.status(404).json({ error: 'FAQ not found' });
+        }
+        faq.question = question || faq.question;
+        faq.answer = answer || faq.answer;
+        faq.askedBy = askedBy !== undefined ? askedBy : faq.askedBy;
+        faq.isActive = isActive !== undefined ? isActive : faq.isActive;
+        faq.isDeleted = isDeleted !== undefined ? isDeleted : faq.isDeleted;
+        if (productId) faq.productId = productId;
+        await faq.save();
+        res.json(faq);
+    } catch (error) {
+        console.error('Error updating FAQ:', error);
+        res.status(500).json({ error: 'Failed to update FAQ' });
+    }
+});
+
+// Delete FAQ
+app.delete('/api/faq/:id', authenticateToken, async (req, res) => {
+    try {
+        const faq = await db.FAQ.findByPk(req.params.id);
+        if (!faq) {
+            return res.status(404).json({ error: 'FAQ not found' });
+        }
+        await faq.destroy();
+        res.status(204).send();
+    } catch (error) {
+        console.error('Error deleting FAQ:', error);
+        res.status(500).json({ error: 'Failed to delete FAQ' });
+    }
+});
+
 // Start server
 const startServer = async () => {
     try {
         await ensureDatabaseExists();
+
+        // Drop and recreate FAQ table first to ensure clean schema
+        try {
+            await db.FAQ.drop({ force: true });
+            console.log('Dropped FAQ table');
+        } catch (err) {
+            // FAQ table might not exist yet, which is fine
+        }
+
+        // Now sync all models
         await db.sequelize.sync({ alter: true });
         await seedData();
 

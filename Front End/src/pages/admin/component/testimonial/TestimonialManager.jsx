@@ -4,6 +4,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { TextField, Box, TablePagination } from '@mui/material';
+import { Clear as ClearIcon } from '@mui/icons-material';
 import axios from 'axios';
 import TestimonialForm from './TestimonialForm';
 import Alert from 'react-s-alert';
@@ -12,18 +14,52 @@ const TestimonialManager = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [selectedTestimonial, setSelectedTestimonial] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const fetchTestimonialsList = async (page = 0, search = '') => {
+    setLoading(true);
+    try {
+      const res = await getTestimonials(page, rowsPerPage, search);
+      setTestimonials(res.content || []);
+      setTotalCount(res.totalElements || 0);
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+      Alert.error('Failed to load testimonials');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetchTestimonials();
+    fetchTestimonialsList(0, searchQuery);
   }, []);
 
-  const fetchTestimonials = async () => {
-    getTestimonials(0, 100)
-      .then((res) => {
-        setTestimonials(res.content);
-      }).catch(error => {
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-      });
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setCurrentPage(0);
+    fetchTestimonialsList(0, query);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setCurrentPage(0);
+    fetchTestimonialsList(0, '');
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+    fetchTestimonialsList(newPage, searchQuery);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(0);
+    fetchTestimonialsList(0, searchQuery);
   };
 
   const handleAddTestimonial = () => {
@@ -41,7 +77,7 @@ const TestimonialManager = () => {
       try {
         await deleteTestimonial(selectedTestimonial).then((res) => {
           Alert.success("Success!");
-          fetchTestimonials();
+          fetchTestimonialsList(currentPage, searchQuery);
           setSelectedTestimonial(null);
         }).catch(error => {
           Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
@@ -59,7 +95,7 @@ const TestimonialManager = () => {
       try {
         await undeleteTestimonial(selectedTestimonial).then((res) => {
           Alert.success("Success!");
-          fetchTestimonials();
+          fetchTestimonialsList(currentPage, searchQuery);
           setSelectedTestimonial(null);
         }).catch(error => {
           Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
@@ -76,14 +112,14 @@ const TestimonialManager = () => {
       if (isDeleted) {
         await deleteTestimonial(testimonial).then((res) => {
           Alert.success("Testimonial deleted successfully!");
-          fetchTestimonials();
+          fetchTestimonialsList(currentPage, searchQuery);
         }).catch(error => {
           Alert.error((error && error.message) || 'Oops! Something went wrong.');
         });
       } else {
         await undeleteTestimonial(testimonial).then((res) => {
           Alert.success("Testimonial restored successfully!");
-          fetchTestimonials();
+          fetchTestimonialsList(currentPage, searchQuery);
         }).catch(error => {
           Alert.error((error && error.message) || 'Oops! Something went wrong.');
         });
@@ -110,7 +146,7 @@ const TestimonialManager = () => {
         });
         //await axios.post('/api/testimonials', formData); // Replace with your API endpoint
       }
-      fetchTestimonials();
+      fetchTestimonialsList(currentPage, searchQuery);
       setSelectedTestimonial(null);
       setIsFormOpen(false);
     } catch (error) {
@@ -189,16 +225,46 @@ const TestimonialManager = () => {
       >
         Undelete Testimonial
       </Button>
+
+      <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+        <TextField
+          fullWidth
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={handleSearch}
+          placeholder="Search by title, organization, description..."
+        />
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={handleClearSearch}
+          startIcon={<ClearIcon />}
+        >
+          Clear
+        </Button>
+      </Box>
+
       <div style={{ height: 400, width: '100%' }}>
         <DataGrid
           rows={testimonials}
           columns={columns}
+          loading={loading}
+          rowCount={totalCount}
+          paginationMode="server"
+          onPaginationModelChange={(newModel) => {
+            handleChangePage(null, newModel.page);
+            if (newModel.pageSize !== rowsPerPage) {
+              setRowsPerPage(newModel.pageSize);
+            }
+          }}
           initialState={{
             pagination: {
-              paginationModel: { pageSize: 5 },
+              paginationModel: { pageSize: rowsPerPage, page: currentPage },
             },
           }}
-          pageSizeOptions={[5, 10, 20]}
+          pageSizeOptions={[5, 10, 25, 50]}
           checkboxSelection
           onRowSelectionModelChange={(newRowSelectionModel) => {
             const selectedId = newRowSelectionModel[0];
@@ -207,6 +273,17 @@ const TestimonialManager = () => {
           }}
         />
       </div>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        component="div"
+        count={totalCount}
+        rowsPerPage={rowsPerPage}
+        page={currentPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+
       {isFormOpen && (
         <TestimonialForm
           key={selectedTestimonial ? selectedTestimonial.id : 'new'}

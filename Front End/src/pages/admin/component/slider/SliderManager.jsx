@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Button, IconButton, Switch, FormControlLabel } from '@mui/material';
+import { Button, IconButton, Switch, FormControlLabel, Box, TextField, TablePagination } from '@mui/material';
+import { Clear as ClearIcon } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SliderForm from './SliderForm';
@@ -11,22 +12,53 @@ const SliderManager = () => {
     const [sliders, setSliders] = useState([]);
     const [selectedSlider, setSelectedSlider] = useState(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [page, setPage] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [totalCount, setTotalCount] = useState(0);
+    const [loading, setLoading] = useState(false);
     const [totalElements, setTotalElements] = useState(0);
 
     useEffect(() => {
-        fetchSliders();
-    }, [page, pageSize]);
+        fetchSlidersList(0, searchQuery);
+    }, []);
 
-    const fetchSliders = async () => {
-        getSliders(page, pageSize)
-            .then((res) => {
-                setSliders(res.content);
-                setTotalElements(res.totalElements);
-            }).catch(error => {
-                Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-            });
+    const fetchSlidersList = async (page = 0, search = '') => {
+        setLoading(true);
+        try {
+            const res = await getSliders(page, rowsPerPage, undefined, search);
+            setSliders(res.content || []);
+            setTotalCount(res.totalElements || 0);
+        } catch (error) {
+            console.error('Error fetching sliders:', error);
+            Alert.error('Failed to load sliders');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSearch = (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        setCurrentPage(0);
+        fetchSlidersList(0, query);
+    };
+
+    const handleClearSearch = () => {
+        setSearchQuery('');
+        setCurrentPage(0);
+        fetchSlidersList(0, '');
+    };
+
+    const handleChangePage = (event, newPage) => {
+        setCurrentPage(newPage);
+        fetchSlidersList(newPage, searchQuery);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setCurrentPage(0);
+        fetchSlidersList(0, searchQuery);
     };
 
     const handleAddSlider = () => {
@@ -43,7 +75,7 @@ const SliderManager = () => {
         try {
             await deleteSlider(id).then((res) => {
                 Alert.success("Slider deleted successfully!");
-                fetchSliders();
+                fetchSlidersList(currentPage, searchQuery);
             }).catch(error => {
                 Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
             });
@@ -56,7 +88,7 @@ const SliderManager = () => {
         try {
             await undeleteSlider(id).then((res) => {
                 Alert.success("Slider restored successfully!");
-                fetchSliders();
+                fetchSlidersList(currentPage, searchQuery);
             }).catch(error => {
                 Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
             });
@@ -70,7 +102,7 @@ const SliderManager = () => {
             if (selectedSlider) {
                 await updateSlider(formData).then((res) => {
                     Alert.success("Slider updated successfully!");
-                    fetchSliders();
+                    fetchSlidersList(currentPage, searchQuery);
                     setIsFormOpen(false);
                 }).catch(error => {
                     Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
@@ -78,7 +110,7 @@ const SliderManager = () => {
             } else {
                 await addSlider(formData).then((res) => {
                     Alert.success("Slider added successfully!");
-                    fetchSliders();
+                    fetchSlidersList(currentPage, searchQuery);
                     setIsFormOpen(false);
                 }).catch(error => {
                     Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
@@ -94,7 +126,7 @@ const SliderManager = () => {
             const updatedSlider = { ...slider, active: isActive };
             await updateSlider(updatedSlider).then((res) => {
                 Alert.success(`Slide ${isActive ? 'activated' : 'deactivated'} successfully!`);
-                fetchSliders();
+                fetchSlidersList(currentPage, searchQuery);
             }).catch(error => {
                 Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
             });
@@ -160,22 +192,57 @@ const SliderManager = () => {
                     Add New Slider
                 </Button>
             </div>
+
+            <Box sx={{ mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+                <TextField
+                    fullWidth
+                    label="Search"
+                    variant="outlined"
+                    size="small"
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    placeholder="Search by headline, category..."
+                />
+                <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={handleClearSearch}
+                    startIcon={<ClearIcon />}
+                >
+                    Clear
+                </Button>
+            </Box>
+
             <DataGrid
                 rows={sliders}
                 columns={columns}
-                rowCount={totalElements}
+                loading={loading}
+                rowCount={totalCount}
                 paginationMode="server"
-                onPaginationModelChange={(model) => {
-                    setPage(model.page);
-                    setPageSize(model.pageSize);
+                onPaginationModelChange={(newModel) => {
+                    handleChangePage(null, newModel.page);
+                    if (newModel.pageSize !== rowsPerPage) {
+                        setRowsPerPage(newModel.pageSize);
+                    }
                 }}
                 initialState={{
                     pagination: {
-                        paginationModel: { pageSize: pageSize, page: page },
+                        paginationModel: { pageSize: rowsPerPage, page: currentPage },
                     },
                 }}
-                pageSizeOptions={[5, 10, 25]}
+                pageSizeOptions={[5, 10, 25, 50]}
             />
+
+            <TablePagination
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                component="div"
+                count={totalCount}
+                rowsPerPage={rowsPerPage}
+                page={currentPage}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+
             {isFormOpen && (
                 <SliderForm
                     onSubmit={handleFormSubmit}

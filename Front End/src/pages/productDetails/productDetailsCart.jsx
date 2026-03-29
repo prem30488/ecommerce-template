@@ -14,6 +14,8 @@ export const ProductDetailsCart = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(null);
   const [frequentProducts, setFrequentProducts] = useState([]);
+  const [faqs, setFaqs] = useState([]);
+  const [selectedFlavorId, setSelectedFlavorId] = useState(null);
 
   const { id } = useParams();
 
@@ -70,6 +72,21 @@ export const ProductDetailsCart = () => {
     fetchFrequent();
   }, [product?.id]);
 
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/faq?productId=${id}`);
+        const json = await res.json();
+        setFaqs(json.content || []);
+      } catch (error) {
+        console.error('Error fetching FAQs:', error);
+      }
+    };
+    if (id) {
+      fetchFaqs();
+    }
+  }, [id]);
+
   if (isLoading)
     return (
       <div className="h-screen flex flex-col justify-center items-center">
@@ -87,8 +104,6 @@ export const ProductDetailsCart = () => {
         </Link>
       </div>
     );
-
-  const [selectedFlavorId, setSelectedFlavorId] = useState(null);
 
   const { title, description, price, rating, ProductImages, img } = product;
 
@@ -199,6 +214,35 @@ export const ProductDetailsCart = () => {
                     <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* FAQS */}
+          {faqs.length > 0 && (
+            <div className="mt-24 lg:mt-32">
+              <h2 className="text-4xl font-black text-slate-850 mb-12 flex items-center gap-6">
+                Frequently Asked Questions
+                <div className="flex-grow h-[2px] bg-slate-100 rounded-full" />
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {faqs.filter(faq => faq.isActive).map(faq => (
+                  <div key={faq.id} className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/20 border border-slate-50 transition-all hover:scale-[1.02] hover:shadow-sky-100 duration-500">
+                    <h3 className="font-extrabold text-xl text-slate-800 mb-4 leading-tight">{faq.question}</h3>
+                    <div className="w-8 h-1 bg-sky-500 rounded-full mb-6"></div>
+                    <p className="text-slate-600 leading-relaxed text-[15px]">{faq.answer}</p>
+                    {faq.askedBy && (
+                      <div className="mt-6 pt-6 border-t border-slate-100 flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs uppercase">
+                          {faq.askedBy.charAt(0)}
+                        </div>
+                        <span className="text-[11px] text-slate-400 font-black tracking-widest uppercase">
+                          Question by <span className="text-sky-600">{faq.askedBy}</span>
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           )}

@@ -15,8 +15,11 @@ import {
   TextField,
   DialogActions,
   Typography,
+  TablePagination,
+  Box,
+  InputAdornment,
 } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon, Search as SearchIcon, Clear as ClearIcon } from '@mui/icons-material';
 import axios from 'axios';
 import { API_BASE_URL } from '../../../../constants';
 import Alert from 'react-s-alert';
@@ -26,23 +29,62 @@ const FlavorManager = () => {
   const [open, setOpen] = useState(false);
   const [currentFlavor, setCurrentFlavor] = useState({ name: '' });
   const [isEditing, setIsEditing] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const fetchFlavors = async () => {
+  const fetchFlavors = async (p = 0, search = '') => {
+    setLoading(true);
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await axios.get(`${API_BASE_URL}/api/flavor/getFlavors?size=1000`, {
-        headers: { Authorization: `Bearer ${token}` }
+      const params = {
+        page: p,
+        size: rowsPerPage,
+        search: search.trim()
+      };
+      const response = await axios.get(`${API_BASE_URL}/api/flavor/getFlavors`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params
       });
       setFlavors(response.data.content || []);
+      setTotalCount(response.data.totalElements || 0);
     } catch (error) {
       console.error('Error fetching flavors:', error);
       Alert.error('Failed to load flavors');
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchFlavors();
+    fetchFlavors(0, searchQuery);
   }, []);
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setPage(0);
+    fetchFlavors(0, query);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setPage(0);
+    fetchFlavors(0, '');
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+    fetchFlavors(newPage, searchQuery);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+    fetchFlavors(0, searchQuery);
+  };
 
   const handleOpen = (flavor = { name: '' }) => {
     setCurrentFlavor(flavor);
@@ -95,7 +137,8 @@ const FlavorManager = () => {
         });
         Alert.success('Flavor created successfully');
       }
-      fetchFlavors();
+      setPage(0);
+      fetchFlavors(0, searchQuery);
       handleClose();
     } catch (error) {
       console.error('Error saving flavor:', error);
@@ -111,7 +154,7 @@ const FlavorManager = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         Alert.success('Flavor deleted successfully');
-        fetchFlavors();
+        fetchFlavors(page, searchQuery);
       } catch (error) {
         console.error('Error deleting flavor:', error);
         Alert.error('Failed to delete flavor');
@@ -133,6 +176,37 @@ const FlavorManager = () => {
           Add New Flavor
         </Button>
       </div>
+
+      {/* Search Bar */}
+      <Box className="mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+        <div className="flex gap-2">
+          <TextField
+            fullWidth
+            placeholder="Search flavors by name..."
+            value={searchQuery}
+            onChange={handleSearch}
+            size="small"
+            variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon className="text-slate-400" />
+                </InputAdornment>
+              ),
+            }}
+          />
+          {searchQuery && (
+            <Button
+              variant="outlined"
+              startIcon={<ClearIcon />}
+              onClick={handleClearSearch}
+              className="whitespace-nowrap"
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+      </Box>
 
       <TableContainer component={Paper} className="shadow-xl rounded-2xl border border-slate-100">
         <Table>
@@ -176,12 +250,21 @@ const FlavorManager = () => {
             {flavors.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-10 text-slate-400">
-                  No flavors found. Create one to get started!
+                  {loading ? 'Loading...' : 'No flavors found. Create one to get started!'}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          component="div"
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">

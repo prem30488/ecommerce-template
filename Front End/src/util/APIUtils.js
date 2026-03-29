@@ -48,18 +48,24 @@ export function signup(signupRequest) {
     return api.post("/auth/signup", signupRequest);
 }
 
-export function getUserList(page, size) {
-
+export function getUserList(page, size, search = '') {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");
     }
-
-    return api.get("/api/user/users?page=" + page + "&size=" + size + "&sort=id");
+    let url = "/api/user/users?page=" + page + "&size=" + size + "&sort=id";
+    if (search) {
+        url += "&search=" + encodeURIComponent(search);
+    }
+    return api.get(url);
 }
 
 
-export function getCategories(page, size) {
-    return api.get("/api/category/getCategories?page=" + page + "&size=" + size + "&sort=order,asc");
+export function getCategories(page, size, search = '') {
+    let url = "/api/category/getCategories?page=" + page + "&size=" + size + "&sort=order,asc";
+    if (search) {
+        url += "&search=" + encodeURIComponent(search);
+    }
+    return api.get(url);
 }
 
 export function fetchOrders(page, size) {
@@ -69,28 +75,43 @@ export function fetchOrders(page, size) {
     return api.get("/api/order/getOrders?page=" + page + "&size=" + size + "&sort=id,desc");
 }
 
-export function getForms(page, size) {
+export function getForms(page, size, search = '') {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");
     }
-    return api.get("/api/forms/getForms?page=" + page + "&size=" + size + "&sort=id,asc");
+    let url = "/api/forms/getForms?page=" + page + "&size=" + size + "&sort=id,asc";
+    if (search) {
+        url += "&search=" + encodeURIComponent(search);
+    }
+    return api.get(url);
 }
 
 export function getProducts(page, size) {
     return api.get("/api/product/getProducts?page=" + page + "&size=" + size + "&sort=id,desc");
 }
 
-export function getTestimonials(page, size) {
-    return api.get("/api/testimonial/getTestimonials?page=" + page + "&size=" + size + "&sort=id,desc");
+export function getTestimonials(page, size, search = '') {
+    let url = "/api/testimonial/getTestimonials?page=" + page + "&size=" + size + "&sort=id,desc";
+    if (search) {
+        url += "&search=" + encodeURIComponent(search);
+    }
+    return api.get(url);
 }
 
-export function getCoupons(page, size) {
-    return api.get("/api/coupon/getCoupon?page=" + page + "&size=" + size + "&sort=id,desc");
+export function getCoupons(page, size, search = '') {
+    let url = "/api/coupon/getCoupon?page=" + page + "&size=" + size + "&sort=id,desc";
+    if (search) {
+        url += "&search=" + encodeURIComponent(search);
+    }
+    return api.get(url);
 }
-export const getSliders = (page, size, active) => {
+export const getSliders = (page, size, active, search = '') => {
     let url = "/api/slider/getSliders?page=" + page + "&size=" + size + "&sort=id,desc";
     if (active !== undefined) {
         url += "&active=" + active;
+    }
+    if (search) {
+        url += "&search=" + encodeURIComponent(search);
     }
     return api.get(url);
 }
@@ -527,9 +548,14 @@ export function fetchWeeklySalesSum() {
     return api.get("/api/order/fetchWeeklySalesSum");
 }
 
-export function getLeadershipTeams(page, size) {
-    return api.get("/api/leadership/getTeams?page=" + page + "&size=" + size);
+export function getLeadershipTeams(page, size, search = '') {
+    let url = "/api/leadership/getTeams?page=" + page + "&size=" + size;
+    if (search) {
+        url += "&search=" + encodeURIComponent(search);
+    }
+    return api.get(url);
 }
+
 
 export function addLeadershipTeam(teamRequest) {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
