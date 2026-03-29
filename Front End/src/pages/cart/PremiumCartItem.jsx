@@ -1,0 +1,174 @@
+import React, { useContext, useState, useEffect } from "react";
+import { ShopContext } from "../../context/shop-context";
+
+export const PremiumCartItem = ({ data, size = "S", isFree = false }) => {
+  const { id, title, price, priceMedium, priceLarge, stock, imageURLs } = data;
+  const {
+    cartItems,
+    martItems,
+    lartItems,
+    freeCartItems,
+    freeMartItems,
+    freeLartItems,
+    addToCart,
+    removeFromCart,
+    flavorCart,
+  } = useContext(ShopContext);
+
+  const flavorId = flavorCart[`${id}_${size}`];
+  const [flavor, setFlavor] = useState(null);
+  const [folderImages, setFolderImages] = useState([]);
+
+  useEffect(() => {
+    // 1. Fetch Flavor Data
+    if (flavorId) {
+      const fetchFlavor = async () => {
+        try {
+          const res = await fetch(`http://localhost:5000/api/flavor/getFlavors?size=1000`);
+          const json = await res.json();
+          const found = (json.content || []).find(f => f.id === flavorId);
+          setFlavor(found);
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      fetchFlavor();
+    }
+
+    // 2. Fetch Carousel Images from Folder
+    const fetchFolderImages = async () => {
+      try {
+        const targetFlavorId = flavorId || 'default';
+        const res = await fetch(`http://localhost:5000/api/product/images/${id}/${targetFlavorId}`);
+        const json = await res.json();
+        if (Array.isArray(json) && json.length > 0) {
+          setFolderImages(json);
+        } else {
+          // If flavor-specific images missing, try 'default' folder
+          const fallbackRes = await fetch(`http://localhost:5000/api/product/images/${id}/default`);
+          const fallbackJson = await fallbackRes.json();
+          setFolderImages(fallbackJson || []);
+        }
+      } catch (e) {
+        console.error('Error fetching folder images:', e);
+        setFolderImages([]);
+      }
+    };
+    fetchFolderImages();
+  }, [id, flavorId]);
+
+  const getQuantity = () => {
+    if (isFree) {
+      if (size === "S") return freeCartItems[id] || 0;
+      if (size === "M") return freeMartItems[id] || 0;
+      if (size === "L") return freeLartItems[id] || 0;
+    } else {
+      if (size === "S") return cartItems[id] || 0;
+      if (size === "M") return martItems[id] || 0;
+      if (size === "L") return lartItems[id] || 0;
+    }
+    return 0;
+  };
+
+  const getPrice = () => {
+    if (isFree) return 0;
+    if (size === "S") return price;
+    if (size === "M") return priceMedium;
+    if (size === "L") return priceLarge;
+    return price;
+  };
+
+  const quantity = getQuantity();
+  const currentPrice = getPrice();
+  const sizeLabel = size === "S" ? "Small" : size === "M" ? "Medium" : "Large";
+
+  // Carousel Logic (Simple State for Active Dot)
+  const [activeImage, setActiveImage] = useState(0);
+  const images = imageURLs ? imageURLs.split(',').map((u) => u.trim()) : [];
+
+  const handleScroll = (e) => {
+    const scrollLeft = e.target.scrollLeft;
+    const width = e.target.clientWidth;
+    const index = Math.round(scrollLeft / width);
+    setActiveImage(index);
+  };
+
+  if (quantity === 0) return null;
+
+  // 1. Carousel to display product photos from folder
+  const displayImages = folderImages.length > 0 ? folderImages : images;
+
+  return (
+    <div className="p-cart-item">
+      <div className="pc-image-container">
+        <div className="pc-carousel custom-scrollbar" onScroll={handleScroll}>
+          {displayImages.length > 0 ? (
+            displayImages.map((src, i) => (
+              <div key={i} className="pc-carousel-item">
+                <img
+                  src={src.startsWith('http') ? src : `http://localhost:5000${src}`}
+                  alt={`${title} ${i}`}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="pc-carousel-item">
+              <img src={`http://localhost:5000/images/${id}/default/1.png`} alt={title} />
+            </div>
+          )}
+        </div>
+
+        {/* Small Flavor Insight Overlay */}
+        {flavor && (
+          <div className="absolute top-1 left-1 flex items-center gap-1 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-full border border-sky-100 shadow-sm z-10 scale-75 origin-top-left">
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[7px] font-black text-sky-600 uppercase tracking-tighter">{flavor.name}</span>
+          </div>
+        )}
+
+        {displayImages.length > 1 && (
+          <div className="pc-dots">
+            {displayImages.map((_, i) => (
+              <div key={i} className={`pc-dot ${i === activeImage ? 'active' : ''}`} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 2. Product Name & 3. Item count button working */}
+      <div className="pc-details">
+        <div>
+          <h4 className="pc-title">{title}</h4>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="p-label-text" style={{ fontSize: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {sizeLabel} Pack
+              {flavor && (
+                <>
+                  <span style={{ color: '#cbd5e1' }}>•</span>
+                  <span style={{ color: '#0ea5e9', fontWeight: '800' }}>{flavor.name} Flavor</span>
+                </>
+              )}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-end">
+          <div className="pc-price">₹{(currentPrice || 0).toLocaleString()}</div>
+
+          <div className="pc-controls">
+            <button className="pc-btn" onClick={() => removeFromCart(id, size)}>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M20 12H4"/></svg>
+            </button>
+            <span className="pc-qty">{quantity}</span>
+            <button
+              className="pc-btn"
+              onClick={() => quantity < stock && addToCart(id, size, flavorId)}
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M12 4v16m8-8H4"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

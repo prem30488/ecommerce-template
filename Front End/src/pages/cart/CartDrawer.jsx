@@ -8,7 +8,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { Cart } from './cart';
+import { PremiumCart } from './PremiumCart';
 import { FaShoppingCart } from "react-icons/fa";
 import { ShopContext } from '../../context/shop-context';
 import { useContext, useEffect } from 'react';
@@ -49,17 +49,17 @@ export default function CartDrawer() {
           onClose={toggleDrawer('right', false)}
           PaperProps={{
             sx: {
-              width: { xs: '100%', sm: '450px' },
-              height: '100%',
-              overflow: 'hidden',
-              boxShadow: '-20px 0 50px rgba(0,0,0,0.1)',
-              borderLeft: '1px solid rgba(0,0,0,0.05)'
+              width: { xs: '100%', sm: '550px' },
+              height: '100vh',
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '-20px 0 60px rgba(0,0,0,0.1)',
+              borderLeft: '1px solid rgba(0,0,0,0.05)',
+              overflow: 'hidden'
             },
           }}
         >
-          <div className="h-full flex flex-col bg-slate-50/30">
-            <Cart onClose={toggleDrawer('right', false)} />
-          </div>
+        <PremiumCart onClose={toggleDrawer('right', false)} />
         </Drawer>
       </div>
     </React.Fragment>

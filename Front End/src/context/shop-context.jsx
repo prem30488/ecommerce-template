@@ -22,6 +22,7 @@ export const ShopContextProvider = (props) => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [customerData, setCustomerData] = useState([]);
   const [totalAfterCoupon, setTotalAfterCoupon] = useState(0);
+  const [flavorCart, setFlavorCart] = useState({}); // Stores { "itemId_size": flavorId }
   useEffect(() => {
     const getData = async () => {
       try {
@@ -48,7 +49,7 @@ export const ShopContextProvider = (props) => {
       let id = item1;
       if (cartItems[item1] > 0) {
         let itemInfo1 = products.find((product1) => product1.id === Number(item1));
-
+        if (!itemInfo1) continue;
 
         let flag = false;
         let disco = 0;
@@ -77,7 +78,7 @@ export const ShopContextProvider = (props) => {
       let id = item2;
       if (martItems[item2] > 0) {
         let itemInfo2 = products.find((product2) => product2.id === Number(item2));
-
+        if (!itemInfo2) continue;
 
         let flag = false;
         let disco = 0;
@@ -107,7 +108,7 @@ export const ShopContextProvider = (props) => {
       let id = item3;
       if (lartItems[item3] > 0) {
         let itemInfo3 = products.find((product3) => product3.id === Number(item3));
-
+        if (!itemInfo3) continue;
 
         let flag = false;
         let disco = 0;
@@ -170,8 +171,8 @@ export const ShopContextProvider = (props) => {
   };
 
   const addFreeCartItem = (itemId, items, size) => {
-
     let currentProduct = products.find((product) => product.id === itemId);
+    if (!currentProduct) return;
     let id = itemId;
 
     if (currentProduct.offers && currentProduct.offers.length > 0) {
@@ -230,21 +231,22 @@ export const ShopContextProvider = (props) => {
 
   };
 
-  const addToCart = (itemId, size) => {
+  const addToCart = (itemId, size, flavorId = null) => {
+    const flavorKey = `${itemId}_${size}`;
+    if (flavorId) {
+      setFlavorCart((prev) => ({ ...prev, [flavorKey]: flavorId }));
+    }
+
     if (size === "M") {
       setMartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
       addFreeCartItem(itemId, martItems, size);
-
     } else if (size === "L") {
       setLartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
       addFreeCartItem(itemId, lartItems, size);
     } else {
       setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
       addFreeCartItem(itemId, cartItems, size);
-
     }
-
-
   };
 
   const removeorUpdateFreeItems = (itemId, items, size) => {
@@ -498,6 +500,8 @@ export const ShopContextProvider = (props) => {
     freeCartItems,
     freeMartItems,
     freeLartItems,
+    flavorCart,
+    setFlavorCart,
     addToCart,
     updateCartItemCount,
     removeFromCart,

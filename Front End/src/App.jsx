@@ -5,7 +5,7 @@ import { NavbarMain } from "./components/navbarMain";
 import { Shop } from "./pages/shop/shop";
 import { Contact } from "./pages/Contact";
 import { Cart } from "./pages/cart/cart";
-import ProductDetailsCart from "./pages/productDetails/ProductDetailsCart";
+import PremiumProductDetails from "./pages/productDetails/PremiumProductDetails";
 import { ShopContextProvider } from "./context/shop-context";
 import { WishlistContextProvider } from "./context/wishlist-context";
 import Wishlist from "./pages/wishlist/wishlist";
@@ -165,7 +165,7 @@ class App extends Component {
 							{/* <Route path="/cart" element={<Cart />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             {/* <Route path="/productdetails/:id" element={<ProductDetails />} /> */}
-							<Route path="/productDetails/:id" element={<ProductDetailsCart />} />
+							<Route path="/productDetails/:id" element={<PremiumProductDetails />} />
 							<Route path="*" element={<Notfound />} />
 							<Route path="/cart" element={<Cart />} />
 							<Route path="/checkout" element={<FormDialog />} />

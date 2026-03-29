@@ -1,0 +1,151 @@
+import React, { useContext, useState, useEffect } from "react";
+import { ShopContext } from "../../context/shop-context";
+import { PremiumCartItem } from "./PremiumCartItem";
+import { useNavigate, Link } from "react-router-dom";
+import "./premium-cart.css";
+
+export const PremiumCart = ({ onClose }) => {
+  const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, addTotalAfterDiscount } = useContext(ShopContext);
+  const totalAmount = getTotalCartAmount();
+  const [products, setProducts] = useState([]);
+  const [coupon, setCoupon] = useState("");
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const freeShippingThreshold = 2000;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000");
+        if (!res.ok) throw new Error("Fetch failed");
+        const json = await res.json();
+        setProducts(json.content || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getData();
+  }, []);
+
+  // 7. Coupon code support (LOVERBOY50 should give 5% discount)
+  const applyCoupon = () => {
+    if (coupon.toUpperCase() === "LOVERBOY50") {
+      setDiscountPercent(5);
+      const discounted = totalAmount * 0.95;
+      if (addTotalAfterDiscount) addTotalAfterDiscount(discounted);
+    } else {
+      setDiscountPercent(0);
+    }
+  };
+
+  const discountAmount = totalAmount * (discountPercent / 100);
+  const grandTotal = totalAmount - discountAmount;
+  const progressPercent = Math.min((totalAmount / freeShippingThreshold) * 100, 100);
+  const diff = Math.max(freeShippingThreshold - totalAmount, 0);
+
+  const hasItems = totalAmount > 0;
+
+  return (
+    <div className="premium-cart-container">
+      {/* Header */}
+      <div className="premium-cart-header">
+        <div>
+          <h2>Your Cart</h2>
+          <span className="cart-status-badge">Professional Edition</span>
+        </div>
+        <button onClick={onClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: '10px' }}>
+          <svg className="w-6 h-6" fill="none" stroke="#64748b" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      {/* 5. Shipping Free or Complementary */}
+      {hasItems && (
+        <div className="premium-shipping-widget">
+          <div className="p-progress-label">
+            <span className="p-label-text">
+              {diff > 0 ? `Spend ₹${diff.toLocaleString()} more for FREE shipping` : "🎉 Exclusive Shipping Unlocked"}
+            </span>
+            <span className="p-label-text" style={{ color: '#0ea5e9' }}>{Math.round(progressPercent)}%</span>
+          </div>
+          <div className="p-progress-bar">
+            <div className={`p-progress-fill ${progressPercent === 100 ? 'full' : ''}`} style={{ width: `${progressPercent}%` }} />
+          </div>
+        </div>
+      )}
+
+      {/* 4. Multiple Products Support (Scrollable Body) */}
+      <div className="premium-cart-body custom-scrollbar">
+        {hasItems ? (
+          products.map((product) => (
+            <React.Fragment key={product.id}>
+              {cartItems[product.id] > 0 && <PremiumCartItem data={product} size="S" />}
+              {martItems[product.id] > 0 && <PremiumCartItem data={product} size="M" />}
+              {lartItems[product.id] > 0 && <PremiumCartItem data={product} size="L" />}
+              {freeCartItems[product.id] > 0 && <PremiumCartItem data={product} size="S" isFree />}
+              {freeMartItems[product.id] > 0 && <PremiumCartItem data={product} size="M" isFree />}
+              {freeLartItems[product.id] > 0 && <PremiumCartItem data={product} size="L" isFree />}
+            </React.Fragment>
+          ))
+        ) : (
+          <div className="p-empty">
+            <div className="p-empty-icon">
+              <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            </div>
+            <h3 style={{ fontSize: '20px', fontWeight: '900', marginBottom: '8px' }}>Your Cart is Quiet</h3>
+            <p className="p-label-text" style={{ maxWidth: '200px', margin: '0 auto' }}>Curate your selection and discover your next piece.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Footer / Summary (Including 6. Grand total and 8. Checkout button) */}
+      {hasItems && (
+        <div className="premium-cart-footer">
+          <div className="p-summary-row">
+            <span className="p-summary-label">Standard Subtotal</span>
+            <span className="p-summary-value">₹{(totalAmount || 0).toLocaleString()}</span>
+          </div>
+          {discountPercent > 0 && (
+            <div className="p-summary-row" style={{ color: '#10b981' }}>
+              <span className="p-summary-label">Coupon Discount (5%)</span>
+              <span className="p-summary-value">-₹{(discountAmount || 0).toLocaleString()}</span>
+            </div>
+          )}
+          <div className="p-summary-row">
+            <span className="p-summary-label">Shipping</span>
+            <span className="p-summary-value" style={{ color: diff === 0 ? '#10b981' : '#94a3b8' }}>
+              {diff === 0 ? "Complementary" : "Standard Calc"}
+            </span>
+          </div>
+
+          <div className="p-grand-total">
+            <div>
+              <span className="p-label-text" style={{ color: '#0f172a' }}>Grand Total</span>
+              <p className="p-label-text" style={{ fontSize: '8px' }}>Inclusive of all taxes</p>
+            </div>
+            <span className="p-total-price">₹{(grandTotal || 0).toLocaleString()}</span>
+          </div>
+
+          {/* 7. Coupon code support */}
+          <div className="p-coupon-section">
+            <input
+              className="p-coupon-input"
+              placeholder="LOVERBOY50"
+              value={coupon}
+              onChange={(e) => setCoupon(e.target.value)}
+            />
+            <button className="p-coupon-btn" onClick={applyCoupon}>Apply</button>
+          </div>
+
+          {/* 8. Checkout Button */}
+          <button
+            className="p-checkout-btn"
+            onClick={() => { onClose(); navigate("/checkout"); }}
+          >
+            Checkout Securely
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};

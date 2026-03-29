@@ -30,71 +30,78 @@ export const Cart = ({ onClose }) => {
   const remainingForFreeShipping = Math.max(freeShippingThreshold - totalAmount, 0);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-white">
+    <div className="flex flex-col h-screen max-h-screen bg-white shadow-2xl cart-drawer-container overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-slate-50">
+      <div className="flex items-center justify-between p-8 border-b border-slate-50/80 bg-white/50 backdrop-blur-sm z-20">
         <div>
-          <h2 className="text-xl font-black text-slate-900 tracking-tight">Your Cart</h2>
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            Your Cart
+            <span className="text-[10px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">{products.length ? "Live" : "Empty"}</span>
+          </h2>
           <div className="flex items-center gap-2 mt-1">
-             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-             <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest leading-none">Secure Checkout</p>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest leading-none">Security Secured Checkout</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={onClose}
-          className="w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white transition-all duration-500 hover:rotate-90 shadow-sm"
+          className="w-11 h-11 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white transition-all duration-500 hover:rotate-90 shadow-sm border border-slate-100"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
 
       {/* Progress Bar for Free Shipping */}
       {hasItems && (
-        <div className="px-6 py-4 bg-slate-50/50 border-b border-slate-50">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-              {remainingForFreeShipping > 0 
-                ? `Add ₹${remainingForFreeShipping.toLocaleString()} more for FREE shipping`
+        <div className="px-8 py-5 bg-slate-50/30 border-b border-slate-50/50">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+              {remainingForFreeShipping > 0
+                ? `Spend ₹${remainingForFreeShipping.toLocaleString()} more for FREE shipping`
                 : "🎉 You've unlocked FREE shipping!"}
             </span>
-            <span className="text-[10px] font-black text-sky-600">{Math.round(progressToFreeShipping)}%</span>
+            <span className="text-[10px] font-black text-sky-600 bg-sky-50 px-2 py-0.5 rounded-lg">{Math.round(progressToFreeShipping)}%</span>
           </div>
-          <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-sky-500 transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(14,165,233,0.5)]" 
-              style={{ width: `${progressToFreeShipping}%` }} 
+          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden p-[2px] border border-slate-200/50">
+            <div
+              className={`h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(14,165,233,0.3)] ${progressToFreeShipping === 100 ? 'bg-emerald-500' : 'bg-sky-500'} shipping-progress-candy`}
+              style={{ width: `${progressToFreeShipping}%` }}
             />
           </div>
         </div>
       )}
 
       {/* Body */}
-      <div className="flex-grow overflow-y-auto p-6 space-y-4 custom-scrollbar bg-white min-h-0 max-h-full">
+      <div className="flex-grow overflow-y-scroll p-8 space-y-6 custom-scrollbar bg-white min-h-[400px] relative z-10 touch-pan-y pointer-events-auto">
         {hasItems ? (
-          <div className="space-y-4 pb-12">
-            {products.map((product) => (
-              <React.Fragment key={product.id}>
-                {cartItems[product.id] > 0 && <CartItem data={product} size="S" />}
-                {martItems[product.id] > 0 && <CartItem data={product} size="M" />}
-                {lartItems[product.id] > 0 && <CartItem data={product} size="L" />}
-                {freeCartItems[product.id] > 0 && <CartItem data={product} size="S" isFree={true} />}
-                {freeMartItems[product.id] > 0 && <CartItem data={product} size="M" isFree={true} />}
-                {freeLartItems[product.id] > 0 && <CartItem data={product} size="L" isFree={true} />}
-              </React.Fragment>
-            ))}
+          <div className="space-y-6 pb-12">
+            {products.length > 0 ? (
+              products.map((product) => (
+                <React.Fragment key={product.id}>
+                  {cartItems[product.id] > 0 && <CartItem data={product} size="S" />}
+                  {martItems[product.id] > 0 && <CartItem data={product} size="M" />}
+                  {lartItems[product.id] > 0 && <CartItem data={product} size="L" />}
+                  {freeCartItems[product.id] > 0 && <CartItem data={product} size="S" isFree={true} />}
+                  {freeMartItems[product.id] > 0 && <CartItem data={product} size="M" isFree={true} />}
+                  {freeLartItems[product.id] > 0 && <CartItem data={product} size="L" isFree={true} />}
+                </React.Fragment>
+              ))
+            ) : (
+              <div className="p-4 text-center text-slate-400">Loading products...</div>
+            )}
           </div>
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-center p-10">
-            <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mb-8 border border-slate-100 rotate-12">
-              <svg className="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            <div className="w-32 h-32 bg-slate-50 rounded-[3rem] flex items-center justify-center mb-10 border border-slate-100/50 shadow-inner empty-cart-float">
+              <svg className="w-16 h-16 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
             </div>
-            <h3 className="text-xl font-black text-slate-800 tracking-tight">Cart is Empty</h3>
-            <p className="text-slate-400 text-sm mt-3 leading-relaxed">Start adding items to your collection to see them here.</p>
-            <button 
+            <h3 className="text-2xl font-black text-slate-800 tracking-tight">Your Cart is Quiet</h3>
+            <p className="text-slate-400 text-sm mt-4 leading-relaxed max-w-[240px] mx-auto">Discover our curated selection and find your next favorite piece.</p>
+            <button
               onClick={onClose}
-              className="mt-10 px-10 py-4 bg-slate-900 text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] hover:bg-sky-500 transition-all duration-500 shadow-2xl shadow-slate-200"
+              className="mt-12 px-12 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-[11px] uppercase tracking-[0.3em] hover:bg-sky-600 transition-all duration-700 shadow-2xl shadow-slate-200 border border-slate-800 active:scale-95"
             >
-              Start Shopping
+              Explore Shop
             </button>
           </div>
         )}
@@ -102,58 +109,53 @@ export const Cart = ({ onClose }) => {
 
       {/* Footer / Summary */}
       {hasItems && (
-        <div className="p-10 bg-white border-t border-slate-100 shadow-[0_-30px_60px_rgba(0,0,0,0.05)] z-10 relative">
-          <div className="space-y-4 mb-10">
+        <div className="p-10 cart-glass-footer z-30 relative rounded-t-[3rem] border-t-0 shadow-[0_-40px_80px_rgba(0,0,0,0.06)]">
+          <div className="space-y-5 mb-10">
             <div className="flex justify-between items-center text-slate-400">
-               <span className="text-[10px] font-black uppercase tracking-[0.2em]">Subtotal</span>
-               <span className="text-sm font-black text-slate-600 tracking-tight">₹{totalAmount.toLocaleString()}</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.25em]">Subtotal</span>
+              <span className="text-sm font-black text-slate-700 tracking-tight">₹{totalAmount.toLocaleString()}</span>
             </div>
             <div className="flex justify-between items-center text-slate-400">
-               <span className="text-[10px] font-black uppercase tracking-[0.2em]">Shipping</span>
-               <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter ${remainingForFreeShipping === 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-500'}`}>
-                 {remainingForFreeShipping === 0 ? "Complimentary" : "Calculated at checkout"}
-               </span>
+              <span className="text-[10px] font-black uppercase tracking-[0.25em]">Shipping</span>
+              <span className={`text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-tighter shadow-sm border ${remainingForFreeShipping === 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-slate-50 text-slate-500 border-slate-100'}`}>
+                {remainingForFreeShipping === 0 ? "Complimentary" : "Calculated at next step"}
+              </span>
             </div>
-            <div className="h-[1px] bg-slate-50 my-6" />
+            <div className="h-[1px] bg-slate-100/50 my-8 shadow-sm" />
             <div className="flex items-end justify-between">
               <div>
-                <span className="text-slate-900 text-[10px] font-black uppercase tracking-[0.25em] block mb-1">Total Amount</span>
-                <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest leading-none">VAT/GST Included</span>
+                <span className="text-slate-900 text-[10px] font-black uppercase tracking-[0.3em] block mb-2">Grand Total</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] leading-none">Inclusive of Taxes</span>
               </div>
               <div className="text-right">
-                <span className="text-4xl font-black text-slate-900 tracking-tighter leading-none">
+                <span className="text-5xl font-black text-slate-900 tracking-tighter leading-none block">
                   ₹{totalAmount.toLocaleString()}
                 </span>
               </div>
             </div>
           </div>
-          
-          <div className="space-y-4">
-             <div className="bg-slate-50/50 p-1 rounded-2xl border border-slate-100/50">
-                <CouponCode />
-             </div>
 
-             <Link 
-               to="/checkout" 
-               onClick={onClose}
-               className="w-full bg-slate-900 text-white py-6 rounded-[2rem] font-black text-center block transition-all duration-700 hover:bg-sky-600 shadow-[0_20px_40px_rgba(15,23,42,0.15)] hover:shadow-[0_20px_40px_rgba(14,165,233,0.3)] hover:-translate-y-1 active:scale-95 group relative overflow-hidden flex items-center justify-center gap-3"
-             >
-               <span className="text-[11px] uppercase tracking-[0.3em] relative z-10">Proceed to Checkout</span>
-               <svg className="w-4 h-4 relative z-10 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_3s_infinite]" />
-             </Link>
+          <div className="space-y-4">
+            {/* CouponCode temporarily hidden to debug layout */}
+            {/* <div className="bg-white/50 p-1.5 rounded-2xl border border-slate-100/80 shadow-inner compact-coupon-wrapper">
+              <CouponCode />
+            </div> */}
+
+            <Link
+              to="/checkout"
+              onClick={onClose}
+              className="w-full bg-slate-900 text-white py-6 rounded-[2.2rem] font-black text-center block transition-all duration-700 hover:bg-sky-600 shadow-[0_25px_50px_-12px_rgba(15,23,42,0.25)] hover:shadow-[0_25px_50px_-12px_rgba(14,165,233,0.35)] hover:-translate-y-1.5 active:scale-95 group relative overflow-hidden flex items-center justify-center gap-4 border border-slate-800 btn-checkout-glow"
+            >
+              <span className="text-xs uppercase tracking-[0.35em] relative z-10">Secure Checkout</span>
+              <svg className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_3s_infinite]" />
+            </Link>
           </div>
-          
-          <div className="flex items-center justify-center gap-6 mt-8">
-             <div className="flex items-center gap-2 opacity-30 grayscale">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-2" alt="Visa" />
-             </div>
-             <div className="flex items-center gap-2 opacity-30 grayscale">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-4" alt="Mastercard" />
-             </div>
-             <div className="flex items-center gap-2 opacity-30 grayscale">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-3" alt="Paypal" />
-             </div>
+
+          <div className="flex items-center justify-center gap-8 mt-10">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-2.5 opacity-20 grayscale hover:opacity-100 transition-all duration-500 cursor-pointer" alt="Visa" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-5 opacity-20 grayscale hover:opacity-100 transition-all duration-500 cursor-pointer" alt="Mastercard" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-3.5 opacity-20 grayscale hover:opacity-100 transition-all duration-500 cursor-pointer" alt="Paypal" />
           </div>
         </div>
       )}

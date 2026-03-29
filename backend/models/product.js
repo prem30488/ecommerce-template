@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
             Product.hasMany(models.ProductImage, { foreignKey: 'product_id' });
             Product.hasMany(models.Offer, { foreignKey: 'productId', as: 'offers' });
             Product.hasMany(models.FAQ, { foreignKey: 'productId', as: 'faqs' });
+            Product.belongsTo(models.Flavor, { foreignKey: 'flavor_id', as: 'flavor' });
         }
     }
     Product.init({
@@ -55,7 +56,14 @@ module.exports = (sequelize, DataTypes) => {
         unitMedium: DataTypes.INTEGER,
         unitLarge: DataTypes.INTEGER,
         priceMedium: DataTypes.FLOAT,
-        priceLarge: DataTypes.FLOAT
+        priceLarge: DataTypes.FLOAT,
+        flavor_id: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'Flavors',
+                key: 'id'
+            }
+        }
     }, {
         sequelize,
         modelName: 'Product',

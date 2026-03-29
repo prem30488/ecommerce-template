@@ -84,6 +84,27 @@ async function seedData() {
     try {
         console.log('Checking for initial data seeding...');
 
+        // Seed flavors first
+        const defaultFlavors = [
+            { id: 1,  name: 'Default',         active: true, image: '/images/Flavors/default.jpg' },
+            { id: 2,  name: 'Dark Chocolate',  active: true, image: '/images/Flavors/dark_chocolate.jpg' },
+            { id: 3,  name: 'Vanilla',         active: true, image: '/images/Flavors/vanilla.jpg' },
+            { id: 4,  name: 'Strawberry',      active: true, image: '/images/Flavors/strawberry.jpg' },
+            { id: 5,  name: 'Mango',           active: true, image: '/images/Flavors/mango.jpg' },
+            { id: 6,  name: 'Cookie Blast',    active: true, image: '/images/Flavors/cookie_blast.jpg' },
+            { id: 7,  name: 'Banana Splurge',  active: true, image: '/images/Flavors/banana_splurge.jpg' },
+            { id: 8,  name: 'Pineapple Swirl', active: true, image: '/images/Flavors/pineapple_swirl.jpg' },
+            { id: 9,  name: 'Fruit Punch',     active: true, image: '/images/Flavors/fruit_punch.jpg' },
+            { id: 10, name: 'Kiwi Lychee',     active: true, image: '/images/Flavors/kiwi_lychee.jpg' },
+        ];
+
+        for (const flavorData of defaultFlavors) {
+            await db.Flavor.findOrCreate({
+                where: { id: flavorData.id },
+                defaults: flavorData
+            });
+        }
+        console.log('Seeded Flavors');
 
         // Seed audiences
         const defaultAudiences = [
@@ -132,65 +153,14 @@ async function seedData() {
         // Drop and recreate Form table, then seed with existing forms
         await db.Form.drop({ force: true });
         await db.Form.sync({ force: true });
-        // You can customize the forms to seed here, or fetch from a file if needed
-        // Example: Seed with some default forms
         const defaultForms = [
-            {
-                "id": 2,
-                "title": "Injection",
-                "description": "Injection",
-                "deleteFlag": false,
-                "createdAt": "2026-03-19T04:14:29.054Z",
-                "updatedAt": "2026-03-19T13:52:03.022Z"
-            },
-            {
-                "id": 4,
-                "title": "Liquid",
-                "description": "Liquid",
-                "deleteFlag": false,
-                "createdAt": "2026-03-19T04:36:13.038Z",
-                "updatedAt": "2026-03-19T13:53:05.496Z"
-            },
-            {
-                "id": 5,
-                "title": "Capsule",
-                "description": "Capsule",
-                "deleteFlag": false,
-                "createdAt": "2026-03-19T13:53:09.781Z",
-                "updatedAt": "2026-03-19T13:53:38.514Z"
-            },
-            {
-                "id": 6,
-                "title": "Powder",
-                "description": "Powder",
-                "deleteFlag": false,
-                "createdAt": "2026-03-19T13:53:59.339Z",
-                "updatedAt": "2026-03-19T13:53:59.339Z"
-            },
-            {
-                "id": 7,
-                "title": "Gel",
-                "description": "Gel",
-                "deleteFlag": false,
-                "createdAt": "2026-03-19T13:54:19.047Z",
-                "updatedAt": "2026-03-19T13:54:19.047Z"
-            },
-            {
-                "id": 1,
-                "title": "Sachet",
-                "description": "Sachet",
-                "deleteFlag": false,
-                "createdAt": "2026-03-19T04:10:32.805Z",
-                "updatedAt": "2026-03-19T14:23:42.413Z"
-            },
-            {
-                "id": 3,
-                "title": "Medicine",
-                "description": "Medicine",
-                "deleteFlag": false,
-                "createdAt": "2026-03-19T04:15:30.084Z",
-                "updatedAt": "2026-03-19T14:23:48.727Z"
-            }
+            { id: 2, title: "Injection", description: "Injection", deleteFlag: false },
+            { id: 4, title: "Liquid", description: "Liquid", deleteFlag: false },
+            { id: 5, title: "Capsule", description: "Capsule", deleteFlag: false },
+            { id: 6, title: "Powder", description: "Powder", deleteFlag: false },
+            { id: 7, title: "Gel", description: "Gel", deleteFlag: false },
+            { id: 1, title: "Sachet", description: "Sachet", deleteFlag: false },
+            { id: 3, title: "Medicine", description: "Medicine", deleteFlag: false }
         ];
         for (const form of defaultForms) {
             await db.Form.create(form);
@@ -203,6 +173,10 @@ async function seedData() {
             const products = JSON.parse(productsContent);
             for (const product of products) {
                 const category = await db.Category.findOne({ where: { title: product.category } });
+
+                // Assign a random flavor, except product 31 gets Chocolate (2)
+                const randomFlavorId = product.id === 31 ? 2 : (Math.floor(Math.random() * (defaultFlavors.length)) + 1);
+
                 await db.Product.findOrCreate({
                     where: { id: product.id },
                     defaults: {
@@ -217,7 +191,8 @@ async function seedData() {
                         featured: product.featured === 'true' || product.featured === true,
                         audience: product.audience,
                         stock: parseInt(product.stock) || 0,
-                        active: true
+                        active: true,
+                        flavor_id: randomFlavorId
                     }
                 });
             }
@@ -564,7 +539,7 @@ async function seedData() {
         console.log('Seeding completed successfully.');
 
         // Reset sequences to prevent duplicate ID errors on next create
-        const tables = ['Sliders', 'Products', 'Categories', 'Forms', 'Testimonials', 'Coupons', 'leadership_teams', 'FAQs'];
+        const tables = ['Sliders', 'Flavors', 'Products', 'Categories', 'Forms', 'Testimonials', 'Coupons', 'leadership_teams', 'FAQs'];
         for (const tableName of tables) {
             try {
                 const [results] = await db.sequelize.query(`SELECT pg_get_serial_sequence('"${tableName}"', 'id') as seq;`);
@@ -659,7 +634,10 @@ app.get('/api/product/getProducts', async (req, res) => {
             offset: page * size,
             limit: size,
             order: [['id', 'DESC']],
-            include: [{ model: db.Offer, as: 'offers', required: false }]
+            include: [
+                { model: db.Offer, as: 'offers', required: false },
+                { model: db.Flavor, as: 'flavor', required: false }
+            ]
         });
         res.json(getPaginatedResponse(rows, count, page, size));
     } catch (error) {
@@ -1438,7 +1416,7 @@ app.post('/api/product/upload', authenticateToken, uploadProductImage.single('fi
     res.send(fileUrl);
 });
 
-app.get('/api/product/images/:productId/:flavorId', authenticateToken, (req, res) => {
+app.get('/api/product/images/:productId/:flavorId', (req, res) => {
     const { productId, flavorId } = req.params;
     const dirPath = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId), String(flavorId));
 
@@ -1971,8 +1949,8 @@ const startServer = async () => {
 
         // Drop and recreate FAQ table first to ensure clean schema
         try {
-            await db.FAQ.drop({ force: true });
-            console.log('Dropped FAQ table');
+            //await db.FAQ.drop({ force: true });
+            //console.log('Dropped FAQ table');
         } catch (err) {
             // FAQ table might not exist yet, which is fine
         }

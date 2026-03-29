@@ -142,7 +142,7 @@ const ProductSelector = ({ product, onFlavorChange }) => {
             className="flex-grow bg-slate-900 text-white hover:bg-sky-600 px-10 py-6 rounded-[2.5rem] font-bold shadow-2xl transition-all active:scale-95 group flex items-center justify-center gap-4"
             onClick={() => {
               if ((cartItemCount + martItemCount + lartItemCount) < stock) { 
-                addToCart(id, selectedSize); 
+                addToCart(id, selectedSize, selectedFlavorId); 
                 Alert.success(`${product.title} (${selectedSize}) added to cart!`);
               } else {
                 Alert.info('Item Out of stock!');

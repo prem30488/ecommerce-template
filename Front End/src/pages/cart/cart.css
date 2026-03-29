@@ -1,52 +1,210 @@
-/* Cart Drawer Custom Styles */
+/* Cart Drawer Custom Styles - THE PREMIUM BOUTIQUE EDITION */
+
+/* Base & Typography */
+.cart-drawer-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  background: white;
+  position: relative;
+}
+
+/* Premium Professional Scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 6px !important;
+  height: 6px !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: #f8fafc !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-  transition: all 0.3s ease;
+  background: #cbd5e1 !important;
+  border-radius: 20px !important;
+  border: 2px solid #f8fafc;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #94a3b8 !important;
 }
 
-/* Animations */
+/* Glassmorphism & Depth */
+.cart-glass-footer {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-top: 1px solid rgba(241, 245, 249, 0.8);
+  box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.03);
+}
+
+.cart-item-card {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #f1f5f9 !important;
+}
+
+.cart-item-card:hover {
+  transform: translateX(-4px);
+  background: white;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.05);
+  border-color: #e2e8f0 !important;
+}
+
+/* Compact Coupon Overrides - ENSURING ITEMS HAVE SPACE */
+.compact-coupon-wrapper h2, 
+.compact-coupon-wrapper h1,
+.compact-coupon-wrapper .container,
+.compact-coupon-wrapper .checkout,
+.compact-coupon-wrapper .subtotal,
+.compact-coupon-wrapper span:not(.text-red-500),
+.compact-coupon-wrapper .pb-20 {
+  display: none !important;
+}
+
+.compact-coupon-wrapper {
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.compact-coupon-wrapper input {
+  font-size: 11px !important;
+  padding: 12px 16px !important;
+  border-radius: 14px !important;
+  border: 1px solid #f1f5f9 !important;
+  background: #f8fafc !important;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 800;
+  width: 100% !important;
+  transition: all 0.3s;
+}
+
+.compact-coupon-wrapper input:focus {
+  background: white !important;
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+  outline: none;
+}
+
+.compact-coupon-wrapper .buttons button {
+  width: 100%;
+  margin-top: 10px;
+  background: #0f172a;
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  padding: 14px;
+  border-radius: 14px;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #1e293b;
+}
+
+.compact-coupon-wrapper .buttons button:hover {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.3);
+}
+
+/* Animated Progress Bar Candy Stripes */
+.shipping-progress-candy {
+  position: relative;
+  overflow: hidden;
+}
+
+.shipping-progress-candy::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.25) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.25) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 30px 30px;
+  animation: progress-slide 1.5s linear infinite;
+  opacity: 0.2;
+}
+
+@keyframes progress-slide {
+  from { background-position: 0 0; }
+  to { background-position: 30px 0; }
+}
+
+/* Professional Animations */
 @keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(30px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 .cart-item-anim {
-  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(12deg); }
+  50% { transform: translateY(-12px) rotate(15deg); }
 }
 
-/* MUI Drawer Overrides */
+.empty-cart-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Premium Glow for Checkout Button */
+.btn-checkout-glow {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.2);
+}
+
+.btn-checkout-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: skewX(-25deg);
+  transition: 0.8s;
+}
+
+.btn-checkout-glow:hover::before {
+  left: 150%;
+}
+
+/* MUI Drawer Overrides (Strict Constraints) */
 .MuiDrawer-paper {
-  height: 100% !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  width: 100% !important;
+  max-width: 450px !important;
+  border-radius: 40px 0 0 40px !important;
+  overflow: hidden !important;
+  background: white !important;
+  border: none !important;
+  box-shadow: -20px 0 80px rgba(0,0,0,0.08) !important;
 }
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
-  .cart-header-trigger {
-    padding: 6px;
+  .MuiDrawer-paper {
+    border-radius: 0 !important;
+    max-width: 100% !important;
   }
 }

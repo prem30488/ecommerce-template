@@ -5,18 +5,21 @@ import { WhatsappLogo } from "phosphor-react";
 export default function Footer() {
 
   // When the user scrolls down 20px from the top of the document, show the button
-  window.onscroll = function () {
-    scrollFunction()
-  };
+  React.useEffect(() => {
+    const scrollFunction = () => {
+      const myBtn = document.getElementById("myBtn");
+      if (myBtn) {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+          myBtn.style.display = "block";
+        } else {
+          myBtn.style.display = "none";
+        }
+      }
+    };
 
-  function scrollFunction() {
-    if (document.body.scrollTop > 20
-      || document.documentElement.scrollTop > 20) {
-      document.getElementById("myBtn").style.display = "block";
-    } else {
-      document.getElementById("myBtn").style.display = "none";
-    }
-  }
+    window.addEventListener("scroll", scrollFunction);
+    return () => window.removeEventListener("scroll", scrollFunction);
+  }, []);
 
   // When the user clicks on the button, scroll to the top of the document
   function topFunction() {

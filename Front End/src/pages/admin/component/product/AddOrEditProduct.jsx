@@ -19,7 +19,8 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
   const [formData, setFormData] = useState({
     ...product,
     ProductImages: product?.ProductImages || [],
-    audience: product?.audience || ''
+    audience: product?.audience || '',
+    flavor_id: product?.flavor_id || 1
   });
   const [flavors, setFlavors] = useState([]);
   const [currentFlavorId, setCurrentFlavorId] = useState('');
@@ -235,6 +236,20 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
           onChange={handleChange}
           required
         />
+
+        <FormControl fullWidth>
+          <InputLabel>Product Default Flavor</InputLabel>
+          <Select
+            name="flavor_id"
+            value={formData.flavor_id}
+            onChange={handleChange}
+            label="Product Default Flavor"
+          >
+            {flavors.map((f) => (
+              <MenuItem key={f.id} value={f.id}>{f.name}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
 
         <TextField
