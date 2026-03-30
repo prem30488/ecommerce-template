@@ -7,11 +7,15 @@
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   position: relative;
   overflow: hidden;
+  min-height: max-content;
+  height: auto;
 }
 
 .testi-header {
   text-align: center;
   margin-bottom: 3.5rem;
+  min-height: max-content;
+  height: auto;
 }
 
 .testi-eyebrow {
@@ -36,21 +40,27 @@
 /* Fixed rectangle card */
 .testi-card {
   background: #ffffff;
-  border-radius: 0.5rem; /* sharper corners for "rectangle" look */
+  border-radius: 0.5rem;
+  /* sharper corners for "rectangle" look */
   padding: 2.5rem 1.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
-  min-height: 440px; /* Flex-stretch handles rectangle shape, min-height allows safety */
+  min-height: auto;
+  /* Allow natural height based on content */
   height: 100%;
-  width: 100%; /* Forces it to fill the grid column */
-  min-width: 280px; /* Prevents Swiper from crushing isolated elements */
+  width: 100%;
+  /* Forces it to fill the grid column */
+  min-width: 280px;
+  /* Prevents Swiper from crushing isolated elements */
   display: flex !important;
   flex-direction: column;
-  align-items: center; /* Center horizontally */
+  align-items: center;
+  /* Center horizontally */
   text-align: center;
   transition: all 0.3s ease;
   position: relative;
   margin: 1rem 0;
+  min-height: 600px;
 }
 
 .testi-card:hover {
@@ -114,7 +124,8 @@
   display: flex;
   justify-content: center;
   gap: 0.25rem;
-  color: #FFD700; /* Yellow */
+  color: #FFD700;
+  /* Yellow */
   font-size: 1.15rem;
   margin-bottom: 1.25rem;
   list-style: none;
@@ -131,7 +142,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1; /* expands to fill remaining space */
+  flex: 1;
+  /* expands to fill remaining space */
 }
 
 .testi-quote-mark {
@@ -152,11 +164,53 @@
   line-height: 1.7;
   color: #475569;
   font-style: italic;
-  opacity: 0.85; /* Required proper opacity */
+  opacity: 0.85;
+  /* Required proper opacity */
   margin: 0;
   transition: opacity 0.3s ease;
 }
 
 .testi-card:hover .testi-text {
   opacity: 1;
+}
+
+/* Responsive height adjustments */
+@media (min-width: 768px) {
+  .testi-card {
+    min-height: 380px;
+    /* Medium screens - slightly constrained */
+  }
+}
+
+@media (min-width: 992px) {
+  .testi-card {
+    position: relative;
+    /* Large screens - balanced height */
+  }
+
+  .swiper-slide {
+    overflow: hidden;
+    display: flex;
+    min-height: 465px;
+    /* Allow Swiper to adjust height based on content */
+  }
+
+  .swiper .testimonial {
+    position: relative;
+    display: contents;
+    height: 550px;
+    ;
+  }
+}
+
+@media (max-width: 576px) {
+  .testi-card {
+    min-height: auto;
+    /* Mobile - natural height */
+    padding: 2rem 1.25rem;
+  }
+
+  .testi-section {
+    padding: 3rem 1rem;
+  }
 }

@@ -72,6 +72,7 @@ export const Testimonials = () => {
             style={{
               '--swiper-navigation-color': '#0d9488',
               '--swiper-pagination-color': '#0d9488',
+              'height': '550px',
             }}
             loop={true}
             spaceBetween={10}
