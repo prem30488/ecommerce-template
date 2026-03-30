@@ -1383,7 +1383,7 @@ const multer = require('multer');
 const flavorStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         const flavorId = req.query.flavorId || 'temp';
-        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'flavor', String(flavorId));
+        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'Flavors', String(flavorId));
 
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
@@ -1401,7 +1401,7 @@ app.post('/api/flavor/upload', authenticateToken, uploadFlavorIcon.single('file'
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
     const flavorId = req.query.flavorId || 'temp';
-    const fileUrl = `/images/flavor/${flavorId}/${req.file.filename}`;
+    const fileUrl = `/images/Flavors/${flavorId}/${req.file.filename}`;
     res.send(fileUrl);
 });
 
@@ -2110,6 +2110,7 @@ const startServer = async () => {
     try {
         await ensureDatabaseExists();
         await db.sequelize.query('DROP TABLE IF EXISTS "Reviews" CASCADE;');
+        await db.sequelize.query('DROP TABLE IF EXISTS "Flavors" CASCADE;');
         await db.sequelize.sync();
         console.log('Database synced successfully');
         await seedData();

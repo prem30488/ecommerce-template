@@ -58,6 +58,29 @@ async function seedData() {
         for (const gen of genders) await db.Gender.findOrCreate({ where: { id: gen.id }, defaults: gen });
         console.log('Seeded genders.');
 
+        // 2.5. Seed Flavors
+        const flavors = [
+            { name: 'Dark Chocolate', active: true },
+            { name: 'Vanilla', active: true },
+            { name: 'Strawberry', active: true },
+            { name: 'Cookie Blast', active: true },
+            { name: 'Mango', active: true },
+            { name: 'Banana Splurge', active: true },
+            { name: 'Pineapple Swirl', active: true },
+            { name: 'Fruit Punch', active: true },
+            { name: 'Kiwi Lychee', active: true },
+            { name: 'Default', active: true }
+        ];
+        const createdFlavors = [];
+        for (const flavor of flavors) {
+            const [createdFlavor] = await db.Flavor.findOrCreate({
+                where: { name: flavor.name },
+                defaults: flavor
+            });
+            createdFlavors.push(createdFlavor);
+        }
+        console.log(`Seeded ${createdFlavors.length} flavors.`);
+
         // 3. Seed Categories
         const categoriesPath = path.join(__dirname, '..', 'Front End', 'public', 'categories.json');
         const categoriesData = JSON.parse(fs.readFileSync(categoriesPath, 'utf8'));
@@ -68,12 +91,13 @@ async function seedData() {
         }
         console.log(`Seeded ${createdCategories.length} categories.`);
 
-        // 4. Seed Products with random categories and 3 images total
+        // 4. Seed Products with random categories, flavors, and 3 images in flavor subfolders
         const productsPath = path.join(__dirname, '..', 'Front End', 'public', 'products.json');
         const productsData = JSON.parse(fs.readFileSync(productsPath, 'utf8'));
 
         for (const product of productsData) {
             const randomCat = createdCategories[Math.floor(Math.random() * createdCategories.length)];
+            const randomFlavor = createdFlavors[Math.floor(Math.random() * createdFlavors.length)];
             const selectedImages = [...imagePool].sort(() => 0.5 - Math.random()).slice(0, 3);
 
             // Create product first to get ID
@@ -82,6 +106,7 @@ async function seedData() {
                 description: product.description,
                 img: '', // Will update later
                 category_id: randomCat.id,
+                flavor_id: randomFlavor.id,
                 brand: product.brand,
                 price: product.price,
                 rating: product.rating,
@@ -97,29 +122,42 @@ async function seedData() {
                 fs.mkdirSync(productImagesDir, { recursive: true });
             }
 
-            // Download main image
-            console.log(`Downloading images for product ${createdProduct.id}...`);
+            console.log(`Downloading images for product ${createdProduct.id} with flavor ${randomFlavor.name}...`);
+            
+            // Download main image into flavor subfolder
+            const mainFlavorFolder = path.join(productImagesDir, String(randomFlavor.id));
+            if (!fs.existsSync(mainFlavorFolder)) {
+                fs.mkdirSync(mainFlavorFolder, { recursive: true });
+            }
+            
             const mainImgUrl = getUnsplashUrl(selectedImages[0], 'main');
-            const mainImgDestBase = path.join(productImagesDir, '1');
+            const mainImgDestBase = path.join(mainFlavorFolder, '1');
             const mainImgFinalPath = await downloadImage(mainImgUrl, mainImgDestBase);
-            const mainImgRelative = `/images/${createdProduct.id}/${path.basename(mainImgFinalPath)}`;
+            const mainImgRelative = `/images/${createdProduct.id}/${randomFlavor.id}/${path.basename(mainImgFinalPath)}`;
 
             await createdProduct.update({ img: mainImgRelative });
 
-            // Download additional images
+            // Download additional images to random flavor subfolders
             for (let j = 1; j < selectedImages.length; j++) {
+                const randomFlavorForImage = createdFlavors[Math.floor(Math.random() * createdFlavors.length)];
+                const flavorFolder = path.join(productImagesDir, String(randomFlavorForImage.id));
+                if (!fs.existsSync(flavorFolder)) {
+                    fs.mkdirSync(flavorFolder, { recursive: true });
+                }
+                
                 const altImgUrl = getUnsplashUrl(selectedImages[j], `alt${j}`);
-                const altImgDestBase = path.join(productImagesDir, String(j + 1));
+                const altImgDestBase = path.join(flavorFolder, String(j + 1));
                 const altImgFinalPath = await downloadImage(altImgUrl, altImgDestBase);
-                const altImgRelative = `/images/${createdProduct.id}/${path.basename(altImgFinalPath)}`;
+                const altImgRelative = `/images/${createdProduct.id}/${randomFlavorForImage.id}/${path.basename(altImgFinalPath)}`;
 
                 await db.ProductImage.create({
                     product_id: createdProduct.id,
+                    flavor_id: randomFlavorForImage.id,
                     url: altImgRelative
                 });
             }
         }
-        console.log(`Seeded ${productsData.length} products with localized images.`);
+        console.log(`Seeded ${productsData.length} products with flavor-organized images.`);
 
         // 5. Seed Sliders (Can also localize sliders if needed, but keeping online for now or localize them too)
         const sliderData = [
