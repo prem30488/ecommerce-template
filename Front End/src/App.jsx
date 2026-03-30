@@ -45,6 +45,7 @@ import SliderManagementPage from './pages/admin/component/slider/SliderManagemen
 import LeadershipManagementPage from './pages/admin/component/leadership/LeadershipManagementPage';
 import FlavorManagementPage from './pages/admin/component/flavor/FlavorManagementPage';
 import FAQManager from './pages/admin/component/faq/FAQManager';
+import ReviewManager from './pages/admin/component/review/ReviewManager';
 
 import TaxInvoice from "./pages/checkout/TaxInvoice";
 
@@ -206,6 +207,7 @@ class App extends Component {
 							<Route exact path="/flavorManagement" element={<FlavorManagementPage />} />
 
 							<Route exact path="/faqManagement" element={<FAQManager />} />
+							<Route exact path="/reviewManagement" element={<ReviewManager />} />
 
 							{/* Wishlist Routes */}
 							<Route path="/wishlist" element={<Wishlist />} />

@@ -43,7 +43,15 @@ export const PremiumCart = ({ onClose }) => {
   const progressPercent = Math.min((totalAmount / freeShippingThreshold) * 100, 100);
   const diff = Math.max(freeShippingThreshold - totalAmount, 0);
 
-  const hasItems = totalAmount > 0;
+  // Count directly from raw cart state so hasItems is true even before product prices load
+  const cartCount =
+    Object.values(cartItems).reduce((a, b) => a + b, 0) +
+    Object.values(martItems).reduce((a, b) => a + b, 0) +
+    Object.values(lartItems).reduce((a, b) => a + b, 0) +
+    Object.values(freeCartItems).reduce((a, b) => a + b, 0) +
+    Object.values(freeMartItems).reduce((a, b) => a + b, 0) +
+    Object.values(freeLartItems).reduce((a, b) => a + b, 0);
+  const hasItems = cartCount > 0;
 
   return (
     <div className="premium-cart-container">

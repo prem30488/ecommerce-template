@@ -127,7 +127,18 @@ const NavbarLoggedIn = () => {
             <ListItem disablePadding>
               <ListItemButton onClick={() => navigate("/faqManagement")}>
                 <Category />
-                <ListItemText primary="FAQs" />
+                <ListItemText primary="FAQs" sx={{ ml: 1.5 }} />
+              </ListItemButton>
+            </ListItem>
+          ) : (
+            ""
+          )}
+
+          {currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN" ? (
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => navigate("/reviewManagement")}>
+                <FaGoodreads />
+                <ListItemText primary="Reviews" sx={{ ml: 1.5 }} />
               </ListItemButton>
             </ListItem>
           ) : (

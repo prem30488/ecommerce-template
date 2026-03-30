@@ -24,7 +24,7 @@ export const NavbarMain = () => {
       <div className="logo">
 
         <Link to="/" id="NavTitle">
-          <img src="images/logo.png" style={{ height: "60px", width: "120px" }} />
+          <img src="/images/logo.png" style={{ height: "60px", width: "120px" }} alt="Logo" />
         </Link>
 
         <div className="menudropdown">

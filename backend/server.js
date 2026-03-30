@@ -86,16 +86,16 @@ async function seedData() {
 
         // Seed flavors first
         const defaultFlavors = [
-            { id: 1,  name: 'Default',         active: true, image: '/images/Flavors/default.jpg' },
-            { id: 2,  name: 'Dark Chocolate',  active: true, image: '/images/Flavors/dark_chocolate.jpg' },
-            { id: 3,  name: 'Vanilla',         active: true, image: '/images/Flavors/vanilla.jpg' },
-            { id: 4,  name: 'Strawberry',      active: true, image: '/images/Flavors/strawberry.jpg' },
-            { id: 5,  name: 'Mango',           active: true, image: '/images/Flavors/mango.jpg' },
-            { id: 6,  name: 'Cookie Blast',    active: true, image: '/images/Flavors/cookie_blast.jpg' },
-            { id: 7,  name: 'Banana Splurge',  active: true, image: '/images/Flavors/banana_splurge.jpg' },
-            { id: 8,  name: 'Pineapple Swirl', active: true, image: '/images/Flavors/pineapple_swirl.jpg' },
-            { id: 9,  name: 'Fruit Punch',     active: true, image: '/images/Flavors/fruit_punch.jpg' },
-            { id: 10, name: 'Kiwi Lychee',     active: true, image: '/images/Flavors/kiwi_lychee.jpg' },
+            { id: 1, name: 'Default', active: true, image: '/images/Flavors/default.jpg' },
+            { id: 2, name: 'Dark Chocolate', active: true, image: '/images/Flavors/dark_chocolate.jpg' },
+            { id: 3, name: 'Vanilla', active: true, image: '/images/Flavors/vanilla.jpg' },
+            { id: 4, name: 'Strawberry', active: true, image: '/images/Flavors/strawberry.jpg' },
+            { id: 5, name: 'Mango', active: true, image: '/images/Flavors/mango.jpg' },
+            { id: 6, name: 'Cookie Blast', active: true, image: '/images/Flavors/cookie_blast.jpg' },
+            { id: 7, name: 'Banana Splurge', active: true, image: '/images/Flavors/banana_splurge.jpg' },
+            { id: 8, name: 'Pineapple Swirl', active: true, image: '/images/Flavors/pineapple_swirl.jpg' },
+            { id: 9, name: 'Fruit Punch', active: true, image: '/images/Flavors/fruit_punch.jpg' },
+            { id: 10, name: 'Kiwi Lychee', active: true, image: '/images/Flavors/kiwi_lychee.jpg' },
         ];
 
         for (const flavorData of defaultFlavors) {
@@ -517,29 +517,57 @@ async function seedData() {
         ];
 
         try {
-            // FAQ table should already be created and synced by startServer
-            // Check if FAQs already exist
+            // Check if we need to seed FAQs
             const faqCount = await db.FAQ.count();
             if (faqCount === 0) {
-                // Seed with default FAQs
-                const firstProduct = await db.Product.findOne();
-                if (firstProduct) {
+                const allProducts = await db.Product.findAll({ attributes: ['id'] });
+                console.log(`Starting bulk seeding of FAQs for ${allProducts.length} products...`);
+                let faqData = [];
+                for (const prod of allProducts) {
                     for (const faq of defaultFAQs) {
-                        await db.FAQ.create({ ...faq, productId: firstProduct.id });
+                        faqData.push({ ...faq, productId: prod.id });
                     }
-                    console.log('Seeded FAQs');
-                } else {
-                    console.log('No products found, skipping FAQ seeding');
                 }
+                await db.FAQ.bulkCreate(faqData);
+                console.log(`Seeded FAQs for ${allProducts.length} products`);
+            } else {
+                console.log('FAQs already exist, skipping seed.');
             }
+
+            // Seed sample reviews
+            const reviewCount = await db.Review.count();
+            if (reviewCount === 0) {
+                const sampleReviews = [
+                    { name: 'Jaymin Patel', email: 'jaymin@example.com', rating: 5, comment: 'Life-changing product! The quality is unmatched.', status: 'approved' },
+                    { name: 'Nikul Sisodiya', email: 'nikul@example.com', rating: 4, comment: 'Really effective, though delivery took an extra day.', status: 'approved' },
+                    { name: 'Parth Trivedi', email: 'parth@example.com', rating: 5, comment: 'Absolutely phenomenal. Highly recommend to everyone.', status: 'approved' },
+                    { name: 'Miraj Trivedi', email: 'miraj@example.com', rating: 3, comment: 'Decent product, but I was expecting local sourcing.', status: 'approved' },
+                    { name: 'Jay Patel', email: 'jay@example.com', rating: 5, comment: 'Boutique quality at a great price point.', status: 'approved' },
+                ];
+
+                const allProducts = await db.Product.findAll({ attributes: ['id'] });
+                let reviewData = [];
+                // Limit reviews to first 100 products for performance
+                for (const prod of allProducts.slice(0, 100)) {
+                    for (let i = 0; i < 3; i++) {
+                        const review = sampleReviews[Math.floor(Math.random() * sampleReviews.length)];
+                        reviewData.push({ ...review, productId: prod.id });
+                    }
+                }
+                await db.Review.bulkCreate(reviewData);
+                console.log(`Seeded reviews for products.`);
+            } else {
+                console.log('Reviews already exist, skipping seed.');
+            }
+
         } catch (err) {
-            console.error('Error seeding FAQs:', err);
+            console.error('Error during data seeding:', err);
         }
 
-        console.log('Seeding completed successfully.');
+        console.log('Seeding process completed.');
 
         // Reset sequences to prevent duplicate ID errors on next create
-        const tables = ['Sliders', 'Flavors', 'Products', 'Categories', 'Forms', 'Testimonials', 'Coupons', 'leadership_teams', 'FAQs'];
+        const tables = ['Sliders', 'Flavors', 'Products', 'Categories', 'Forms', 'Testimonials', 'Coupons', 'leadership_teams', 'FAQs', 'Reviews'];
         for (const tableName of tables) {
             try {
                 const [results] = await db.sequelize.query(`SELECT pg_get_serial_sequence('"${tableName}"', 'id') as seq;`);
@@ -1869,8 +1897,8 @@ app.get('/api/faq', async (req, res) => {
 
 // CRUD API routes for FAQs
 
-// Create FAQ
-app.post('/api/faq', authenticateToken, async (req, res) => {
+// Create FAQ (Public submission for "Ask a Question" feature)
+app.post('/api/faq', async (req, res) => {
     try {
         const { question, answer, askedBy, isActive, productId } = req.body;
         if (!productId) {
@@ -1878,14 +1906,15 @@ app.post('/api/faq', authenticateToken, async (req, res) => {
         }
         const newFAQ = await db.FAQ.create({
             question,
-            answer: answer || 'COMING SOON',
-            askedBy: askedBy || '',
-            isActive: isActive !== false,
+            answer: 'Thank you for your question. Our team will get back to you soon!',
+            askedBy: askedBy || 'Anonymous',
+            isActive: false, // Force false for public submissions for moderation
             isDeleted: false,
             productId: productId
         });
         res.status(201).json(newFAQ);
     } catch (error) {
+
         console.error('Error creating FAQ:', error);
         res.status(500).json({ error: 'Failed to create FAQ' });
     }
@@ -1941,22 +1970,148 @@ app.delete('/api/faq/:id', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'Failed to delete FAQ' });
     }
 });
+// API routes for Reviews
+// Get Reviews for a product (Approved only for public)
+app.get('/api/review', async (req, res) => {
+    try {
+        const { productId, page = 0, size = 10 } = req.query;
+        const pageNum = parseInt(page) || 0;
+        const pageSize = parseInt(size) || 10;
+        const offset = pageNum * pageSize;
 
+        let where = { status: 'approved' };
+        if (productId) {
+            where.productId = productId;
+        }
+
+        const { count, rows: reviews } = await db.Review.findAndCountAll({
+            where,
+            order: [['createdAt', 'DESC']],
+            limit: pageSize,
+            offset: offset
+        });
+
+        res.json(getPaginatedResponse(reviews, count, pageNum, pageSize));
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+        res.status(500).json({ error: 'Failed to load reviews', message: error.message, stack: error.stack });
+    }
+});
+
+// Admin Get All Reviews
+app.get('/api/review/admin', authenticateToken, async (req, res) => {
+    try {
+        const { page = 0, size = 10, status, productId, search } = req.query;
+        const pageNum = parseInt(page) || 0;
+        const pageSize = parseInt(size) || 10;
+        const offset = pageNum * pageSize;
+        const { Op } = db.Sequelize;
+
+        let where = {};
+        if (status) where.status = status;
+        if (productId) where.productId = productId;
+
+        if (search && search.trim()) {
+            where[Op.or] = [
+                { name: { [Op.iLike]: `%${search}%` } },
+                { email: { [Op.iLike]: `%${search}%` } },
+                { comment: { [Op.iLike]: `%${search}%` } }
+            ];
+        }
+
+        const { count, rows: reviews } = await db.Review.findAndCountAll({
+            where,
+            include: [
+                { model: db.Product, as: 'product', attributes: ['title'] },
+                { model: db.User, as: 'approver', attributes: ['username'] }
+            ],
+            order: [['createdAt', 'DESC']],
+            limit: pageSize,
+            offset: offset
+        });
+
+        res.json(getPaginatedResponse(reviews, count, pageNum, pageSize));
+    } catch (error) {
+        console.error('Error fetching admin reviews:', error);
+        res.status(500).json({ error: 'Failed to load admin reviews' });
+    }
+});
+
+// Submit a Review (Public)
+app.post('/api/review', async (req, res) => {
+    try {
+        const { name, email, rating, comment, productId } = req.body;
+        if (!productId || !rating || !comment) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        const newReview = await db.Review.create({
+            name,
+            email,
+            rating,
+            comment,
+            productId,
+            status: 'pending' // Default to pending
+        });
+        res.status(201).json(newReview);
+    } catch (error) {
+        console.error('Error creating review:', error);
+        res.status(500).json({ error: 'Failed to submit review' });
+    }
+});
+
+// Admin Update Review (Approve/Reject/Edit)
+app.put('/api/review/:id', authenticateToken, async (req, res) => {
+    try {
+        const { status, rating, comment } = req.body;
+        const review = await db.Review.findByPk(req.params.id);
+        if (!review) {
+            return res.status(404).json({ error: 'Review not found' });
+        }
+        if (status) {
+            review.status = status;
+            // Track who approved or rejected the review
+            if (status === 'approved' || status === 'rejected') {
+                review.approvedBy = req.user.id;
+            }
+        }
+        if (rating) review.rating = rating;
+        if (comment) review.comment = comment;
+        await review.save();
+        // Return with approver info
+        const updatedReview = await db.Review.findByPk(req.params.id, {
+            include: [
+                { model: db.Product, as: 'product', attributes: ['title'] },
+                { model: db.User, as: 'approver', attributes: ['username'] }
+            ]
+        });
+        res.json(updatedReview);
+    } catch (error) {
+        console.error('Error updating review:', error);
+        res.status(500).json({ error: 'Failed to update review' });
+    }
+});
+
+// Admin Delete Review
+app.delete('/api/review/:id', authenticateToken, async (req, res) => {
+    try {
+        const review = await db.Review.findByPk(req.params.id);
+        if (!review) {
+            return res.status(404).json({ error: 'Review not found' });
+        }
+        await review.destroy();
+        res.status(204).send();
+    } catch (error) {
+        console.error('Error deleting review:', error);
+        res.status(500).json({ error: 'Failed to delete review' });
+    }
+});
 // Start server
 const startServer = async () => {
     try {
         await ensureDatabaseExists();
-
-        // Drop and recreate FAQ table first to ensure clean schema
-        try {
-            //await db.FAQ.drop({ force: true });
-            //console.log('Dropped FAQ table');
-        } catch (err) {
-            // FAQ table might not exist yet, which is fine
-        }
-
-        // Now sync all models
-        await db.sequelize.sync({ alter: true });
+        await db.sequelize.query('DROP TABLE IF EXISTS "Reviews" CASCADE;');
+        await db.sequelize.sync();
+        console.log('Database synced successfully');
         await seedData();
 
         app.listen(PORT, () => {

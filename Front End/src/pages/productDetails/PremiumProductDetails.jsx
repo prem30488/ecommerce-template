@@ -39,8 +39,11 @@ export const PremiumProductDetails = () => {
   const [faqs, setFaqs] = useState([]);
   const [openFaq, setOpenFaq] = useState(null);
   const [frequentProducts, setFrequentProducts] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [newReview, setNewReview] = useState({ name: '', email: '', rating: 5, comment: '' });
 
-  const { addToCart, cartItems, martItems, lartItems } = useContext(ShopContext);
+  const { addToCart, removeFromCart, cartItems, martItems, lartItems } = useContext(ShopContext);
 
   // ── Fetch product ──────────────────────────────────────────────
   useEffect(() => {
@@ -75,16 +78,19 @@ export const PremiumProductDetails = () => {
   useEffect(() => {
     axios.get(`${API_BASE_URL}/api/flavor/getFlavors?size=1000`)
       .then(r => setFlavors(r.data.content || []))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // ── Fetch FAQs ─────────────────────────────────────────────────
   useEffect(() => {
     if (!id) return;
-    fetch(`http://localhost:5000/api/faq?productId=${id}`)
+    fetch(`http://localhost:5000/api/faq?productId=${id}&size=100`)
       .then(r => r.json())
-      .then(j => setFaqs(j.content || []))
-      .catch(() => {});
+      .then(j => {
+        const items = j.content || j || [];
+        setFaqs(Array.isArray(items) ? items : []);
+      })
+      .catch(() => { });
   }, [id]);
 
   // ── Fetch frequently bought together ──────────────────────────
@@ -101,8 +107,39 @@ export const PremiumProductDetails = () => {
         }
         setFrequentProducts(recs.slice(0, 4));
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [product?.id]);
+
+  // ── Fetch Reviews ──────────────────────────────────────────────
+  useEffect(() => {
+    if (!id) return;
+    fetch(`${API_BASE_URL}/api/review?productId=${id}&size=100`)
+      .then(r => r.json())
+      .then(j => {
+        const items = j.content || j || [];
+        setReviews(Array.isArray(items) ? items : []);
+      })
+      .catch(() => { });
+  }, [id]);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post(`${API_BASE_URL}/api/review`, { ...newReview, productId: id });
+      Alert.success("Thank you! Your review is pending approval.");
+      setIsReviewModalOpen(false);
+      setNewReview({ name: '', email: '', rating: 5, comment: '' });
+    } catch (err) {
+      Alert.error("Failed to submit review.");
+    }
+  };
+
+  const avgRating = reviews.length ? (reviews.reduce((a, b) => a + Number(b.rating), 0) / reviews.length).toFixed(1) : "0.0";
+  const ratingCounts = [5, 4, 3, 2, 1].map(star => ({
+    star,
+    count: reviews.filter(r => Number(r.rating) === star).length,
+    percentage: reviews.length ? (reviews.filter(r => Number(r.rating) === star).length / reviews.length) * 100 : 0
+  }));
 
   // ── Helpers ────────────────────────────────────────────────────
   const getSizeCount = () => {
@@ -133,12 +170,47 @@ export const PremiumProductDetails = () => {
 
   // ── Size options ──────────────────────────────────────────────
   const sizes = product ? [
-    { id: "S", label: "Small",  price: product.price,       unit: product.unitSmall  },
+    { id: "S", label: "Small", price: product.price, unit: product.unitSmall },
     { id: "M", label: "Medium", price: product.priceMedium, unit: product.unitMedium, popular: true },
-    { id: "L", label: "Large",  price: product.priceLarge,  unit: product.unitLarge  },
+    { id: "L", label: "Large", price: product.priceLarge, unit: product.unitLarge },
   ] : [];
 
-  // ── Loading / Error ───────────────────────────────────────────
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [questionData, setQuestionData] = useState({ name: '', email: '', phone: '', comment: '' });
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: product.title,
+        url: window.location.href
+      }).catch(console.error);
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      Alert.info("Link copied to clipboard!");
+    }
+  };
+
+  const handleQuestionSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        question: questionData.comment,
+        askedBy: questionData.name,
+        productId: product.id,
+      };
+      // Guest-friendly submission (Public endpoint now enabled in backend)
+      await axios.post(`${API_BASE_URL}/api/faq`, payload);
+      Alert.success("Question submitted! We will respond shortly.");
+      setIsModalOpen(false);
+      setQuestionData({ name: '', email: '', phone: '', comment: '' });
+    } catch (err) {
+      console.error("FAQ Submission Error:", err);
+      const errMsg = err.response?.data?.error || "Failed to submit question. Please try again.";
+      Alert.error(errMsg);
+    }
+
+  };
+
   if (loading) return (
     <div className="h-screen flex flex-col items-center justify-center gap-4">
       <div className="w-14 h-14 border-4 border-sky-400 border-t-transparent rounded-full animate-spin" />
@@ -159,7 +231,69 @@ export const PremiumProductDetails = () => {
     : (product.img ? resolveImg(product.img) : "https://placehold.co/600x600/f1f5f9/94a3b8?text=No+Image");
 
   return (
-    <div className="ppp-root">
+    <div className="ppp-root" style={{ "paddingTop": "200px" }}>
+      {/* Question Modal */}
+      {isModalOpen && (
+        <div className="ppp-modal-overlay">
+          <div className="ppp-modal-card">
+            <div className="ppp-modal-header">
+              <h3>Ask A Question</h3>
+              <button 
+                className="ppp-modal-close" 
+                onClick={() => setIsModalOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+            <form onSubmit={handleQuestionSubmit} className="ppp-modal-form">
+              <div className="ppp-form-row">
+                <div className="ppp-form-group">
+                  <label>Name</label>
+                  <input 
+                    required 
+                    value={questionData.name}
+                    onChange={e => setQuestionData({...questionData, name: e.target.value})}
+                    placeholder="Your Full Name"
+                  />
+                </div>
+                <div className="ppp-form-group">
+                  <label>Email</label>
+                  <input 
+                    required 
+                    type="email" 
+                    value={questionData.email}
+                    onChange={e => setQuestionData({...questionData, email: e.target.value})}
+                    placeholder="you@example.com"
+                  />
+                </div>
+              </div>
+              <div className="ppp-form-group">
+                <label>Phone number</label>
+                <input 
+                  required 
+                  value={questionData.phone}
+                  onChange={e => setQuestionData({...questionData, phone: e.target.value})}
+                  placeholder="+91 XXXXX XXXXX"
+                />
+              </div>
+              <div className="ppp-form-group">
+                <label>Comment</label>
+                <textarea 
+                  required 
+                  rows="4" 
+                  value={questionData.comment}
+                  onChange={e => setQuestionData({...questionData, comment: e.target.value})}
+                  placeholder="Ask anything about this product..."
+                />
+              </div>
+              <button type="submit" className="ppp-submit-btn">
+                SUBMIT NOW
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Breadcrumb */}
       <div className="ppp-breadcrumb">
         <Link to="/">Home</Link>
@@ -216,9 +350,9 @@ export const PremiumProductDetails = () => {
 
           {/* Rating */}
           <div className="ppp-rating-row">
-            <RatingStars rating={product.rating} />
-            <span className="ppp-rating-num">{product.rating || "4.8"}</span>
-            <span className="ppp-review-count">· 240 reviews</span>
+            <RatingStars rating={avgRating} />
+            <span className="ppp-rating-num">{avgRating}</span>
+            <span className="ppp-review-count">· {reviews.length} reviews</span>
           </div>
 
           {/* Price */}
@@ -299,17 +433,56 @@ export const PremiumProductDetails = () => {
 
           {/* CTA */}
           <div className="ppp-cta-row">
-            <button className="ppp-add-btn" onClick={handleAddToCart}>
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-              Add to Collection
-              {getSizeCount() > 0 && (
-                <span style={{ background: 'rgba(255,255,255,0.15)', padding: '2px 10px', borderRadius: 100, fontSize: 11 }}>
-                  {getSizeCount()} in cart
-                </span>
-              )}
-            </button>
+            {getSizeCount() > 0 ? (
+              /* ── Quantity stepper (shown once item is in cart) ── */
+              <div style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                background: '#f8fafc',
+                border: '2px solid #e2e8f0',
+                borderRadius: 16,
+                overflow: 'hidden',
+                height: 54,
+              }}>
+                <button
+                  onClick={() => removeFromCart(product.id, selectedSize)}
+                  style={{
+                    width: 54, height: '100%', border: 'none', background: 'transparent',
+                    fontSize: 22, fontWeight: 900, color: '#64748b', cursor: 'pointer',
+                    transition: 'all 0.15s', flexShrink: 0,
+                  }}
+                  onMouseEnter={e => { e.target.style.background = '#fee2e2'; e.target.style.color = '#ef4444'; }}
+                  onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.color = '#64748b'; }}
+                >
+                  −
+                </button>
+                <div style={{ flex: 1, textAlign: 'center' }}>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>{getSizeCount()}</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2 }}>in cart</div>
+                </div>
+                <button
+                  onClick={handleAddToCart}
+                  style={{
+                    width: 54, height: '100%', border: 'none', background: '#0ea5e9',
+                    fontSize: 22, fontWeight: 900, color: '#fff', cursor: 'pointer',
+                    transition: 'all 0.15s', flexShrink: 0,
+                  }}
+                  onMouseEnter={e => e.target.style.background = '#0369a1'}
+                  onMouseLeave={e => e.target.style.background = '#0ea5e9'}
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              /* ── Add button (shown when 0 in cart) ── */
+              <button className="ppp-add-btn" onClick={handleAddToCart}>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                Add to Collection
+              </button>
+            )}
             <div>
               <WishlistIcon
                 productId={String(product.id)}
@@ -328,6 +501,18 @@ export const PremiumProductDetails = () => {
                 }}
               />
             </div>
+          </div>
+
+          {/* NEW: Ask Question & Share */}
+          <div className="ppp-secondary-actions">
+            <button className="ppp-sec-btn" onClick={() => setIsModalOpen(true)}>
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              Ask A Question
+            </button>
+            <button className="ppp-sec-btn" onClick={handleShare}>
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+              Share
+            </button>
           </div>
 
           {/* Trust strip */}
@@ -375,7 +560,7 @@ export const PremiumProductDetails = () => {
             { num: "10K+", label: "Happy Customers" },
             { num: "4.8★", label: "Average Rating" },
             { num: "100%", label: "Purity Guaranteed" },
-            { num: "30",   label: "Day Money Back" },
+            { num: "30", label: "Day Money Back" },
           ].map(s => (
             <div key={s.label} className="ppp-stat-card">
               <div className="ppp-stat-num">{s.num}</div>
@@ -389,6 +574,148 @@ export const PremiumProductDetails = () => {
         <div className="ppp-desc-block">
           {product.description || "Premium quality supplement crafted with precision and care. Each serving is carefully dosed to deliver maximum results. Our formulas undergo rigorous third-party testing to ensure purity, potency, and safety. We believe in transparency — no proprietary blends, no hidden fillers, just pure science-backed ingredients."}
         </div>
+
+
+        {/* FAQs */}
+        {faqs.filter(f => f.isActive !== false).length > 0 && (
+          <>
+            <h2 className="ppp-section-title">Frequently Asked Questions</h2>
+            <div className="ppp-faq-list">
+              {faqs.filter(f => f.isActive !== false).map(faq => (
+                <div key={faq.id} className={`ppp-faq-item ${openFaq === faq.id ? "open" : ""}`}>
+                  <button
+                    className="ppp-faq-trigger"
+                    onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+                  >
+                    {faq.question}
+                    <span className="ppp-faq-chevron">›</span>
+                  </button>
+                  <div className="ppp-faq-body">{faq.answer}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {/* Customer Reviews Section */}
+        <div id="reviews" className="ppp-reviews-section">
+          <h2 className="ppp-section-title">Customer Reviews</h2>
+
+          <div className="ppp-reviews-overview">
+            <div className="ppp-overview-left">
+              <div className="ppp-avg-box">
+                <div className="ppp-avg-num">{avgRating}</div>
+                <div className="ppp-avg-label">out of 5</div>
+              </div>
+              <div className="ppp-total-count">Based on {reviews.length} reviews</div>
+              <RatingStars rating={avgRating} />
+            </div>
+
+            <div className="ppp-overview-middle">
+              {ratingCounts.map(rc => (
+                <div key={rc.star} className="ppp-rating-row">
+                  <div className="ppp-star-label">{rc.star} <Star filled={true} /></div>
+                  <div className="ppp-bar-bg">
+                    <div className="ppp-bar-fill" style={{ width: `${rc.percentage}%` }} />
+                  </div>
+                  <div className="ppp-count-label">{rc.count}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="ppp-overview-right">
+              <button 
+                className="ppp-write-btn"
+                onClick={() => setIsReviewModalOpen(true)}
+              >
+                WRITE A REVIEW
+              </button>
+            </div>
+          </div>
+
+          <div className="ppp-divider" style={{ margin: '40px 0' }} />
+
+          <div className="ppp-reviews-list">
+            {reviews.length > 0 ? (
+              reviews.map(rev => (
+                <div key={rev.id} className="ppp-review-card">
+                  <div className="ppp-rev-header">
+                    <div className="ppp-rev-user">
+                      <div className="ppp-rev-avatar">
+                        {rev.name?.charAt(0) || 'U'}
+                      </div>
+                      <div>
+                        <div className="ppp-rev-name">{rev.name}</div>
+                        <div className="ppp-rev-date">{new Date(rev.createdAt).toLocaleDateString()}</div>
+                      </div>
+                    </div>
+                    <RatingStars rating={rev.rating} />
+                  </div>
+                  <div className="ppp-rev-body">{rev.comment}</div>
+                </div>
+              ))
+            ) : (
+              <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
+                No reviews yet. Be the first to share your experience!
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Write Review Modal */}
+        {isReviewModalOpen && (
+          <div className="ppp-modal-overlay">
+            <div className="ppp-modal-card">
+              <div className="ppp-modal-header">
+                <h3>Write A Review</h3>
+                <button className="ppp-modal-close" onClick={() => setIsReviewModalOpen(false)}>×</button>
+              </div>
+              <form onSubmit={handleReviewSubmit} className="ppp-modal-form">
+                <div className="ppp-form-row">
+                  <div className="ppp-form-group">
+                    <label>Name</label>
+                    <input 
+                      required 
+                      value={newReview.name}
+                      onChange={e => setNewReview({...newReview, name: e.target.value})}
+                      placeholder="Your Name"
+                    />
+                  </div>
+                  <div className="ppp-form-group">
+                    <label>Email</label>
+                    <input 
+                      required 
+                      type="email" 
+                      value={newReview.email}
+                      onChange={e => setNewReview({...newReview, email: e.target.value})}
+                      placeholder="Email"
+                    />
+                  </div>
+                </div>
+                <div className="ppp-form-group">
+                  <label>Rating</label>
+                  <select 
+                    value={newReview.rating}
+                    onChange={e => setNewReview({...newReview, rating: e.target.value})}
+                    className="ppp-select"
+                  >
+                    {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Stars</option>)}
+                  </select>
+                </div>
+                <div className="ppp-form-group">
+                  <label>Your Review</label>
+                  <textarea 
+                    required 
+                    rows="4"
+                    value={newReview.comment}
+                    onChange={e => setNewReview({...newReview, comment: e.target.value})}
+                    placeholder="Tell us what you think..."
+                  />
+                </div>
+                <button type="submit" className="ppp-submit-btn">SUBMIT REVIEW</button>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Frequently Bought Together */}
         {frequentProducts.length > 0 && (
@@ -418,26 +745,6 @@ export const PremiumProductDetails = () => {
           </div>
         )}
 
-        {/* FAQs */}
-        {faqs.filter(f => f.isActive).length > 0 && (
-          <>
-            <h2 className="ppp-section-title">Frequently Asked Questions</h2>
-            <div className="ppp-faq-list">
-              {faqs.filter(f => f.isActive).map(faq => (
-                <div key={faq.id} className={`ppp-faq-item ${openFaq === faq.id ? "open" : ""}`}>
-                  <button
-                    className="ppp-faq-trigger"
-                    onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
-                  >
-                    {faq.question}
-                    <span className="ppp-faq-chevron">›</span>
-                  </button>
-                  <div className="ppp-faq-body">{faq.answer}</div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
       </div>
     </div>
   );
