@@ -3,26 +3,73 @@
   font-family: 'Inter', sans-serif;
   z-index: 1000;
   border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  flex-wrap: nowrap;
 }
 
 .navbar a {
-  float: left;
-  font-size: 16px;
-  color: rgb(28, 27, 27);
+  font-size: 14px;
+  color: #475569;
   text-align: center;
-  padding: 14px 16px;
+  padding: 8px 12px;
   text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  font-weight: 500;
+}
+
+.navbar a:hover {
+  color: #0284c7;
+}
+
+.navbar a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #0284c7, #0369a1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+}
+
+.navbar a:hover::after {
+  width: 100%;
+}
+
+.active-link {
+  color: #0284c7 !important;
+  font-weight: 600;
+}
+
+.active-link::after {
+  width: 100% !important;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
 }
 
 .menudropdown {
-  float: left;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .menudropdown .menudropbtn {
   font-size: 16px;
   border: none;
   outline: none;
-  color: #0284c7; /* Sky 600 */
+  color: #0284c7;
+  /* Sky 600 */
   padding: 14px 16px;
   background-color: inherit;
   font-weight: 500;
@@ -31,7 +78,8 @@
 }
 
 .menudropdown:hover .menudropbtn {
-  color: #0369a1; /* Sky 700 */
+  color: #0369a1;
+  /* Sky 700 */
   background-color: #f8fafc;
 }
 
@@ -123,7 +171,8 @@
 .menuheader h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a; /* Slate 900 */
+  color: #0f172a;
+  /* Slate 900 */
   margin: 0;
 }
 
@@ -138,6 +187,14 @@
 .label-warning[href],
 .badge-warning[href] {
   background-color: #c67605;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: nowrap;
+  margin-left: auto;
 }
 
 #lblCartCount {
