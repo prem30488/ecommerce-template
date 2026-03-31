@@ -42,6 +42,7 @@ export const PremiumProductDetails = () => {
   const [reviews, setReviews] = useState([]);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [newReview, setNewReview] = useState({ name: '', email: '', rating: 5, comment: '' });
+  const [bundleSelections, setBundleSelections] = useState(null); // { allProducts, selections }
 
   const { addToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart } = useContext(ShopContext);
 
@@ -746,6 +747,7 @@ export const PremiumProductDetails = () => {
               <FrequentlyBoughtCarousel
                 currentProduct={product}
                 frequentProducts={frequentProducts}
+                onSelectionsChange={(allProds, sels) => setBundleSelections({ allProducts: allProds, selections: sels })}
               />
               <div style={{ marginTop: 32, paddingTop: 28, borderTop: '1px solid #f1f5f9', textAlign: 'center' }}>
                 <span style={{ fontSize: 11, fontWeight: 900, color: '#94a3b8', letterSpacing: '0.15em', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}>
@@ -762,10 +764,14 @@ export const PremiumProductDetails = () => {
                   onMouseEnter={e => e.target.style.background = '#0ea5e9'}
                   onMouseLeave={e => e.target.style.background = '#0f172a'}
                   onClick={() => {
-                    const allBundle = [product, ...frequentProducts];
-                    allBundle.forEach(item => {
-                      const fid = item.productFlavors?.[0]?.flavor_id;
-                      if (fid) addToCart(item.id, "S", fid);
+                    const allBundle = bundleSelections?.allProducts || [product, ...frequentProducts];
+                    const sels = bundleSelections?.selections || {};
+                    const SIZES_MAP = { S: 'price', M: 'priceMedium', L: 'priceLarge' };
+                    allBundle.forEach((item, idx) => {
+                      const sel = sels[idx] || { flavorIdx: 0, size: 'S' };
+                      const flavor = item.productFlavors?.[sel.flavorIdx];
+                      const fid = flavor?.flavor_id;
+                      if (fid) addToCart(item.id, sel.size, fid);
                     });
                     Alert.success("Bundle added to collection!");
                   }}
