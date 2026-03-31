@@ -67,25 +67,31 @@ export const PremiumProductDetails = () => {
       .catch(e => { setErr(String(e)); setLoading(false); });
   }, [id]);
 
-  // ── Fetch folder images for active flavor ─────────────────────
+  // ── Resolve images for active flavor from already-loaded product data ──
   useEffect(() => {
-    const flavorId = selectedFlavor || "default";
-    const load = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/api/product/images/${id}/${flavorId}`);
-        const json = await res.json();
-        if (Array.isArray(json) && json.length > 0) {
-          setAllImages(json);
-        } else {
-          const fb = await fetch(`http://localhost:5000/api/product/images/${id}/default`);
-          const fbj = await fb.json();
-          setAllImages(Array.isArray(fbj) && fbj.length > 0 ? fbj : product?.img ? [product.img] : []);
-        }
-        setActiveImg(0);
-      } catch { setAllImages(product?.img ? [product.img] : []); }
-    };
-    if (id) load();
-  }, [id, selectedFlavor, product?.img]);
+    if (!product) return;
+
+    const flavorId = selectedFlavor;
+    const allProdImages = product.ProductImages || [];
+
+    // Filter images for the selected flavor
+    const flavorImages = flavorId
+      ? allProdImages.filter(img => String(img.flavor_id) === String(flavorId)).map(img => img.url)
+      : [];
+
+    if (flavorImages.length > 0) {
+      setAllImages(flavorImages);
+    } else if (allProdImages.length > 0) {
+      // Fallback: all images regardless of flavor
+      setAllImages(allProdImages.map(img => img.url));
+    } else if (product.img) {
+      setAllImages([product.img]);
+    } else {
+      setAllImages([]);
+    }
+
+    setActiveImg(0);
+  }, [selectedFlavor, product]);
 
   // ── Fetch flavors ──────────────────────────────────────────────
   useEffect(() => {
