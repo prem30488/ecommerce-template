@@ -9,11 +9,21 @@ import { useParams } from "react-router-dom";
 const TaxInvoice = ({ status }) => {
 	const { orderId } = useParams();
 	const para = useRef(null);
-	const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, getTotalAfterDiscount, resetCart, getCustomerData } = useContext(ShopContext);
+	const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, getTotalAfterDiscount, resetCart, getCustomerData, flavorCart } = useContext(ShopContext);
 	const totalAmount = getTotalCartAmount();
 	const formData = getCustomerData();
 	const totalAfterDiscount = getTotalAfterDiscount();
 	const total = totalAfterDiscount ? totalAfterDiscount : totalAmount;
+
+	const getPriceForSize = (product, size) => {
+		const flavorId = flavorCart[`${product.id}_${size}`] || (product.productFlavors && product.productFlavors[0]?.flavor_id) || 1;
+		const activeFlavorData = product.productFlavors?.find(pf => String(pf.flavor_id) === String(flavorId));
+		if (!activeFlavorData) return 0;
+		if (size === "S") return activeFlavorData.price;
+		if (size === "M") return activeFlavorData.priceMedium;
+		if (size === "L") return activeFlavorData.priceLarge;
+		return 0;
+	};
 	// const [items, setItems] = useState([
 	//  // { id: 1, description: 'Item 1', quantity: 2, price: 10 },
 	//  // { id: 2, description: 'Item 2', quantity: 1, price: 15 },
@@ -113,9 +123,9 @@ const TaxInvoice = ({ status }) => {
 											return <tr key={product1.id}>
 												<td><span >{product1.title}</span></td>
 												<td><span >{product1.hmscode}</span></td>
-												<td><span data-prefix>INR </span><span>{product1.price} - Small pack</span></td>
+												<td><span data-prefix>INR </span><span>{getPriceForSize(product1, "S")} - Small pack</span></td>
 												<td><span >{cartItems[product1.id]}</span></td>
-												<td><span data-prefix>INR </span><span>{product1.offers[0] ? product1.price - (product1.price * product1.offers[0].discount / 100) : product1.price}</span></td>
+												<td><span data-prefix>INR </span><span>{product1.offers[0] ? getPriceForSize(product1, "S") - (getPriceForSize(product1, "S") * product1.offers[0].discount / 100) : getPriceForSize(product1, "S")}</span></td>
 											</tr>;
 										}
 									})}
@@ -126,9 +136,9 @@ const TaxInvoice = ({ status }) => {
 											return <tr key={product2.id}>
 												<td><span >{product2.title}</span></td>
 												<td><span >{product2.hmscode}</span></td>
-												<td><span data-prefix>INR </span><span>{product2.priceMedium} - Medium Pack</span></td>
+												<td><span data-prefix>INR </span><span>{getPriceForSize(product2, "M")} - Medium Pack</span></td>
 												<td><span >{martItems[product2.id]}</span></td>
-												<td><span data-prefix>INR </span><span>{product2.offers[0] ? product2.priceMedium - (product2.priceMedium * product2.offers[0].discount / 100) : product2.priceMedium}</span></td>
+												<td><span data-prefix>INR </span><span>{product2.offers[0] ? getPriceForSize(product2, "M") - (getPriceForSize(product2, "M") * product2.offers[0].discount / 100) : getPriceForSize(product2, "M")}</span></td>
 											</tr>;
 										}
 									})}
@@ -139,9 +149,9 @@ const TaxInvoice = ({ status }) => {
 											return <tr key={product3.id}>
 												<td><span >{product3.title}</span></td>
 												<td><span >{product3.hmscode}</span></td>
-												<td><span data-prefix>INR </span><span>{product3.priceLarge} - Large Pack</span></td>
+												<td><span data-prefix>INR </span><span>{getPriceForSize(product3, "L")} - Large Pack</span></td>
 												<td><span >{lartItems[product3.id]}</span></td>
-												<td><span data-prefix>INR </span><span>{product3.offers[0] ? product3.priceLarge - (product3.priceLarge * product3.offers[0].discount / 100) : product3.priceLarge}</span></td>
+												<td><span data-prefix>INR </span><span>{product3.offers[0] ? getPriceForSize(product3, "L") - (getPriceForSize(product3, "L") * product3.offers[0].discount / 100) : getPriceForSize(product3, "L")}</span></td>
 											</tr>;
 										}
 									})}

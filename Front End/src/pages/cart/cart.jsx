@@ -76,16 +76,28 @@ export const Cart = ({ onClose }) => {
         {hasItems ? (
           <div className="space-y-6 pb-12">
             {products.length > 0 ? (
-              products.map((product) => (
-                <React.Fragment key={product.id}>
-                  {cartItems[product.id] > 0 && <CartItem data={product} size="S" />}
-                  {martItems[product.id] > 0 && <CartItem data={product} size="M" />}
-                  {lartItems[product.id] > 0 && <CartItem data={product} size="L" />}
-                  {freeCartItems[product.id] > 0 && <CartItem data={product} size="S" isFree={true} />}
-                  {freeMartItems[product.id] > 0 && <CartItem data={product} size="M" isFree={true} />}
-                  {freeLartItems[product.id] > 0 && <CartItem data={product} size="L" isFree={true} />}
-                </React.Fragment>
-              ))
+              products.map((product) => {
+                const renderAllFlavors = (items, size, isFree = false) => {
+                  return Object.keys(items).map(key => {
+                    const [pid, flavorId] = key.split('_');
+                    if (Number(pid) === product.id && items[key] > 0) {
+                      return <CartItem key={`${key}_${size}_${isFree}`} data={product} size={size} flavorId={flavorId} isFree={isFree} />
+                    }
+                    return null;
+                  });
+                };
+
+                return (
+                  <React.Fragment key={product.id}>
+                    {renderAllFlavors(cartItems, "S")}
+                    {renderAllFlavors(martItems, "M")}
+                    {renderAllFlavors(lartItems, "L")}
+                    {renderAllFlavors(freeCartItems, "S", true)}
+                    {renderAllFlavors(freeMartItems, "M", true)}
+                    {renderAllFlavors(freeLartItems, "L", true)}
+                  </React.Fragment>
+                );
+              })
             ) : (
               <div className="p-4 text-center text-slate-400">Loading products...</div>
             )}

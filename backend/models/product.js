@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
             Product.hasMany(models.ProductImage, { foreignKey: 'product_id' });
             Product.hasMany(models.Offer, { foreignKey: 'productId', as: 'offers' });
             Product.hasMany(models.FAQ, { foreignKey: 'productId', as: 'faqs' });
-            Product.belongsTo(models.Flavor, { foreignKey: 'flavor_id', as: 'flavor' });
+            Product.hasMany(models.ProductFlavor, { foreignKey: 'product_id', as: 'productFlavors' });
             Product.hasMany(models.Review, { foreignKey: 'productId', as: 'reviews' });
         }
     }
@@ -38,7 +38,6 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         brand: DataTypes.STRING,
-        price: DataTypes.FLOAT,
         rating: DataTypes.STRING,
         bestseller: DataTypes.BOOLEAN,
         featured: DataTypes.BOOLEAN,
@@ -55,16 +54,7 @@ module.exports = (sequelize, DataTypes) => {
         unit: DataTypes.STRING,
         unitSmall: DataTypes.INTEGER,
         unitMedium: DataTypes.INTEGER,
-        unitLarge: DataTypes.INTEGER,
-        priceMedium: DataTypes.FLOAT,
-        priceLarge: DataTypes.FLOAT,
-        flavor_id: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'Flavors',
-                key: 'id'
-            }
-        }
+        unitLarge: DataTypes.INTEGER
     }, {
         sequelize,
         modelName: 'Product',

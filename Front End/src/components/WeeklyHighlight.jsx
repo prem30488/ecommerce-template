@@ -62,8 +62,11 @@ const WeeklyHighlight = () => {
     );
   }
 
-  const { id, title, description, img, price, rating, stock } = product;
-  const cartCount = id ? (cartItems[id] || 0) : 0;
+  const { id, title, description, img, rating, stock } = product;
+  const price = product.productFlavors?.[0]?.price ?? product.price ?? 0;
+  const firstFlavorId = product.productFlavors?.[0]?.flavor_id;
+  const cartCount = id ? Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0)
+    : 0;
   const isOutOfStock = stock === 0;
 
   const handleAddToCart = () => {
@@ -75,7 +78,7 @@ const WeeklyHighlight = () => {
       Alert.info("Item is out of stock!");
       return;
     }
-    addToCart(id, "S");
+    addToCart(id, "S", firstFlavorId);
     Alert.success(`${title} added to cart!`);
   };
 

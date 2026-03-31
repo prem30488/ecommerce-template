@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import "./premium-cart.css";
 
 export const PremiumCart = ({ onClose }) => {
-  const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, addTotalAfterDiscount } = useContext(ShopContext);
+  const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, addTotalAfterDiscount, resetCart } = useContext(ShopContext);
   const totalAmount = getTotalCartAmount();
   const [products, setProducts] = useState([]);
   const [coupon, setCoupon] = useState("");
@@ -61,9 +61,23 @@ export const PremiumCart = ({ onClose }) => {
           <h2>Your Cart</h2>
           <span className="cart-status-badge">Professional Edition</span>
         </div>
-        <button onClick={onClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: '10px' }}>
-          <svg className="w-6 h-6" fill="none" stroke="#64748b" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
+        <div className="header-actions">
+          {hasItems && (
+            <button
+              onClick={resetCart}
+              className="clear-cart-btn"
+            >
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span>Clear All</span>
+            </button>
+          )}
+          <button 
+            onClick={onClose} 
+            className="premium-close-btn"
+          >
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
       </div>
 
       {/* 5. Shipping Free or Complementary */}
@@ -81,19 +95,43 @@ export const PremiumCart = ({ onClose }) => {
         </div>
       )}
 
-      {/* 4. Multiple Products Support (Scrollable Body) */}
       <div className="premium-cart-body custom-scrollbar">
         {hasItems ? (
-          products.map((product) => (
-            <React.Fragment key={product.id}>
-              {cartItems[product.id] > 0 && <PremiumCartItem data={product} size="S" />}
-              {martItems[product.id] > 0 && <PremiumCartItem data={product} size="M" />}
-              {lartItems[product.id] > 0 && <PremiumCartItem data={product} size="L" />}
-              {freeCartItems[product.id] > 0 && <PremiumCartItem data={product} size="S" isFree />}
-              {freeMartItems[product.id] > 0 && <PremiumCartItem data={product} size="M" isFree />}
-              {freeLartItems[product.id] > 0 && <PremiumCartItem data={product} size="L" isFree />}
-            </React.Fragment>
-          ))
+          products.length > 0 ? (
+            products.map((product) => (
+              <React.Fragment key={product.id}>
+                {/* Render items by iterating over all keys that belong to this product */}
+                {Object.keys(cartItems).map(key => {
+                  const [pid, fid] = key.split('_');
+                  if (pid === String(product.id) && cartItems[key] > 0) {
+                    return <PremiumCartItem key={`${key}_S`} data={product} size="S" flavorId={fid} />;
+                  }
+                  return null;
+                })}
+                {Object.keys(martItems).map(key => {
+                  const [pid, fid] = key.split('_');
+                  if (pid === String(product.id) && martItems[key] > 0) {
+                    return <PremiumCartItem key={`${key}_M`} data={product} size="M" flavorId={fid} />;
+                  }
+                  return null;
+                })}
+                {Object.keys(lartItems).map(key => {
+                  const [pid, fid] = key.split('_');
+                  if (pid === String(product.id) && lartItems[key] > 0) {
+                    return <PremiumCartItem key={`${key}_L`} data={product} size="L" flavorId={fid} />;
+                  }
+                  return null;
+                })}
+
+                {/* Free items still use product.id keys for now */}
+                {freeCartItems[product.id] > 0 && <PremiumCartItem data={product} size="S" isFree />}
+                {freeMartItems[product.id] > 0 && <PremiumCartItem data={product} size="M" isFree />}
+                {freeLartItems[product.id] > 0 && <PremiumCartItem data={product} size="L" isFree />}
+              </React.Fragment>
+            ))
+          ) : (
+            <div className="p-4 text-center p-label-text">Loading curation...</div>
+          )
         ) : (
           <div className="p-empty">
             <div className="p-empty-icon">

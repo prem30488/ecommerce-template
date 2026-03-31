@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ShopContext } from "../../context/shop-context";
 
-export const PremiumCartItem = ({ data, size = "S", isFree = false }) => {
-  const { id, title, price, priceMedium, priceLarge, stock, imageURLs } = data;
+export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: propFlavorId = null }) => {
+  const { id, title, stock, imageURLs, img } = data;
   const {
     cartItems,
     martItems,
@@ -12,21 +12,20 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false }) => {
     freeLartItems,
     addToCart,
     removeFromCart,
-    flavorCart,
   } = useContext(ShopContext);
 
-  const flavorId = flavorCart[`${id}_${size}`];
+  const flavorId = propFlavorId || (data.productFlavors && data.productFlavors[0]?.flavor_id) || 1;
+  const activeFlavorData = data.productFlavors?.find(pf => String(pf.flavor_id) === String(flavorId));
   const [flavor, setFlavor] = useState(null);
   const [folderImages, setFolderImages] = useState([]);
 
   useEffect(() => {
-    // 1. Fetch Flavor Data
     if (flavorId) {
       const fetchFlavor = async () => {
         try {
           const res = await fetch(`http://localhost:5000/api/flavor/getFlavors?size=1000`);
           const json = await res.json();
-          const found = (json.content || []).find(f => f.id === flavorId);
+          const found = (json.content || []).find(f => f.id === Number(flavorId));
           setFlavor(found);
         } catch (e) {
           console.error(e);
@@ -35,17 +34,15 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false }) => {
       fetchFlavor();
     }
 
-    // 2. Fetch Carousel Images from Folder
     const fetchFolderImages = async () => {
       try {
-        const targetFlavorId = flavorId || 'default';
+        const targetFlavorId = flavorId || '1';
         const res = await fetch(`http://localhost:5000/api/product/images/${id}/${targetFlavorId}`);
         const json = await res.json();
         if (Array.isArray(json) && json.length > 0) {
           setFolderImages(json);
         } else {
-          // If flavor-specific images missing, try 'default' folder
-          const fallbackRes = await fetch(`http://localhost:5000/api/product/images/${id}/default`);
+          const fallbackRes = await fetch(`http://localhost:5000/api/product/images/${id}/1`);
           const fallbackJson = await fallbackRes.json();
           setFolderImages(fallbackJson || []);
         }
@@ -58,33 +55,33 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false }) => {
   }, [id, flavorId]);
 
   const getQuantity = () => {
+    const cartKey = flavorId ? `${id}_${flavorId}` : id;
     if (isFree) {
       if (size === "S") return freeCartItems[id] || 0;
       if (size === "M") return freeMartItems[id] || 0;
       if (size === "L") return freeLartItems[id] || 0;
     } else {
-      if (size === "S") return cartItems[id] || 0;
-      if (size === "M") return martItems[id] || 0;
-      if (size === "L") return lartItems[id] || 0;
+      if (size === "S") return cartItems[cartKey] || 0;
+      if (size === "M") return martItems[cartKey] || 0;
+      if (size === "L") return lartItems[cartKey] || 0;
     }
     return 0;
   };
 
   const getPrice = () => {
-    if (isFree) return 0;
-    if (size === "S") return price;
-    if (size === "M") return priceMedium;
-    if (size === "L") return priceLarge;
-    return price;
+    if (isFree || !activeFlavorData) return 0;
+    if (size === "S") return activeFlavorData.price || 0;
+    if (size === "M") return activeFlavorData.priceMedium || 0;
+    if (size === "L") return activeFlavorData.priceLarge || 0;
+    return activeFlavorData.price || 0;
   };
 
   const quantity = getQuantity();
   const currentPrice = getPrice();
   const sizeLabel = size === "S" ? "Small" : size === "M" ? "Medium" : "Large";
 
-  // Carousel Logic (Simple State for Active Dot)
   const [activeImage, setActiveImage] = useState(0);
-  const images = imageURLs ? imageURLs.split(',').map((u) => u.trim()) : [];
+  const images = imageURLs ? imageURLs.split(',').map((u) => u.trim()) : (img ? [img] : []);
 
   const handleScroll = (e) => {
     const scrollLeft = e.target.scrollLeft;
@@ -95,7 +92,6 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false }) => {
 
   if (quantity === 0) return null;
 
-  // 1. Carousel to display product photos from folder
   const displayImages = folderImages.length > 0 ? folderImages : images;
 
   return (
@@ -113,12 +109,11 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false }) => {
             ))
           ) : (
             <div className="pc-carousel-item">
-              <img src={`http://localhost:5000/images/${id}/default/1.png`} alt={title} />
+              <img src={`http://localhost:5000/images/${id}/1/1.png`} alt={title} />
             </div>
           )}
         </div>
 
-        {/* Small Flavor Insight Overlay */}
         {flavor && (
           <div className="absolute top-1 left-1 flex items-center gap-1 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-full border border-sky-100 shadow-sm z-10 scale-75 origin-top-left">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -135,7 +130,6 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false }) => {
         )}
       </div>
 
-      {/* 2. Product Name & 3. Item count button working */}
       <div className="pc-details">
         <div>
           <h4 className="pc-title">{title}</h4>
@@ -156,15 +150,15 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false }) => {
           <div className="pc-price">₹{(currentPrice || 0).toLocaleString()}</div>
 
           <div className="pc-controls">
-            <button className="pc-btn" onClick={() => removeFromCart(id, size)}>
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M20 12H4"/></svg>
+            <button className="pc-btn" onClick={() => removeFromCart(id, size, flavorId)}>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M20 12H4" /></svg>
             </button>
             <span className="pc-qty">{quantity}</span>
             <button
               className="pc-btn"
               onClick={() => quantity < stock && addToCart(id, size, flavorId)}
             >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M12 4v16m8-8H4"/></svg>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M12 4v16m8-8H4" /></svg>
             </button>
           </div>
         </div>

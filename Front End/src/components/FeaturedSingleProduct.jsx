@@ -6,11 +6,13 @@ import ImageCarousel from "../pages/productDetails/ImageCarousel";
 import Alert from 'react-s-alert';
 import WishlistIcon from "./WishlistIcon";
 const FeaturedSingleProduct = ({ product }) => {
-  const { id, title, stock, price, imageURLs } = product;
+  const { id, title, stock, imageURLs } = product;
+  const price = product.productFlavors?.[0]?.price || 0;
+  const firstFlavorId = product.productFlavors?.[0]?.flavor_id;
   const navigate = useNavigate();
   const { addToCart, cartItems } = useContext(ShopContext);
 
-  const cartItemCount = cartItems[id];
+  const cartItemCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0);
   return (
     <div className="single-product flex flex-col bg-gray-50 gap-3 shadow-md hover:shadow-xl hover:scale-105 duration-300 px-4 py-7 rounded-sm overflow-hidden pt-3">
       <div className="flex justify-center">
@@ -52,7 +54,7 @@ const FeaturedSingleProduct = ({ product }) => {
 
         <button className="btn-cart"
           onClick={() => {
-            if (cartItemCount < stock) { addToCart(id, "S"); } else {
+            if (cartItemCount < stock) { addToCart(id, "S", firstFlavorId); } else {
               Alert.info('Item Out of stock!');
             }
           }}>

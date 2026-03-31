@@ -3,9 +3,13 @@ import { ShopContext } from "../../context/shop-context";
 import ImageCarousel from '../productDetails/ImageCarousel';
 import Alert from 'react-s-alert';
 export const LartItem = (props) => {
-  const { id, title,priceLarge, offers,stock, imageURLs } = props.data;
-  const { lartItems, addToCart, removeFromCart, updateCartItemCount } =
+  const { id, title, offers,stock, imageURLs } = props.data;
+  const { lartItems, flavorCart, addToCart, removeFromCart, updateCartItemCount } =
     useContext(ShopContext);
+
+  const flavorId = flavorCart[`${id}_L`] || (props.data.productFlavors && props.data.productFlavors[0]?.flavor_id) || 1;
+  const activeFlavorData = props.data.productFlavors?.find(pf => String(pf.flavor_id) === String(flavorId));
+  const priceLarge = activeFlavorData ? activeFlavorData.priceLarge : 0;
 
   return (
     <div className="">

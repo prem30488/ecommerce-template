@@ -10,7 +10,9 @@ import { API_BASE_URL } from '../../constants';
 const ProductSelector = ({ product, onFlavorChange }) => {
   const [selectedSize, setSelectedSize] = useState('M'); // Default size
   const [flavors, setFlavors] = useState([]);
-  const [selectedFlavorId, setSelectedFlavorId] = useState(null);
+  const [selectedFlavorId, setSelectedFlavorId] = useState(
+    product.productFlavors?.[0]?.flavor_id || null
+  );
 
   useEffect(() => {
     const fetchFlavors = async () => {
@@ -30,15 +32,22 @@ const ProductSelector = ({ product, onFlavorChange }) => {
   };
 
   const { id, stock } = product;
-  const { addToCart, cartItems, martItems, lartItems } = useContext(ShopContext);
-  const cartItemCount = cartItems[id];
-  const martItemCount = martItems[id];
-  const lartItemCount = lartItems[id];
+  const { addToCart, cartItems, martItems, lartItems, flavorCart } = useContext(ShopContext);
+  const cartKey = selectedFlavorId ? `${id}_${selectedFlavorId}` : id;
+  const cartItemCount = cartItems[cartKey] || 0;
+  const martItemCount = martItems[cartKey] || 0;
+  const lartItemCount = lartItems[cartKey] || 0;
+
+  // Use the selected flavor data for pricing
+  const activeFlavorData = product.productFlavors?.find(
+    pf => String(pf.flavor_id) === String(selectedFlavorId)
+  ) || product.productFlavors?.[0];
+
   const sizeOptions = [
-    { id: 'S', label: 'Small', price: product.price, discount: 0 },
-    { id: 'M', label: 'Medium', price: product.priceMedium, discount: 5 },
-    { id: 'L', label: 'Large', price: product.priceLarge, discount: 10 },
-  ];
+    { id: 'S', label: 'Small', price: activeFlavorData?.price || 0, discount: 0 },
+    { id: 'M', label: 'Medium', price: activeFlavorData?.priceMedium || 0, discount: 5 },
+    { id: 'L', label: 'Large', price: activeFlavorData?.priceLarge || 0, discount: 10 },
+  ].filter(s => s.price > 0);
 
   const handleSizeChange = (size) => {
     setSelectedSize(size);
@@ -64,12 +73,16 @@ const ProductSelector = ({ product, onFlavorChange }) => {
         <div className="space-y-4">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Select Flavor</h3>
           <div className="flex flex-wrap gap-3">
-            {flavors.map((f) => (
+            {/* Use product.productFlavors if present, else fall back to global flavors */}
+          {(product.productFlavors?.length > 0 ? product.productFlavors.filter(pf => pf.Flavor) : flavors).map(item => {
+            const f = item.Flavor || item;  // support both productFlavors and raw flavors
+            const fId = item.flavor_id || item.id;
+            return (
               <button
-                key={f.id}
-                onClick={() => handleFlavorChange(f.id)}
+                key={fId}
+                onClick={() => handleFlavorChange(fId)}
                 className={`flex items-center gap-3 px-6 py-4 rounded-3xl border-2 transition-all duration-300 ${
-                  selectedFlavorId === f.id
+                  selectedFlavorId === fId
                     ? 'border-sky-500 bg-sky-50 shadow-md scale-105'
                     : 'border-slate-100 bg-white hover:border-slate-300'
                 }`}
@@ -81,11 +94,12 @@ const ProductSelector = ({ product, onFlavorChange }) => {
                     <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[8px] text-slate-300">N/A</div>
                   )}
                 </div>
-                <span className={`text-sm font-black ${selectedFlavorId === f.id ? 'text-sky-600' : 'text-slate-600'}`}>
+                <span className={`text-sm font-black ${selectedFlavorId === fId ? 'text-sky-600' : 'text-slate-600'}`}>
                   {f.name}
                 </span>
               </button>
-            ))}
+            );
+          })}
           </div>
         </div>
       )}

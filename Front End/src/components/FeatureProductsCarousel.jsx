@@ -95,8 +95,10 @@ const FpcCard = ({ product, onQuickView }) => {
   const navigate = useNavigate();
   const { addToCart, cartItems } = useContext(ShopContext);
 
-  const { id, title, price, stock, rating, img } = product;
-  const cartCount = cartItems[id] || 0;
+  const { id, title, stock, rating, img } = product;
+  const price = product.productFlavors?.[0]?.price || 0;
+  const firstFlavorId = product.productFlavors?.[0]?.flavor_id;
+  const cartCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0);
 
   // Fallback image from picsum if img is missing
   const imgSrc = img || `https://picsum.photos/seed/${encodeURIComponent(id)}/400/400`;
@@ -104,7 +106,7 @@ const FpcCard = ({ product, onQuickView }) => {
   const handleAdd = (e) => {
     e.stopPropagation();
     if (cartCount >= stock) { Alert.info("Item out of stock!"); return; }
-    addToCart(id, "S");
+    addToCart(id, "S", firstFlavorId);
     Alert.success(`${title.slice(0, 20)} added!`);
   };
 
@@ -188,7 +190,7 @@ const FpcCard = ({ product, onQuickView }) => {
         <Stars rating={rating} />
         <div className="fpc-price-row">
           <span className="fpc-price-now">
-            ₹{parseFloat(price).toLocaleString("en-IN")}
+            ₹{parseFloat(price || 0).toLocaleString("en-IN")}
           </span>
         </div>
         <button className="fpc-info-btn" onClick={() => navigate("/productDetails/" + id)}>

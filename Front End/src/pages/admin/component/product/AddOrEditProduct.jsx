@@ -20,7 +20,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
     ...product,
     ProductImages: product?.ProductImages || [],
     audience: product?.audience || '',
-    flavor_id: product?.flavor_id || 1
+    productFlavors: product?.productFlavors || [{ flavor_id: '', price: '', priceMedium: '', priceLarge: '' }]
   });
   const [flavors, setFlavors] = useState([]);
   const [currentFlavorId, setCurrentFlavorId] = useState('');
@@ -146,14 +146,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
           value={formData.description}
           onChange={handleChange}
         />
-        <TextField
-          name="price"
-          label="Price (INR)"
-          value={formData.price}
-          onChange={handleChange}
-          type="number"
-          required
-        />
+        {/* Price mapped to flavors instead of root */}
         <TextField
           name="stock"
           label="Stock Qty"
@@ -237,41 +230,72 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
           required
         />
 
-        <FormControl fullWidth>
-          <InputLabel>Product Default Flavor</InputLabel>
-          <Select
-            name="flavor_id"
-            value={formData.flavor_id}
-            onChange={handleChange}
-            label="Product Default Flavor"
-          >
-            {flavors.map((f) => (
-              <MenuItem key={f.id} value={f.id}>{f.name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <div className="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+          <h4 className="text-sm font-bold text-slate-700 mb-4 px-2">FLAVORS & PRICING</h4>
+          {formData.productFlavors.map((pf, index) => (
+            <div key={index} className="flex gap-4 mb-4 items-center">
+              <FormControl fullWidth>
+                <InputLabel>Flavor</InputLabel>
+                <Select
+                  value={pf.flavor_id}
+                  onChange={(e) => {
+                    const newFlavors = [...formData.productFlavors];
+                    newFlavors[index].flavor_id = e.target.value;
+                    setFormData({ ...formData, productFlavors: newFlavors });
+                  }}
+                  required
+                >
+                  {flavors.map((f) => (
+                    <MenuItem key={f.id} value={f.id}>{f.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                label="Price Small"
+                value={pf.price}
+                onChange={(e) => {
+                  const newFlavors = [...formData.productFlavors];
+                  newFlavors[index].price = e.target.value;
+                  setFormData({ ...formData, productFlavors: newFlavors });
+                }}
+                required
+                type="number"
+              />
+              <TextField
+                label="Price Medium"
+                value={pf.priceMedium}
+                onChange={(e) => {
+                  const newFlavors = [...formData.productFlavors];
+                  newFlavors[index].priceMedium = e.target.value;
+                  setFormData({ ...formData, productFlavors: newFlavors });
+                }}
+                type="number"
+              />
+              <TextField
+                label="Price Large"
+                value={pf.priceLarge}
+                onChange={(e) => {
+                  const newFlavors = [...formData.productFlavors];
+                  newFlavors[index].priceLarge = e.target.value;
+                  setFormData({ ...formData, productFlavors: newFlavors });
+                }}
+                type="number"
+              />
+              <Button color="error" onClick={() => {
+                const newFlavors = formData.productFlavors.filter((_, i) => i !== index);
+                setFormData({ ...formData, productFlavors: newFlavors });
+              }}>X</Button>
+            </div>
+          ))}
+          <Button onClick={() => setFormData({ ...formData, productFlavors: [...formData.productFlavors, { flavor_id: '', price: '', priceMedium: '', priceLarge: '' }] })}>
+             + Add Flavor Variant
+          </Button>
+        </div>
 
-
-        <TextField
-          name="priceMedium"
-          label="Price Medium (INR)"
-          value={formData.priceMedium}
-          onChange={handleChange}
-          required
-          type="Number"
-        />
         <TextField
           name="unitMedium"
           label="Unit Medium"
           value={formData.unitMedium}
-          onChange={handleChange}
-          required
-          type="Number"
-        />
-        <TextField
-          name="priceLarge"
-          label="Price Large (INR)"
-          value={formData.priceLarge}
           onChange={handleChange}
           required
           type="Number"

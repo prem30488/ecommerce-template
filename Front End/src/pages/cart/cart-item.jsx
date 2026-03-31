@@ -4,29 +4,34 @@ import ImageCarousel from "../productDetails/ImageCarousel";
 import Alert from 'react-s-alert';
 
 export const CartItem = (props) => {
-  const { id, title, price, priceMedium, priceLarge, offers, stock, imageURLs } = props.data;
-  const { size = "S", isFree = false } = props;
+  const { id, title, offers, stock, imageURLs } = props.data;
+  const { size = "S", isFree = false, flavorId = null } = props;
   const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, addToCart, removeFromCart } = useContext(ShopContext);
 
+  const activeFlavorId = flavorId || (props.data.productFlavors && props.data.productFlavors[0]?.flavor_id) || 1;
+  const activeFlavorData = props.data.productFlavors?.find(pf => String(pf.flavor_id) === String(activeFlavorId));
+  const flavorName = activeFlavorData?.Flavor?.name || "Original";
+
   const getQuantity = () => {
+    const cartKey = activeFlavorId ? `${id}_${activeFlavorId}` : id;
     if (isFree) {
       if (size === "S") return freeCartItems[id] || 0;
       if (size === "M") return freeMartItems[id] || 0;
       if (size === "L") return freeLartItems[id] || 0;
     } else {
-      if (size === "S") return cartItems[id] || 0;
-      if (size === "M") return martItems[id] || 0;
-      if (size === "L") return lartItems[id] || 0;
+      if (size === "S") return cartItems[cartKey] || 0;
+      if (size === "M") return martItems[cartKey] || 0;
+      if (size === "L") return lartItems[cartKey] || 0;
     }
     return 0;
   };
 
   const getPrice = () => {
-    if (isFree) return 0;
-    if (size === "S") return price;
-    if (size === "M") return priceMedium;
-    if (size === "L") return priceLarge;
-    return price;
+    if (isFree || !activeFlavorData) return 0;
+    if (size === "S") return activeFlavorData.price || 0;
+    if (size === "M") return activeFlavorData.priceMedium || 0;
+    if (size === "L") return activeFlavorData.priceLarge || 0;
+    return activeFlavorData.price || 0;
   };
 
   const currentPrice = getPrice();
@@ -109,7 +114,7 @@ export const CartItem = (props) => {
             {!isFree ? (
               <>
                 <button
-                  onClick={() => removeFromCart(id, size)}
+                  onClick={() => removeFromCart(id, size, activeFlavorId)}
                   className="w-6 h-6 flex items-center justify-center rounded-lg bg-white text-slate-400 hover:text-slate-900 shadow-sm transition-all"
                 >
                   <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M20 12H4" /></svg>
@@ -120,7 +125,7 @@ export const CartItem = (props) => {
                 <button
                   onClick={() => {
                     if (quantity < stock) {
-                      addToCart(id, size);
+                      addToCart(id, size, activeFlavorId);
                     } else {
                       Alert.info('Max reached');
                     }

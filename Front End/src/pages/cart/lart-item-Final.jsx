@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
 import { ShopContext } from "../../context/shop-context";
 export const LartItemFinal = (props) => {
-  const { id, title,priceLarge, img, offers } = props.data;
-  const { lartItems } =
-  useContext(ShopContext);
+  const { id, title, img, offers } = props.data;
+  const { lartItems, flavorCart } = useContext(ShopContext);
+  const flavorId = flavorCart[`${id}_L`] || (props.data.productFlavors && props.data.productFlavors[0]?.flavor_id) || 1;
+  const activeFlavorData = props.data.productFlavors?.find(pf => String(pf.flavor_id) === String(flavorId));
+  const priceLarge = activeFlavorData ? activeFlavorData.priceLarge : 0;
 
   return (
     <div className="">

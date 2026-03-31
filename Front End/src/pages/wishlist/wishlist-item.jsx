@@ -82,18 +82,24 @@ const WishlistItem = ({ item }) => {
           )}
           <div className="wishlist-item-prices">
             <span className="price-label">Prices: </span>
-            <span className="price-s">₹{item.price}</span>
-            {item.priceMedium && (
+            {item.productFlavors && item.productFlavors[0] ? (
               <>
-                <span className="price-separator"> | </span>
-                <span className="price-m">₹{item.priceMedium}</span>
+                <span className="price-s">₹{item.productFlavors[0].price}</span>
+                {item.productFlavors[0].priceMedium && (
+                  <>
+                    <span className="price-separator"> | </span>
+                    <span className="price-m">₹{item.productFlavors[0].priceMedium}</span>
+                  </>
+                )}
+                {item.productFlavors[0].priceLarge && (
+                  <>
+                    <span className="price-separator"> | </span>
+                    <span className="price-l">₹{item.productFlavors[0].priceLarge}</span>
+                  </>
+                )}
               </>
-            )}
-            {item.priceLarge && (
-              <>
-                <span className="price-separator"> | </span>
-                <span className="price-l">₹{item.priceLarge}</span>
-              </>
+            ) : (
+              <span className="price-s">Not available</span>
             )}
           </div>
         </div>

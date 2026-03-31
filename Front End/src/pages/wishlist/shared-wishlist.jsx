@@ -99,7 +99,7 @@ const SharedWishlist = () => {
     );
   }
 
-  const totalPrice = wishlistItems.reduce((sum, item) => sum + (item.Product?.price || 0), 0);
+  const totalPrice = wishlistItems.reduce((sum, item) => sum + (item.Product?.productFlavors?.[0]?.price || 0), 0);
 
   return (
     <div className="shared-wishlist-container">
@@ -136,11 +136,11 @@ const SharedWishlist = () => {
                 <p className="description">{item.Product?.description?.substring(0, 60)}...</p>
                 <div className="prices">
                   <span className="price-label">S/M/L:</span>
-                  <span className="price">${item.Product?.price}</span>
+                  <span className="price">${item.Product?.productFlavors?.[0]?.price || 0}</span>
                   <span className="price-sep">/</span>
-                  <span className="price">${item.Product?.priceMedium}</span>
+                  <span className="price">${item.Product?.productFlavors?.[0]?.priceMedium || 0}</span>
                   <span className="price-sep">/</span>
-                  <span className="price">${item.Product?.priceLarge}</span>
+                  <span className="price">${item.Product?.productFlavors?.[0]?.priceLarge || 0}</span>
                 </div>
               </div>
               <div className="card-footer">
@@ -165,19 +165,19 @@ const SharedWishlist = () => {
             <div className="stat">
               <span>Lowest Price (S):</span>
               <span className="value">
-                ${Math.min(...wishlistItems.map(i => i.Product?.price || 0)).toFixed(2)}
+                ${Math.min(...wishlistItems.map(i => i.Product?.productFlavors?.[0]?.price || 0)).toFixed(2)}
               </span>
             </div>
             <div className="stat">
               <span>Highest Price (L):</span>
               <span className="value">
-                ${Math.max(...wishlistItems.map(i => i.Product?.priceLarge || 0)).toFixed(2)}
+                ${Math.max(...wishlistItems.map(i => i.Product?.productFlavors?.[0]?.priceLarge || 0)).toFixed(2)}
               </span>
             </div>
             <div className="stat">
               <span>Average Price (M):</span>
               <span className="value">
-                ${(wishlistItems.reduce((sum, i) => sum + (i.Product?.priceMedium || 0), 0) / wishlistItems.length).toFixed(2)}
+                ${(wishlistItems.reduce((sum, i) => sum + (i.Product?.productFlavors?.[0]?.priceMedium || 0), 0) / (wishlistItems.length || 1)).toFixed(2)}
               </span>
             </div>
           </div>

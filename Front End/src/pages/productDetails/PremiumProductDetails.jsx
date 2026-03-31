@@ -43,14 +43,26 @@ export const PremiumProductDetails = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [newReview, setNewReview] = useState({ name: '', email: '', rating: 5, comment: '' });
 
-  const { addToCart, removeFromCart, cartItems, martItems, lartItems } = useContext(ShopContext);
+  const { addToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart } = useContext(ShopContext);
 
   // ── Fetch product ──────────────────────────────────────────────
   useEffect(() => {
     setLoading(true);
     fetch(`http://localhost:5000/api/product/fetchById/${id}`)
       .then(r => r.ok ? r.json() : Promise.reject("Not found"))
-      .then(data => { setProduct(data); setLoading(false); })
+      .then(data => { 
+        setProduct(data); 
+        if (data.productFlavors && data.productFlavors.length > 0) {
+          const firstFlavor = data.productFlavors[0];
+          setSelectedFlavor(firstFlavor.flavor_id);
+          if (!firstFlavor.priceMedium && firstFlavor.price) {
+            setSelectedSize("S");
+          } else if (firstFlavor.priceMedium) {
+            setSelectedSize("M");
+          }
+        }
+        setLoading(false); 
+      })
       .catch(e => { setErr(String(e)); setLoading(false); });
   }, [id]);
 
@@ -143,21 +155,28 @@ export const PremiumProductDetails = () => {
 
   // ── Helpers ────────────────────────────────────────────────────
   const getSizeCount = () => {
-    if (selectedSize === "S") return cartItems[product?.id] || 0;
-    if (selectedSize === "M") return martItems[product?.id] || 0;
-    return lartItems[product?.id] || 0;
+    const cartKey = selectedFlavor ? `${product?.id}_${selectedFlavor}` : product?.id;
+    if (selectedSize === "S") return cartItems[cartKey] || 0;
+    if (selectedSize === "M") return martItems[cartKey] || 0;
+    return lartItems[cartKey] || 0;
   };
 
+  const activeFlavorData = product?.productFlavors?.find(pf => String(pf.flavor_id) === String(selectedFlavor));
+
   const currentPrice = () => {
-    if (!product) return 0;
-    if (selectedSize === "S") return product.price;
-    if (selectedSize === "M") return product.priceMedium;
-    return product.priceLarge;
+    if (!activeFlavorData) return 0;
+    if (selectedSize === "S") return activeFlavorData.price;
+    if (selectedSize === "M") return activeFlavorData.priceMedium;
+    return activeFlavorData.priceLarge;
   };
 
   const handleAddToCart = () => {
-    const total = (cartItems[product.id] || 0) + (martItems[product.id] || 0) + (lartItems[product.id] || 0);
-    if (total < product.stock) {
+    // Note: Stock limit currently checked against total of all sizes for this product
+    const totalCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + cartItems[key] : sum, 0) +
+                       Object.keys(martItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + martItems[key] : sum, 0) +
+                       Object.keys(lartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + lartItems[key] : sum, 0);
+
+    if (totalCount < product.stock) {
       addToCart(product.id, selectedSize, selectedFlavor);
       Alert.success(`${product.title} added to collection!`);
     } else {
@@ -169,11 +188,11 @@ export const PremiumProductDetails = () => {
     src ? (src.startsWith("http") ? src : `http://localhost:5000${src}`) : "";
 
   // ── Size options ──────────────────────────────────────────────
-  const sizes = product ? [
-    { id: "S", label: "Small", price: product.price, unit: product.unitSmall },
-    { id: "M", label: "Medium", price: product.priceMedium, unit: product.unitMedium, popular: true },
-    { id: "L", label: "Large", price: product.priceLarge, unit: product.unitLarge },
-  ] : [];
+  const sizes = product && activeFlavorData ? [
+    { id: "S", label: "Small", price: activeFlavorData.price, unit: product.unitSmall },
+    { id: "M", label: "Medium", price: activeFlavorData.priceMedium, unit: product.unitMedium, popular: true },
+    { id: "L", label: "Large", price: activeFlavorData.priceLarge, unit: product.unitLarge },
+  ].filter(s => s.price) : [];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [questionData, setQuestionData] = useState({ name: '', email: '', phone: '', comment: '' });
@@ -368,11 +387,13 @@ export const PremiumProductDetails = () => {
           <div className="ppp-divider" />
 
           {/* Flavor selector */}
-          {flavors.length > 0 && (
+          {product?.productFlavors?.length > 0 && (
             <>
               <div className="ppp-section-label">Choose Flavor</div>
               <div className="ppp-flavors">
-                {flavors.map(f => (
+                {product.productFlavors.filter(pf => pf.Flavor).map(pf => {
+                  const f = pf.Flavor;
+                  return (
                   <button
                     key={f.id}
                     className={`ppp-flavor-btn ${selectedFlavor === f.id ? "active" : ""}`}
@@ -390,7 +411,7 @@ export const PremiumProductDetails = () => {
                     )}
                     {f.name}
                   </button>
-                ))}
+                )})}
               </div>
               <div className="ppp-divider" />
             </>

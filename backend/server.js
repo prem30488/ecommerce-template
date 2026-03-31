@@ -621,21 +621,31 @@ app.get('/api/product/weeklyBestSeller', async (req, res) => {
         }
 
         let product = null;
+        const include = [
+            { model: db.Offer, as: 'offers', required: false },
+            {
+                model: db.ProductFlavor, as: 'productFlavors',
+                include: [{ model: db.Flavor }],
+                required: false
+            }
+        ];
+
         if (Object.keys(tally).length > 0) {
             const topId = Object.keys(tally).reduce((a, b) => tally[a] > tally[b] ? a : b);
-            product = await db.Product.findByPk(topId);
+            product = await db.Product.findByPk(topId, { include });
         }
 
         // Fallback: find Whey Protein by title
         if (!product) {
             product = await db.Product.findOne({
-                where: { title: { [Op.iLike]: '%whey%' } }
+                where: { title: { [Op.iLike]: '%whey%' } },
+                include
             });
         }
 
         // Final fallback: first bestseller
         if (!product) {
-            product = await db.Product.findOne({ where: { bestseller: true } });
+            product = await db.Product.findOne({ where: { bestseller: true }, include });
         }
 
         if (product) res.json(product);
@@ -664,7 +674,11 @@ app.get('/api/product/getProducts', async (req, res) => {
             order: [['id', 'DESC']],
             include: [
                 { model: db.Offer, as: 'offers', required: false },
-                { model: db.Flavor, as: 'flavor', required: false }
+                {
+                    model: db.ProductFlavor, as: 'productFlavors',
+                    include: [{ model: db.Flavor }],
+                    required: false
+                }
             ]
         });
         res.json(getPaginatedResponse(rows, count, page, size));
@@ -836,6 +850,10 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
                     model: db.ProductImage,
                     include: [{ model: db.Flavor }]
                 },
+                {
+                    model: db.ProductFlavor, as: 'productFlavors',
+                    include: [{ model: db.Flavor }]
+                },
                 { model: db.Offer, as: 'offers' }
             ]
         });
@@ -852,7 +870,7 @@ app.post('/api/product/createProduct', authenticateToken, async (req, res) => {
         const productData = req.body;
         // If ProductImages provided, handle them
         const product = await db.Product.create(productData, {
-            include: [{ model: db.ProductImage }]
+            include: [{ model: db.ProductImage }, { model: db.ProductFlavor, as: 'productFlavors' }]
         });
         res.status(201).json(product);
     } catch (error) {
@@ -883,6 +901,21 @@ app.put('/api/product/:id', authenticateToken, async (req, res) => {
             }));
 
             await db.ProductImage.bulkCreate(imagesToCreate, { transaction: t });
+        }
+
+        // If productFlavors are provided, sync them
+        if (productData.productFlavors) {
+            await db.ProductFlavor.destroy({
+                where: { product_id: req.params.id },
+                transaction: t
+            });
+
+            const flavorsToCreate = productData.productFlavors.map(f => ({
+                ...f,
+                product_id: req.params.id
+            }));
+
+            await db.ProductFlavor.bulkCreate(flavorsToCreate, { transaction: t });
         }
 
         await t.commit();

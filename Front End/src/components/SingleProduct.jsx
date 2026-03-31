@@ -8,12 +8,14 @@ import WishlistIcon from "./WishlistIcon";
 const SingleProduct = ({ product }) => {
 
 
-  const { id, title, price, offers, stock, imageURLs } = product;
+  const { id, title, offers, stock, imageURLs } = product;
+  const price = product.productFlavors?.[0]?.price || 0;
   const { addToCart, cartItems } = useContext(ShopContext);
   const navigate = useNavigate();
-  const cartItemCount = cartItems[id];
+  const cartItemCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0);
 
 
+  const firstFlavorId = product.productFlavors?.[0]?.flavor_id;
   return (
     <React.Fragment>
 
@@ -82,7 +84,7 @@ const SingleProduct = ({ product }) => {
               {price} INR/-
             </div>
 
-            {price - (price * offers[0].discount / 100)} INR /-
+            {price - (price * (offers[0]?.discount || 0) / 100)} INR /-
           </div>
           : ""
         }
@@ -94,7 +96,7 @@ const SingleProduct = ({ product }) => {
           <button className="btn-info" onClick={() => navigate("/productDetails/" + product.id)}>More Info</button>
           <button className="btn-cart"
             onClick={() => {
-              if (cartItemCount < stock) { addToCart(id, "S"); } else {
+              if (cartItemCount < stock) { addToCart(id, "S", firstFlavorId); } else {
                 Alert.info('Item Out of stock!');
               }
             }

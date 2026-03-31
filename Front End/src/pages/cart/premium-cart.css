@@ -22,14 +22,20 @@
 
 /* Header */
 .premium-cart-header {
-  padding: 16px 24px;
+  padding: 18px 24px;
   border-bottom: 1px solid var(--cart-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.84);
-  backdrop-filter: blur(12px);
-  z-index: 50;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  z-index: 100;
+}
+
+.header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
 }
 
 .premium-cart-header h2 {
@@ -442,4 +448,111 @@
 .MuiDrawer-paper {
   border-radius: 40px 0 0 40px !important;
   overflow: hidden !important;
+}
+
+/* Premium Reset Button */
+.clear-cart-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(244, 63, 94, 0.1);
+  background: rgba(255, 241, 242, 0.5);
+  color: #e11d48;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(4px);
+}
+
+.clear-cart-btn:hover {
+  background: #e11d48;
+  color: white;
+  border-color: #e11d48;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px -5px rgba(225, 29, 72, 0.3);
+}
+
+.clear-cart-btn svg {
+  width: 14px;
+  height: 14px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.clear-cart-btn:hover svg {
+  transform: rotate(15deg) scale(1.1);
+  filter: brightness(0) invert(1);
+}
+
+.clear-cart-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: skewX(-25deg);
+  transition: 0.5s;
+}
+
+.clear-cart-btn:hover::after {
+  left: 150%;
+  transition: 0.5s;
+}
+
+/* Premium Close Button */
+.premium-close-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--cart-border);
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--cart-text-muted);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(4px);
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-close-btn:hover {
+  background: var(--cart-text-main);
+  color: white;
+  border-color: var(--cart-text-main);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.15);
+}
+
+.premium-close-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
+  transition: transform 0.4s;
+}
+
+.premium-close-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: skewX(-25deg);
+  transition: 0.5s;
+}
+
+.premium-close-btn:hover::after {
+  left: 150%;
+  transition: 0.5s;
 }

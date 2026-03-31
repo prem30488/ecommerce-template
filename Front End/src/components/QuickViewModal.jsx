@@ -13,10 +13,12 @@ const QuickViewModal = ({ product, isOpen, onClose }) => {
 
     if (!isOpen || !product) return null;
 
-    const { id, title, price, stock, img, imageURLs, offers } = product;
+    const { id, title, stock, img, imageURLs, offers } = product;
+    const price = product.productFlavors?.[0]?.price || 0;
+    const firstFlavorId = product.productFlavors?.[0]?.flavor_id;
     
-    // Use cart count directly
-    const quantity = cartItems[id] || 0;
+    // Aggregated cart count across all flavors of this product
+    const quantity = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0);
 
     // Parse images
     let images = [];
@@ -40,13 +42,13 @@ const QuickViewModal = ({ product, isOpen, onClose }) => {
             Alert.info('Item Out of stock!');
             return;
         }
-        addToCart(id, 'S');
+        addToCart(id, 'S', firstFlavorId);
         Alert.success(`${title} added!`);
     };
 
     const handleRemoveFromCart = () => {
         if (quantity > 0) {
-            removeFromCart(id, 'S');
+            removeFromCart(id, 'S', firstFlavorId);
             Alert.warning(`${title} removed!`);
         }
     };

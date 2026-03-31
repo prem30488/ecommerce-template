@@ -395,9 +395,7 @@ function ProductManager() {
       "unitSmall": 0,
       "unitMedium": 0,
       "unitLarge": 0,
-      "price": 0,
-      "priceMedium": 0,
-      "priceLarge": 0
+      "productFlavors": [{ flavor_id: '', price: '', priceMedium: '', priceLarge: '' }]
     };
     setEditingProduct(initialProduct);
     setIsPDialogOpen(true);
