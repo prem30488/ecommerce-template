@@ -752,12 +752,23 @@ export const PremiumProductDetails = () => {
                   Bundle Price
                 </span>
                 <div style={{ fontSize: 44, fontWeight: 900, color: '#0ea5e9', letterSpacing: '-0.04em', marginBottom: 24 }}>
-                  ₹{(Number(product.price) + frequentProducts.reduce((s, p) => s + Number(p.price), 0)).toLocaleString()}
+                  ₹{(
+                    (product?.productFlavors?.[0]?.price || 0) + 
+                    frequentProducts.reduce((sum, p) => sum + (p.productFlavors?.[0]?.price || 0), 0)
+                  ).toLocaleString()}
                 </div>
                 <button
                   style={{ background: '#0f172a', color: '#fff', border: 'none', borderRadius: 16, padding: '16px 40px', fontWeight: 900, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.2s' }}
                   onMouseEnter={e => e.target.style.background = '#0ea5e9'}
                   onMouseLeave={e => e.target.style.background = '#0f172a'}
+                  onClick={() => {
+                    const allBundle = [product, ...frequentProducts];
+                    allBundle.forEach(item => {
+                      const fid = item.productFlavors?.[0]?.flavor_id;
+                      if (fid) addToCart(item.id, "S", fid);
+                    });
+                    Alert.success("Bundle added to collection!");
+                  }}
                 >
                   Add Bundle to Collection →
                 </button>
