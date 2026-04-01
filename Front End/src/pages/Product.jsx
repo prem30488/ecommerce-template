@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useRef } from "react";
-import SingleProduct from "../components/SingleProduct";
+import PremiumProductCard from "../components/PremiumProductCard";
 import { Link } from "react-router-dom";
 import "./product.css";
 
@@ -94,15 +94,17 @@ const Product = () => {
               {<Link to="/">Home </Link>}/
               <span className="text-sky-400 px-1">{catPath} for Men</span>
             </p>
-            <div className="grid grid-cols-4 gap-lg-5 ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filterProducts &&
                 filterProducts
                   .filter(prod => typeof prod.audience === 'string' && prod.audience.match(new RegExp("(?:^|,)" + "Men" + "(?:,|$)")))
                   .filter(p => p.active == true)
                   .map((product) => (
-                    <SingleProduct key={product.id} product={product} />
+                    <PremiumProductCard key={product.id} product={product} />
                   ))}
             </div>
+
+            <img src="/images/certifications.png" alt="Certifications" style={{ height: '500px', width: '100%', float: "center", marginLeft: "0px", verticalAlign: "top" }} />
           </div>
         </div>
       </div>

@@ -216,7 +216,7 @@ export const PremiumProductDetails = () => {
       console.log("[PPD] offers:", product?.offers || []);
       // eslint-disable-next-line no-console
       console.log("[PPD] activeFreeOffer:", activeFreeOffer || null);
-    } catch (e) {}
+    } catch (e) { }
   }, [selectedSize, product, activeFreeOffer]);
   // helper to map size id to human label
   function getSizeLabel(sz) {
@@ -897,7 +897,7 @@ export const PremiumProductDetails = () => {
             </div>
           </div>
         )}
-
+        <img src="/images/certifications.png" alt="Certifications" style={{ height: '500px', width: '100%', float: "center", marginLeft: "0px", verticalAlign: "top" }} />
       </div>
     </div>
   );

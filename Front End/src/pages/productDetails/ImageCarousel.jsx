@@ -8,19 +8,18 @@ import './styles.css';
 import { Navigation } from 'swiper/modules';
 import { useId } from 'react'
 
-const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thumbs = true }) => {
+const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thumbs = true, thumbDirection = 'horizontal' }) => {
   const uId = useId();
   const mainSwiperRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  let images = [];
+  let images = [mainImage].filter(Boolean);
   if (imageList) {
-    images = typeof imageList === 'string' ? imageList.split(',').map(s => s.trim()).filter(Boolean) : imageList;
-  } else {
-    images = [
-      mainImage,
-      ...(additionalImages?.map(img => img.url) || [])
-    ].filter(Boolean);
+    const list = typeof imageList === 'string' ? imageList.split(',').map(s => s.trim()).filter(Boolean) : imageList;
+    images = [...images, ...list];
+  }
+  if (additionalImages && Array.isArray(additionalImages)) {
+    images = [...images, ...additionalImages.map(img => img?.url || img).filter(Boolean)];
   }
 
   // Ensure at least 10 unique images per product
@@ -43,53 +42,25 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
   }
 
   return (
-    <div className="product-carousel-container" style={{ minHeight: '100%' }}>
-      <Swiper
-        style={{
-          '--swiper-navigation-color': '#000',
-          borderRadius: '8px',
-          overflow: 'hidden'
-        }}
-        loop={false}
-        spaceBetween={10}
-        navigation={true}
-        modules={[Navigation]}
-        className="main-swiper mb-2"
-        onSwiper={(swiper) => { mainSwiperRef.current = swiper; }}
-        onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-        key={`${uId}-main`}
-      >
-        {images.map((imageUrl, index) => (
-          <SwiperSlide key={`${uId}-slide-${index}`}>
-            <img
-              src={imageUrl}
-              alt={`${title || 'Product'} - view ${index + 1}`}
-              className="w-full h-auto object-cover rounded-md shadow-sm"
-              loading="lazy"
-              onError={(e) => {
-                console.error(`Failed to load image: ${imageUrl}`);
-                e.target.style.display = 'none';
-              }}
-            />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+    <div className={`product-carousel-container flex ${thumbDirection === 'vertical' ? 'flex-row' : 'flex-col'}`} style={{ minHeight: '100%', width: '100%', alignItems: 'flex-start' }}>
 
-      {thumbs && (
-        <div className="thumbs-scroll overflow-x-auto overflow-y-hidden whitespace-nowrap py-2" style={{ scrollbarWidth: 'thin' }}>
+      {/* Vertical Thumbs (Left side) */}
+      {thumbs && thumbDirection === 'vertical' && (
+        <div className="thumbs-scroll flex flex-col gap-2 pr-2" style={{ width: '100%', height: '100px', maxHeight: '100%', overflowY: 'hidden', overflowX: 'hidden' }}>
           {images.map((imageUrl, index) => {
             const isActive = index === activeIndex;
             return (
               <button
                 key={`${uId}-thumb-button-${index}`}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   mainSwiperRef.current?.slideTo(index);
                   setActiveIndex(index);
                 }}
-                className="inline-block p-0 border-0 bg-transparent cursor-pointer mr-2"
+                className="shrink-0 p-0 border-0 bg-transparent cursor-pointer flex-none"
                 style={{
-                  width: 100,
-                  height: 100,
+                  width: '100px',
+                  height: '100px',
                   opacity: isActive ? 1 : 0.4,
                   transform: isActive ? 'scale(1.04)' : 'scale(1)',
                   transition: 'opacity 0.2s ease, transform 0.2s ease',
@@ -100,11 +71,75 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
                   alt={`${title || 'Product'} thumb ${index + 1}`}
                   className="w-full h-full object-cover rounded-md"
                   loading="lazy"
-                  onError={(e) => {
-                    console.error(`Failed to load thumb: ${imageUrl}`);
-                    e.target.style.display = 'none';
-                  }}
-                  style={{ display: 'block', width: '100%', height: '100%' }}
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Main Image */}
+      <div style={{ flex: 1, minWidth: 0, height: '100%', minHeight: '150px' }}>
+        <Swiper
+          style={{
+            '--swiper-navigation-color': '#000',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            height: '100%',
+          }}
+          loop={false}
+          spaceBetween={10}
+          navigation={true}
+          modules={[Navigation]}
+          className="main-swiper mb-2"
+          onSwiper={(swiper) => { mainSwiperRef.current = swiper; }}
+          onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+          key={`${uId}-main`}
+        >
+          {images.map((imageUrl, index) => (
+            <SwiperSlide key={`${uId}-slide-${index}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img
+                src={imageUrl}
+                alt={`${title || 'Product'} - view ${index + 1}`}
+                className="w-full h-auto object-cover rounded-md shadow-sm"
+                style={{ maxHeight: '100%' }}
+                loading="lazy"
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      {/* Horizontal Thumbs (Bottom side) */}
+      {thumbs && thumbDirection === 'horizontal' && (
+        <div className="thumbs-scroll overflow-x-auto overflow-y-hidden whitespace-nowrap py-2" style={{ scrollbarWidth: 'thin' }}>
+          {images.map((imageUrl, index) => {
+            const isActive = index === activeIndex;
+            return (
+              <button
+                key={`${uId}-thumb-button-${index}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  mainSwiperRef.current?.slideTo(index);
+                  setActiveIndex(index);
+                }}
+                className="inline-block p-0 border-0 bg-transparent cursor-pointer mr-2 shrink-0"
+                style={{
+                  width: '60px',
+                  height: '60px',
+                  opacity: isActive ? 1 : 0.4,
+                  transform: isActive ? 'scale(1.04)' : 'scale(1)',
+                  transition: 'opacity 0.2s ease, transform 0.2s ease',
+                }}
+              >
+                <img
+                  src={imageUrl}
+                  alt={`${title || 'Product'} thumb ${index + 1}`}
+                  className="w-full h-full object-cover rounded-md"
+                  loading="lazy"
+                  onError={(e) => { e.target.style.display = 'none'; }}
                 />
               </button>
             );
