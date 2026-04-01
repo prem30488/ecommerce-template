@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     class Offer extends Model {
         static associate(models) {
             Offer.belongsTo(models.Product, { foreignKey: 'productId' });
+            Offer.belongsTo(models.SaleEvent, { foreignKey: 'saleEventId', allowNull: true });
         }
     }
     Offer.init({
@@ -16,6 +17,14 @@ module.exports = (sequelize, DataTypes) => {
         productId: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        saleEventId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'SaleEvents',
+                key: 'id'
+            }
         },
         from: DataTypes.DATE,
         to: DataTypes.DATE,

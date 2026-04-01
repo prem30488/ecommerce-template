@@ -31,7 +31,7 @@ import AddOrEditProduct from './AddOrEditProduct';
 import Alert from 'react-s-alert';
 import {
   addProduct, getProducts, deleteProduct, undeleteProduct, fetchProductById, getCategories, updateProduct,
-  getForms, getOffersByProductId, getAllOffers, addOffer, deleteOffer
+  getForms, getOffersByProductId, getAllOffers, addOffer, deleteOffer, getActiveSales
 } from '../../../../util/APIUtils';
 
 
@@ -56,6 +56,18 @@ function ProductManager() {
   const [products, setProducts] = useState([]);
 
   const [offers, setOffers] = useState([]);
+  const [sales, setSales] = useState([]);
+  const [selectedSaleId, setSelectedSaleId] = useState('');
+
+  const reloadSalesList = () => {
+    getActiveSales()
+      .then(res => {
+        setSales(res.data || res || []);
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Unable to load sale events.');
+      });
+  };
+
   const reloadOffersList = () => {
     getAllOffers(0, 100)
       .then(res => {
@@ -105,6 +117,7 @@ function ProductManager() {
     reloadCategoriesList();
     reloadFormsList();
     reloadOffersList();
+    reloadSalesList();
   }, [page, pageSize]);
 
   const [name, setName] = useState('');
@@ -332,6 +345,7 @@ function ProductManager() {
     setStartDate('');
     setEndDate('');
     setDiscount('');
+    setSelectedSaleId('');
   };
 
   const handleAddOffer = () => {
@@ -339,6 +353,7 @@ function ProductManager() {
 
     const newOffer = {
       "productId": currentProductId,
+      "saleEventId": selectedSaleId || null,
       "from": startDate,
       "to": endDate,
       "discount": Number(discount),
@@ -495,6 +510,22 @@ function ProductManager() {
             minDate={startDate}
             onChange={date => setEndDate(date)}
           />
+          <FormControl fullWidth margin="dense">
+            <InputLabel id="sale-event-label">Sale Event</InputLabel>
+            <Select
+              labelId="sale-event-label"
+              value={selectedSaleId}
+              label="Sale Event"
+              onChange={(e) => setSelectedSaleId(e.target.value)}
+            >
+              <MenuItem value="">None</MenuItem>
+              {sales.map((sale) => (
+                <MenuItem key={sale.id} value={sale.id}>
+                  {sale.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
 
           <TextField

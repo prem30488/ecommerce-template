@@ -51,7 +51,7 @@ export const CartItem = (props) => {
           {imageURLs ? imageURLs.split(',').map((url, i) => (
             <div key={i} className="w-full h-full flex-shrink-0 snap-center">
               <img
-                src={url.trim().startsWith('http') ? url.trim() : `http://localhost:5000${url.trim()}`}
+                src={url.trim().startsWith('http') ? url.trim() : `http://localhost:3000${url.trim()}`}
                 className="w-full h-full object-cover"
                 alt={`${title} ${i}`}
               />

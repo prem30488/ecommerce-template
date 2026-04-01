@@ -89,7 +89,7 @@ const ProductSelector = ({ product, onFlavorChange }) => {
               >
                 <div className="w-6 h-6 rounded-full overflow-hidden border border-slate-100 flex-shrink-0">
                   {f.image ? (
-                    <img src={f.image.startsWith('http') ? f.image : `http://localhost:5000${f.image}`} className="w-full h-full object-cover" alt="" />
+                    <img src={f.image.startsWith('http') ? f.image : `http://localhost:3000${f.image}`} className="w-full h-full object-cover" alt="" />
                   ) : (
                     <div className="w-full h-full bg-slate-100 flex items-center justify-center text-[8px] text-slate-300">N/A</div>
                   )}

@@ -226,7 +226,7 @@ const FlavorManager = () => {
                   <div className="w-[50px] h-[75px] rounded-lg border border-slate-200 overflow-hidden bg-slate-50 shadow-sm">
                     {flavor.image ? (
                       <img
-                        src={flavor.image.startsWith('http') ? flavor.image : `http://localhost:5000${flavor.image}`}
+                        src={flavor.image.startsWith('http') ? flavor.image : `http://localhost:3000${flavor.image}`}
                         className="w-[50px] h-[75px]"
                         style={{ "height": "30%", "width": "100%" }}
                         alt={flavor.name}
@@ -291,7 +291,7 @@ const FlavorManager = () => {
               <div className="w-[100px] h-[150px] flex-shrink-0 bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm shadow-slate-200/50">
                 {currentFlavor.image ? (
                   <img
-                    src={currentFlavor.image.startsWith('http') ? currentFlavor.image : `http://localhost:5000${currentFlavor.image}`}
+                    src={currentFlavor.image.startsWith('http') ? currentFlavor.image : `http://localhost:3000${currentFlavor.image}`}
                     className="w-full h-full object-cover"
                     alt="Preview"
                   />

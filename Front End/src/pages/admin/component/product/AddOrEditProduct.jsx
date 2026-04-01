@@ -392,7 +392,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
                     <div className="w-[60px] h-[40px] rounded-lg border border-slate-100 bg-slate-50 flex-shrink-0 overflow-hidden">
                       {f.image ? (
                         <img 
-                          src={f.image.startsWith('http') ? f.image : `http://localhost:5000${f.image}`} 
+                          src={f.image.startsWith('http') ? f.image : `http://localhost:3000${f.image}`} 
                           style={{ "height": "40px", "width": "60px" }}
                           alt=""
                         />
@@ -443,7 +443,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
                   return (
                     <div key={idx} className="relative w-[100px] h-[150px] border border-slate-200 rounded-xl overflow-hidden bg-white group hover:shadow-lg transition-all flex-shrink-0">
                       <img
-                        src={imagePath.startsWith('http') ? imagePath : `http://localhost:5000${imagePath}`}
+                        src={imagePath.startsWith('http') ? imagePath : `http://localhost:3000${imagePath}`}
                         className="w-full h-full object-cover"
                         alt="Product variant"
                       />

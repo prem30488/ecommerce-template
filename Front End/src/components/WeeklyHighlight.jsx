@@ -42,7 +42,7 @@ const WeeklyHighlight = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("//localhost:5000/api/product/weeklyBestSeller")
+    fetch("http://localhost:3000/api/product/weeklyBestSeller")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         setProduct(data || WHEY_FALLBACK);

@@ -68,6 +68,58 @@ export function getCategories(page, size, search = '') {
     return api.get(url);
 }
 
+export function getActiveSales() {
+    return api.get("/api/sale/active");
+}
+
+export function getAllSales() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/sale");
+}
+
+export function getSaleById(id) {
+    return api.get(`/api/sale/${id}`);
+}
+
+export function getSaleImages(id) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get(`/api/sale/images/${id}`);
+}
+
+export function uploadSaleImage(id, fileRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post(`/api/sale/upload?saleId=${id}`, fileRequest, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+}
+
+export function createSale(saleRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/sale", saleRequest);
+}
+
+export function updateSale(id, saleRequest) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put(`/api/sale/${id}`, saleRequest);
+}
+
+export function getSaleAnalytics(id) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get(`/api/sale/${id}/analytics`);
+}
+
 export function fetchOrders(page, size) {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");

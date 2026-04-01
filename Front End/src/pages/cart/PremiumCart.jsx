@@ -16,7 +16,7 @@ export const PremiumCart = ({ onClose }) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000");
+        const res = await fetch("//localhost:3000/api/product/getProducts?page=0&size=1000");
         if (!res.ok) throw new Error("Fetch failed");
         const json = await res.json();
         setProducts(json.content || []);

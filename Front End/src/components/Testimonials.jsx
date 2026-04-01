@@ -28,7 +28,7 @@ export const Testimonials = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch("//localhost:5000/api/testimonial/getTestimonials?page=0&size=1000&sort=id,asc");
+        const res = await fetch("http://localhost:3000/api/testimonial/getTestimonials?page=0&size=1000&sort=id,asc");
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         const activeTestimonials = (json.content || []).filter(t => !t.deleteFlag);

@@ -20,7 +20,7 @@ const ProductDetails = ({ compare }) => {
       if (!paramId) return;
       try {
         setIsLoading(true);
-        const res = await fetch(`//localhost:5000/api/product/fetchById/${paramId}`);
+        const res = await fetch(`http://localhost:3000/api/product/fetchById/${paramId}`);
         if (!res.ok) throw new Error("Product not found");
         const json = await res.json();
         setProduct(json);
@@ -33,7 +33,7 @@ const ProductDetails = ({ compare }) => {
 
     const getAllProducts = async () => {
       try {
-        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true");
+        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content || json);

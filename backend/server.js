@@ -9,9 +9,11 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('./models');
+const { initRedis } = require('./config/redis');
+const saleRoutes = require('./routes/saleRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // Middleware
@@ -848,6 +850,7 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
             include: [
                 {
                     model: db.ProductImage,
+                    as: 'images',
                     include: [{ model: db.Flavor }]
                 },
                 {
@@ -860,6 +863,7 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
         if (product) res.json(product);
         else res.status(404).json({ error: 'Product not found' });
     } catch (error) {
+        console.error('Error fetching product by id:', error);
         res.status(500).json({ error: 'Failed to fetch product' });
     }
 });
@@ -1139,8 +1143,9 @@ app.post('/auth/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
+        const isAdmin = ['admin', 'superadmin'].includes(user.role.toLowerCase());
         const token = jwt.sign(
-            { id: user.id, username: user.username, role: user.role },
+            { id: user.id, username: user.username, role: user.role, isAdmin },
             JWT_SECRET,
             { expiresIn: '24h' }
         );
@@ -2138,14 +2143,26 @@ app.delete('/api/review/:id', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'Failed to delete review' });
     }
 });
+
+// Mount Sale Routes
+app.use('/api/sale', saleRoutes);
+
 // Start server
 const startServer = async () => {
     try {
+        // Initialize Redis (graceful - app works without it)
+        const redisClient = await initRedis();
+        if (redisClient) {
+            console.log('✅ Redis initialized successfully');
+        } else {
+            console.log('⚠️  Starting without Redis - some features like caching will be unavailable');
+        }
+
         await ensureDatabaseExists();
         await db.sequelize.query('DROP TABLE IF EXISTS "Reviews" CASCADE;');
-        await db.sequelize.query('DROP TABLE IF EXISTS "Flavors" CASCADE;');
-        await db.sequelize.sync();
-        console.log('Database synced successfully');
+        //await db.sequelize.query('DROP TABLE IF EXISTS "Flavors" CASCADE;');
+        await db.sequelize.sync({ alter: true });
+        console.log('Database synced successfully (alter applied)');
         await seedData();
 
         app.listen(PORT, () => {
@@ -2153,6 +2170,7 @@ const startServer = async () => {
         });
     } catch (err) {
         console.error('Failed to start server:', err);
+        process.exit(1);
     }
 };
 

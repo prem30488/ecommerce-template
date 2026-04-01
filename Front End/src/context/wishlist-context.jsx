@@ -40,7 +40,7 @@ export const WishlistContextProvider = (props) => {
   const loadWishlist = async (userIdParam) => {
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
-      const response = await fetch(`http://localhost:5000/api/wishlist`, {
+      const response = await fetch(`http://localhost:3000/api/wishlist`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -67,7 +67,7 @@ export const WishlistContextProvider = (props) => {
   const addToWishlist = async (productId) => {
     const idStr = String(productId);
     console.log('addToWishlist called for product:', idStr);
-    
+
     if (wishlistItems[idStr]) {
       console.log('Item already in wishlist');
       return;
@@ -80,7 +80,7 @@ export const WishlistContextProvider = (props) => {
       addedAt: new Date().toISOString(),
       isOptimistic: true
     };
-    
+
     setWishlistItems(prev => ({
       ...prev,
       [idStr]: tempItem
@@ -88,7 +88,7 @@ export const WishlistContextProvider = (props) => {
 
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
-      const response = await fetch(`http://localhost:5000/api/wishlist`, {
+      const response = await fetch(`http://localhost:3000/api/wishlist`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,9 +114,9 @@ export const WishlistContextProvider = (props) => {
       } else {
         const errorData = await response.json().catch(() => ({}));
         if (response.status === 400 && errorData.error === 'Item already in wishlist') {
-            console.log('Item already in wishlist on server, keeping local state.');
-            // Remove optimistic flag if you use one, or just keep as is
-            return; 
+          console.log('Item already in wishlist on server, keeping local state.');
+          // Remove optimistic flag if you use one, or just keep as is
+          return;
         }
 
         // Rollback on other failure
@@ -144,7 +144,7 @@ export const WishlistContextProvider = (props) => {
   const removeFromWishlist = async (productId) => {
     const idStr = String(productId);
     console.log('removeFromWishlist called for product:', idStr);
-    
+
     const wishlistItem = wishlistItems[idStr];
     if (!wishlistItem) {
       console.log('Item not in wishlist');
@@ -163,7 +163,7 @@ export const WishlistContextProvider = (props) => {
 
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
-      const response = await fetch(`http://localhost:5000/api/wishlist/${idStr}`, {
+      const response = await fetch(`http://localhost:3000/api/wishlist/${idStr}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
@@ -210,7 +210,7 @@ export const WishlistContextProvider = (props) => {
 
       // Fetch product details for all wishlist items
       const productDetailsPromises = productIds.map(productId =>
-        fetch(`http://localhost:5000/api/product/fetchById/${productId}`)
+        fetch(`http://localhost:3000/api/product/fetchById/${productId}`)
           .then(res => res.ok ? res.json() : null)
           .catch(err => {
             console.error(`Failed to fetch product ${productId}:`, err);
@@ -237,7 +237,7 @@ export const WishlistContextProvider = (props) => {
   const clearWishlist = async () => {
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
-      await fetch(`http://localhost:5000/api/wishlist`, {
+      await fetch(`http://localhost:3000/api/wishlist`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
@@ -254,7 +254,7 @@ export const WishlistContextProvider = (props) => {
     if (userId && Object.keys(wishlistItems).length > 0) {
       try {
         const token = localStorage.getItem('authToken') || 'mock-token';
-        await fetch(`http://localhost:5000/api/wishlist/email-on-close`, {
+        await fetch(`http://localhost:3000/api/wishlist/email-on-close`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -6,7 +6,7 @@ import "./cart.css";
 import CouponCode from "../checkout/CouponCode";
 
 export const Cart = ({ onClose }) => {
-  const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount } = useContext(ShopContext);
+  const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, getTotalCartCount } = useContext(ShopContext);
   const totalAmount = getTotalCartAmount();
   const [products, setProducts] = useState([]);
   const freeShippingThreshold = 2000;
@@ -14,7 +14,7 @@ export const Cart = ({ onClose }) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true");
+        const res = await fetch("//localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);
@@ -25,7 +25,7 @@ export const Cart = ({ onClose }) => {
     getData();
   }, []);
 
-  const hasItems = totalAmount > 0;
+  const hasItems = getTotalCartCount() > 0;
   const progressToFreeShipping = Math.min((totalAmount / freeShippingThreshold) * 100, 100);
   const remainingForFreeShipping = Math.max(freeShippingThreshold - totalAmount, 0);
 

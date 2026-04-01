@@ -2,6 +2,7 @@ import React from "react";
 import FeatureProductsCarousel from "../../components/FeatureProductsCarousel";
 import HomeVideo from "../../components/HomeVideo";
 import Slider from "../../components/Slider";
+import SaleSlider from "../../components/SaleSlider";
 import Testimonials from "../../components/Testimonials";
 //import TestimonialsMDB from "../../components/TestimonialsMDB";
 // import Gmap from "../../components/Gmap";
@@ -19,7 +20,7 @@ export const Shop = () => {
                 <HomeVideo />
                 <FeatureBar />
                 <InstagramVideoCarousel />
-                <Slider></Slider>
+                <SaleSlider />
                 <WeeklyHighlight />
                 <BestSellingCarousel />
                 <FeatureProductsCarousel />

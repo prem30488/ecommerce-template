@@ -21,14 +21,14 @@ const Categorywise = () => {
       try {
         setIsLoading(true);
         // Fetch category details
-        const catRes = await fetch(`//localhost:5000/api/category/fetchById/${id}`);
+        const catRes = await fetch(`http://localhost:3000/api/category/fetchById/${id}`);
         if (catRes.ok) {
           const catJson = await catRes.json();
           setCategory(catJson);
         }
 
         // Fetch products for this category
-        const res = await fetch(`//localhost:5000/api/product/getProducts?categoryId=${id}&page=0&size=1000`);
+        const res = await fetch(`http://localhost:3000/api/product/getProducts?categoryId=${id}&page=0&size=1000`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);

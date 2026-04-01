@@ -60,7 +60,7 @@ export default function FormDialog() {
     const getData = async () => {
       try {
 
-        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true");
+        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
 

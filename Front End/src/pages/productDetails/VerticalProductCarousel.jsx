@@ -9,7 +9,7 @@ const VerticalProductCarousel = ({ id, title, mainImage, additionalImages, selec
   const resolveUrl = (url) => {
     if (!url) return null;
     if (url.startsWith('http') || url.startsWith('/')) return url;
-    return `http://localhost:5000/${url}`;
+    return `http://localhost:3000/${url}`;
   };
 
   // Robust image processing with Flavor Filtering
@@ -79,7 +79,7 @@ const VerticalProductCarousel = ({ id, title, mainImage, additionalImages, selec
                   const currentSrc = e.target.src;
                   if (currentSrc.includes('/images/') && !currentSrc.includes('/images/products/')) return; 
                   
-                  if (currentSrc.includes('localhost:5000/')) {
+                  if (currentSrc.includes('localhost:3000/')) {
                     const newUrl = currentSrc.replace('/images/products/', '/images/').replace('/uploads/products/', '/images/');
                     if (newUrl !== currentSrc) e.target.src = newUrl;
                   }
@@ -128,7 +128,7 @@ const VerticalProductCarousel = ({ id, title, mainImage, additionalImages, selec
             className="max-w-full max-h-full object-contain animate-fadeIn"
             onError={(e) => {
               if (!e.target.src.includes('/uploads/')) {
-                e.target.src = e.target.src.replace('localhost:5000/', 'localhost:5000/uploads/');
+                e.target.src = e.target.src.replace('localhost:3000/', 'localhost:3000/uploads/');
               }
             }}
           />

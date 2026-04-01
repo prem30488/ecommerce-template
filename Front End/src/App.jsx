@@ -46,6 +46,8 @@ import LeadershipManagementPage from './pages/admin/component/leadership/Leaders
 import FlavorManagementPage from './pages/admin/component/flavor/FlavorManagementPage';
 import FAQManager from './pages/admin/component/faq/FAQManager';
 import ReviewManager from './pages/admin/component/review/ReviewManager';
+import SaleManagementPage from './pages/admin/component/sale/SaleManagementPage';
+import SalesLandingPage from './pages/SalesLandingPage';
 
 import TaxInvoice from "./pages/checkout/TaxInvoice";
 
@@ -178,6 +180,7 @@ class App extends Component {
 
 							<Route path="/byCategory/:id" element={<Categorywise />} />
 							<Route path="/Search/:query" element={<Search />} />
+							<Route path="/sales/:saleId" element={<SalesLandingPage />} />
 
 							<Route path="/refundPolicy" element={<RefundPolicy />} />
 							<Route path="/policies/refund-policy" element={<RefundPolicy />} />
@@ -208,6 +211,7 @@ class App extends Component {
 
 							<Route exact path="/faqManagement" element={<FAQManager />} />
 							<Route exact path="/reviewManagement" element={<ReviewManager />} />
+							<Route exact path="/saleManagement" element={<SaleManagementPage />} />
 
 							{/* Wishlist Routes */}
 							<Route path="/wishlist" element={<Wishlist />} />

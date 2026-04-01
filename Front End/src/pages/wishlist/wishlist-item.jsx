@@ -39,10 +39,10 @@ const WishlistItem = ({ item }) => {
     // 2. If 'imageURLs' exists, try to get the first image from the list
     if (item.imageURLs) {
       // imageURLs could be a string "img1.png,img2.png" or an array
-      const imagesArr = Array.isArray(item.imageURLs) 
-        ? item.imageURLs 
+      const imagesArr = Array.isArray(item.imageURLs)
+        ? item.imageURLs
         : item.imageURLs.split(',').map(u => u.trim());
-      
+
       const firstImage = imagesArr[0];
       if (firstImage) {
         // If it looks like a full URL, use it
@@ -50,7 +50,7 @@ const WishlistItem = ({ item }) => {
           return firstImage;
         }
         // Otherwise use the backend endpoint
-        return `http://localhost:5000/api/product/image/${item.id}/${firstImage}`;
+        return `http://localhost:3000/api/product/image/${item.id}/${firstImage}`;
       }
     }
 
@@ -66,9 +66,9 @@ const WishlistItem = ({ item }) => {
             src={getImageUrl()}
             alt={item.title}
             loading="lazy"
-            onError={(e) => { 
-                e.target.onerror = null; 
-                e.target.src = `https://placehold.co/400x400?text=${encodeURIComponent(item.title)}`; 
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = `https://placehold.co/400x400?text=${encodeURIComponent(item.title)}`;
             }}
           />
         </div>

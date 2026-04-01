@@ -44,15 +44,25 @@ export const PremiumProductDetails = () => {
   const [newReview, setNewReview] = useState({ name: '', email: '', rating: 5, comment: '' });
   const [bundleSelections, setBundleSelections] = useState(null); // { allProducts, selections }
 
-  const { addToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart } = useContext(ShopContext);
+  const { addToCart, addFreeToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart } = useContext(ShopContext);
 
   // ── Fetch product ──────────────────────────────────────────────
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:5000/api/product/fetchById/${id}`)
+    fetch(`http://localhost:3000/api/product/fetchById/${id}`)
       .then(r => r.ok ? r.json() : Promise.reject("Not found"))
-      .then(data => { 
-        setProduct(data); 
+      .then(async data => {
+        setProduct(data);
+        try {
+          // Ensure offers are loaded — some API variants return offers separately
+          const resp = await axios.get(`${API_BASE_URL}/api/offer/getOffersByProductId/${id}`);
+          const offers = Array.isArray(resp.data) ? resp.data : (resp.data?.content || []);
+          if (offers && offers.length) {
+            setProduct(prev => ({ ...(prev || data), offers }));
+          }
+        } catch (e) {
+          // ignore; product may already contain offers
+        }
         if (data.productFlavors && data.productFlavors.length > 0) {
           const firstFlavor = data.productFlavors[0];
           setSelectedFlavor(firstFlavor.flavor_id);
@@ -62,7 +72,7 @@ export const PremiumProductDetails = () => {
             setSelectedSize("M");
           }
         }
-        setLoading(false); 
+        setLoading(false);
       })
       .catch(e => { setErr(String(e)); setLoading(false); });
   }, [id]);
@@ -103,7 +113,7 @@ export const PremiumProductDetails = () => {
   // ── Fetch FAQs ─────────────────────────────────────────────────
   useEffect(() => {
     if (!id) return;
-    fetch(`http://localhost:5000/api/faq?productId=${id}&size=100`)
+    fetch(`http://localhost:3000/api/faq?productId=${id}&size=100`)
       .then(r => r.json())
       .then(j => {
         const items = j.content || j || [];
@@ -115,7 +125,7 @@ export const PremiumProductDetails = () => {
   // ── Fetch frequently bought together ──────────────────────────
   useEffect(() => {
     if (!product) return;
-    fetch("http://localhost:5000/api/product/getProducts?page=0&size=20")
+    fetch("http://localhost:3000/api/product/getProducts?page=0&size=20")
       .then(r => r.json())
       .then(j => {
         const all = j.content || j;
@@ -171,20 +181,91 @@ export const PremiumProductDetails = () => {
   const activeFlavorData = product?.productFlavors?.find(pf => String(pf.flavor_id) === String(selectedFlavor));
 
   const currentPrice = () => {
-    if (!activeFlavorData) return 0;
-    if (selectedSize === "S") return activeFlavorData.price;
-    if (selectedSize === "M") return activeFlavorData.priceMedium;
-    return activeFlavorData.priceLarge;
+    if (activeFlavorData) {
+      if (selectedSize === "S") return activeFlavorData.price || 0;
+      if (selectedSize === "M") return activeFlavorData.priceMedium || 0;
+      return activeFlavorData.priceLarge || 0;
+    }
+    return product?.price || 0;
   };
+
+  const activeOffer = product?.offers?.find(
+    (o) =>
+      o.active &&
+      o.discount > 0 &&
+      o.type === 0 &&
+      normalizeSize(o.size) === normalizeSize(selectedSize)
+  );
+  // Consider any offer that has a buy & buyget >= 1 as a free-offer (some offers use type 0)
+  const activeFreeOffer = product?.offers?.find((o) => {
+    const isActive = o.active === true || String(o.active).toLowerCase() === "true";
+    return (
+      isActive &&
+      Number(o.buy) >= 1 &&
+      Number(o.buyget) >= 1 &&
+      normalizeSize(o.size) === normalizeSize(selectedSize)
+    );
+  });
+
+  // debug: why free-offer may not match at runtime (remove after verification)
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line no-console
+      console.log("[PPD] selectedSize:", selectedSize, "normalized:", normalizeSize(selectedSize));
+      // eslint-disable-next-line no-console
+      console.log("[PPD] offers:", product?.offers || []);
+      // eslint-disable-next-line no-console
+      console.log("[PPD] activeFreeOffer:", activeFreeOffer || null);
+    } catch (e) {}
+  }, [selectedSize, product, activeFreeOffer]);
+  // helper to map size id to human label
+  function getSizeLabel(sz) {
+    const s = String(sz || '').trim().toUpperCase();
+    if (!s) return '';
+    if (s.startsWith('S')) return 'Small';
+    if (s.startsWith('M')) return 'Medium';
+    if (s.startsWith('L')) return 'Large';
+    return sz;
+  }
+  // normalize various size representations to canonical short id: 'S'|'M'|'L'
+  function normalizeSize(sz) {
+    const s = String(sz || '').trim().toUpperCase();
+    if (!s) return '';
+    if (s.startsWith('S')) return 'S';
+    if (s.startsWith('M')) return 'M';
+    if (s.startsWith('L')) return 'L';
+    return s;
+  }
+  const displayPrice = currentPrice() || product?.price || 0;
+  const discountedPrice = activeOffer
+    ? Math.round(displayPrice * (1 - activeOffer.discount / 100))
+    : displayPrice;
+  const offerLabel = activeOffer
+    ? `${Math.round(activeOffer.discount)}% off`
+    : null;
 
   const handleAddToCart = () => {
     // Note: Stock limit currently checked against total of all sizes for this product
     const totalCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + cartItems[key] : sum, 0) +
-                       Object.keys(martItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + martItems[key] : sum, 0) +
-                       Object.keys(lartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + lartItems[key] : sum, 0);
+      Object.keys(martItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + martItems[key] : sum, 0) +
+      Object.keys(lartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + lartItems[key] : sum, 0);
 
     if (totalCount < product.stock) {
       addToCart(product.id, selectedSize, selectedFlavor);
+
+      const activeOffer = product?.offers?.find(
+        (o) =>
+          o.active &&
+          o.discount > 0 &&
+          o.type === 0 &&
+          normalizeSize(o.size) === normalizeSize(selectedSize)
+      );
+      const activeFreeOffer = product?.offers?.find((o) =>
+        o.active &&
+        Number(o.buy) >= 1 &&
+        Number(o.buyget) >= 1 &&
+        normalizeSize(o.size) === normalizeSize(selectedSize)
+      );
       Alert.success(`${product.title} added to collection!`);
     } else {
       Alert.warning("Out of stock!");
@@ -192,7 +273,7 @@ export const PremiumProductDetails = () => {
   };
 
   const resolveImg = (src) =>
-    src ? (src.startsWith("http") ? src : `http://localhost:5000${src}`) : "";
+    src ? (src.startsWith("http") ? src : `http://localhost:3000${src}`) : "";
 
   // ── Size options ──────────────────────────────────────────────
   const sizes = product && activeFlavorData ? [
@@ -257,15 +338,15 @@ export const PremiumProductDetails = () => {
     : (product.img ? resolveImg(product.img) : "https://placehold.co/600x600/f1f5f9/94a3b8?text=No+Image");
 
   return (
-    <div className="ppp-root" style={{ "paddingTop": "200px" }}>
+    <div className="ppp-root" style={{ "paddingTop": "100px" }}>
       {/* Question Modal */}
       {isModalOpen && (
         <div className="ppp-modal-overlay">
           <div className="ppp-modal-card">
             <div className="ppp-modal-header">
               <h3>Ask A Question</h3>
-              <button 
-                className="ppp-modal-close" 
+              <button
+                className="ppp-modal-close"
                 onClick={() => setIsModalOpen(false)}
               >
                 ×
@@ -275,40 +356,40 @@ export const PremiumProductDetails = () => {
               <div className="ppp-form-row">
                 <div className="ppp-form-group">
                   <label>Name</label>
-                  <input 
-                    required 
+                  <input
+                    required
                     value={questionData.name}
-                    onChange={e => setQuestionData({...questionData, name: e.target.value})}
+                    onChange={e => setQuestionData({ ...questionData, name: e.target.value })}
                     placeholder="Your Full Name"
                   />
                 </div>
                 <div className="ppp-form-group">
                   <label>Email</label>
-                  <input 
-                    required 
-                    type="email" 
+                  <input
+                    required
+                    type="email"
                     value={questionData.email}
-                    onChange={e => setQuestionData({...questionData, email: e.target.value})}
+                    onChange={e => setQuestionData({ ...questionData, email: e.target.value })}
                     placeholder="you@example.com"
                   />
                 </div>
               </div>
               <div className="ppp-form-group">
                 <label>Phone number</label>
-                <input 
-                  required 
+                <input
+                  required
                   value={questionData.phone}
-                  onChange={e => setQuestionData({...questionData, phone: e.target.value})}
+                  onChange={e => setQuestionData({ ...questionData, phone: e.target.value })}
                   placeholder="+91 XXXXX XXXXX"
                 />
               </div>
               <div className="ppp-form-group">
                 <label>Comment</label>
-                <textarea 
-                  required 
-                  rows="4" 
+                <textarea
+                  required
+                  rows="4"
                   value={questionData.comment}
-                  onChange={e => setQuestionData({...questionData, comment: e.target.value})}
+                  onChange={e => setQuestionData({ ...questionData, comment: e.target.value })}
                   placeholder="Ask anything about this product..."
                 />
               </div>
@@ -384,8 +465,32 @@ export const PremiumProductDetails = () => {
           {/* Price */}
           <div className="ppp-price-block">
             <div>
-              <div className="ppp-price-label">Starting from</div>
-              <div className="ppp-price-main">₹{currentPrice() || product.price}</div>
+              <div className="ppp-price-label" style={{ "color": "#fff" }}>Starting from</div>
+              <div className="ppp-price-row">
+                {activeOffer && displayPrice > discountedPrice && (
+                  <span className="ppp-price-original">₹{displayPrice}</span>
+                )}
+                <span className="ppp-price-main">₹{discountedPrice}</span>
+              </div>
+              {offerLabel && (
+                <div className="ppp-offer-line">
+                  <span className="ppp-offer-icon" aria-hidden="true">
+                    <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+                      <path d="M4 2h8l4 4v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
+                      <path d="M5 6a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H5zm0 4a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2H5z" fill="#fff" opacity=".6" />
+                    </svg>
+                  </span>
+                  <span>{offerLabel}</span>
+                </div>
+              )}
+              {activeFreeOffer && (
+                <div className="ppp-free-offer">
+                  <span className="ppp-free-icon">🎁</span>
+                  <div>
+                    Special Offer: Buy {activeFreeOffer?.buy || 1} {getSizeLabel(activeFreeOffer.size || selectedSize)} pack and get {activeFreeOffer?.buyget || 1} {getSizeLabel(activeFreeOffer.freeProductsize || activeFreeOffer.size || selectedSize)} pack free
+                  </div>
+                </div>
+              )}
               <div className="ppp-price-tax">Inclusive of all taxes</div>
             </div>
             <div className="ppp-price-badge">🎉 Best Value</div>
@@ -401,24 +506,25 @@ export const PremiumProductDetails = () => {
                 {product.productFlavors.filter(pf => pf.Flavor).map(pf => {
                   const f = pf.Flavor;
                   return (
-                  <button
-                    key={f.id}
-                    className={`ppp-flavor-btn ${selectedFlavor === f.id ? "active" : ""}`}
-                    onClick={() => setSelectedFlavor(f.id)}
-                    title={f.name}
-                  >
-                    {f.image ? (
-                      <img
-                        src={resolveImg(f.image)}
-                        alt={f.name}
-                        className="ppp-flavor-img"
-                      />
-                    ) : (
-                      <div className="ppp-flavor-placeholder">?</div>
-                    )}
-                    {f.name}
-                  </button>
-                )})}
+                    <button
+                      key={f.id}
+                      className={`ppp-flavor-btn ${selectedFlavor === f.id ? "active" : ""}`}
+                      onClick={() => setSelectedFlavor(f.id)}
+                      title={f.name}
+                    >
+                      {f.image ? (
+                        <img
+                          src={resolveImg(f.image)}
+                          alt={f.name}
+                          className="ppp-flavor-img"
+                        />
+                      ) : (
+                        <div className="ppp-flavor-placeholder">?</div>
+                      )}
+                      {f.name}
+                    </button>
+                  )
+                })}
               </div>
               <div className="ppp-divider" />
             </>
@@ -449,6 +555,9 @@ export const PremiumProductDetails = () => {
               </div>
             ))}
           </div>
+
+          {/* Free-offer banner shown when matching free offer is active for the selected size */}
+
 
           {/* Stock indicator */}
           <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -651,7 +760,7 @@ export const PremiumProductDetails = () => {
             </div>
 
             <div className="ppp-overview-right">
-              <button 
+              <button
                 className="ppp-write-btn"
                 onClick={() => setIsReviewModalOpen(true)}
               >
@@ -701,41 +810,41 @@ export const PremiumProductDetails = () => {
                 <div className="ppp-form-row">
                   <div className="ppp-form-group">
                     <label>Name</label>
-                    <input 
-                      required 
+                    <input
+                      required
                       value={newReview.name}
-                      onChange={e => setNewReview({...newReview, name: e.target.value})}
+                      onChange={e => setNewReview({ ...newReview, name: e.target.value })}
                       placeholder="Your Name"
                     />
                   </div>
                   <div className="ppp-form-group">
                     <label>Email</label>
-                    <input 
-                      required 
-                      type="email" 
+                    <input
+                      required
+                      type="email"
                       value={newReview.email}
-                      onChange={e => setNewReview({...newReview, email: e.target.value})}
+                      onChange={e => setNewReview({ ...newReview, email: e.target.value })}
                       placeholder="Email"
                     />
                   </div>
                 </div>
                 <div className="ppp-form-group">
                   <label>Rating</label>
-                  <select 
+                  <select
                     value={newReview.rating}
-                    onChange={e => setNewReview({...newReview, rating: e.target.value})}
+                    onChange={e => setNewReview({ ...newReview, rating: e.target.value })}
                     className="ppp-select"
                   >
-                    {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Stars</option>)}
+                    {[5, 4, 3, 2, 1].map(n => <option key={n} value={n}>{n} Stars</option>)}
                   </select>
                 </div>
                 <div className="ppp-form-group">
                   <label>Your Review</label>
-                  <textarea 
-                    required 
+                  <textarea
+                    required
                     rows="4"
                     value={newReview.comment}
-                    onChange={e => setNewReview({...newReview, comment: e.target.value})}
+                    onChange={e => setNewReview({ ...newReview, comment: e.target.value })}
                     placeholder="Tell us what you think..."
                   />
                 </div>
@@ -761,7 +870,7 @@ export const PremiumProductDetails = () => {
                 </span>
                 <div style={{ fontSize: 44, fontWeight: 900, color: '#0ea5e9', letterSpacing: '-0.04em', marginBottom: 24 }}>
                   ₹{(
-                    (product?.productFlavors?.[0]?.price || 0) + 
+                    (product?.productFlavors?.[0]?.price || 0) +
                     frequentProducts.reduce((sum, p) => sum + (p.productFlavors?.[0]?.price || 0), 0)
                   ).toLocaleString()}
                 </div>

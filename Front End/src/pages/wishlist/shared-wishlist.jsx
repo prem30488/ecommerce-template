@@ -17,8 +17,8 @@ const SharedWishlist = () => {
     const loadSharedWishlist = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`//localhost:5000/api/wishlist/shared/${userId}`);
-        
+        const response = await fetch(`http://localhost:3000/api/wishlist/shared/${userId}`);
+
         if (!response.ok) {
           throw new Error('Failed to load shared wishlist');
         }
@@ -120,14 +120,14 @@ const SharedWishlist = () => {
           {wishlistItems.map((item) => (
             <div key={item.id} className="wishlist-card">
               <div className="card-image">
-                <img 
-                    src={item.Product?.img || (item.Product?.imageURLs ? (item.Product?.imageURLs.split(',')[0].startsWith('http') ? item.Product?.imageURLs.split(',')[0] : `http://localhost:5000/api/product/image/${item.product_id}/${item.Product?.imageURLs.split(',')[0]}`) : `https://picsum.photos/seed/${item.product_id}/400/400`)} 
-                    alt={item.Product?.title} 
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff' }}
-                    onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = `https://placehold.co/400x400?text=${encodeURIComponent(item.Product?.title || 'Product')}`;
-                    }}
+                <img
+                  src={item.Product?.img || (item.Product?.imageURLs ? (item.Product?.imageURLs.split(',')[0].startsWith('http') ? item.Product?.imageURLs.split(',')[0] : `http://localhost:3000/api/product/image/${item.product_id}/${item.Product?.imageURLs.split(',')[0]}`) : `https://picsum.photos/seed/${item.product_id}/400/400`)}
+                  alt={item.Product?.title}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff' }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = `https://placehold.co/400x400?text=${encodeURIComponent(item.Product?.title || 'Product')}`;
+                  }}
                 />
                 <span className="category-badge">{item.Product?.category}</span>
               </div>
@@ -144,7 +144,7 @@ const SharedWishlist = () => {
                 </div>
               </div>
               <div className="card-footer">
-                <button 
+                <button
                   className="btn-view"
                   onClick={() => handleAddToCart(item)}
                 >

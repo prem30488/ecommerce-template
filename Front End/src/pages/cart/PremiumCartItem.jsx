@@ -23,7 +23,7 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
     if (flavorId) {
       const fetchFlavor = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/flavor/getFlavors?size=1000`);
+          const res = await fetch(`http://localhost:3000/api/flavor/getFlavors?size=1000`);
           const json = await res.json();
           const found = (json.content || []).find(f => f.id === Number(flavorId));
           setFlavor(found);
@@ -37,12 +37,12 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
     const fetchFolderImages = async () => {
       try {
         const targetFlavorId = flavorId || '1';
-        const res = await fetch(`http://localhost:5000/api/product/images/${id}/${targetFlavorId}`);
+        const res = await fetch(`http://localhost:3000/api/product/images/${id}/${targetFlavorId}`);
         const json = await res.json();
         if (Array.isArray(json) && json.length > 0) {
           setFolderImages(json);
         } else {
-          const fallbackRes = await fetch(`http://localhost:5000/api/product/images/${id}/1`);
+          const fallbackRes = await fetch(`http://localhost:3000/api/product/images/${id}/1`);
           const fallbackJson = await fallbackRes.json();
           setFolderImages(fallbackJson || []);
         }
@@ -102,14 +102,14 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
             displayImages.map((src, i) => (
               <div key={i} className="pc-carousel-item">
                 <img
-                  src={src.startsWith('http') ? src : `http://localhost:5000${src}`}
+                  src={src.startsWith('http') ? src : `http://localhost:3000${src}`}
                   alt={`${title} ${i}`}
                 />
               </div>
             ))
           ) : (
             <div className="pc-carousel-item">
-              <img src={`http://localhost:5000/images/${id}/1/1.png`} alt={title} />
+              <img src={`http://localhost:3000/images/${id}/1/1.png`} alt={title} />
             </div>
           )}
         </div>

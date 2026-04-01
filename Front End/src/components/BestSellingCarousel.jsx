@@ -272,7 +272,7 @@ const BestSellingCarousel = () => {
   };
 
   useEffect(() => {
-    fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true")
+    fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         const best = (data?.content || [])

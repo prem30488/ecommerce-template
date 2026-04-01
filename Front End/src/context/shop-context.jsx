@@ -23,12 +23,12 @@ export const ShopContextProvider = (props) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch("//localhost:5000/api/product/getProducts?page=0&size=1000&sorted=true");
+        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch products:", err);
       }
     };
     getData();
@@ -61,9 +61,13 @@ export const ShopContextProvider = (props) => {
             itemInfo.offers
               .filter((o) => o.size === size && o.active === true)
               .forEach((offer) => {
-                if ((offer.type === 0 && items[key] === 1) || (offer.type === 3 && items[key] === offer.buy)) {
+                if (offer.type === 0 && items[key] > 0) {
                   hasOffer = true;
-                  disco = offer.discount;
+                  disco = Math.max(disco, offer.discount);
+                }
+                if (offer.type === 3 && items[key] >= offer.buy) {
+                  hasOffer = true;
+                  disco = Math.max(disco, offer.discount);
                 }
               });
           }
@@ -121,7 +125,7 @@ export const ShopContextProvider = (props) => {
     }
 
     const cartKey = activeFlavorId ? `${itemId}_${activeFlavorId}` : itemId;
-    
+
     // Update legacy flavorCart for backward compatibility
     if (activeFlavorId) {
       setFlavorCart((prev) => ({ ...prev, [`${itemId}_${size}`]: activeFlavorId }));
@@ -183,8 +187,16 @@ export const ShopContextProvider = (props) => {
     }
   };
 
-  const addFreeToCart = (id, qty, itemId) => {
-    setFreeCartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + qty }));
+  // add free item into appropriate free map depending on size
+  // size: "S" | "M" | "L" (optional, defaults to S)
+  const addFreeToCart = (id, qty, itemId, size = "S") => {
+    if (size === "M") {
+      setFreeMartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + qty }));
+    } else if (size === "L") {
+      setFreeLartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + qty }));
+    } else {
+      setFreeCartItems((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + qty }));
+    }
   };
 
   const removeFreeFromCart = (id, qty, itemId) => {
@@ -258,7 +270,7 @@ export const ShopContextProvider = (props) => {
     setTotalAfterCoupon(0.0);
   }
 
-  const checkout = () => {};
+  const checkout = () => { };
 
   const resetCart = () => {
     setCartItems(getDefaultCart());

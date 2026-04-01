@@ -24,7 +24,7 @@ export const ProductDetailsCart = () => {
       try {
         setIsLoading(true);
         // Fetch specific product with images from the improved route
-        const res = await fetch(`http://localhost:5000/api/product/fetchById/${id}`);
+        const res = await fetch(`http://localhost:3000/api/product/fetchById/${id}`);
         if (!res.ok) throw new Error("Oops! Product not found");
         const json = await res.json();
         setProduct(json);
@@ -41,7 +41,7 @@ export const ProductDetailsCart = () => {
     const fetchFrequent = async () => {
       if (!product) return;
       try {
-        const res = await fetch("http://localhost:5000/api/product/getProducts?page=0&size=20");
+        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=20");
         const json = await res.json();
         const allProducts = (json.content || json);
 
@@ -60,7 +60,7 @@ export const ProductDetailsCart = () => {
         console.error(e);
         // Fallback to simple random selection
         try {
-          const res = await fetch("http://localhost:5000/api/product/getProducts?page=0&size=10");
+          const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=10");
           const json = await res.json();
           const items = (json.content || json).filter(p => p.id !== product.id).sort(() => 0.5 - Math.random()).slice(0, 4);
           setFrequentProducts(items);
@@ -75,7 +75,7 @@ export const ProductDetailsCart = () => {
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/faq?productId=${id}`);
+        const res = await fetch(`http://localhost:3000/api/faq?productId=${id}`);
         const json = await res.json();
         setFaqs(json.content || []);
       } catch (error) {
@@ -90,8 +90,8 @@ export const ProductDetailsCart = () => {
   if (isLoading)
     return (
       <div className="h-screen flex flex-col justify-center items-center">
-         <div className="w-16 h-16 border-4 border-sky-400 border-t-transparent rounded-full animate-spin"></div>
-         <p className="mt-4 text-slate-500 font-bold">Loading product details...</p>
+        <div className="w-16 h-16 border-4 border-sky-400 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-slate-500 font-bold">Loading product details...</p>
       </div>
     );
 
@@ -128,10 +128,10 @@ export const ProductDetailsCart = () => {
                   <div>
                     <span className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mb-2 block">Premium Product</span>
                     <div className="flex items-baseline gap-3">
-                       <span className="text-5xl lg:text-6xl font-black text-slate-900 tracking-tighter">
-                         {price}
-                       </span>
-                       <span className="text-2xl font-black text-sky-500">INR</span>
+                      <span className="text-5xl lg:text-6xl font-black text-slate-900 tracking-tighter">
+                        {price}
+                      </span>
+                      <span className="text-2xl font-black text-sky-500">INR</span>
                     </div>
                   </div>
 
@@ -154,8 +154,8 @@ export const ProductDetailsCart = () => {
                   {/* Product Title */}
                   <div>
                     <div className="flex items-center gap-3 mb-6">
-                       <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-                       <span className="text-sky-500 text-[11px] font-black uppercase tracking-widest">In Stock & Ready to Ship</span>
+                      <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+                      <span className="text-sky-500 text-[11px] font-black uppercase tracking-widest">In Stock & Ready to Ship</span>
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-slate-900 leading-[1.1] tracking-tight">
                       {title}
@@ -182,8 +182,8 @@ export const ProductDetailsCart = () => {
 
                   {/* Product Selector (Buttons & Options) */}
                   <div className="pt-4">
-                    <ProductSelector 
-                      product={product} 
+                    <ProductSelector
+                      product={product}
                       onFlavorChange={setSelectedFlavorId}
                     />
                   </div>
@@ -211,7 +211,7 @@ export const ProductDetailsCart = () => {
                   </p>
                   <button className="bg-slate-900 hover:bg-sky-600 text-white px-16 py-6 rounded-[2rem] font-black shadow-[0_20px_40px_rgba(14,165,233,0.2)] transition-all duration-500 hover:scale-105 active:scale-95 group flex items-center gap-4">
                     ADD BUNDLE TO COLLECTION
-                    <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                   </button>
                 </div>
               </div>
