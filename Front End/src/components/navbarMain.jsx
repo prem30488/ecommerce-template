@@ -24,7 +24,7 @@ export const NavbarMain = () => {
       <div className="logo">
 
         <Link to="/" id="NavTitle">
-          <img src="/images/logo.png" style={{ height: "60px", width: "120px" }} alt="Logo" />
+          <img src="/images/logo.png" style={{ height: "60px", width: "100px" }} alt="Logo" />
         </Link>
 
         <div className="menudropdown">
@@ -39,6 +39,9 @@ export const NavbarMain = () => {
         <Link to="/" className={location.pathname === "/" ? "active-link" : ""} products={products}>
           Home
         </Link>
+        <Link to="/collections/all" className={location.pathname === "/collections/all" ? "active-link" : ""} products={products}>
+          Shop
+        </Link>
         <Link to="/productMen" className={location.pathname === "/productMen" ? "active-link" : ""} products={products}>
           Men
         </Link>
@@ -48,10 +51,6 @@ export const NavbarMain = () => {
         <Link to="/productKids" className={location.pathname === "/productKids" ? "active-link" : ""} products={products}>
           Kids
         </Link>
-        {/* <Link to="/booking" className={location.pathname === "/booking" ? "active-link" : ""}>
-          Booking
-        </Link> */}
-
         <Link to="/bestsellers" className={location.pathname === "/bestsellers" ? "active-link" : ""}>
           BestSellers
         </Link>
@@ -66,7 +65,7 @@ export const NavbarMain = () => {
         </Link>
 
 
-        <Link to="/your-wishlist" className="wishlist-header-trigger" title="View Wishlist" style={{ fontSize: "24px", marginRight: "10px", display: 'inline-flex', alignItems: 'center' }}>
+        <Link to="/your-wishlist" className="wishlist-header-trigger" title="View Wishlist" style={{ fontSize: "20px", marginRight: "10px", display: 'inline-flex', alignItems: 'center' }}>
           <FaHeart style={{ color: '#ff4757' }} />
           <span className='badge badge-warning' id='lblWishlistCount' style={{ marginLeft: 6 }}>
             {wishlistItems ? Object.keys(wishlistItems).length : 0}

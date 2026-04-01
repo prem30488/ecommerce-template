@@ -48,6 +48,7 @@ import FAQManager from './pages/admin/component/faq/FAQManager';
 import ReviewManager from './pages/admin/component/review/ReviewManager';
 import SaleManagementPage from './pages/admin/component/sale/SaleManagementPage';
 import SalesLandingPage from './pages/SalesLandingPage';
+import PremiumAllProducts from './pages/PremiumAllProducts';
 
 import TaxInvoice from "./pages/checkout/TaxInvoice";
 
@@ -163,6 +164,7 @@ class App extends Component {
 							<Route path="/productMen" element={<Product />} />
 							<Route path="/productWomen" element={<ProductWomen />} />
 							<Route path="/productKids" element={<ProductKids />} />
+							<Route path="/collections/all" element={<PremiumAllProducts />} />
 							<Route path="/bestsellers" element={<BestSellersPage />} />
 							<Route path="/featured" element={<FeaturedPage />} />
 							{/* <Route path="/cart" element={<Cart />} />

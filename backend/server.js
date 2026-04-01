@@ -680,7 +680,8 @@ app.get('/api/product/getProducts', async (req, res) => {
                     model: db.ProductFlavor, as: 'productFlavors',
                     include: [{ model: db.Flavor }],
                     required: false
-                }
+                },
+                { model: db.Category, required: false }
             ]
         });
         res.json(getPaginatedResponse(rows, count, page, size));

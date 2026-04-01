@@ -1,0 +1,223 @@
+/* PremiumCollectionCard.css */
+
+.collection-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: var(--premium-radius);
+  overflow: hidden;
+  transition: var(--premium-transition);
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.collection-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--premium-shadow-md);
+}
+
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.collection-card:hover .card-image {
+  transform: scale(1.08);
+}
+
+.card-badge-container {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 2;
+}
+
+.card-status-badge {
+  background: black;
+  color: white;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  width: fit-content;
+}
+
+.card-status-badge.featured {
+  background: #4f46e5;
+  /* Indigo for Featured */
+}
+
+.card-status-badge.bestseller {
+  background: #f59e0b;
+  /* Amber/Gold for Bestseller */
+}
+
+.card-discount-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--premium-accent);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent);
+  display: flex;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: var(--premium-transition);
+  z-index: 3;
+}
+
+.collection-card:hover .card-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.overlay-btn {
+  flex: 1;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--premium-transition);
+}
+
+.overlay-btn-primary {
+  background: white;
+  color: black;
+}
+
+.overlay-btn-primary:hover {
+  background: var(--premium-accent);
+  color: white;
+}
+
+.overlay-btn-secondary {
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  backdrop-filter: blur(4px);
+}
+
+.overlay-btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.card-content {
+  padding: 20px 0;
+  text-align: center;
+}
+
+.card-brand {
+  font-size: 11px;
+  color: var(--premium-text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--premium-text);
+  margin-bottom: 8px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.8em;
+}
+
+.card-price-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-final-price {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--premium-text);
+}
+
+.card-original-price {
+  font-size: 14px;
+  color: var(--premium-text-muted);
+  text-decoration: line-through;
+}
+
+.card-stock-status {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.in-stock {
+  color: #16a34a;
+  /* Green for in-stock */
+}
+
+.out-of-stock {
+  color: #dc2626;
+  /* Red for out-of-stock */
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .card-overlay {
+    opacity: 1;
+    transform: translateY(0);
+    position: relative;
+    background: transparent;
+    padding: 0 16px 16px;
+  }
+
+  .overlay-btn {
+    height: 36px;
+    font-size: 11px;
+    border: 1px solid #ddd;
+  }
+
+  .overlay-btn-secondary {
+    display: none;
+  }
+}
