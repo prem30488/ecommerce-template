@@ -215,6 +215,16 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
           }
           label="Featured"
         />
+        <FormControlLabel
+          control={
+            <Checkbox
+              name="comingSoon"
+              checked={formData.comingSoon}
+              onChange={handleChange}
+            />
+          }
+          label="Coming Soon"
+        />
         <TextField
           name="rating"
           label="Rating (5/5)"

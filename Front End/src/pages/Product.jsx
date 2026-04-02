@@ -3,6 +3,8 @@ import { useRef } from "react";
 import PremiumProductCard from "../components/PremiumProductCard";
 import { Link } from "react-router-dom";
 import "./product.css";
+import { API_BASE_URL } from "../constants";
+import { getCategoriesShort } from "../util/APIUtils";
 
 const Product = () => {
 
@@ -20,16 +22,18 @@ const Product = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
+        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);
         setFilterProducts(json.content);
 
-        const resC = await fetch("./categories.json");
-        if (!resC.ok) throw new Error("Oops! An error has occured");
-        const jsonC = await resC.json();
-        setCategories(jsonC);
+        const resC = await getCategoriesShort();
+        if (resC) {
+          const dbCategories = resC.content || resC || [];
+          const titles = dbCategories.map(cat => (typeof cat === 'string' ? cat : cat.title));
+          setCategories(titles);
+        }
         setIsLoading(false);
       } catch (err) {
         setIsLoading(false);

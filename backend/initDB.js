@@ -17,27 +17,33 @@ const imagePool = [
 const getUnsplashUrl = (id, seed = 'default') => `https://picsum.photos/seed/${id}${seed}/800/600`;
 
 async function downloadImage(url, dest) {
-    const fetch = (await import('node-fetch')).default;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
-    const buffer = await response.buffer();
-
-    // Determine extension from content-type or URL
-    const contentType = response.headers.get('content-type');
-    let ext = 'jpg';
-    if (contentType) {
-        if (contentType.includes('png')) ext = 'png';
-        else if (contentType.includes('jpeg')) ext = 'jpg';
-        else if (contentType.includes('webp')) ext = 'webp';
-    } else {
-        const urlExt = path.extname(new URL(url).pathname);
-        if (urlExt) ext = urlExt.substring(1);
+    try {
+        const fetch = (await import('node-fetch')).default;
+        const response = await fetch(url, { timeout: 10000 });
+        if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+        const buffer = await response.buffer();
+    
+        // Determine extension from content-type or URL
+        const contentType = response.headers.get('content-type');
+        let ext = 'jpg';
+        if (contentType) {
+            if (contentType.includes('png')) ext = 'png';
+            else if (contentType.includes('jpeg')) ext = 'jpg';
+            else if (contentType.includes('webp')) ext = 'webp';
+        } else {
+            const urlExt = path.extname(new URL(url).pathname);
+            if (urlExt) ext = urlExt.substring(1);
+        }
+    
+        const finalDest = `${dest}.${ext}`;
+        await fs.promises.writeFile(finalDest, buffer);
+        return finalDest;
+    } catch (err) {
+        console.warn(`Image download failed for ${url}: ${err.message}`);
+        return null;
     }
-
-    const finalDest = `${dest}.${ext}`;
-    await fs.promises.writeFile(finalDest, buffer);
-    return finalDest;
 }
+
 
 async function seedData() {
     try {
@@ -58,7 +64,12 @@ async function seedData() {
         for (const gen of genders) await db.Gender.findOrCreate({ where: { id: gen.id }, defaults: gen });
         console.log('Seeded genders.');
 
-        // 2.5. Seed Flavors
+        // 2.5. Seed Flavors with images
+        const flavorImagesPath = path.join(publicImagesPath, 'flavors');
+        if (!fs.existsSync(flavorImagesPath)) {
+            fs.mkdirSync(flavorImagesPath, { recursive: true });
+        }
+
         const flavors = [
             { name: 'Dark Chocolate', active: true },
             { name: 'Vanilla', active: true },
@@ -72,14 +83,26 @@ async function seedData() {
             { name: 'Default', active: true }
         ];
         const createdFlavors = [];
-        for (const flavor of flavors) {
+        for (let i = 0; i < flavors.length; i++) {
+            const flavor = flavors[i];
+            const randomImgId = imagePool[Math.floor(Math.random() * imagePool.length)];
+            const flavorImgUrl = getUnsplashUrl(randomImgId, `flavor_${i}`);
+            const flavorImgDestBase = path.join(flavorImagesPath, String(i + 1));
+            
+            console.log(`Downloading image for flavor: ${flavor.name}...`);
+            const flavorImgFinalPath = await downloadImage(flavorImgUrl, flavorImgDestBase);
+            const flavorImgRelative = flavorImgFinalPath 
+                ? `/images/flavors/${path.basename(flavorImgFinalPath)}`
+                : flavorImgUrl;
+
             const [createdFlavor] = await db.Flavor.findOrCreate({
                 where: { name: flavor.name },
-                defaults: flavor
+                defaults: { ...flavor, image: flavorImgRelative }
             });
             createdFlavors.push(createdFlavor);
         }
-        console.log(`Seeded ${createdFlavors.length} flavors.`);
+        console.log(`Seeded ${createdFlavors.length} flavors with images.`);
+
 
         // 3. Seed Categories
         const categoriesPath = path.join(__dirname, '..', 'Front End', 'public', 'categories.json');
@@ -96,8 +119,18 @@ async function seedData() {
         const productsData = JSON.parse(fs.readFileSync(productsPath, 'utf8'));
 
         for (const product of productsData) {
-            const randomCat = createdCategories[Math.floor(Math.random() * createdCategories.length)];
-            const randomFlavor = createdFlavors[Math.floor(Math.random() * createdFlavors.length)];
+            // Pick 1-3 random categories
+            const numCategories = Math.floor(Math.random() * 3) + 1;
+            const shuffledCats = [...createdCategories].sort(() => 0.5 - Math.random()).slice(0, numCategories);
+            const catIds = shuffledCats.map(cat => cat.id).join(',');
+            const primaryCat = shuffledCats[0];
+            
+            // Generate multiple flavors and prices
+            const numFlavors = Math.floor(Math.random() * 3) + 1;
+            const selectedFlavors = [...createdFlavors].sort(() => 0.5 - Math.random()).slice(0, numFlavors);
+            
+            const firstFlavor = selectedFlavors[0];
+            const baseUnitPrice = Math.max(800, product.price || (Math.floor(Math.random() * 1000) + 800));
             const selectedImages = [...imagePool].sort(() => 0.5 - Math.random()).slice(0, 3);
 
             // Create product first to get ID
@@ -105,10 +138,11 @@ async function seedData() {
                 title: product.title,
                 description: product.description,
                 img: '', // Will update later
-                category_id: randomCat.id,
-                flavor_id: randomFlavor.id,
+                category_id: primaryCat.id,
+                catIds: catIds,
+                flavor_id: firstFlavor.id, // Primary flavor
                 brand: product.brand,
-                price: product.price,
+                price: baseUnitPrice,
                 rating: product.rating,
                 bestseller: product.bestseller,
                 featured: product.featured,
@@ -117,15 +151,65 @@ async function seedData() {
                 active: true
             });
 
+            // Create ProductFlavor entries with size-based pricing
+            for (const flav of selectedFlavors) {
+                // Variations based on base price, ensuring minimum 800
+                const sPrice = Math.max(800, baseUnitPrice + (Math.floor(Math.random() * 200) - 100));
+                const mPrice = sPrice + 500;
+                const lPrice = mPrice + 700;
+
+                await db.ProductFlavor.create({
+                    product_id: createdProduct.id,
+                    flavor_id: flav.id,
+                    price: sPrice,
+                    priceMedium: mPrice,
+                    priceLarge: lPrice
+                });
+            }
+
+            // Create 3-6 random reviews per product
+            const reviewNames = ['Aria Mitchell', 'Leo Thompson', 'Isabella Clark', 'Noah Davis', 'Sophia Wilson', 'Ethan Brown', 'Mia Anderson', 'Lucas Taylor', 'Olivia Garcia', 'Mason Moore'];
+            const reviewComments = [
+                "Excellent quality, really made a difference in my routine!",
+                "Great value for the price. Highly recommend to anyone looking for this.",
+                "The flavors are amazing and it mixes very well. Will buy again.",
+                "Good product, but the delivery took a bit longer than expected.",
+                "Absolutely premium feel and packaging was top notch.",
+                "Helped me achieve my results much faster. Very satisfied.",
+                "A bit on the expensive side, but definitely worth the investment for the quality.",
+                "Decent product, does exactly what it says on the box.",
+                "Very impressed with the results after just one week of use.",
+                "Love the brand and their commitment to quality. My new go-to."
+            ];
+
+            const numReviews = Math.floor(Math.random() * 4) + 3;
+            for (let k = 0; k < numReviews; k++) {
+                const randomName = reviewNames[Math.floor(Math.random() * reviewNames.length)];
+                const randomComment = reviewComments[Math.floor(Math.random() * reviewComments.length)];
+                const randomRating = Math.floor(Math.random() * 3) + 3; // 3 to 5 stars
+
+                await db.Review.create({
+                    name: randomName,
+                    email: randomName.toLowerCase().replace(' ', '.') + "@example.com",
+                    rating: randomRating,
+                    comment: randomComment,
+                    status: 'approved',
+                    productId: createdProduct.id
+                });
+            }
+
+
+
+
             const productImagesDir = path.join(publicImagesPath, String(createdProduct.id));
             if (!fs.existsSync(productImagesDir)) {
                 fs.mkdirSync(productImagesDir, { recursive: true });
             }
 
-            console.log(`Downloading images for product ${createdProduct.id} with flavor ${randomFlavor.name}...`);
+            console.log(`Downloading images for product ${createdProduct.id} with flavor ${firstFlavor.name}...`);
             
             // Download main image into flavor subfolder
-            const mainFlavorFolder = path.join(productImagesDir, String(randomFlavor.id));
+            const mainFlavorFolder = path.join(productImagesDir, String(firstFlavor.id));
             if (!fs.existsSync(mainFlavorFolder)) {
                 fs.mkdirSync(mainFlavorFolder, { recursive: true });
             }
@@ -133,7 +217,9 @@ async function seedData() {
             const mainImgUrl = getUnsplashUrl(selectedImages[0], 'main');
             const mainImgDestBase = path.join(mainFlavorFolder, '1');
             const mainImgFinalPath = await downloadImage(mainImgUrl, mainImgDestBase);
-            const mainImgRelative = `/images/${createdProduct.id}/${randomFlavor.id}/${path.basename(mainImgFinalPath)}`;
+            const mainImgRelative = mainImgFinalPath 
+                ? `/images/${createdProduct.id}/${firstFlavor.id}/${path.basename(mainImgFinalPath)}`
+                : mainImgUrl;
 
             await createdProduct.update({ img: mainImgRelative });
 
@@ -148,7 +234,9 @@ async function seedData() {
                 const altImgUrl = getUnsplashUrl(selectedImages[j], `alt${j}`);
                 const altImgDestBase = path.join(flavorFolder, String(j + 1));
                 const altImgFinalPath = await downloadImage(altImgUrl, altImgDestBase);
-                const altImgRelative = `/images/${createdProduct.id}/${randomFlavorForImage.id}/${path.basename(altImgFinalPath)}`;
+                const altImgRelative = altImgFinalPath
+                    ? `/images/${createdProduct.id}/${randomFlavorForImage.id}/${path.basename(altImgFinalPath)}`
+                    : altImgUrl;
 
                 await db.ProductImage.create({
                     product_id: createdProduct.id,
@@ -156,6 +244,7 @@ async function seedData() {
                     url: altImgRelative
                 });
             }
+
         }
         console.log(`Seeded ${productsData.length} products with flavor-organized images.`);
 
@@ -175,6 +264,78 @@ async function seedData() {
             });
         }
         console.log('Seeded sliders.');
+        
+        // 5.5 Seed Testimonials with person images
+        const testimonialImagesPath = path.join(publicImagesPath, 'testimonials');
+        if (!fs.existsSync(testimonialImagesPath)) {
+            fs.mkdirSync(testimonialImagesPath, { recursive: true });
+        }
+
+        const testimonialData = [
+            { title: 'Sarah Jenkins', description: 'The quality of these healthcare products is unmatched. I have seen a significant improvement in my recovery time!', designation: 'Professional Athlete', organization: 'City Sports Club' },
+            { title: 'Michael Chen', description: 'Finally, a brand that actually delivers on its promises. The flavor and mixability are top-notch.', designation: 'Fitness Coach', organization: 'Elite Training' },
+            { title: 'Emma Rodriguez', description: 'I love how transparent they are about their ingredients. It gives me great peace of mind.', designation: 'Nutritionist', organization: 'Healthy Life' },
+            { title: 'David Wilson', description: 'The customer service is outstanding, and the products arrive so quickly. Truly impressed!', designation: 'Daily User', organization: 'Individual' },
+            { title: 'Jessica Taylor', description: 'Best investment I have made for my health this year. Worth every single ruppee.', designation: 'Yoga Instructor', organization: 'Mind & Body' },
+            { title: 'Robert Smith', description: 'As a doctor, I recommend these to my patients frequently. The purity is exceptional.', designation: 'Medical Practitioner', organization: 'Main General Hospital' },
+            { title: 'Linda Brown', description: 'The variety of flavors means I never get bored. My favorite is definitely the Cookie Blast!', designation: 'Health Enthusiast', organization: 'Gym Junkie' },
+            { title: 'James Anderson', description: 'Outstanding results and no bloating at all. This is exactly what I was looking for.', designation: 'Bodybuilder', organization: 'Steel Gym' },
+            { title: 'Emily Garcia', description: 'Perfect for my busy lifestyle. Quick, easy, and provides all the nutrients I need on the go.', designation: 'Business Executive', organization: 'Tech Solutions' },
+            { title: 'William Moore', description: 'Top tier quality and the packaging is beautiful. You can tell they care about their customers.', designation: 'Marathon Runner', organization: 'Peak Performance' }
+        ];
+
+        for (let i = 0; i < testimonialData.length; i++) {
+            const test = testimonialData[i];
+            const randomPersonId = imagePool[Math.floor(Math.random() * imagePool.length)];
+            const testImgUrl = `https://i.pravatar.cc/300?u=${test.title.replace(' ', '')}`; // Use Pravatar for better person images
+            const testImgDestBase = path.join(testimonialImagesPath, String(i + 1));
+            
+            console.log(`Downloading image for testimonial: ${test.title}...`);
+            const testImgFinalPath = await downloadImage(testImgUrl, testImgDestBase);
+            const testImgRelative = testImgFinalPath 
+                ? `/images/testimonials/${path.basename(testImgFinalPath)}`
+                : testImgUrl;
+
+            await db.Testimonial.create({
+                ...test,
+                imageURL: testImgRelative,
+                rating: [4, 4.5, 5][Math.floor(Math.random() * 3)]
+            });
+        }
+        console.log(`Seeded ${testimonialData.length} testimonials with images.`);
+
+        // 5.7 Seed Leadership Team with professional images
+        const leadershipImagesPath = path.join(publicImagesPath, 'leadership');
+        if (!fs.existsSync(leadershipImagesPath)) {
+            fs.mkdirSync(leadershipImagesPath, { recursive: true });
+        }
+
+        const leadershipData = [
+            { name: 'Dr. Alexander Vaughn', designation: 'Chief Executive Officer', order: 1 },
+            { name: 'Elena Rodriguez', designation: 'Chief Operations Officer', order: 2 },
+            { name: 'Marcus Thorne', designation: 'Head of Research & Development', order: 3 },
+            { name: 'Sarah Chen', designation: 'Director of Nutrition & Science', order: 4 },
+            { name: 'Jonathan Pierce', designation: 'Senior Product Architect', order: 5 }
+        ];
+
+        for (let i = 0; i < leadershipData.length; i++) {
+            const lead = leadershipData[i];
+            const leadImgUrl = `https://i.pravatar.cc/400?u=lead_${i}`; // High-res professional avatars
+            const leadImgDestBase = path.join(leadershipImagesPath, String(i + 1));
+            
+            console.log(`Downloading image for leadership member: ${lead.name}...`);
+            const leadImgFinalPath = await downloadImage(leadImgUrl, leadImgDestBase);
+            const leadImgRelative = leadImgFinalPath 
+                ? `/images/leadership/${path.basename(leadImgFinalPath)}`
+                : leadImgUrl;
+
+            await db.LeadershipTeam.create({
+                ...lead,
+                image: leadImgRelative
+            });
+        }
+        console.log(`Seeded ${leadershipData.length} leadership members with images.`);
+
 
         // 6. Seed Users and Privileges
         const hashedSuperPassword = await bcrypt.hash('superpass123', 10);

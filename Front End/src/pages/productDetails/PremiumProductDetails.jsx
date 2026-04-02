@@ -207,17 +207,6 @@ export const PremiumProductDetails = () => {
     );
   });
 
-  // debug: why free-offer may not match at runtime (remove after verification)
-  useEffect(() => {
-    try {
-      // eslint-disable-next-line no-console
-      console.log("[PPD] selectedSize:", selectedSize, "normalized:", normalizeSize(selectedSize));
-      // eslint-disable-next-line no-console
-      console.log("[PPD] offers:", product?.offers || []);
-      // eslint-disable-next-line no-console
-      console.log("[PPD] activeFreeOffer:", activeFreeOffer || null);
-    } catch (e) { }
-  }, [selectedSize, product, activeFreeOffer]);
   // helper to map size id to human label
   function getSizeLabel(sz) {
     const s = String(sz || '').trim().toUpperCase();
@@ -327,7 +316,7 @@ export const PremiumProductDetails = () => {
   if (err || !product) return (
     <div className="h-screen flex flex-col items-center justify-center gap-6 px-4 text-center">
       <h2 className="text-2xl font-black text-slate-800">{err || "Product not found"}</h2>
-      <Link to="/product" className="px-8 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-colors">
+      <Link to="/products" className="px-8 py-3 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-colors">
         ← Back to Products
       </Link>
     </div>
@@ -405,7 +394,7 @@ export const PremiumProductDetails = () => {
       <div className="ppp-breadcrumb">
         <Link to="/">Home</Link>
         <span>›</span>
-        <Link to="/product">Products</Link>
+        <Link to="/products">Products</Link>
         <span>›</span>
         <span>{product.title}</span>
       </div>

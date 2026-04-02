@@ -12,15 +12,6 @@ const BestSelling = () => {
 
   const para = useRef(null);
 
-  const categories = [
-    // "smartphone",
-    // "laptop",
-    // "smartwatch",
-    // "earbuds",
-    // "Keyboard",
-    // "graphics card",
-  ];
-
   useEffect(() => {
     const getData = async () => {
       try {
@@ -48,7 +39,7 @@ const BestSelling = () => {
     return (
       <p className="h-screen flex flex-col justify-center items-center text-2xl">
         <span>{err}</span>
-        <Link to="/product" className="text-lg text-gray-500 font-semibold">
+        <Link to="/bestsellers" className="text-lg text-gray-500 font-semibold">
           &larr; Refresh page
         </Link>
       </p>
@@ -58,7 +49,7 @@ const BestSelling = () => {
     <div className="container mx-auto pb-20">
       <div style={{ position: "relative", paddingTop: "100px" }}></div>
       {/* <h2 className="text-center text-3xl py-10">Bestselling Products</h2> */}
-      <BestSellingCarousel />
+
       <div className="flex justify-between gap-10">
 
         <div>
@@ -66,6 +57,8 @@ const BestSelling = () => {
             {<Link to="/">Home </Link>}/
             <span className="text-sky-400 px-1">Best Seller Products</span>
           </p>
+
+          <BestSellingCarousel />
           <div className="grid grid-cols-4 gap-lg-5 ">
 
             {products &&

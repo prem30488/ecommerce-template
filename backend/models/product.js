@@ -44,6 +44,10 @@ module.exports = (sequelize, DataTypes) => {
         audience: DataTypes.STRING,
         stock: DataTypes.INTEGER,
         compare: DataTypes.BOOLEAN,
+        comingSoon: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
         active: {
             type: DataTypes.BOOLEAN,
             defaultValue: true

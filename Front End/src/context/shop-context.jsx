@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import { API_BASE_URL } from "../constants";
 
 export const ShopContext = createContext(null);
 
@@ -8,6 +9,7 @@ const getDefaultCart = () => {
 
 export const ShopContextProvider = (props) => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [cartItems, setCartItems] = useState(getDefaultCart());
   const [martItems, setMartItems] = useState(getDefaultCart());
   const [lartItems, setLartItems] = useState(getDefaultCart());
@@ -23,12 +25,19 @@ export const ShopContextProvider = (props) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
+        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);
+
+        // Fetch categories as well
+        const catRes = await fetch(`${API_BASE_URL}/api/category/getCategories?page=0&size=1000&sort=id&sort=order,asc`);
+        if (catRes.ok) {
+          const catJson = await catRes.json();
+          setCategories(catJson.content || catJson || []);
+        }
       } catch (err) {
-        console.error("Failed to fetch products:", err);
+        console.error("Failed to fetch products/categories:", err);
       }
     };
     getData();
@@ -307,7 +316,9 @@ export const ShopContextProvider = (props) => {
     addTotalAfterDiscount,
     getTotalAfterDiscount,
     cleanTotalAfterDiscount,
-    getProductFlavorPrice
+    getProductFlavorPrice,
+    products,
+    categories
   };
 
   return (

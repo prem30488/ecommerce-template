@@ -2,13 +2,44 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from 'react-s-alert';
 import { ShopContext } from '../context/shop-context';
+import { WishlistContext } from '../context/wishlist-context';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar, faStarHalfAlt, faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import './PremiumCollectionCard.css';
 
 const PremiumCollectionCard = ({ product }) => {
     const navigate = useNavigate();
-    const { addToCart } = useContext(ShopContext);
+    const { addToCart, categories } = useContext(ShopContext);
+    const { addToWishlist, removeFromWishlist, isInWishlist } = useContext(WishlistContext);
 
     if (!product) return null;
+
+    const isWishlisted = isInWishlist(product.id);
+
+    const handleWishlistToggle = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isWishlisted) {
+            removeFromWishlist(product.id);
+            Alert.success("Removed from wishlist");
+        } else {
+            addToWishlist(product.id);
+            Alert.success("Added to wishlist");
+        }
+    };
+
+
+    const getDisplayCategories = () => {
+        if (product.catIds) {
+            const ids = String(product.catIds).split(',').map(Number);
+            const matches = categories
+                .filter(c => ids.includes(c.id))
+                .map(c => c.title);
+            if (matches.length > 0) return matches.join(' • ');
+        }
+        return product.Category?.title || product.category || '';
+    };
 
     // Handle pricing logic: check flavors if main price is 0 or null
     let basePrice = product.price ? parseFloat(product.price) : 0;
@@ -64,6 +95,15 @@ const PremiumCollectionCard = ({ product }) => {
                 </div>
                 {discountInfo && <span className="card-discount-badge">{discountInfo}</span>}
                 
+                {activeOffer && (
+                    <div className="card-marquee-wrapper">
+                        <div className="card-marquee-content">
+                            <span>{activeOffer.discount}% OFF LIMITED TIME OFFER • </span>
+                            <span>{activeOffer.discount}% OFF LIMITED TIME OFFER • </span>
+                        </div>
+                    </div>
+                )}
+
                 <img 
                     src={product.img || (product.ProductImages?.[0]?.imageUrl) || 'https://placehold.co/600x600?text=Product'} 
                     alt={product.title} 
@@ -72,18 +112,44 @@ const PremiumCollectionCard = ({ product }) => {
                 />
 
                 <div className="card-overlay">
-                    <button className="overlay-btn overlay-btn-primary" onClick={handleAddToCart}>
-                        Add to Cart
-                    </button>
-                    <button className="overlay-btn overlay-btn-secondary" onClick={handleQuickView}>
-                        View Details
+                    <div className="overlay-top-row">
+                        <button className="overlay-btn overlay-btn-primary" onClick={handleAddToCart}>
+                            Add to Cart
+                        </button>
+                        <button className="overlay-btn overlay-btn-secondary" onClick={handleQuickView}>
+                            View Details
+                        </button>
+                    </div>
+                    <button 
+                        className={`overlay-btn overlay-btn-wishlist ${isWishlisted ? 'active' : ''}`}
+                        onClick={handleWishlistToggle}
+                    >
+                        <FontAwesomeIcon icon={isWishlisted ? faHeartSolid : faHeartRegular} />
+                        <span>{isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}</span>
                     </button>
                 </div>
+
             </div>
 
             <div className="card-content">
-                <div className="card-brand">{product.brand || 'Elite Healthcare'}</div>
+                <div className="card-brand-row">
+                    <span className="card-brand">{product.brand || 'Elite Healthcare'}</span>
+                    {getDisplayCategories() && (
+                        <span className="card-category">  • {getDisplayCategories()}</span>
+                    )}
+                </div>
                 <h3 className="card-title">{product.title}</h3>
+                <div className="card-rating">
+                    <div className="card-stars">
+                        {[1, 2, 3, 4, 5].map(star => {
+                            const ratingNum = parseFloat(product.rating || 5);
+                            if (ratingNum >= star) return <FontAwesomeIcon key={star} icon={faStar} className="star-filled" />;
+                            if (ratingNum >= star - 0.5) return <FontAwesomeIcon key={star} icon={faStarHalfAlt} className="star-half" />;
+                            return <FontAwesomeIcon key={star} icon={faStar} className="star-empty" />;
+                        })}
+                    </div>
+                    <span className="rating-value">{product.rating || '5.0'}</span>
+                </div>
                 <div className="card-price-row">
                     <span className="card-final-price">₹{Math.round(finalPrice).toLocaleString()}</span>
                     {discountInfo && (

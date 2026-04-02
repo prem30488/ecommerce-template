@@ -1,16 +1,32 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import PremiumCollectionCard from './PremiumCollectionCard';
 import './PremiumAllProducts.css';
 import { API_BASE_URL } from '../constants';
+import { getCategoriesShort } from '../util/APIUtils';
 
 const PremiumAllProducts = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const urlCategory = searchParams.get('category');
+    const filter = searchParams.get('filter');
+
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [selectedCategory, setSelectedCategory] = useState(urlCategory || 'All');
     const [sortBy, setSortBy] = useState('newest');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Update selectedCategory if URL changes
+    useEffect(() => {
+        if (urlCategory) {
+            setSelectedCategory(urlCategory);
+        } else {
+            setSelectedCategory('All');
+        }
+    }, [urlCategory]);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,11 +41,12 @@ const PremiumAllProducts = () => {
                 setProducts(productList);
 
                 // Fetch categories
-                const resC = await fetch("/categories.json");
+                const resC = await getCategoriesShort();
                 let categoryList = ['All'];
-                if (resC.ok) {
-                    const jsonC = await resC.json();
-                    categoryList = ['All', ...jsonC];
+                if (resC) {
+                    const dbCategories = resC.content || resC || [];
+                    const titles = dbCategories.map(cat => (typeof cat === 'string' ? cat : cat.title));
+                    categoryList = ['All', ...titles];
                 }
                 setCategories(categoryList);
 
@@ -56,11 +73,24 @@ const PremiumAllProducts = () => {
     const filteredAndSortedProducts = useMemo(() => {
         let result = [...products];
 
+        // Filter by text search
+        if (searchQuery.trim() !== '') {
+            const query = searchQuery.toLowerCase();
+            result = result.filter(p =>
+                (p.title || "").toLowerCase().includes(query) ||
+                (p.description || "").toLowerCase().includes(query) ||
+                (p.brand || "").toLowerCase().includes(query)
+            );
+        }
+
         // Filter by category
         if (selectedCategory !== 'All') {
             result = result.filter(p =>
                 (p.Category?.title === selectedCategory) || (p.category === selectedCategory)
             );
+        }
+        if (filter === 'comingSoon') {
+            result = result.filter(p => p.comingSoon === true || p.comingSoon === 'true');
         }
 
         // Filter active only
@@ -102,7 +132,7 @@ const PremiumAllProducts = () => {
         }
 
         return result;
-    }, [products, selectedCategory, sortBy]);
+    }, [products, selectedCategory, sortBy, searchQuery]);
 
     const getCategoryProductCount = (cat) => {
         const activeProducts = products.filter(p => p.active !== false);
@@ -131,10 +161,25 @@ const PremiumAllProducts = () => {
 
                 {/* Page Header */}
                 <header className="premium-page-header">
-                    <div>
+                    <div className="premium-header-content">
                         <h1 className="premium-page-title">Shop All Collections</h1>
+                        <div className="premium-search-wrapper">
+                            <input
+                                name='searchproducts'
+                                type="text"
+                                className="premium-search-input"
+                                placeholder="Search products, brands, or collections..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                            {searchQuery && (
+                                <button className="premium-clear-search" onClick={() => setSearchQuery('')}>×</button>
+                            )}
+                            <div className="premium-search-icon">🔍</div>
+                        </div>
                     </div>
                 </header>
+
 
                 <div className="premium-content-wrapper">
                     {/* Sidebar Filters */}
@@ -168,7 +213,7 @@ const PremiumAllProducts = () => {
                             </p>
                             <div className="premium-sort-wrapper">
                                 <span className="premium-text-muted" style={{ fontSize: '14px' }}>Sort By:</span>
-                                <select 
+                                <select
                                     className="premium-sort-select"
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
@@ -210,6 +255,7 @@ const PremiumAllProducts = () => {
                         )}
                     </main>
                 </div>
+                <img src="/images/certifications.png" alt="Certifications" style={{ height: '500px', width: '100%', float: "center", marginLeft: "0px", verticalAlign: "top" }} />
             </div>
         </div>
     );
