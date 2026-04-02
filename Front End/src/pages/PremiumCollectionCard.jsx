@@ -15,6 +15,8 @@ const PremiumCollectionCard = ({ product }) => {
 
     if (!product) return null;
 
+    const isComingSoon = product.comingSoon === true || product.comingSoon === 'true';
+
     const isWishlisted = isInWishlist(product.id);
 
     const handleWishlistToggle = (e) => {
@@ -43,17 +45,17 @@ const PremiumCollectionCard = ({ product }) => {
 
     // Handle pricing logic: check flavors if main price is 0 or null
     let basePrice = product.price ? parseFloat(product.price) : 0;
-    
+
     if (basePrice === 0 && product.productFlavors && product.productFlavors.length > 0) {
         const firstFlavor = product.productFlavors[0];
         // Use the first available numeric price from the flavor
-        basePrice = parseFloat(firstFlavor.price) || 
-                    parseFloat(firstFlavor.priceMedium) || 
-                    parseFloat(firstFlavor.priceLarge) || 0;
+        basePrice = parseFloat(firstFlavor.price) ||
+            parseFloat(firstFlavor.priceMedium) ||
+            parseFloat(firstFlavor.priceLarge) || 0;
     }
 
     const activeOffer = product.offers?.find(o => o.active && o.discount > 0);
-    
+
     let finalPrice = basePrice;
     let discountInfo = null;
 
@@ -70,9 +72,9 @@ const PremiumCollectionCard = ({ product }) => {
     const handleAddToCart = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
-        const flavorId = (product.productFlavors && product.productFlavors.length > 0) 
-            ? product.productFlavors[0].flavor_id 
+
+        const flavorId = (product.productFlavors && product.productFlavors.length > 0)
+            ? product.productFlavors[0].flavor_id
             : null;
 
         addToCart(product.id, 'S', flavorId); // default size (S) and first flavor
@@ -86,15 +88,16 @@ const PremiumCollectionCard = ({ product }) => {
     };
 
     return (
-        <div className="collection-card" onClick={() => navigate(`/productDetails/${product.id}`)}>
+        <div className={`collection-card${isComingSoon ? ' coming-soon-card-product' : ''}`} onClick={() => navigate(`/productDetails/${product.id}`)}>
             <div className="card-image-wrapper">
                 <div className="card-badge-container">
-                    {product.isNew && <span className="card-status-badge">New</span>}
+                    {isComingSoon && <span className="card-status-badge coming-soon-badge">✨ Coming Soon</span>}
+                    {product.isNew && !isComingSoon && <span className="card-status-badge">New</span>}
                     {product.bestseller && <span className="card-status-badge bestseller">Bestseller</span>}
                     {product.featured && <span className="card-status-badge featured">Featured</span>}
                 </div>
                 {discountInfo && <span className="card-discount-badge">{discountInfo}</span>}
-                
+
                 {activeOffer && (
                     <div className="card-marquee-wrapper">
                         <div className="card-marquee-content">
@@ -104,30 +107,42 @@ const PremiumCollectionCard = ({ product }) => {
                     </div>
                 )}
 
-                <img 
-                    src={product.img || (product.ProductImages?.[0]?.imageUrl) || 'https://placehold.co/600x600?text=Product'} 
-                    alt={product.title} 
+                <img
+                    src={product.img || (product.ProductImages?.[0]?.imageUrl) || 'https://placehold.co/600x600?text=Product'}
+                    alt={product.title}
                     className="card-image"
                     loading="lazy"
                 />
 
-                <div className="card-overlay">
-                    <div className="overlay-top-row">
-                        <button className="overlay-btn overlay-btn-primary" onClick={handleAddToCart}>
-                            Add to Cart
-                        </button>
-                        <button className="overlay-btn overlay-btn-secondary" onClick={handleQuickView}>
-                            View Details
+                {isComingSoon ? (
+                    <div className="card-coming-soon-overlay">
+                        <div className="coming-soon-overlay-content">
+                            <div className="coming-soon-marquee-track">
+                                <span>COMING SOON ✨ COMING SOON ✨ COMING SOON ✨ COMING SOON ✨&nbsp;</span>
+                                <span>COMING SOON ✨ COMING SOON ✨ COMING SOON ✨ COMING SOON ✨&nbsp;</span>
+                            </div>
+                            <p className="coming-soon-overlay-label">Notify Me</p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="card-overlay">
+                        <div className="overlay-top-row">
+                            <button className="overlay-btn overlay-btn-primary" onClick={handleAddToCart}>
+                                Add to Cart
+                            </button>
+                            <button className="overlay-btn overlay-btn-secondary" onClick={handleQuickView}>
+                                View Details
+                            </button>
+                        </div>
+                        <button
+                            className={`overlay-btn overlay-btn-wishlist ${isWishlisted ? 'active' : ''}`}
+                            onClick={handleWishlistToggle}
+                        >
+                            <FontAwesomeIcon icon={isWishlisted ? faHeartSolid : faHeartRegular} />
+                            <span>{isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}</span>
                         </button>
                     </div>
-                    <button 
-                        className={`overlay-btn overlay-btn-wishlist ${isWishlisted ? 'active' : ''}`}
-                        onClick={handleWishlistToggle}
-                    >
-                        <FontAwesomeIcon icon={isWishlisted ? faHeartSolid : faHeartRegular} />
-                        <span>{isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}</span>
-                    </button>
-                </div>
+                )}
 
             </div>
 

@@ -7,17 +7,6 @@ const FeatureProducts = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(null);
 
-  const para = useRef(null);
-
-  const categories = [
-    // "smartphone",
-    // "laptop",
-    // "smartwatch",
-    // "earbuds",
-    // "Keyboard",
-    // "graphics card",
-  ];
-
   useEffect(() => {
     const getData = async () => {
       try {
@@ -45,7 +34,7 @@ const FeatureProducts = () => {
     return (
       <p className="h-screen flex flex-col justify-center items-center text-2xl">
         <span>{err}</span>
-        <Link to="/product" className="text-lg text-gray-500 font-semibold">
+        <Link to="/featured" className="text-lg text-gray-500 font-semibold">
           &larr;Refresh page
         </Link>
       </p>
@@ -53,13 +42,14 @@ const FeatureProducts = () => {
 
   return (
     <div className="container mx-auto pb-20">
-      <FeatureProductsCarousel />
+
       <div className="flex justify-between gap-10">
         <div>
           <p className="text-gray-500 pb-4">
             {<Link to="/">Home </Link>}/
             <span className="text-sky-400 px-1">Featured Products</span>
           </p>
+          <FeatureProductsCarousel />
           <div className="grid grid-cols-4 gap-lg-5 ">
             {products &&
               products

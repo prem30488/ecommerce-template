@@ -1,0 +1,446 @@
+/* =========================================================
+   Categorywise.css  —  Premium Category Page
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ── CSS Vars (mirrors PremiumAllProducts) ────────────────── */
+.cw-page {
+  --cw-accent: #0284c7;
+  --cw-accent-dark: #0369a1;
+  --cw-text: #0f172a;
+  --cw-muted: #64748b;
+  --cw-border: #e2e8f0;
+  --cw-bg: #f8fafc;
+  --cw-radius: 20px;
+  --cw-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+  --cw-shadow-md: 0 12px 40px rgba(0, 0, 0, 0.12);
+  --cw-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  font-family: 'Inter', sans-serif;
+  background: var(--cw-bg);
+  min-height: 100vh;
+}
+
+/* ── Hero Banner ─────────────────────────────────────────── */
+.cw-hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0284c7 100%);
+  padding: 130px 60px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cw-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 80% 50%, rgba(2, 132, 199, 0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 300px 300px at 10% 80%, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cw-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--cw-bg);
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.cw-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+}
+
+/* Breadcrumb */
+.cw-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.cw-breadcrumb a {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.cw-breadcrumb a:hover {
+  color: #fff;
+}
+
+.cw-sep {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 13px;
+}
+
+.cw-current {
+  color: #7dd3fc;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cw-hero-title {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cw-hero-desc {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 560px;
+  line-height: 1.65;
+  margin: 0 0 28px;
+}
+
+/* Stats row */
+.cw-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+
+.cw-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 28px;
+  min-width: 90px;
+}
+
+.cw-stat:first-child {
+  padding-left: 0;
+}
+
+.cw-stat-num {
+  font-size: 28px;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.cw-stat-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+.cw-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Main Container ──────────────────────────────────────── */
+.cw-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────── */
+.cw-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+  background: white;
+  border: 1px solid var(--cw-border);
+  border-radius: 16px;
+  padding: 14px 20px;
+  box-shadow: var(--cw-shadow);
+}
+
+.cw-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+  max-width: 400px;
+}
+
+.cw-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.cw-search {
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--cw-border);
+  border-radius: 10px;
+  padding: 0 38px 0 42px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--cw-text);
+  background: var(--cw-bg);
+  transition: var(--cw-transition);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cw-search:focus {
+  border-color: var(--cw-accent);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+.cw-clear-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--cw-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.cw-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.cw-result-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cw-muted);
+  white-space: nowrap;
+}
+
+.cw-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cw-sort-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cw-muted);
+  white-space: nowrap;
+}
+
+.cw-sort-select {
+  height: 38px;
+  border: 1px solid var(--cw-border);
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--cw-text);
+  background: var(--cw-bg);
+  cursor: pointer;
+  outline: none;
+  transition: var(--cw-transition);
+}
+
+.cw-sort-select:focus {
+  border-color: var(--cw-accent);
+}
+
+/* ── Product Grid ────────────────────────────────────────── */
+.cw-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+/* ── Skeleton Loader ─────────────────────────────────────── */
+.cw-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+}
+
+.cw-skeleton-card {
+  background: white;
+  border-radius: var(--cw-radius);
+  overflow: hidden;
+  box-shadow: var(--cw-shadow);
+  animation: cw-skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+.cw-skeleton-img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #e2e8f0;
+}
+
+.cw-skeleton-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cw-skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: #e2e8f0;
+}
+
+.cw-skeleton-line.short {
+  width: 40%;
+}
+
+.cw-skeleton-line.medium {
+  width: 65%;
+}
+
+@keyframes cw-skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+/* ── Empty / Error States ────────────────────────────────── */
+.cw-empty-state,
+.cw-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+  text-align: center;
+  gap: 12px;
+}
+
+.cw-empty-icon,
+.cw-error-icon {
+  font-size: 52px;
+  margin-bottom: 8px;
+}
+
+.cw-empty-state h3,
+.cw-error-state h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--cw-text);
+  margin: 0;
+}
+
+.cw-empty-state p,
+.cw-error-state p {
+  font-size: 15px;
+  color: var(--cw-muted);
+  margin: 4px 0 16px;
+}
+
+.cw-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cw-accent);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: var(--cw-transition);
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35);
+}
+
+.cw-back-btn:hover {
+  background: var(--cw-accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(2, 132, 199, 0.45);
+}
+
+.cw-error-state {
+  min-height: 60vh;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .cw-grid,
+  .cw-skeleton-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .cw-container {
+    padding: 32px 30px 60px;
+  }
+}
+
+@media (max-width: 900px) {
+  .cw-hero {
+    padding: 110px 28px 50px;
+  }
+
+  .cw-grid,
+  .cw-skeleton-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cw-hero {
+    padding: 100px 20px 40px;
+  }
+
+  .cw-hero-title {
+    font-size: 1.75rem;
+  }
+
+  .cw-container {
+    padding: 24px 16px 60px;
+  }
+
+  .cw-grid,
+  .cw-skeleton-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .cw-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .cw-search-wrap {
+    max-width: 100%;
+  }
+
+  .cw-toolbar-right {
+    justify-content: space-between;
+  }
+
+  .cw-stat {
+    padding: 0 16px;
+  }
+
+  .cw-stat-num {
+    font-size: 22px;
+  }
+}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 
-const MegaMenu = () => {
+const MegaMenu = ({ isOpen, onClose }) => {
 
   const [categories, setCategories] = useState([]);
 
@@ -23,7 +23,7 @@ const MegaMenu = () => {
   }, []);
 
   return (
-    <div className="menudropdown-content">
+    <div className={`menudropdown-content${isOpen ? ' show' : ''}`}>
       <div className="menuheader">
         <h2>Shop By Category</h2>
       </div>
@@ -35,7 +35,7 @@ const MegaMenu = () => {
               categories && categories
                 .filter(cat => cat.type === 1)
                 .map(cat => (
-                  <Link key={cat.id} to={`/byCategory/${cat.id}`}>{cat.title}</Link>
+                  <Link key={cat.id} to={`/byCategory/${cat.id}`} onClick={onClose}>{cat.title}</Link>
                 ))
             }
           </div>
@@ -47,7 +47,7 @@ const MegaMenu = () => {
               categories && categories
                 .filter(cat => cat.type === 2)
                 .map(cat => (
-                  <Link key={cat.id} to={`/byCategory/${cat.id}`}>{cat.title}</Link>
+                  <Link key={cat.id} to={`/byCategory/${cat.id}`} onClick={onClose}>{cat.title}</Link>
                 ))
             }
           </div>
@@ -59,7 +59,7 @@ const MegaMenu = () => {
               categories && categories
                 .filter(cat => cat.type === 3)
                 .map(cat => (
-                  <Link key={cat.id} to={`/byCategory/${cat.id}`}>{cat.title}</Link>
+                  <Link key={cat.id} to={`/byCategory/${cat.id}`} onClick={onClose}>{cat.title}</Link>
                 ))
             }
           </div>

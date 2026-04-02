@@ -9,7 +9,7 @@ const FeaturedPage = () => {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f8fafc", paddingTop: "80px" }}>
       {/* Hero Banner specific for Featured Products */}
-      <div 
+      <div
         style={{
           background: "linear-gradient(135deg, #0d9488 0%, #0f766e 100%)",
           color: "white",
@@ -29,6 +29,7 @@ const FeaturedPage = () => {
       <div className="container mx-auto pb-20 px-4">
         {/* Render the FeatureProducts component */}
         <FeatureProducts />
+        <img src="/images/certifications.png" alt="Certifications" style={{ height: '500px', width: '100%', float: "center", marginLeft: "0px", verticalAlign: "top" }} />
       </div>
     </div>
   );

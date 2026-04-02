@@ -119,7 +119,7 @@ const ProductDetails = ({ compare }) => {
           </div>
         </div>
         <Link
-          to="/product"
+          to="/products"
           className="text-xl py-4 text-center hover:text-sky-600 duration-300 select-none border-t border-gray-200"
         >
           &larr; Back to Products Catalog

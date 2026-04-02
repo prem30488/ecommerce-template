@@ -70,6 +70,10 @@ const PremiumAllProducts = () => {
         return 0;
     };
 
+    const comingSoonCount = useMemo(() => {
+        return products.filter(p => p.active !== false && (p.comingSoon === true || p.comingSoon === 'true')).length;
+    }, [products]);
+
     const filteredAndSortedProducts = useMemo(() => {
         let result = [...products];
 
@@ -83,14 +87,14 @@ const PremiumAllProducts = () => {
             );
         }
 
-        // Filter by category
-        if (selectedCategory !== 'All') {
+        // Filter by Coming Soon URL param
+        if (filter === 'comingSoon') {
+            result = result.filter(p => p.comingSoon === true || p.comingSoon === 'true');
+        } else if (selectedCategory !== 'All') {
+            // Category filter only applies when not in comingSoon filter mode
             result = result.filter(p =>
                 (p.Category?.title === selectedCategory) || (p.category === selectedCategory)
             );
-        }
-        if (filter === 'comingSoon') {
-            result = result.filter(p => p.comingSoon === true || p.comingSoon === 'true');
         }
 
         // Filter active only
@@ -132,7 +136,7 @@ const PremiumAllProducts = () => {
         }
 
         return result;
-    }, [products, selectedCategory, sortBy, searchQuery]);
+    }, [products, selectedCategory, sortBy, searchQuery, filter]);
 
     const getCategoryProductCount = (cat) => {
         const activeProducts = products.filter(p => p.active !== false);
@@ -156,13 +160,27 @@ const PremiumAllProducts = () => {
                 <div className="premium-breadcrumbs">
                     <Link to="/">Home</Link>
                     <span className="separator">/</span>
-                    <span className="current">All Products</span>
+                    <Link to="/products">All Products</Link>
+                    {filter === 'comingSoon' && (
+                        <>
+                            <span className="separator">/</span>
+                            <span className="current">Coming Soon</span>
+                        </>
+                    )}
+                    {!filter && <span className="current" style={{ display: 'none' }}></span>}
                 </div>
 
                 {/* Page Header */}
                 <header className="premium-page-header">
                     <div className="premium-header-content">
-                        <h1 className="premium-page-title">Shop All Collections</h1>
+                        <h1 className="premium-page-title">
+                            {filter === 'comingSoon' ? '✨ Coming Soon' : 'Shop All Collections'}
+                        </h1>
+                        {filter === 'comingSoon' && (
+                            <p style={{ color: '#6366f1', fontWeight: 600, marginTop: 4 }}>
+                                Exclusive products arriving soon — be the first to know!
+                            </p>
+                        )}
                         <div className="premium-search-wrapper">
                             <input
                                 name='searchproducts'
@@ -187,11 +205,26 @@ const PremiumAllProducts = () => {
                         <section className="premium-filter-section">
                             <h3 className="premium-filter-title">Collections</h3>
                             <ul className="premium-filter-list">
+                                {/* Coming Soon filter entry */}
+                                <li className="premium-filter-item">
+                                    <span
+                                        className={`premium-filter-link ${filter === 'comingSoon' ? 'active' : ''}`}
+                                        onClick={() => setSearchParams({ filter: 'comingSoon' })}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        ✨ Coming Soon
+                                        <span className="premium-filter-count">{comingSoonCount}</span>
+                                    </span>
+                                </li>
                                 {categories.map(cat => (
                                     <li key={cat} className="premium-filter-item">
                                         <span
-                                            className={`premium-filter-link ${selectedCategory === cat ? 'active' : ''}`}
-                                            onClick={() => setSelectedCategory(cat)}
+                                            className={`premium-filter-link ${!filter && selectedCategory === cat ? 'active' : ''}`}
+                                            onClick={() => {
+                                                setSearchParams(cat !== 'All' ? { category: cat } : {});
+                                                setSelectedCategory(cat);
+                                            }}
+                                            style={{ cursor: 'pointer' }}
                                         >
                                             {cat}
                                             <span className="premium-filter-count">

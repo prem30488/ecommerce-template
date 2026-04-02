@@ -9,7 +9,7 @@ const BestSellersPage = () => {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f8fafc", paddingTop: "80px" }}>
       {/* Hero Banner specific for Best Sellers */}
-      <div 
+      <div
         style={{
           background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
           color: "white",
@@ -29,6 +29,7 @@ const BestSellersPage = () => {
       <div className="container mx-auto pb-20 px-4">
         {/* Render the BestSelling component (which includes the new carousel and grid) */}
         <BestSelling />
+        <img src="/images/certifications.png" alt="Certifications" style={{ height: '500px', width: '100%', float: "center", marginLeft: "0px", verticalAlign: "top" }} />
       </div>
     </div>
   );

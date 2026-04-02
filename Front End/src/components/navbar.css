@@ -76,10 +76,14 @@
   transition: color 0.2s;
 }
 
-.menudropdown:hover .menudropbtn {
-  color: #0369a1;
-  /* Sky 700 */
-  background-color: #f8fafc;
+.menudropdown .fa-caret-down {
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.menudropdown.open .fa-caret-down,
+.fa-caret-down.rotated {
+  transform: rotate(180deg);
 }
 
 .menudropdown-content {
@@ -92,8 +96,8 @@
   box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
   z-index: 9999;
   border-top: 1px solid #f1f5f9;
-  /* padding: 3rem 5rem; */
   flex-direction: column;
+  pointer-events: none;
 }
 
 /* Bridge the gap between navbar and dropdown to prevent disappearing */
@@ -107,8 +111,15 @@
   background: transparent;
 }
 
-.menudropdown:hover .menudropdown-content {
+/* Hover activation disabled — double-click controlled by JS state */
+/* .menudropdown:hover .menudropdown-content {
   display: flex !important;
+} */
+
+/* JS-controlled show class */
+.menudropdown-content.show {
+  display: flex !important;
+  pointer-events: all;
 }
 
 .menurow {
@@ -211,6 +222,15 @@
   /* Ensure mega menu can span full width */
 }
 
+.shop-dropdown.open .fa-caret-down {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+.shop-dropdown .fa-caret-down {
+  transition: transform 0.3s ease;
+}
+
 
 .new-badge {
   background: #2563eb;
@@ -238,6 +258,13 @@
   animation: megaMenuFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   border-bottom: 3px solid #0284c7;
   overflow-x: hidden;
+  pointer-events: none; /* Disable interaction when hidden to avoid invisible blocker */
+}
+
+/* New show class for JS-controlled double click */
+.shop-mega-menu.show {
+  display: block !important;
+  pointer-events: all;
 }
 
 @keyframes megaMenuFadeIn {
@@ -252,9 +279,9 @@
   }
 }
 
-.shop-dropdown:hover .shop-mega-menu {
+/* .shop-dropdown:hover .shop-mega-menu {
   display: block;
-}
+} */
 
 .mega-menu-container {
   max-width: 1300px;

@@ -1,5 +1,112 @@
 /* PremiumCollectionCard.css */
 
+/* ── Coming Soon card state ───────────────────── */
+.coming-soon-card-product .card-image {
+  filter: brightness(0.88);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.4s ease;
+}
+
+.coming-soon-card-product:hover .card-image {
+  transform: scale(1.06);
+  filter: brightness(0.7);
+}
+
+/* Pink "COMING SOON" overlay – hidden by default, slides up on hover */
+.card-coming-soon-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    160deg,
+    rgba(236, 72, 153, 0.82) 0%,
+    rgba(168, 85, 247, 0.75) 100%
+  );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 3;
+  overflow: hidden;
+}
+
+.collection-card:hover .card-coming-soon-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.coming-soon-overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  padding: 0 12px;
+}
+
+/* Scrolling marquee inside overlay */
+.coming-soon-marquee-track {
+  display: flex;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  gap: 0;
+  animation: cs-marquee 8s linear infinite;
+}
+
+.coming-soon-marquee-track span {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+@keyframes cs-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* "Notify Me" button inside overlay */
+.coming-soon-overlay-label {
+  background: white;
+  color: #ec4899;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 28px;
+  border-radius: 50px;
+  margin: 0;
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.coming-soon-overlay-label:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 28px rgba(236, 72, 153, 0.6);
+}
+
+/* Pink badge for Coming Soon products */
+.card-status-badge.coming-soon-badge {
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+  color: white;
+  font-size: 9px;
+  font-weight: 800;
+  animation: badge-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(236, 72, 153, 0); }
+}
+
 .collection-card {
   display: flex;
   flex-direction: column;

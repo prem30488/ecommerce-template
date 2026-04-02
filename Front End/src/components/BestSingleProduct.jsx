@@ -14,7 +14,7 @@ const BestSingleProduct = ({ product }) => {
   const navigate = useNavigate();
   const cartItemCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0);
   return (
-    <div className="single-product flex flex-col bg-gray-50 gap-3 shadow-md hover:shadow-xl hover:scale-105 duration-300 px-4 py-7 rounded-sm overflow-hidden">
+    <div className="single-product flex flex-col bg-gray-50 gap-3 shadow-md hover:shadow-xl hover:scale-105 duration-300 px-4 py-7 rounded-sm overflow-hidden border border-gray-200">
       <div className="flex justify-center">
         {imageURLs !== undefined || imageURLs !== null || imageURLs.trim() !== ''
           ?

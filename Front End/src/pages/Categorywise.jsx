@@ -1,97 +1,242 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useRef } from "react";
-import SingleProduct from "../components/SingleProduct";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import "./product.css";
+import { API_BASE_URL } from "../constants";
+import PremiumCollectionCard from "./PremiumCollectionCard";
+import "./Categorywise.css";
 
 const Categorywise = () => {
-
-  const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [err, setErr] = useState(null);
-
-  const [category, setCategory] = useState(null);
   const { id } = useParams();
-  const para = useRef(null);
+  const [category, setCategory] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [err, setErr] = useState(null);
+  const [sortBy, setSortBy] = useState("newest");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        // Fetch category details
-        const catRes = await fetch(`http://localhost:3000/api/category/fetchById/${id}`);
-        if (catRes.ok) {
-          const catJson = await catRes.json();
-          setCategory(catJson);
-        }
+        setErr(null);
 
-        // Fetch products for this category
-        const res = await fetch(`http://localhost:3000/api/product/getProducts?categoryId=${id}&page=0&size=1000`);
-        if (!res.ok) throw new Error("Oops! An error has occured");
-        const json = await res.json();
-        setProducts(json.content);
+        const [catRes, prodRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/category/fetchById/${id}`),
+          fetch(`${API_BASE_URL}/api/product/getProducts?categoryId=${id}&page=0&size=1000`),
+        ]);
+
+        if (catRes.ok) setCategory(await catRes.json());
+        if (!prodRes.ok) throw new Error("Failed to load products");
+        const json = await prodRes.json();
+        setProducts(Array.isArray(json) ? json : json.content || []);
+      } catch (e) {
+        setErr(e.message);
+      } finally {
         setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        setErr(err.message);
       }
     };
     getData();
   }, [id]);
 
-  if (isLoading)
-    return (
-      <p className="h-screen flex flex-col justify-center items-center text-2xl">
-        Loading...
-      </p>
-    );
+  const activeProducts = useMemo(
+    () => products.filter((p) => p.active !== false),
+    [products]
+  );
+
+  const filteredProducts = useMemo(() => {
+    let result = [...activeProducts];
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (p) =>
+          (p.title || "").toLowerCase().includes(q) ||
+          (p.brand || "").toLowerCase().includes(q) ||
+          (p.description || "").toLowerCase().includes(q)
+      );
+    }
+    switch (sortBy) {
+      case "price-low":
+        result.sort((a, b) => (a.price || 0) - (b.price || 0));
+        break;
+      case "price-high":
+        result.sort((a, b) => (b.price || 0) - (a.price || 0));
+        break;
+      case "alpha-a":
+        result.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+        break;
+      case "alpha-z":
+        result.sort((a, b) => (b.title || "").localeCompare(a.title || ""));
+        break;
+      case "featured":
+        result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+        break;
+      case "bestseller":
+        result.sort((a, b) => (b.bestseller ? 1 : 0) - (a.bestseller ? 1 : 0));
+        break;
+      case "oldest":
+        result.sort((a, b) => a.id - b.id);
+        break;
+      case "qty-low":
+        result.sort((a, b) => (a.stock || 0) - (b.stock || 0));
+        break;
+      case "qty-high":
+        result.sort((a, b) => (b.stock || 0) - (a.stock || 0));
+        break;
+      default: // newest
+        result.sort((a, b) => b.id - a.id);
+    }
+    return result;
+  }, [activeProducts, sortBy, searchQuery]);
+
+  /* ── Stats ── */
+  const featuredCount = activeProducts.filter((p) => p.featured).length;
+  const bestsellerCount = activeProducts.filter((p) => p.bestseller).length;
+  const inStockCount = activeProducts.filter((p) => p.stock > 0).length;
+
+  /* ── Skeletons ── */
+  const Skeleton = () => (
+    <div className="cw-skeleton-grid">
+      {[...Array(8)].map((_, i) => (
+        <div key={i} className="cw-skeleton-card">
+          <div className="cw-skeleton-img" />
+          <div className="cw-skeleton-body">
+            <div className="cw-skeleton-line short" />
+            <div className="cw-skeleton-line" />
+            <div className="cw-skeleton-line medium" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   if (err)
     return (
-      <p className="h-screen flex flex-col justify-center items-center text-2xl">
-        <span>{err}</span>
-        <Link to="/" className="text-lg text-gray-500 font-semibold">
-          &larr; Home
-        </Link>
-      </p>
+      <div className="cw-error-state">
+        <div className="cw-error-icon">⚠️</div>
+        <h2>Something went wrong</h2>
+        <p>{err}</p>
+        <Link to="/" className="cw-back-btn">← Return Home</Link>
+      </div>
     );
 
   return (
-    <React.Fragment>
-      <div style={{ paddingTop: "100px" }}></div>
-      <div className="container mx-auto pb-20">
-        <h2 className="text-center text-3xl py-10">
-          {category ? `Products for ${category.title}` : "Products For Categories"}
-        </h2>
-        <div className="flex flex-col gap-10">
-          <div>
-            <p className="text-gray-500 pb-4">
-              {<Link to="/">Home </Link>}/
-              <span className="text-sky-400 px-1">{category?.title || "all categories"}</span>
-            </p>
+    <div className="cw-page">
+      {/* ── Hero Banner ── */}
+      <div className="cw-hero">
+        <div className="cw-hero-content">
+          {/* Breadcrumb */}
+          <nav className="cw-breadcrumb">
+            <Link to="/">Home</Link>
+            <span className="cw-sep">/</span>
+            <Link to="/products">Shop</Link>
+            <span className="cw-sep">/</span>
+            <span className="cw-current">{category?.title || "Collection"}</span>
+          </nav>
 
-            {products && products.filter((prod) => prod.active === true).length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {products
-                  .filter((prod) => prod.active === true)
-                  .map((product) => (
-                    <SingleProduct key={product.id} product={product} />
-                  ))}
+          <h1 className="cw-hero-title">
+            {category?.title || "Product Collection"}
+          </h1>
+          {category?.description && (
+            <p className="cw-hero-desc">{category.description}</p>
+          )}
+
+          {/* Stats row */}
+          {!isLoading && (
+            <div className="cw-stats-row">
+              <div className="cw-stat">
+                <span className="cw-stat-num">{activeProducts.length}</span>
+                <span className="cw-stat-lbl">Products</span>
               </div>
-            ) : (
-              <div className="text-center py-20">
-                <h3 className="text-2xl text-gray-400">No products found for this category.</h3>
-                <Link to="/" className="text-sky-400 hover:underline mt-4 inline-block">
-                  Continue Shopping
-                </Link>
+              <div className="cw-stat-divider" />
+              <div className="cw-stat">
+                <span className="cw-stat-num">{inStockCount}</span>
+                <span className="cw-stat-lbl">In Stock</span>
               </div>
-            )}
-          </div>
+              {featuredCount > 0 && (
+                <>
+                  <div className="cw-stat-divider" />
+                  <div className="cw-stat">
+                    <span className="cw-stat-num">{featuredCount}</span>
+                    <span className="cw-stat-lbl">Featured</span>
+                  </div>
+                </>
+              )}
+              {bestsellerCount > 0 && (
+                <>
+                  <div className="cw-stat-divider" />
+                  <div className="cw-stat">
+                    <span className="cw-stat-num">{bestsellerCount}</span>
+                    <span className="cw-stat-lbl">Bestsellers</span>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
-    </React.Fragment>
+      {/* ── Main Content ── */}
+      <div className="cw-container">
+        {/* Toolbar */}
+        <div className="cw-toolbar">
+          <div className="cw-search-wrap">
+            <span className="cw-search-icon">🔍</span>
+            <input
+              className="cw-search"
+              type="text"
+              placeholder="Search in this collection…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button className="cw-clear-search" onClick={() => setSearchQuery("")}>×</button>
+            )}
+          </div>
+
+          <div className="cw-toolbar-right">
+            <p className="cw-result-count">
+              {isLoading ? "Loading…" : `${filteredProducts.length} result${filteredProducts.length !== 1 ? "s" : ""}`}
+            </p>
+            <div className="cw-sort-wrap">
+              <span className="cw-sort-label">Sort:</span>
+              <select
+                className="cw-sort-select"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="alpha-a">Alphabetically: A → Z</option>
+                <option value="alpha-z">Alphabetically: Z → A</option>
+                <option value="price-low">Price: Low → High</option>
+                <option value="price-high">Price: High → Low</option>
+                <option value="qty-low">Quantity: Low → High</option>
+                <option value="qty-high">Quantity: High → Low</option>
+                <option value="featured">Featured First</option>
+                <option value="bestseller">Bestsellers First</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Grid */}
+        {isLoading ? (
+          <Skeleton />
+        ) : filteredProducts.length === 0 ? (
+          <div className="cw-empty-state">
+            <div className="cw-empty-icon">🛍️</div>
+            <h3>No products found</h3>
+            <p>{searchQuery ? "Try a different search term." : "Check back soon for new arrivals."}</p>
+            <Link to="/products" className="cw-back-btn">Browse All Products</Link>
+          </div>
+        ) : (
+          <div className="cw-grid">
+            {filteredProducts.map((product) => (
+              <PremiumCollectionCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

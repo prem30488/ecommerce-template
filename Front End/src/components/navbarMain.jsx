@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import { WishlistContext } from "../context/wishlist-context";
@@ -20,6 +20,32 @@ export const NavbarMain = () => {
   const { cartItems, getTotalCartCount, products } = useContext(ShopContext);
   const { wishlistItems } = useContext(WishlistContext);
   const location = useLocation();
+  const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
+  const [isHealthMenuOpen, setIsHealthMenuOpen] = useState(false);
+
+  const handleShopDoubleClick = (e) => {
+    e.preventDefault();
+    setIsShopMenuOpen(!isShopMenuOpen);
+  };
+
+  const handleHealthDoubleClick = (e) => {
+    e.preventDefault();
+    setIsHealthMenuOpen((prev) => !prev);
+  };
+
+  // Close menus when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.shop-dropdown')) {
+        setIsShopMenuOpen(false);
+      }
+      if (!event.target.closest('.menudropdown')) {
+        setIsHealthMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const comingSoonProducts = products ? products.filter(p => p.comingSoon === true || p.comingSoon === 'true') : [];
 
@@ -32,11 +58,18 @@ export const NavbarMain = () => {
           <img src="/images/logo.png" style={{ height: "60px", width: "100px" }} alt="Logo" />
         </Link>
 
-        <div className="menudropdown">
-          <button className="menudropbtn">Health & Beauty Essentials <i className="fa fa-caret-down"></i>
+        <div className={`menudropdown${isHealthMenuOpen ? ' open' : ''}`}>
+          <button
+            className="menudropbtn"
+            onDoubleClick={handleHealthDoubleClick}
+            onClick={(e) => e.preventDefault()}
+            style={{ cursor: 'pointer', userSelect: 'none' }}
+            title="Double-click to browse categories"
+          >
+            Health &amp; Beauty Essentials{' '}
+            <i className={`fa fa-caret-down${isHealthMenuOpen ? ' rotated' : ''}`}></i>
           </button>
-          <MegaMenu />
-
+          <MegaMenu isOpen={isHealthMenuOpen} onClose={() => setIsHealthMenuOpen(false)} />
         </div>
       </div>
       <SearchMenu />
@@ -44,18 +77,26 @@ export const NavbarMain = () => {
         <Link to="/" className={location.pathname === "/" ? "active-link" : ""}>
           Home
         </Link>
-        <div className="shop-dropdown">
-          <Link to="/products" className={location.pathname === "/products" ? "active-link" : ""}>
+        <div className={`shop-dropdown ${isShopMenuOpen ? 'open' : ''}`}>
+          <Link 
+            to="/products" 
+            className={location.pathname === "/products" ? "active-link" : ""}
+            onDoubleClick={handleShopDoubleClick}
+            onClick={(e) => {
+              e.preventDefault(); // Prevent navigation on single click to prioritize double-click menu
+            }}
+            style={{ cursor: 'pointer' }}
+          >
             Shop <span className="new-badge">NEW</span> <i className="fa fa-caret-down" style={{ fontSize: '10px', marginLeft: '4px' }}></i>
           </Link>
-          <div className="shop-mega-menu">
+          <div className={`shop-mega-menu ${isShopMenuOpen ? 'show' : ''}`}>
             <div className="mega-menu-container">
               <div className="mega-menu-links">
-                <Link to="/products" className="mega-link active">
+                <Link to="/products" className="mega-link active" onClick={() => setIsShopMenuOpen(false)}>
                   All Products
                 </Link>
-                <Link to="/products?filter=comingSoon" className="mega-link">
-                  Coming Soon products
+                <Link to="/products?filter=comingSoon" className="mega-link" onClick={() => setIsShopMenuOpen(false)}>
+                  ✨ Coming Soon
                 </Link>
                 {/* Additional categories could go here to match screenshot */}
                 {/* <Link to="/products?category=Gym Supplements" className="mega-link">Gym Supplements</Link> */}
@@ -81,7 +122,7 @@ export const NavbarMain = () => {
 
                       return (
                         <SwiperSlide key={`${p.id}-coming-soon`}>
-                          <div className="coming-soon-card" onClick={() => window.location.href = `/productDetails/${p.id}`}>
+                          <div className="coming-soon-card" onClick={() => { setIsShopMenuOpen(false); window.location.href = `/productDetails/${p.id}`; }}>
                             <div className="coming-soon-image-wrapper">
                               <img src={p.img} alt={p.title} />
                               <div className="coming-soon-overlay">
