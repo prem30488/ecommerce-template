@@ -17,7 +17,25 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://ecommerce-template-xi-tan.vercel.app'
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.startsWith('https://ecommerce-template-xi-tan')) {
+            return callback(null, true);
+        }
+        return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 app.use(express.json());
 // Serve static files from the frontend's public folder
 app.use(express.static(path.join(__dirname, '..', 'Front End', 'public')));
