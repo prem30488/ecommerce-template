@@ -20,7 +20,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
-    'https://ecommerce-template-xi-tan.vercel.app'
+    'https://ecommerce-template-xi-tan.vercel.app',
+    'https://ecommerce-template-api-mu.vercel.app'
 ];
 
 app.use(cors({
@@ -701,17 +702,17 @@ app.get('/api/product/getProducts', async (req, res) => {
                 },
                 { model: db.Category, required: false },
                 { model: db.Form, as: 'Form', required: false },
-                { 
-                    model: db.FAQ, 
-                    as: 'faqs', 
-                    where: { isActive: true }, 
-                    required: false 
+                {
+                    model: db.FAQ,
+                    as: 'faqs',
+                    where: { isActive: true },
+                    required: false
                 },
-                { 
-                    model: db.Review, 
-                    as: 'reviews', 
-                    where: { status: 'approved', isDeleted: false }, 
-                    required: false 
+                {
+                    model: db.Review,
+                    as: 'reviews',
+                    where: { status: 'approved', isDeleted: false },
+                    required: false
                 }
             ]
         });
@@ -892,17 +893,17 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
                 { model: db.Offer, as: 'offers' },
                 { model: db.Category, required: false },
                 { model: db.Form, as: 'Form', required: false },
-                { 
-                    model: db.FAQ, 
-                    as: 'faqs', 
-                    where: { isActive: true }, 
-                    required: false 
+                {
+                    model: db.FAQ,
+                    as: 'faqs',
+                    where: { isActive: true },
+                    required: false
                 },
-                { 
-                    model: db.Review, 
-                    as: 'reviews', 
-                    where: { status: 'approved', isDeleted: false }, 
-                    required: false 
+                {
+                    model: db.Review,
+                    as: 'reviews',
+                    where: { status: 'approved', isDeleted: false },
+                    required: false
                 }
             ]
         });
