@@ -26,17 +26,29 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: function (origin, callback) {
-        // allow requests with no origin (like mobile apps or curl requests)
+        // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.startsWith('https://ecommerce-template-xi-tan')) {
-            return callback(null, true);
+        
+        const isAllowed = allowedOrigins.includes(origin) || 
+                         (origin.startsWith('https://ecommerce-template') && origin.endsWith('.vercel.app')) ||
+                         origin.includes('localhost') ||
+                         origin.includes('127.0.0.1');
+
+        if (isAllowed) {
+            callback(null, true);
+        } else {
+            callback(null, false);
         }
-        return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    optionsSuccessStatus: 200
 }));
+
+// Handle preflight requests for all routes
+app.options('*', cors());
+
 app.use(express.json());
 // Serve static files from the frontend's public folder
 app.use(express.static(path.join(__dirname, '..', 'Front End', 'public')));
