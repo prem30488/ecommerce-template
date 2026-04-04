@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+const app = require('./app');
 const { Client } = require('pg');
 const { URL } = require('url');
 const fs = require('fs');
@@ -12,44 +12,9 @@ const db = require('./models');
 const { initRedis } = require('./config/redis');
 const saleRoutes = require('./routes/saleRoutes');
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-// Middleware
-const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://ecommerce-template-xi-tan.vercel.app',
-    'https://ecommerce-template-api-mu.vercel.app'
-];
-
-app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        const isAllowed = allowedOrigins.includes(origin) || 
-                         (origin.startsWith('https://ecommerce-template') && origin.endsWith('.vercel.app')) ||
-                         origin.includes('localhost') ||
-                         origin.includes('127.0.0.1');
-
-        if (isAllowed) {
-            callback(null, true);
-        } else {
-            callback(null, false);
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-    optionsSuccessStatus: 200
-}));
-
-// Handle preflight requests for all routes
-app.options('*', cors());
-
-app.use(express.json());
 // Serve static files from the frontend's public folder
 app.use(express.static(path.join(__dirname, '..', 'Front End', 'public')));
 // Serve MDB5 static files specifically if needed
@@ -2206,6 +2171,21 @@ app.delete('/api/review/:id', authenticateToken, async (req, res) => {
 // Mount Sale Routes
 app.use('/api/sale', saleRoutes);
 
+// --------------- 404 Handler ---------------
+app.use((req, res) => {
+    res.status(404).json({ success: false, message: 'Route not found: ' + req.originalUrl });
+});
+
+// --------------- Global Error Handler ---------------
+app.use((err, req, res, next) => {
+    console.error('Global Error:', err.stack);
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message || 'Internal Server Error',
+        ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
+    });
+});
+
 // Start server
 const startServer = async () => {
     try {
@@ -2224,7 +2204,7 @@ const startServer = async () => {
 
         // ONLY sync/seed if NOT in production or if explicitly asked
         const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
-        
+
         if (!isProduction) {
             console.log('Initializing database in development mode...');
             await db.sequelize.query('DROP TABLE IF EXISTS "Reviews" CASCADE;');
