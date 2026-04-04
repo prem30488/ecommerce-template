@@ -13,6 +13,12 @@ api.interceptors.request.use(config => {
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Normalize URL: remove leading slash if it exists to avoid double slashes with baseURL
+    if (config.url && config.url.startsWith('/') && config.baseURL) {
+        config.url = config.url.substring(1);
+    }
+    
     return config;
 }, error => {
     return Promise.reject(error);
