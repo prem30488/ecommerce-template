@@ -11,6 +11,7 @@ import FeatureBar from "../../components/FeatureBar";
 import InstagramVideoCarousel from "../../components/InstagramVideoCarousel";
 import WeeklyHighlight from "../../components/WeeklyHighlight";
 import BestSellingCarousel from "../../components/BestSellingCarousel";
+import OnlineSupport from "../../components/OnlineSupport";
 export const Shop = () => {
 
     return (
@@ -26,6 +27,7 @@ export const Shop = () => {
                 <FeatureProductsCarousel />
                 {/* <NewOfferedProducts /> */}
                 <Testimonials />
+                <OnlineSupport />
             </div>
 
         </React.Fragment>

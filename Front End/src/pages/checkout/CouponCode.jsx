@@ -1,4 +1,5 @@
 import React, { useContext, useId, useState, useEffect } from "react";
+import { API_BASE_URL } from '../../constants/index.jsx';
 import { ShopContext } from "../../context/shop-context";
 import { CartItemFinal } from "../cart/cart-item-Final";
 import { useNavigate } from "react-router-dom";
@@ -43,11 +44,11 @@ export const CouponCode = (props) => {
     const getData = async () => {
       try {
 
-        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=id,asc");
+        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=id,asc`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);
-        const resCode = await fetch("http://localhost:3000/api/coupon/getCoupon?page=0&size=15");
+        const resCode = await fetch(`${API_BASE_URL}/api/coupon/getCoupon?page=0&size=15`);
         if (!resCode.ok) throw new Error("Oops! An error has occured");
         const resJson = await resCode.json();
         setCoupons(resJson.content);

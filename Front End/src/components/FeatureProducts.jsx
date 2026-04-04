@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import FeaturedSingleProduct from "../components/FeaturedSingleProduct";
+import { API_BASE_URL } from '../constants/index.jsx';
+import PremiumProductCard from "../components/PremiumProductCard";
 import FeatureProductsCarousel from "../components/FeatureProductsCarousel";
 import { Link } from "react-router-dom";
 const FeatureProducts = () => {
@@ -11,7 +12,7 @@ const FeatureProducts = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
+        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);
@@ -56,7 +57,7 @@ const FeatureProducts = () => {
                 .filter((product) => product.featured === true && product.active === true)
                 .map((product, index) => {
                   if (index > 7) { return "" }
-                  return <FeaturedSingleProduct key={product.id} product={product} />;
+                  return <PremiumProductCard key={product.id} product={product} />;
                 })}
           </div>
         </div>

@@ -8,6 +8,25 @@ const WishlistDrawer = ({ open, onClose }) => {
   const { wishlistItems, getWishlistItemsWithDetails, removeFromWishlist } = useContext(WishlistContext);
   const [items, setItems] = useState([]);
 
+  const parsePrice = (productItem) => {
+    if (!productItem) return 0;
+    const product = productItem.Product || productItem;
+    const flavor = product?.productFlavors?.[0];
+    if (flavor) {
+      const val = flavor.price ?? flavor.priceMedium ?? flavor.priceLarge;
+      if (val !== undefined && val !== null && !Number.isNaN(Number(val))) return Number(val);
+    }
+    const fallback = product.price ?? product.priceMedium ?? product.priceLarge;
+    if (fallback !== undefined && fallback !== null && !Number.isNaN(Number(fallback))) return Number(fallback);
+    return 0;
+  };
+
+  const formatINR = (amount) => {
+    const n = Number(amount);
+    if (Number.isNaN(n)) return '₹0.00';
+    return `₹${n.toFixed(2)}`;
+  };
+
   React.useEffect(() => {
     const wishlistProducts = getWishlistItemsWithDetails();
     setItems(wishlistProducts);
@@ -48,7 +67,7 @@ const WishlistDrawer = ({ open, onClose }) => {
                 <div className="item-details">
                   <h4>{item.title}</h4>
                   <p className="item-category">{item.category}</p>
-                  <p className="item-price">${item.price}</p>
+                  <p className="item-price">{formatINR(parsePrice(item))}</p>
                 </div>
                 <button
                   className="remove-btn"

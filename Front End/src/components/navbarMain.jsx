@@ -49,6 +49,22 @@ export const NavbarMain = () => {
 
   const comingSoonProducts = products ? products.filter(p => p.comingSoon === true || p.comingSoon === 'true') : [];
 
+  const getComingSoonCategories = (p) => {
+    if (p.catIds) {
+      const ids = String(p.catIds).split(',').map(Number);
+      // If Category object exists, prefer it; else fallback to p.category
+      return p.Category?.title || p.category || ids.join(', ');
+    }
+    return p.Category?.title || p.category || '';
+  };
+
+  const getComingSoonForm = (p) => {
+    if (p.Form?.title) return p.Form.title;
+    if (p.form) return typeof p.form === 'string' ? p.form : `Form #${p.form}`;
+    if (p.formId) return `Form #${p.formId}`;
+    return '';
+  };
+
   return (
     <div className="navbar" id="navbar" style={{ position: "fixed", width: "100%" }}>
       <Sidebar />
@@ -78,8 +94,8 @@ export const NavbarMain = () => {
           Home
         </Link>
         <div className={`shop-dropdown ${isShopMenuOpen ? 'open' : ''}`}>
-          <Link 
-            to="/products" 
+          <Link
+            to="/products"
             className={location.pathname === "/products" ? "active-link" : ""}
             onDoubleClick={handleShopDoubleClick}
             onClick={(e) => {
@@ -135,6 +151,10 @@ export const NavbarMain = () => {
                             </div>
                             <div className="coming-soon-info">
                               <h3 className="coming-soon-title">{p.title}</h3>
+                              <div className="coming-soon-meta">
+                                {getComingSoonCategories(p) && <span className="coming-soon-category">{getComingSoonCategories(p)}</span>}
+                                {getComingSoonForm(p) && <span className="coming-soon-form">{getComingSoonForm(p)}</span>}
+                              </div>
                               <div className="coming-soon-rating">
                                 {"★★★★★".split("").map((s, i) => (
                                   <span key={i} className="star">★</span>

@@ -4,6 +4,7 @@ import PremiumCollectionCard from './PremiumCollectionCard';
 import './PremiumAllProducts.css';
 import { API_BASE_URL } from '../constants';
 import { getCategoriesShort } from '../util/APIUtils';
+import OnlineSupport from '../components/OnlineSupport';
 
 const PremiumAllProducts = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -288,7 +289,8 @@ const PremiumAllProducts = () => {
                         )}
                     </main>
                 </div>
-                <img src="/images/certifications.png" alt="Certifications" style={{ height: '500px', width: '100%', float: "center", marginLeft: "0px", verticalAlign: "top" }} />
+                <img src="/images/certifications.png" alt="Certifications" className="certifications-banner" />
+                <OnlineSupport />
             </div>
         </div>
     );

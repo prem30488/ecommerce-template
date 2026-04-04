@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from '../constants/index.jsx';
 import { Link } from "react-router-dom";
 
 
@@ -10,7 +11,7 @@ const MegaMenu = ({ isOpen, onClose }) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/category/getCategories?page=0&size=1000&&sort=order,asc");
+        const res = await fetch(`${API_BASE_URL}/api/category/getCategories?page=0&size=1000&&sort=order,asc`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
 

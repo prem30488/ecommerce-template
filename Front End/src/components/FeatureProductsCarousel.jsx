@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useRef } from "react";
+import { API_BASE_URL } from '../constants/index.jsx';
 import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import Alert from "react-s-alert";
@@ -98,6 +99,8 @@ const FpcCard = ({ product, onQuickView }) => {
   const { id, title, stock, rating, img } = product;
   const price = product.productFlavors?.[0]?.price || 0;
   const firstFlavorId = product.productFlavors?.[0]?.flavor_id;
+  const categoryLabel = product.Category?.title || product.category || (product.categories?.length ? product.categories.map(c => c.title).join(', ') : 'Uncategorized');
+  const formLabel = product.Form?.title || (product.form ? (typeof product.form === 'string' ? product.form : `Form #${product.form}`) : (product.formId ? `Form #${product.formId}` : 'No form'));
   const cartCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0);
 
   // Fallback image from picsum if img is missing
@@ -184,6 +187,10 @@ const FpcCard = ({ product, onQuickView }) => {
 
       {/* Info */}
       <div className="fpc-card-info">
+        <div className="fpc-card-meta">
+          <span className="fpc-card-meta-item fpc-card-meta-category">{categoryLabel}</span>
+          <span className="fpc-card-meta-item fpc-card-meta-form">{formLabel}</span>
+        </div>
         <h3 className="fpc-card-title" onClick={() => navigate("/productDetails/" + id)}>
           {title.length > 22 ? title.slice(0, 22) + "…" : title}
         </h3>
@@ -211,6 +218,8 @@ const FALLBACK_PRODUCT = {
   stock: 100,
   featured: true,
   active: true,
+  Category: { title: "Proteins" },
+  Form: { title: "Powder" },
 };
 
 /* ── Main carousel ───────────────────────────────────────────────────────── */
@@ -228,7 +237,7 @@ const FeatureProductsCarousel = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true")
+    fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         const featured = (data?.content || [])

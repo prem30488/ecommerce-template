@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../constants/index.jsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { ShopContext } from '../../context/shop-context';
@@ -35,7 +36,7 @@ const TaxInvoice = ({ status }) => {
 		const getData = async () => {
 			try {
 
-				const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
+				const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
 				if (!res.ok) throw new Error("Oops! An error has occured");
 				const json = await res.json();
 

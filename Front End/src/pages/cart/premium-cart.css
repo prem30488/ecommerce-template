@@ -186,6 +186,33 @@
   color: var(--cart-text-main);
 }
 
+.pc-original-price {
+  font-size: 11px;
+  color: #94a3b8;
+  text-decoration: line-through;
+  font-weight: 600;
+  margin-bottom: -2px;
+}
+
+.pc-price-discounted {
+  font-size: 16px;
+  font-weight: 950;
+  color: #D4AF37; /* Elite Gold */
+  letter-spacing: -0.01em;
+}
+
+.pc-price-free {
+  font-size: 11px;
+  font-weight: 900;
+  color: #10b981; /* Emerald */
+  background: #ecfdf5;
+  padding: 4px 10px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: inline-block;
+}
+
 /* Quantity Control */
 .pc-controls {
   display: flex;

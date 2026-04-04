@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../constants/index.jsx';
 import { useSearchParams } from 'react-router-dom';
 import './shared-wishlist.css';
 import { FaArrowLeft, FaShare, FaHeart } from 'react-icons/fa';
@@ -13,11 +14,36 @@ const SharedWishlist = () => {
   const userId = searchParams.get('userId');
   const productId = searchParams.get('product'); // Optional specific product
 
+  const parsePrice = (productOrItem) => {
+    if (!productOrItem) return 0;
+    const product = productOrItem.Product || productOrItem;
+    const flavor = product?.productFlavors?.[0];
+    if (flavor) {
+      const val = flavor.price ?? flavor.priceMedium ?? flavor.priceLarge;
+      if (val !== undefined && val !== null && !Number.isNaN(Number(val))) {
+        return Number(val);
+      }
+    }
+    const fallback = product.price ?? product.priceMedium ?? product.priceLarge;
+    if (fallback !== undefined && fallback !== null && !Number.isNaN(Number(fallback))) {
+      return Number(fallback);
+    }
+    return 0;
+  };
+
+  const formatINR = (amount) => {
+    const n = Number(amount);
+    if (Number.isNaN(n)) {
+      return '₹0.00';
+    }
+    return `₹${n.toFixed(2)}`;
+  };
+
   useEffect(() => {
     const loadSharedWishlist = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/api/wishlist/shared/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/api/wishlist/shared/${userId}`);
 
         if (!response.ok) {
           throw new Error('Failed to load shared wishlist');
@@ -99,7 +125,7 @@ const SharedWishlist = () => {
     );
   }
 
-  const totalPrice = wishlistItems.reduce((sum, item) => sum + (item.Product?.productFlavors?.[0]?.price || 0), 0);
+  const totalPrice = wishlistItems.reduce((sum, item) => sum + parsePrice(item), 0);
 
   return (
     <div className="shared-wishlist-container">
@@ -121,7 +147,7 @@ const SharedWishlist = () => {
             <div key={item.id} className="wishlist-card">
               <div className="card-image">
                 <img
-                  src={item.Product?.img || (item.Product?.imageURLs ? (item.Product?.imageURLs.split(',')[0].startsWith('http') ? item.Product?.imageURLs.split(',')[0] : `http://localhost:3000/api/product/image/${item.product_id}/${item.Product?.imageURLs.split(',')[0]}`) : `https://picsum.photos/seed/${item.product_id}/400/400`)}
+                  src={item.Product?.img || (item.Product?.imageURLs ? (item.Product?.imageURLs.split(',')[0].startsWith('http') ? item.Product?.imageURLs.split(',')[0] : `${API_BASE_URL}/api/product/image/${item.product_id}/${item.Product?.imageURLs.split(',')[0]}`) : `https://picsum.photos/seed/${item.product_id}/400/400`)}
                   alt={item.Product?.title}
                   style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff' }}
                   onError={(e) => {
@@ -136,11 +162,11 @@ const SharedWishlist = () => {
                 <p className="description">{item.Product?.description?.substring(0, 60)}...</p>
                 <div className="prices">
                   <span className="price-label">S/M/L:</span>
-                  <span className="price">${item.Product?.productFlavors?.[0]?.price || 0}</span>
+                  <span className="price">{formatINR(item.Product?.productFlavors?.[0]?.price)}</span>
                   <span className="price-sep">/</span>
-                  <span className="price">${item.Product?.productFlavors?.[0]?.priceMedium || 0}</span>
+                  <span className="price">{formatINR(item.Product?.productFlavors?.[0]?.priceMedium)}</span>
                   <span className="price-sep">/</span>
-                  <span className="price">${item.Product?.productFlavors?.[0]?.priceLarge || 0}</span>
+                  <span className="price">{formatINR(item.Product?.productFlavors?.[0]?.priceLarge)}</span>
                 </div>
               </div>
               <div className="card-footer">
@@ -163,21 +189,25 @@ const SharedWishlist = () => {
               <span className="value">{wishlistItems.length}</span>
             </div>
             <div className="stat">
+              <span>Total Value:</span>
+              <span className="value">{formatINR(totalPrice)}</span>
+            </div>
+            <div className="stat">
               <span>Lowest Price (S):</span>
               <span className="value">
-                ${Math.min(...wishlistItems.map(i => i.Product?.productFlavors?.[0]?.price || 0)).toFixed(2)}
+                {formatINR(Math.min(...wishlistItems.map(parsePrice)))}
               </span>
             </div>
             <div className="stat">
               <span>Highest Price (L):</span>
               <span className="value">
-                ${Math.max(...wishlistItems.map(i => i.Product?.productFlavors?.[0]?.priceLarge || 0)).toFixed(2)}
+                {formatINR(Math.max(...wishlistItems.map(parsePrice)))}
               </span>
             </div>
             <div className="stat">
               <span>Average Price (M):</span>
               <span className="value">
-                ${(wishlistItems.reduce((sum, i) => sum + (i.Product?.productFlavors?.[0]?.priceMedium || 0), 0) / (wishlistItems.length || 1)).toFixed(2)}
+                {formatINR(wishlistItems.length ? (wishlistItems.reduce((sum, i) => sum + parsePrice(i), 0) / wishlistItems.length) : 0)}
               </span>
             </div>
           </div>

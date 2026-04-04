@@ -8,6 +8,27 @@ const WishlistShareModal = ({ item, onClose }) => {
   const [copied, setCopied] = useState(false);
   const shareLink = getWishlistShareLink();
 
+  const parsePrice = (productItem) => {
+    if (!productItem) return 0;
+    const product = productItem.Product || productItem;
+    const flavor = product?.productFlavors?.[0];
+    if (flavor) {
+      const v = flavor.price ?? flavor.priceMedium ?? flavor.priceLarge;
+      if (v !== undefined && v !== null && !Number.isNaN(Number(v))) return Number(v);
+    }
+    const fallback = product.price ?? product.priceMedium ?? product.priceLarge;
+    if (fallback !== undefined && fallback !== null && !Number.isNaN(Number(fallback))) return Number(fallback);
+    return 0;
+  };
+
+  const formatINR = (value) => {
+    const n = Number(value);
+    if (Number.isNaN(n)) return '₹0.00';
+    return `₹${n.toFixed(2)}`;
+  };
+
+  const displayPrice = formatINR(parsePrice(item));
+
   const handleCopyLink = () => {
     const itemLink = `${shareLink}&product=${item.id}`;
     navigator.clipboard.writeText(itemLink).then(() => {
@@ -50,28 +71,28 @@ const WishlistShareModal = ({ item, onClose }) => {
           </div>
 
           <div className="share-info">
-            <p className="share-price">Price: <strong>${item.price}</strong></p>
+            <p className="share-price">Price: <strong>{displayPrice}</strong></p>
             <p className="share-description">{item.description?.substring(0, 80)}...</p>
           </div>
 
           <div className="social-share-section">
             <h4>Share on Social Media</h4>
             <div className="social-buttons">
-              <button 
+              <button
                 className="social-btn facebook"
                 onClick={() => handleShareSocial('facebook')}
                 title="Share on Facebook"
               >
                 <FaFacebook /> Facebook
               </button>
-              <button 
+              <button
                 className="social-btn twitter"
                 onClick={() => handleShareSocial('twitter')}
                 title="Share on Twitter"
               >
                 <FaTwitter /> Twitter
               </button>
-              <button 
+              <button
                 className="social-btn whatsapp"
                 onClick={() => handleShareSocial('whatsapp')}
                 title="Share on WhatsApp"
@@ -84,13 +105,13 @@ const WishlistShareModal = ({ item, onClose }) => {
           <div className="link-share-section">
             <h4>Copy Link</h4>
             <div className="link-copy-group">
-              <input 
-                type="text" 
-                className="link-input" 
+              <input
+                type="text"
+                className="link-input"
                 value={`${shareLink}&product=${item.id}`}
                 readOnly
               />
-              <button 
+              <button
                 className="copy-btn"
                 onClick={handleCopyLink}
                 style={{ backgroundColor: copied ? '#4caf50' : '#2196F3' }}

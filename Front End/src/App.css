@@ -166,3 +166,33 @@ footer p {
   background: rgba(13, 148, 136, 0.07);
   box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1);
 }
+
+/* Certifications Banner */
+.certifications-banner {
+  width: 100%;
+  max-width: 1280px;
+  height: auto;
+  min-height: 100px;
+  display: block;
+  margin: 60px auto;
+  padding: 40px;
+  background: #ffffff;
+  border: 1px solid #f1f1f1;
+  border-radius: 20px;
+  object-fit: contain;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  transition: all 0.4s ease;
+}
+
+.certifications-banner:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 768px) {
+  .certifications-banner {
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 12px;
+  }
+}

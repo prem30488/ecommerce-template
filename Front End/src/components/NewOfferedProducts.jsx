@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { API_BASE_URL } from '../constants/index.jsx';
 import SingleProduct from './SingleProduct'
 import { Link } from "react-router-dom";
 import { Compare } from './Compare/index';
@@ -15,7 +16,7 @@ const NewOfferedProducts = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
+        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);

@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { API_BASE_URL } from '../../constants/index.jsx';
 import { ShopContext } from "../../context/shop-context";
 import ImageCarousel from "../productDetails/ImageCarousel";
 import Alert from 'react-s-alert';
@@ -51,7 +52,7 @@ export const CartItem = (props) => {
           {imageURLs ? imageURLs.split(',').map((url, i) => (
             <div key={i} className="w-full h-full flex-shrink-0 snap-center">
               <img
-                src={url.trim().startsWith('http') ? url.trim() : `http://localhost:3000${url.trim()}`}
+                src={url.trim().startsWith('http') ? url.trim() : `${API_BASE_URL}${url.trim()}`}
                 className="w-full h-full object-cover"
                 alt={`${title} ${i}`}
               />
@@ -59,7 +60,7 @@ export const CartItem = (props) => {
           )) : (
             <div className="w-full h-full flex-shrink-0 snap-center">
               <img
-                src={`//localhost:3000/images/${id}.png`}
+                src={`${API_BASE_URL}/images/${id}.png`}
                 className="w-full h-full object-cover"
                 alt={title}
               />

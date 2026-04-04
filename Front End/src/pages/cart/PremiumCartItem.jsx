@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { API_BASE_URL } from '../../constants/index.jsx';
 import { ShopContext } from "../../context/shop-context";
 
 export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: propFlavorId = null }) => {
@@ -23,7 +24,7 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
     if (flavorId) {
       const fetchFlavor = async () => {
         try {
-          const res = await fetch(`http://localhost:3000/api/flavor/getFlavors?size=1000`);
+          const res = await fetch(`${API_BASE_URL}/api/flavor/getFlavors?size=1000`);
           const json = await res.json();
           const found = (json.content || []).find(f => f.id === Number(flavorId));
           setFlavor(found);
@@ -37,12 +38,12 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
     const fetchFolderImages = async () => {
       try {
         const targetFlavorId = flavorId || '1';
-        const res = await fetch(`http://localhost:3000/api/product/images/${id}/${targetFlavorId}`);
+        const res = await fetch(`${API_BASE_URL}/api/product/images/${id}/${targetFlavorId}`);
         const json = await res.json();
         if (Array.isArray(json) && json.length > 0) {
           setFolderImages(json);
         } else {
-          const fallbackRes = await fetch(`http://localhost:3000/api/product/images/${id}/1`);
+          const fallbackRes = await fetch(`${API_BASE_URL}/api/product/images/${id}/1`);
           const fallbackJson = await fallbackRes.json();
           setFolderImages(fallbackJson || []);
         }
@@ -77,7 +78,20 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
   };
 
   const quantity = getQuantity();
-  const currentPrice = getPrice();
+  const basePrice = getPrice();
+  
+  const activeOffer = data.offers?.find(o => 
+    o.active && 
+    o.discount > 0 && 
+    (o.size === size || !o.size)
+  );
+  
+  const getFinalPrice = () => {
+    if (!activeOffer) return basePrice;
+    if (activeOffer.type === 2) return Math.max(0, basePrice - activeOffer.discount);
+    return basePrice * (1 - activeOffer.discount / 100);
+  };
+  const finalPrice = getFinalPrice();
   const sizeLabel = size === "S" ? "Small" : size === "M" ? "Medium" : "Large";
 
   const [activeImage, setActiveImage] = useState(0);
@@ -102,14 +116,14 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
             displayImages.map((src, i) => (
               <div key={i} className="pc-carousel-item">
                 <img
-                  src={src.startsWith('http') ? src : `http://localhost:3000${src}`}
+                  src={src.startsWith('http') ? src : `${API_BASE_URL}${src}`}
                   alt={`${title} ${i}`}
                 />
               </div>
             ))
           ) : (
             <div className="pc-carousel-item">
-              <img src={`http://localhost:3000/images/${id}/1/1.png`} alt={title} />
+              <img src={`${API_BASE_URL}/images/${id}/1/1.png`} alt={title} />
             </div>
           )}
         </div>
@@ -147,20 +161,38 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
         </div>
 
         <div className="flex justify-between items-end">
-          <div className="pc-price">₹{(currentPrice || 0).toLocaleString()}</div>
-
-          <div className="pc-controls">
-            <button className="pc-btn" onClick={() => removeFromCart(id, size, flavorId)}>
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M20 12H4" /></svg>
-            </button>
-            <span className="pc-qty">{quantity}</span>
-            <button
-              className="pc-btn"
-              onClick={() => quantity < stock && addToCart(id, size, flavorId)}
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M12 4v16m8-8H4" /></svg>
-            </button>
+          <div className="pc-price-container">
+            {isFree ? (
+              <span className="pc-price-free">FREE GIFT</span>
+            ) : activeOffer ? (
+              <div className="flex flex-col">
+                <span className="pc-original-price">₹{basePrice.toLocaleString()}</span>
+                <span className="pc-price-discounted">₹{Math.round(finalPrice).toLocaleString()}</span>
+              </div>
+            ) : (
+              <div className="pc-price">₹{basePrice.toLocaleString()}</div>
+            )}
           </div>
+
+          {!isFree && (
+            <div className="pc-controls">
+              <button className="pc-btn" onClick={() => removeFromCart(id, size, flavorId)}>
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M20 12H4" /></svg>
+              </button>
+              <span className="pc-qty">{quantity}</span>
+              <button
+                className="pc-btn"
+                onClick={() => quantity < stock && addToCart(id, size, flavorId)}
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M12 4v16m8-8H4" /></svg>
+              </button>
+            </div>
+          )}
+          {isFree && (
+             <div className="pc-controls" style={{ background: 'transparent' }}>
+                <span className="pc-qty" style={{ color: '#10b981' }}>Qty: {quantity}</span>
+             </div>
+          )}
         </div>
       </div>
     </div>

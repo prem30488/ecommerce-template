@@ -6,6 +6,8 @@ import ImageCarousel from "../pages/productDetails/ImageCarousel";
 import WishlistIcon from "./WishlistIcon";
 const SimilarProduct = ({ product }) => {
   const { id, title, price, audience, offers, stock, imageURLs } = product;
+  const categoryLabel = product.Category?.title || product.category || (product.categories?.length ? product.categories.map(c => c.title).join(', ') : 'Uncategorized');
+  const formLabel = product.Form?.title || (product.form ? (typeof product.form === 'string' ? product.form : `Form #${product.form}`) : (product.formId ? `Form #${product.formId}` : 'No form'));
   const { addToCart, cartItems, addToCompare, removeFromCompare } = useContext(ShopContext);
   const navigate = useNavigate();
   const cartItemCount = cartItems[id];
@@ -52,6 +54,12 @@ const SimilarProduct = ({ product }) => {
           : ""
         }
         <div>
+          <p className="text-sm text-gray-600">
+            Category: <span className="font-semibold">{categoryLabel}</span>
+          </p>
+          <p className="text-sm text-gray-600">
+            Form: <span className="font-semibold">{formLabel}</span>
+          </p>
           <p className={product.bestseller ? "bestseller" : "text-sm text-gray-600"}>
             Bestseller: <span className="font-semibold capitalize"> {product.bestseller ? "Yes" : "No"}</span>
 

@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../constants/index.jsx';
 import { Drawer, Button } from '@mui/material';
 import { WishlistContext } from '../../context/wishlist-context';
 import { FaHeart } from 'react-icons/fa';
@@ -94,7 +95,7 @@ export default function WishlistHeaderDrawer() {
                                 <div key={product.id} className="wishlist-item-row">
                                     <div className="item-image-small">
                                         <img
-                                            src={product.img || (product.imageURLs ? (product.imageURLs.split(',')[0].startsWith('http') ? product.imageURLs.split(',')[0] : `http://localhost:3000/api/product/image/${product.id}/${product.imageURLs.split(',')[0]}`) : `https://picsum.photos/seed/${product.id}/400/400`)}
+                                            src={product.img || (product.imageURLs ? (product.imageURLs.split(',')[0].startsWith('http') ? product.imageURLs.split(',')[0] : `${API_BASE_URL}/api/product/image/${product.id}/${product.imageURLs.split(',')[0]}`) : `https://picsum.photos/seed/${product.id}/400/400`)}
                                             alt={product.title}
                                             style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff' }}
                                             onError={(e) => {

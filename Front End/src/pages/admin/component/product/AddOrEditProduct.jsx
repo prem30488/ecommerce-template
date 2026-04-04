@@ -120,9 +120,9 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
       ...prev,
       ProductImages: [...(prev.ProductImages || []), newImage]
     }));
-    
+
     // Refresh folder images too
-    setTimeout(fetchFolderImages, 500); 
+    setTimeout(fetchFolderImages, 500);
   };
 
   return (
@@ -298,7 +298,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
             </div>
           ))}
           <Button onClick={() => setFormData({ ...formData, productFlavors: [...formData.productFlavors, { flavor_id: '', price: '', priceMedium: '', priceLarge: '' }] })}>
-             + Add Flavor Variant
+            + Add Flavor Variant
           </Button>
         </div>
 
@@ -398,28 +398,28 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
             >
               <MenuItem value=""><em>None / Default</em></MenuItem>
               {flavors.map((f) => (
-                  <MenuItem key={f.id} value={f.id} className="flex items-center gap-3">
-                    <div className="w-[60px] h-[40px] rounded-lg border border-slate-100 bg-slate-50 flex-shrink-0 overflow-hidden">
-                      {f.image ? (
-                        <img 
-                          src={f.image.startsWith('http') ? f.image : `http://localhost:3000${f.image}`} 
-                          style={{ "height": "40px", "width": "60px" }}
-                          alt=""
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[8px] text-slate-300">N/A</div>
-                      )}
-                    </div>
-                    <span>{f.name}</span>
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                <MenuItem key={f.id} value={f.id} className="flex items-center gap-3">
+                  <div className="w-[60px] h-[40px] rounded-lg border border-slate-100 bg-slate-50 flex-shrink-0 overflow-hidden">
+                    {f.image ? (
+                      <img
+                        src={f.image.startsWith('http') ? f.image : `${API_BASE_URL}${f.image}`}
+                        style={{ "height": "40px", "width": "60px" }}
+                        alt=""
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[8px] text-slate-300">N/A</div>
+                    )}
+                  </div>
+                  <span>{f.name}</span>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-          <FileUploader 
+          <FileUploader
             key={currentFlavorId} // Force fresh uploader for each flavor
-            maxNoFiles={10} 
-            onSave={returnFileArray} 
+            maxNoFiles={10}
+            onSave={returnFileArray}
             productId={product?.id || 'temp'}
             flavorId={currentFlavorId}
           />
@@ -453,7 +453,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
                   return (
                     <div key={idx} className="relative w-[100px] h-[150px] border border-slate-200 rounded-xl overflow-hidden bg-white group hover:shadow-lg transition-all flex-shrink-0">
                       <img
-                        src={imagePath.startsWith('http') ? imagePath : `http://localhost:3000${imagePath}`}
+                        src={imagePath.startsWith('http') ? imagePath : `${API_BASE_URL}${imagePath}`}
                         className="w-full h-full object-cover"
                         alt="Product variant"
                       />
@@ -478,7 +478,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
               })()}
             </div>
 
-        </div>
+          </div>
         </div>
 
         <br />

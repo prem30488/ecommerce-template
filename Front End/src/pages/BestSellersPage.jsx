@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import BestSelling from "../components/BestSelling";
+import OnlineSupport from "../components/OnlineSupport";
 
 const BestSellersPage = () => {
   useEffect(() => {
@@ -14,8 +15,7 @@ const BestSellersPage = () => {
           background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
           color: "white",
           padding: "4rem 2rem",
-          textAlign: "center",
-          marginBottom: "2rem"
+          textAlign: "center"
         }}
       >
         <h1 style={{ fontSize: "2.5rem", fontWeight: "800", margin: "0 0 1rem 0", letterSpacing: "-0.02em" }}>
@@ -29,8 +29,9 @@ const BestSellersPage = () => {
       <div className="container mx-auto pb-20 px-4">
         {/* Render the BestSelling component (which includes the new carousel and grid) */}
         <BestSelling />
-        <img src="/images/certifications.png" alt="Certifications" style={{ height: '500px', width: '100%', float: "center", marginLeft: "0px", verticalAlign: "top" }} />
+        <img src="/images/certifications.png" alt="Certifications" className="certifications-banner" />
       </div>
+      <OnlineSupport />
     </div>
   );
 };

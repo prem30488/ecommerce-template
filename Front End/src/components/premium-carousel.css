@@ -143,6 +143,38 @@
   color: #0ea5e9;
 }
 
+.frequent-card-meta {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.frequent-card-meta-item {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.2;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.frequent-card-category {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #bbf7d0;
+}
+
+.frequent-card-form {
+  background: #f5f3ff;
+  color: #5b21b6;
+  border-color: #ddd6fe;
+}
+
 .frequent-card-footer {
   margin-top: auto;
   display: flex;
@@ -249,6 +281,53 @@
   color: #0f172a;
 }
 
+.fbc-flavor-meta-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.fbc-flavor-row {
+  flex: 1 1 60%;
+  min-width: 240px;
+}
+
+.fbc-meta-side {
+  flex: 1 1 35%;
+  min-width: 180px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.fbc-meta-pill {
+  font-size: 8px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.fbc-meta-category {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #bbf7d0;
+}
+
+.fbc-meta-form {
+  background: #f5f3ff;
+  color: #5b21b6;
+  border-color: #ddd6fe;
+}
+
 .fbc-size-row {
   margin-bottom: 10px;
 }
@@ -309,4 +388,146 @@
 
 .premium-marquee-wrapper:hover .animate-marquee {
   animation-play-state: paused;
+}
+
+/* ─── Premium Product Reviews ────────────────────────── */
+.fbc-reviews-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.fbc-stars-gold {
+  color: #fbbf24; /* Rich Amber Gold */
+  display: inline-flex;
+  gap: 2px;
+  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.3));
+}
+
+.fbc-review-pill {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 12px;
+  padding: 6px 12px;
+  transition: all 0.3s ease;
+}
+
+.fbc-review-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.1);
+}
+
+.fbc-review-item {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 10px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+.fbc-review-item:hover {
+  border-color: #fbbf24;
+  background: #fff;
+  transform: scale(1.02);
+}
+
+.fbc-review-name {
+  font-size: 9px;
+  font-weight: 800;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fbc-review-comment {
+  font-size: 10px;
+  color: #64748b;
+  line-height: 1.5;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ─── Premium Product FAQs ──────────────────────────── */
+.fbc-faq-section {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.fbc-faq-item {
+  background: #f0f9ff;
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid #e0f2fe;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.fbc-faq-item:hover {
+  border-color: #0ea5e9;
+  background: #fff;
+  transform: scale(1.02);
+}
+
+.fbc-faq-question {
+  font-size: 9px;
+  font-weight: 900;
+  color: #0c4a6e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fbc-faq-answer {
+  font-size: 10px;
+  color: #0369a1;
+  line-height: 1.5;
+  margin-top: 6px;
+  padding-left: 14px;
+  border-left: 2px solid #bae6fd;
+}
+
+/* Trust Metric Enhancements */
+.fbc-trust-snapshot {
+  flex: 1;
+  border-radius: 16px;
+  padding: 12px 10px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.fbc-trust-faq {
+  background: #f0f9ff;
+  border-color: #e0f2fe;
+}
+
+.fbc-trust-faq:hover {
+  background: #e0f2fe;
+  border-color: #38bdf8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.1);
+}
+
+.fbc-trust-reviews {
+  background: #fffbeb;
+  border-color: #fef3c7;
+}
+
+.fbc-trust-reviews:hover {
+  background: #fef3c7;
+  border-color: #fbbf24;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(251, 191, 36, 0.1);
 }

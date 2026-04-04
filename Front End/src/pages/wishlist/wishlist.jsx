@@ -44,6 +44,32 @@ const Wishlist = () => {
     navigate('/');
   };
 
+  const parsePrice = (item) => {
+    if (!item) return 0;
+    const product = item.Product || item;
+    const flavor = product?.productFlavors?.[0];
+
+    if (flavor) {
+      const priceVal = flavor.price ?? flavor.priceMedium ?? flavor.priceLarge;
+      if (priceVal !== undefined && priceVal !== null && !Number.isNaN(Number(priceVal))) {
+        return Number(priceVal);
+      }
+    }
+
+    const candidate = item.price ?? product?.price ?? product?.priceMedium ?? product?.priceLarge;
+    if (candidate !== undefined && candidate !== null && !Number.isNaN(Number(candidate))) {
+      return Number(candidate);
+    }
+
+    return 0;
+  };
+
+  const formatINR = (value) => {
+    const numeric = Number(value);
+    if (Number.isNaN(numeric)) return '₹0.00';
+    return `₹${numeric.toFixed(2)}`;
+  };
+
   if (isLoading) {
     return (
       <div className="wishlist-container">
@@ -118,19 +144,19 @@ const Wishlist = () => {
             <div className="summary-item">
               <span>Lowest Price:</span>
               <span className="summary-value">
-                ${Math.min(...items.map(i => i.price)).toFixed(2)}
+                {formatINR(Math.min(...items.map(parsePrice)))}
               </span>
             </div>
             <div className="summary-item">
               <span>Highest Price:</span>
               <span className="summary-value">
-                ${Math.max(...items.map(i => i.price)).toFixed(2)}
+                {formatINR(Math.max(...items.map(parsePrice)))}
               </span>
             </div>
             <div className="summary-item">
               <span>Average Price:</span>
               <span className="summary-value">
-                ${(items.reduce((sum, i) => sum + i.price, 0) / items.length).toFixed(2)}
+                {formatINR(items.length ? (items.reduce((sum, i) => sum + parsePrice(i), 0) / items.length) : 0)}
               </span>
             </div>
             <button

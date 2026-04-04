@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { API_BASE_URL } from '../../constants/index.jsx';
 import { Link, useParams } from "react-router-dom";
 import SimilarProducts from "../../components/SimilarProducts"
 import "./productDetails.css";
@@ -24,7 +25,7 @@ export const ProductDetailsCart = () => {
       try {
         setIsLoading(true);
         // Fetch specific product with images from the improved route
-        const res = await fetch(`http://localhost:3000/api/product/fetchById/${id}`);
+        const res = await fetch(`${API_BASE_URL}/api/product/fetchById/${id}`);
         if (!res.ok) throw new Error("Oops! Product not found");
         const json = await res.json();
         setProduct(json);
@@ -41,7 +42,7 @@ export const ProductDetailsCart = () => {
     const fetchFrequent = async () => {
       if (!product) return;
       try {
-        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=20");
+        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=20`);
         const json = await res.json();
         const allProducts = (json.content || json);
 
@@ -60,7 +61,7 @@ export const ProductDetailsCart = () => {
         console.error(e);
         // Fallback to simple random selection
         try {
-          const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=10");
+          const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=10`);
           const json = await res.json();
           const items = (json.content || json).filter(p => p.id !== product.id).sort(() => 0.5 - Math.random()).slice(0, 4);
           setFrequentProducts(items);
@@ -75,7 +76,7 @@ export const ProductDetailsCart = () => {
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/faq?productId=${id}`);
+        const res = await fetch(`${API_BASE_URL}/api/faq?productId=${id}`);
         const json = await res.json();
         setFaqs(json.content || []);
       } catch (error) {

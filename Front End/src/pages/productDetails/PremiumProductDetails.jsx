@@ -44,12 +44,43 @@ export const PremiumProductDetails = () => {
   const [newReview, setNewReview] = useState({ name: '', email: '', rating: 5, comment: '' });
   const [bundleSelections, setBundleSelections] = useState(null); // { allProducts, selections }
 
-  const { addToCart, addFreeToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart } = useContext(ShopContext);
+  const { addToCart, addFreeToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart, categories: allCategories } = useContext(ShopContext);
+
+  // ── Category & Form Resolution ──────────────────────────────────
+  const categoryItems = new Set();
+  if (product) {
+    if (product.Category?.title) categoryItems.add(product.Category.title);
+    if (product.category) {
+      String(product.category).split(',').map(c => c.trim()).filter(Boolean).forEach(c => categoryItems.add(c));
+    }
+    if (product.catIds && allCategories?.length > 0) {
+      const idList = String(product.catIds).split(',').map(id => id.trim()).filter(Boolean);
+      idList.forEach(id => {
+        const catObj = allCategories.find(c => String(c.id) === String(id));
+        if (catObj && catObj.title) categoryItems.add(catObj.title);
+      });
+    }
+    if (product.categories && Array.isArray(product.categories)) {
+      product.categories.forEach(c => {
+        const title = typeof c === 'string' ? c : c.title || String(c);
+        if (title) categoryItems.add(title);
+      });
+    }
+  }
+  const visibleCategories = Array.from(categoryItems);
+  const getFormLabel = () => {
+    if (product?.Form?.title) return product.Form.title;
+    if (typeof product?.form === 'string' && product.form.trim()) return product.form;
+    if (product?.form && typeof product.form !== 'object') return `Form #${product.form}`;
+    //if (product?.formId) return `Form #${product.formId}`;
+    return 'No Form';
+  };
+  const formLabel = getFormLabel();
 
   // ── Fetch product ──────────────────────────────────────────────
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:3000/api/product/fetchById/${id}`)
+    fetch(`${API_BASE_URL}/api/product/fetchById/${id}`)
       .then(r => r.ok ? r.json() : Promise.reject("Not found"))
       .then(async data => {
         setProduct(data);
@@ -60,6 +91,8 @@ export const PremiumProductDetails = () => {
           if (offers && offers.length) {
             setProduct(prev => ({ ...(prev || data), offers }));
           }
+          if (data.faqs) setFaqs(data.faqs);
+          if (data.reviews) setReviews(data.reviews);
         } catch (e) {
           // ignore; product may already contain offers
         }
@@ -113,7 +146,7 @@ export const PremiumProductDetails = () => {
   // ── Fetch FAQs ─────────────────────────────────────────────────
   useEffect(() => {
     if (!id) return;
-    fetch(`http://localhost:3000/api/faq?productId=${id}&size=100`)
+    fetch(`${API_BASE_URL}/api/faq?productId=${id}&size=100`)
       .then(r => r.json())
       .then(j => {
         const items = j.content || j || [];
@@ -125,7 +158,7 @@ export const PremiumProductDetails = () => {
   // ── Fetch frequently bought together ──────────────────────────
   useEffect(() => {
     if (!product) return;
-    fetch("http://localhost:3000/api/product/getProducts?page=0&size=20")
+    fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=20`)
       .then(r => r.json())
       .then(j => {
         const all = j.content || j;
@@ -262,7 +295,7 @@ export const PremiumProductDetails = () => {
   };
 
   const resolveImg = (src) =>
-    src ? (src.startsWith("http") ? src : `http://localhost:3000${src}`) : "";
+    src ? (src.startsWith("http") ? src : `${API_BASE_URL}${src}`) : "";
 
   // ── Size options ──────────────────────────────────────────────
   const sizes = product && activeFlavorData ? [
@@ -442,6 +475,19 @@ export const PremiumProductDetails = () => {
         {/* ─── RIGHT: Info ─── */}
         <div className="ppp-info">
           <div className="ppp-brand">{product.brand || "Premium Brand"}</div>
+
+          {/* Category & Form Chips */}
+          {(visibleCategories.length > 0 || formLabel) && (
+            <div className="ppp-meta-chips mb-4 flex flex-wrap gap-2">
+              {visibleCategories.map((cat, idx) => (
+                <span key={`cat-${idx}`} className="ppp-chip ppp-chip-category">{cat}</span>
+              ))}
+              {formLabel && (
+                <span className="ppp-chip ppp-chip-form">{formLabel}</span>
+              )}
+            </div>
+          )}
+
           <h1 className="ppp-title">{product.title}</h1>
 
           {/* Rating */}
@@ -886,7 +932,7 @@ export const PremiumProductDetails = () => {
             </div>
           </div>
         )}
-        <img src="/images/certifications.png" alt="Certifications" style={{ height: '500px', width: '100%', float: "center", marginLeft: "0px", verticalAlign: "top" }} />
+        <img src="/images/certifications.png" alt="Certifications" className="certifications-banner" />
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import Alert from 'react-s-alert';
-
+import { API_BASE_URL } from "../constants";
 export const WishlistContext = createContext(null);
 
 const getDefaultWishlist = () => {
@@ -40,7 +40,7 @@ export const WishlistContextProvider = (props) => {
   const loadWishlist = async (userIdParam) => {
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
-      const response = await fetch(`http://localhost:3000/api/wishlist`, {
+      const response = await fetch(`${API_BASE_URL}/api/wishlist`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -88,7 +88,7 @@ export const WishlistContextProvider = (props) => {
 
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
-      const response = await fetch(`http://localhost:3000/api/wishlist`, {
+      const response = await fetch(`${API_BASE_URL}/api/wishlist`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export const WishlistContextProvider = (props) => {
 
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
-      const response = await fetch(`http://localhost:3000/api/wishlist/${idStr}`, {
+      const response = await fetch(`${API_BASE_URL}/api/wishlist/${idStr}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
@@ -210,7 +210,7 @@ export const WishlistContextProvider = (props) => {
 
       // Fetch product details for all wishlist items
       const productDetailsPromises = productIds.map(productId =>
-        fetch(`http://localhost:3000/api/product/fetchById/${productId}`)
+        fetch(`${API_BASE_URL}/api/product/fetchById/${productId}`)
           .then(res => res.ok ? res.json() : null)
           .catch(err => {
             console.error(`Failed to fetch product ${productId}:`, err);
@@ -237,7 +237,7 @@ export const WishlistContextProvider = (props) => {
   const clearWishlist = async () => {
     try {
       const token = localStorage.getItem('authToken') || 'mock-token';
-      await fetch(`http://localhost:3000/api/wishlist`, {
+      await fetch(`${API_BASE_URL}/api/wishlist`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
@@ -254,7 +254,7 @@ export const WishlistContextProvider = (props) => {
     if (userId && Object.keys(wishlistItems).length > 0) {
       try {
         const token = localStorage.getItem('authToken') || 'mock-token';
-        await fetch(`http://localhost:3000/api/wishlist/email-on-close`, {
+        await fetch(`${API_BASE_URL}/api/wishlist/email-on-close`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -3,6 +3,7 @@ import { ShopContext } from "../../context/shop-context";
 import { PremiumCartItem } from "./PremiumCartItem";
 import { useNavigate, Link } from "react-router-dom";
 import "./premium-cart.css";
+import { API_BASE_URL } from "../../constants";
 
 export const PremiumCart = ({ onClose }) => {
   const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, addTotalAfterDiscount, resetCart } = useContext(ShopContext);
@@ -16,7 +17,7 @@ export const PremiumCart = ({ onClose }) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch("//localhost:3000/api/product/getProducts?page=0&size=1000");
+        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000`);
         if (!res.ok) throw new Error("Fetch failed");
         const json = await res.json();
         setProducts(json.content || []);
@@ -67,15 +68,15 @@ export const PremiumCart = ({ onClose }) => {
               onClick={resetCart}
               className="clear-cart-btn"
             >
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
               <span>Clear All</span>
             </button>
           )}
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="premium-close-btn"
           >
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
       </div>
@@ -135,7 +136,7 @@ export const PremiumCart = ({ onClose }) => {
         ) : (
           <div className="p-empty">
             <div className="p-empty-icon">
-              <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              <svg className="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
             </div>
             <h3 style={{ fontSize: '20px', fontWeight: '900', marginBottom: '8px' }}>Your Cart is Quiet</h3>
             <p className="p-label-text" style={{ maxWidth: '200px', margin: '0 auto' }}>Curate your selection and discover your next piece.</p>
@@ -188,7 +189,7 @@ export const PremiumCart = ({ onClose }) => {
             onClick={() => { onClose(); navigate("/checkout"); }}
           >
             Checkout Securely
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
           </button>
         </div>
       )}

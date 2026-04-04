@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import BestSingleProduct from "../components/BestSingleProduct";
+import PremiumProductCard from "../components/PremiumProductCard";
 import BestSellingCarousel from "../components/BestSellingCarousel";
 import { Link } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
-
+import { API_BASE_URL } from "../constants";
 const BestSelling = () => {
 
   const [products, setProducts] = useState([]);
@@ -16,7 +16,7 @@ const BestSelling = () => {
     const getData = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true");
+        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         setProducts(json.content);
@@ -67,7 +67,7 @@ const BestSelling = () => {
 
                 .map((product, index) => {
                   if (index > 7) { return "" }
-                  return <BestSingleProduct key={product.id} product={product} />;
+                  return <PremiumProductCard key={product.id} product={product} />;
                 })}
           </div>
         </div>

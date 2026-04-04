@@ -18,11 +18,9 @@
   left: 0;
   right: 0;
   height: 100%;
-  background: linear-gradient(
-    160deg,
-    rgba(236, 72, 153, 0.82) 0%,
-    rgba(168, 85, 247, 0.75) 100%
-  );
+  background: linear-gradient(160deg,
+      rgba(236, 72, 153, 0.82) 0%,
+      rgba(168, 85, 247, 0.75) 100%);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   display: flex;
@@ -69,8 +67,13 @@
 }
 
 @keyframes cs-marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 /* "Notify Me" button inside overlay */
@@ -103,8 +106,15 @@
 }
 
 @keyframes badge-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.5); }
-  50%       { box-shadow: 0 0 0 6px rgba(236, 72, 153, 0); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(236, 72, 153, 0);
+  }
 }
 
 .collection-card {
@@ -181,7 +191,8 @@
 .card-discount-badge {
   position: absolute;
   top: 12px;
-  right: 12px; /* Reset position */
+  right: 12px;
+  /* Reset position */
   background: var(--premium-accent);
   color: white;
   font-size: 10px;
@@ -225,8 +236,8 @@
   padding: 6px 0;
   overflow: hidden;
   z-index: 2;
-  border-top: 1px solid rgba(0,0,0,0.05);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .card-marquee-content {
@@ -244,8 +255,13 @@
 }
 
 @keyframes card-marquee-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .collection-card:hover .card-marquee-wrapper {
@@ -341,6 +357,14 @@
   letter-spacing: 0.05em;
 }
 
+.card-form {
+  font-size: 11px;
+  color: #6d28d9;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
 .card-title {
   font-size: 18px;
   font-weight: 700;
@@ -369,7 +393,8 @@
 }
 
 .star-filled {
-  color: #f59e0b; /* Amber 500 */
+  color: #f59e0b;
+  /* Amber 500 */
   font-size: 13px;
 }
 
@@ -379,7 +404,8 @@
 }
 
 .star-empty {
-  color: #e5e7eb; /* Gray 200 */
+  color: #e5e7eb;
+  /* Gray 200 */
   font-size: 13px;
 }
 

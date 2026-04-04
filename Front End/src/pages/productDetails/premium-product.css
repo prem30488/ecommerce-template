@@ -176,6 +176,37 @@
   margin-bottom: 8px;
 }
 
+/* Meta Chips */
+.ppp-meta-chips {
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ppp-chip {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.ppp-chip-category {
+  background: rgba(14, 165, 233, 0.08);
+  color: #0ea5e9;
+  border-color: rgba(14, 165, 233, 0.2);
+}
+
+.ppp-chip-form {
+  background: rgba(100, 116, 139, 0.08);
+  color: #64748b;
+  border-color: rgba(100, 116, 139, 0.2);
+}
+
 .ppp-title {
   font-size: 30px;
   font-weight: 900;

@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { API_BASE_URL } from '../constants/index.jsx';
 import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import Alert from "react-s-alert";
@@ -42,7 +43,7 @@ const WeeklyHighlight = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/product/weeklyBestSeller")
+    fetch(`${API_BASE_URL}/api/product/weeklyBestSeller`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         setProduct(data || WHEY_FALLBACK);

@@ -10,6 +10,8 @@ const SingleProduct = ({ product }) => {
 
   const { id, title, offers, stock, imageURLs } = product;
   const price = product.productFlavors?.[0]?.price || 0;
+  const categoryLabel = product.Category?.title || product.category || (product.categories?.length ? product.categories.map(c => c.title).join(', ') : 'Uncategorized');
+  const formLabel = product.Form?.title || (product.form ? (typeof product.form === 'string' ? product.form : `Form #${product.form}`) : (product.formId ? `Form #${product.formId}` : 'No form'));
   const { addToCart, cartItems } = useContext(ShopContext);
   const navigate = useNavigate();
   const cartItemCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0);
@@ -21,17 +23,12 @@ const SingleProduct = ({ product }) => {
 
 
       <div className="single-product bg-gray-50 gap-3 shadow-md hover:shadow-xl hover:scale-105 duration-300 px-4 py-7 rounded-sm overflow-hidden">
-        {/* <p className="stock">
-        Stock : <span className="font-semibold capitalize">{stock}</span>
-        
-      </p> */}
-        Categories :
-        {
-
-          product.categories && product.categories.length > 0 ?
-            product.categories.map((cat) => <span key={cat.id}>{cat.title}</span>)
-            : ""
-        }
+        <p className="text-sm text-gray-600">
+          Category: <span className="font-semibold">{categoryLabel}</span>
+        </p>
+        <p className="text-sm text-gray-600">
+          Form: <span className="font-semibold">{formLabel}</span>
+        </p>
         {
           product.offers && product.offers.length > 0 ?
 

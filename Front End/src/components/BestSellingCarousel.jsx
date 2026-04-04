@@ -6,7 +6,7 @@ import "./bestsellingcarousel.css";
 import WishlistIcon from "./WishlistIcon";
 import { FaEye } from "react-icons/fa";
 import QuickViewModal from "./QuickViewModal";
-
+import { API_BASE_URL } from "../constants";
 /* ── Constants ──────────────────────────────────────────────────────────── */
 const CARD_WIDTH = 200;   // px
 const GAP = 16;    // px between cards
@@ -129,6 +129,9 @@ const BscCard = ({ product, onQuickView }) => {
   const price = product.productFlavors?.[0]?.price || 0;
   const firstFlavorId = product.productFlavors?.[0]?.flavor_id;
 
+  const categoryLabel = product.Category?.title || product.category || (product.catIds ? String(product.catIds).split(',').map(Number).join(', ') : 'Uncategorized');
+  const formLabel = product.Form?.title || product.form?.title || (product.form ? String(product.form) : (product.formId ? `Form #${product.formId}` : 'No form'));
+
   const cartCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0);
   const offerLabel = getOfferLabel(offers);
   const activeOffer = offers?.find((o) => o.active);
@@ -221,6 +224,10 @@ const BscCard = ({ product, onQuickView }) => {
 
       {/* Info */}
       <div className="bsc-card-info">
+        <div className="bsc-card-meta">
+          <span className="bsc-card-meta-item bsc-card-meta-category">{categoryLabel}</span>
+          <span className="bsc-card-meta-item bsc-card-meta-form">{formLabel}</span>
+        </div>
         <h3 className="bsc-card-title" onClick={() => navigate("/productDetails/" + id)}>
           {title.length > 22 ? title.slice(0, 22) + "…" : title}
         </h3>
@@ -255,6 +262,8 @@ const WHEY_FALLBACK = {
   bestseller: true,
   active: true,
   offers: [{ discount: 10, type: 0, active: true }],
+  Category: { title: "Proteins" },
+  Form: { title: "Powder" },
 };
 
 /* ── Main carousel ───────────────────────────────────────────────────────── */
@@ -272,7 +281,7 @@ const BestSellingCarousel = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/product/getProducts?page=0&size=1000&sorted=true")
+    fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         const best = (data?.content || [])

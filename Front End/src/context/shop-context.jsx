@@ -64,28 +64,25 @@ export const ShopContextProvider = (props) => {
           const itemInfo = products.find((p) => p.id === Number(productId));
           if (!itemInfo) continue;
 
-          let disco = 0;
-          let hasOffer = false;
-          if (itemInfo.offers && itemInfo.offers.length > 0) {
-            itemInfo.offers
-              .filter((o) => o.size === size && o.active === true)
-              .forEach((offer) => {
-                if (offer.type === 0 && items[key] > 0) {
-                  hasOffer = true;
-                  disco = Math.max(disco, offer.discount);
-                }
-                if (offer.type === 3 && items[key] >= offer.buy) {
-                  hasOffer = true;
-                  disco = Math.max(disco, offer.discount);
-                }
-              });
-          }
-
           const unitPrice = getProductFlavorPrice(itemInfo, size, flavorId);
-          if (hasOffer) {
-            totalAmount += items[key] * (unitPrice - (Number((disco * unitPrice) / 100)));
+          
+          // Match the logic in PremiumProductCard/PremiumCartItem
+          const activeOffer = itemInfo.offers?.find(o => 
+            o.active && 
+            o.discount > 0 && 
+            (o.size === size || !o.size)
+          );
+
+          if (activeOffer) {
+            let discountedPrice = unitPrice;
+            if (activeOffer.type === 2) {
+              discountedPrice = Math.max(0, unitPrice - activeOffer.discount);
+            } else {
+              discountedPrice = unitPrice * (1 - activeOffer.discount / 100);
+            }
+            totalAmount += items[key] * discountedPrice;
           } else {
-            totalAmount += items[key] * Number(unitPrice);
+            totalAmount += items[key] * unitPrice;
           }
         }
       }
@@ -108,22 +105,49 @@ export const ShopContextProvider = (props) => {
     return cartCount;
   };
 
-  const addFreeCartItem = (itemId, items, size) => {
-    // Note: Free items logic currently doesn't support flavors fully in the backend/offers, 
-    // keeping it simple for now as it relies on productId.
-    let currentProduct = products.find((product) => product.id === itemId);
-    if (!currentProduct) return;
+  // ── Automated Free Items Sync (BOGO / Buy X Get Y) ─────────────
+  useEffect(() => {
+    if (products.length === 0) return;
 
-    if (currentProduct.offers && currentProduct.offers.length > 0) {
-      currentProduct.offers
-        .filter((o) => o.size === size && o.active === true)
-        .forEach((offer) => {
-          if (offer.type === 3 && offer.buy === (items[itemId] || 0) + 1) {
-            // ... (rest of free item logic remains similar but checks existence)
+    const newFreeS = {};
+    const newFreeM = {};
+    const newFreeL = {};
+
+    const syncForSize = (paidItems, size, targetMap) => {
+      // 1. Group paid counts by productId (merging flavors)
+      const paidCounts = {};
+      for (const key in paidItems) {
+        if (paidItems[key] > 0) {
+          const [pid] = key.split('_');
+          paidCounts[pid] = (paidCounts[pid] || 0) + paidItems[key];
+        }
+      }
+
+      // 2. Resolve free items based on offers
+      for (const pid in paidCounts) {
+        const itemInfo = products.find(p => String(p.id) === String(pid));
+        if (!itemInfo || !itemInfo.offers) continue;
+
+        itemInfo.offers.forEach(offer => {
+          if (offer.active && offer.buy > 0 && offer.buyget > 0 && (offer.size === size || !offer.size)) {
+            const freeCount = Math.floor(paidCounts[pid] / offer.buy) * offer.buyget;
+            if (freeCount > 0) {
+              const freeId = offer.freeProductid || pid;
+              targetMap[freeId] = (targetMap[freeId] || 0) + freeCount;
+            }
           }
         });
-    }
-  };
+      }
+    };
+
+    syncForSize(cartItems, "S", newFreeS);
+    syncForSize(martItems, "M", newFreeM);
+    syncForSize(lartItems, "L", newFreeL);
+
+    setFreeCartItems(newFreeS);
+    setFreeMartItems(newFreeM);
+    setFreeLartItems(newFreeL);
+  }, [cartItems, martItems, lartItems, products]);
 
   const addToCart = (itemId, size, flavorId = null) => {
     // If flavorId is not provided, try to find the first flavor of the product

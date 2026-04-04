@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from '../constants/index.jsx';
 import './testimonials.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -28,7 +29,7 @@ export const Testimonials = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/testimonial/getTestimonials?page=0&size=1000&sort=id,asc");
+        const res = await fetch(`${API_BASE_URL}/api/testimonial/getTestimonials?page=0&size=1000&sort=id,asc`);
         if (!res.ok) throw new Error("Oops! An error has occured");
         const json = await res.json();
         const activeTestimonials = (json.content || []).filter(t => !t.deleteFlag);
@@ -64,8 +65,8 @@ export const Testimonials = () => {
       <section className="testi-section">
         <div className="container mx-auto">
           <div className="testi-header">
-            <span className="testi-eyebrow">HEAR FROM OUR CUSTOMERS</span>
-            <h2 className="testi-title">Testimonials</h2>
+            <span className="testi-eyebrow">Real Experiences</span>
+            <h2 className="testi-title">Customer Voices</h2>
           </div>
 
           <Swiper

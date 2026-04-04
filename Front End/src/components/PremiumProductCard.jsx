@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from 'react-s-alert';
 import { FaEye } from 'react-icons/fa';
@@ -16,7 +16,7 @@ const SIZES = [
 
 const PremiumProductCard = ({ product }) => {
     const navigate = useNavigate();
-    const { addToCart, cartItems } = useContext(ShopContext);
+    const { addToCart, cartItems, categories: allCategories } = useContext(ShopContext);
     const [quickViewProduct, setQuickViewProduct] = useState(null);
     const [sel, setSel] = useState({ flavorIdx: 0, size: 'S' });
 
@@ -82,6 +82,50 @@ const PremiumProductCard = ({ product }) => {
     const { originalPrice, finalPrice, discountInfo } = getPriceData();
     const cartCount = getCartCount();
 
+    const categoryItems = new Set();
+
+    // 1. From Associated Category Object
+    if (product.Category?.title) {
+        categoryItems.add(product.Category.title);
+    }
+
+    // 2. From raw category string (comma-separated)
+    if (product.category) {
+        String(product.category)
+            .split(',')
+            .map(c => c.trim())
+            .filter(Boolean)
+            .forEach(c => categoryItems.add(c));
+    }
+
+    // 3. From catIds string (comma separated IDs) using global categories map
+    if (product.catIds && allCategories && allCategories.length > 0) {
+        const idList = String(product.catIds).split(',').map(id => id.trim()).filter(Boolean);
+        idList.forEach(id => {
+            const catObj = allCategories.find(c => String(c.id) === String(id));
+            if (catObj && catObj.title) categoryItems.add(catObj.title);
+        });
+    }
+
+    // 4. From categories array
+    if (product.categories && Array.isArray(product.categories)) {
+        product.categories.forEach(c => {
+            const title = typeof c === 'string' ? c : c.title || String(c);
+            if (title) categoryItems.add(title);
+        });
+    }
+
+    const visibleCategories = categoryItems.size > 0 ? Array.from(categoryItems) : ['Premium Product'];
+
+    const getFormLabel = () => {
+        if (product.Form?.title) return product.Form.title;
+        if (typeof product.form === 'string' && product.form.trim()) return product.form;
+        if (product.form && typeof product.form !== 'object') return `Form #${product.form}`;
+        //if (product.formId) return `Form #${product.formId}`;
+        return 'No Form';
+    };
+    const formLabel = getFormLabel();
+
     return (
         <React.Fragment>
             <div className="frequent-card" style={{ minHeight: "420px", display: "flex", flexDirection: "column" }}>
@@ -89,12 +133,17 @@ const PremiumProductCard = ({ product }) => {
                 <div className="frequent-card-content flex-grow flex flex-col justify-between">
                     <div>
                         <div className="flex justify-between items-start mb-1">
-                            <div className="frequent-card-brand">{product.brand || 'Elite Selection'}</div>
-                            {product.category && (
-                                <span className="text-[9px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                    {product.category}
-                                </span>
-                            )}
+                            <div>
+                                <div className="frequent-card-brand">{product.brand || 'Elite Selection'}</div>
+                                <div className="frequent-card-meta">
+                                    {visibleCategories.map((cat, idx) => (
+                                        <span key={`cat-${idx}`} className="frequent-card-meta-item frequent-card-category">{cat}</span>
+                                    ))}
+                                    {formLabel && (
+                                        <span className="frequent-card-meta-item frequent-card-form">{formLabel}</span>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                         <h6 className="frequent-card-title mb-1" style={{ marginBottom: "6px" }}>{product.title}</h6>                        {/* Active Offers Marquee */}
                         {product.offers && product.offers.filter(o => o.active).length > 0 ? (
@@ -275,25 +324,55 @@ const PremiumProductCard = ({ product }) => {
                             <img src="/images/time.png" alt="Delievry time" style={{ height: '70px', width: '350px', float: "center", marginLeft: "20px", verticalAlign: "top" }} />
                         </div>
 
-                        {/* Flavor Pills */}
+                        {/* Flavor and Metas (side by side) */}
                         {flavors.length > 0 && (
-                            <div className="fbc-flavor-row">
-                                <span className="fbc-label">Flavor</span>
-                                <div className="fbc-pills">
-                                    {flavors.map((pf, fi) => (
-                                        <button
-                                            style={{ minWidth: "auto" }}
-                                            key={fi}
-                                            className={`fbc-pill ${sel.flavorIdx === fi ? 'active' : ''}`}
-                                            onClick={() => setFlavor(fi)}
-                                            title={pf.Flavor?.name || `Flavor ${fi + 1}`}
-                                        >
-                                            {(pf.Flavor?.name || `F${fi + 1}`).slice(0, 15)}
-                                        </button>
+                            <div className="fbc-flavor-meta-wrap">
+                                <div className="fbc-flavor-row">
+                                    <span className="fbc-label">Flavor</span>
+                                    <div className="fbc-pills">
+                                        {flavors.map((pf, fi) => (
+                                            <button
+                                                style={{ minWidth: "auto" }}
+                                                key={fi}
+                                                className={`fbc-pill ${sel.flavorIdx === fi ? 'active' : ''}`}
+                                                onClick={() => setFlavor(fi)}
+                                                title={pf.Flavor?.name || `Flavor ${fi + 1}`}
+                                            >
+                                                {(pf.Flavor?.name || `F${fi + 1}`).slice(0, 15)}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="fbc-meta-side">
+                                    {visibleCategories.map((cat, idx) => (
+                                        <span key={`prod-cat-${idx}`} className="fbc-meta-pill fbc-meta-category">{cat}</span>
                                     ))}
+                                    {formLabel && (
+                                        <span className="fbc-meta-pill fbc-meta-form">{formLabel}</span>
+                                    )}
                                 </div>
                             </div>
                         )}
+
+                        {/* Repositioned Gold Rating Section - Below Categories & Form */}
+                        <div className="flex justify-end mb-4">
+                            <div className="fbc-review-pill flex items-center gap-3">
+                                <div className="fbc-stars-gold">
+                                    {[...Array(5)].map((_, i) => (
+                                        <span key={i} className={`text-[13px] ${i < Math.floor(product.rating || 0) ? '' : 'opacity-50'}`}>
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+                                <div className="flex items-center gap-1.5 border-l border-amber-200/50 pl-3">
+                                    <span style={{ color: "#b45309", fontSize: "14px", fontWeight: "900" }}>{product.rating || '0.0'}</span>
+                                    <span className="text-[9px] font-black text-amber-600/70 tracking-tighter uppercase">
+                                        ({product.reviews?.length || 0} Reviews)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Size Toggles */}
                         {flavors.length > 0 && (
@@ -340,6 +419,94 @@ const PremiumProductCard = ({ product }) => {
                             )}
                         </div>
                         <span className="frequent-card-stock">In Stock</span>
+                    </div>
+
+                    {/* Elite Trust Metrics: FAQs & Reviews Side-by-Side */}
+                    {(product.faqs?.length > 0 || product.reviews?.length > 0) && (
+                        <div className="mt-6 pt-4 border-t border-slate-100 flex gap-3">
+                            {/* Reviews Snapshot */}
+                            <div className="fbc-trust-snapshot fbc-trust-reviews">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <span style={{ fontSize: "14px" }}>✨</span>
+                                    <span style={{ fontSize: "9px", fontWeight: "900", color: "#451a03", textTransform: "uppercase", letterSpacing: "0.1em" }}>Verified Story</span>
+                                </div>
+                                <p style={{ fontSize: "9px", fontWeight: "800", color: "#d97706", display: "flex", alignItems: "center", gap: "4px" }}>
+                                    {product.reviews?.length || 0} Customer Experiences
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Interactive Feedback & FAQ Section */}
+                    <div className="mt-6">
+                        {/* Verified Feedback Tab */}
+                        <div className="fbc-reviews-section">
+                            <div className="space-y-3 max-h-[160px] overflow-y-auto pr-1 no-scrollbar">
+                                {product.reviews && product.reviews.length > 0 ? (
+                                    product.reviews.map((rev, ri) => (
+                                        <div key={ri} className="fbc-review-item">
+                                            <div className="flex justify-between items-center mb-1.5">
+                                                <span className="fbc-review-name">{rev.name || 'Verified Buyer'}</span>
+                                                <div className="fbc-stars-gold scale-75">
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <span key={i} className={`${i < (rev.rating || 0) ? '' : 'opacity-20 text-slate-300'}`}>
+                                                            ★
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <p className="fbc-review-comment">
+                                                "{rev.comment || 'Safe and effective - highly recommended.'}"
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-8 border-2 border-dashed border-slate-50 rounded-2xl">
+                                        <span className="text-xl block mb-2 opacity-30">✨</span>
+                                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-loose">
+                                            No reviews yet.<br />Be the first to share!
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div className="mt-6 pt-4 border-t border-slate-100 flex gap-3">
+                            {/* FAQs Snapshot */}
+                            <div className="fbc-trust-snapshot fbc-trust-faq">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <span style={{ fontSize: "14px" }}>❓</span>
+                                    <span style={{ fontSize: "9px", fontWeight: "900", color: "#0c4a6e", textTransform: "uppercase", letterSpacing: "0.1em" }}>Expert FAQs</span>
+                                </div>
+                                <p style={{ fontSize: "9px", fontWeight: "800", color: "#0ea5e9", display: "flex", alignItems: "center", gap: "4px" }}>
+                                    {product.faqs?.length || 0} Professional Answers
+                                </p>
+                            </div>
+                        </div>
+                        {/* Product FAQs Tab */}
+                        <div className="fbc-faq-section">
+                            <div className="space-y-3 max-h-[160px] overflow-y-auto pr-1 no-scrollbar">
+                                {product.faqs && product.faqs.length > 0 ? (
+                                    product.faqs.map((faq, fi) => (
+                                        <div key={fi} className="fbc-faq-item">
+                                            <div className="fbc-faq-question">
+                                                <span className="text-[11px] text-sky-500">Q.</span>
+                                                {faq.question || 'How do I use this product?'}
+                                            </div>
+                                            <p className="fbc-faq-answer">
+                                                {faq.answer || 'Follow the recommended guidelines for optimal results.'}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-8 border-2 border-dashed border-slate-50 rounded-2xl">
+                                        <span className="text-xl block mb-2 opacity-30">❓</span>
+                                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-loose">
+                                            Got questions?<br />Consult our experts!
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

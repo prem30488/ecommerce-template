@@ -681,7 +681,20 @@ app.get('/api/product/getProducts', async (req, res) => {
                     include: [{ model: db.Flavor }],
                     required: false
                 },
-                { model: db.Category, required: false }
+                { model: db.Category, required: false },
+                { model: db.Form, as: 'Form', required: false },
+                { 
+                    model: db.FAQ, 
+                    as: 'faqs', 
+                    where: { isActive: true }, 
+                    required: false 
+                },
+                { 
+                    model: db.Review, 
+                    as: 'reviews', 
+                    where: { status: 'approved', isDeleted: false }, 
+                    required: false 
+                }
             ]
         });
         res.json(getPaginatedResponse(rows, count, page, size));
@@ -858,7 +871,21 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
                     model: db.ProductFlavor, as: 'productFlavors',
                     include: [{ model: db.Flavor }]
                 },
-                { model: db.Offer, as: 'offers' }
+                { model: db.Offer, as: 'offers' },
+                { model: db.Category, required: false },
+                { model: db.Form, as: 'Form', required: false },
+                { 
+                    model: db.FAQ, 
+                    as: 'faqs', 
+                    where: { isActive: true }, 
+                    required: false 
+                },
+                { 
+                    model: db.Review, 
+                    as: 'reviews', 
+                    where: { status: 'approved', isDeleted: false }, 
+                    required: false 
+                }
             ]
         });
         if (product) res.json(product);
@@ -1868,7 +1895,7 @@ app.post('/api/wishlist/email-on-close', optionalAuth, async (req, res) => {
                 user.email,
                 user.username,
                 items,
-                process.env.APP_URL || 'http://localhost:3000'
+                process.env.APP_URL || '${API_BASE_URL}'
             );
         } catch (emailError) {
             console.error('Email sending failed, but continuing:', emailError);

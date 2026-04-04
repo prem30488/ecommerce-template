@@ -410,6 +410,34 @@
   flex: 1;
 }
 
+.bsc-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+  font-size: 0.64rem;
+  color: #4b5563;
+  letter-spacing: 0.02em;
+}
+
+.bsc-card-meta-item {
+  background: #e2e8f0;
+  color: #0f172a;
+  border-radius: 999px;
+  padding: 0.14rem 0.46rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.bsc-card-meta-category {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.bsc-card-meta-form {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
 .bsc-card-title {
   font-size: 0.8rem;
   font-weight: 700;

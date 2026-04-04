@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { API_BASE_URL } from '../../constants/index.jsx';
 import { WishlistContext } from '../../context/wishlist-context';
 import { ShopContext } from '../../context/shop-context';
 import { FaTrash, FaShoppingCart, FaShareAlt } from 'react-icons/fa';
@@ -50,7 +51,7 @@ const WishlistItem = ({ item }) => {
           return firstImage;
         }
         // Otherwise use the backend endpoint
-        return `http://localhost:3000/api/product/image/${item.id}/${firstImage}`;
+        return `${API_BASE_URL}/api/product/image/${item.id}/${firstImage}`;
       }
     }
 

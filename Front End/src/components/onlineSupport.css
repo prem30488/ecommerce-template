@@ -1,0 +1,123 @@
+.support-section {
+    padding: 80px 0;
+    background-color: #fff;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+}
+
+.support-header {
+    margin-bottom: 50px;
+}
+
+.support-eyebrow {
+    color: #0d9488;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.support-title {
+    font-size: 42px;
+    font-weight: 800;
+    color: #111;
+    margin: 0;
+}
+
+.support-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.support-card-link {
+    text-decoration: none !important;
+    display: block;
+    color: inherit;
+}
+
+.support-card {
+    background: #fff;
+    border: 1px solid #f1f1f1;
+    border-radius: 40px;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 320px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.support-card-link:hover .support-card {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.support-icon-wrap {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.support-icon {
+    font-size: 24px;
+    color: #111;
+}
+
+.support-content {
+    text-align: left;
+}
+
+.support-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 2px 0;
+}
+
+.support-card-text {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.support-footer {
+    margin-top: 50px;
+    padding: 0 20px;
+}
+
+.support-footer-text {
+    font-size: 13px;
+    color: #444;
+    line-height: 1.6;
+}
+
+.support-footer-text a {
+    color: #0d9488;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .support-title {
+        font-size: 32px;
+    }
+    
+    .support-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .support-card {
+        width: 100%;
+        max-width: 400px;
+    }
+}

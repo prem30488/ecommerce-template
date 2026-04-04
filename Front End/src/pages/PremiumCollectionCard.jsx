@@ -43,6 +43,13 @@ const PremiumCollectionCard = ({ product }) => {
         return product.Category?.title || product.category || '';
     };
 
+    const getDisplayForm = () => {
+        if (product.Form?.title) return product.Form.title;
+        if (product.form) return typeof product.form === 'string' ? product.form : `Form #${product.form}`;
+        if (product.formId) return `Form #${product.formId}`;
+        return '';
+    };
+
     // Handle pricing logic: check flavors if main price is 0 or null
     let basePrice = product.price ? parseFloat(product.price) : 0;
 
@@ -151,6 +158,9 @@ const PremiumCollectionCard = ({ product }) => {
                     <span className="card-brand">{product.brand || 'Elite Healthcare'}</span>
                     {getDisplayCategories() && (
                         <span className="card-category">  • {getDisplayCategories()}</span>
+                    )}
+                    {getDisplayForm() && (
+                        <span className="card-form">  • {getDisplayForm()}</span>
                     )}
                 </div>
                 <h3 className="card-title">{product.title}</h3>
