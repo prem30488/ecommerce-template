@@ -2210,27 +2210,49 @@ app.use('/api/sale', saleRoutes);
 const startServer = async () => {
     try {
         // Initialize Redis (graceful - app works without it)
-        const redisClient = await initRedis();
-        if (redisClient) {
-            console.log('✅ Redis initialized successfully');
-        } else {
-            console.log('⚠️  Starting without Redis - some features like caching will be unavailable');
+        try {
+            const redisClient = await initRedis();
+            if (redisClient) {
+                console.log('✅ Redis initialized successfully');
+            }
+        } catch (redisError) {
+            console.log('⚠️  Redis connection failed - continuing without it');
         }
 
+        // Database Initialization
         await ensureDatabaseExists();
-        await db.sequelize.query('DROP TABLE IF EXISTS "Reviews" CASCADE;');
-        //await db.sequelize.query('DROP TABLE IF EXISTS "Flavors" CASCADE;');
-        await db.sequelize.sync({ alter: true });
-        console.log('Database synced successfully (alter applied)');
-        await seedData();
 
-        app.listen(PORT, () => {
-            console.log('Server is running on port ' + PORT);
-        });
+        // ONLY sync/seed if NOT in production or if explicitly asked
+        const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+        
+        if (!isProduction) {
+            console.log('Initializing database in development mode...');
+            await db.sequelize.query('DROP TABLE IF EXISTS "Reviews" CASCADE;');
+            await db.sequelize.sync({ alter: true });
+            console.log('Database synced successfully');
+            await seedData();
+        } else {
+            // In production, just sync without dropping (safe alter)
+            await db.sequelize.sync({ alter: true });
+            console.log('Database synced (production/alter only)');
+        }
+
+        // Start listening
+        if (process.env.VERCEL !== '1') {
+            app.listen(PORT, () => {
+                console.log('Server is running on port ' + PORT);
+            });
+        }
     } catch (err) {
         console.error('Failed to start server:', err);
-        process.exit(1);
+        // On Vercel, we don't want to exit(1) as it kills the instance
+        if (process.env.VERCEL !== '1') {
+            process.exit(1);
+        }
     }
 };
 
 startServer();
+
+// Export for Vercel
+module.exports = app;
