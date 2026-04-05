@@ -2,13 +2,15 @@
   "development": {
     "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
+    "define": {
+      "timestamps": true
+    },
     "pool": {
       "max": 20,
       "min": 1,
-      "acquire": 60000,
-      "idle": 60000
+      "acquire": 120000,
+      "idle": 10000
     },
-    "logging": true,
     "dialectOptions": {
       "connectTimeout": 60000,
       "statement_timeout": 60000,
@@ -22,13 +24,15 @@
   "production": {
     "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
+    "define": {
+      "timestamps": true
+    },
     "pool": {
       "max": 20,
       "min": 1,
-      "acquire": 60000,
-      "idle": 60000
+      "acquire": 120000,
+      "idle": 10000
     },
-    "logging": true,
     "dialectOptions": {
       "ssl": {
         "require": false,
