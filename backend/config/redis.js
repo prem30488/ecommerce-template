@@ -6,7 +6,7 @@ const initRedis = async () => {
     try {
         // Get Redis URL from environment or use default
         const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-        console.log('Redis URL:', redisUrl);
+
         client = redis.createClient({
             url: redisUrl,
             socket: {
