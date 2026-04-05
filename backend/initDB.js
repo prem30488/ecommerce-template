@@ -128,7 +128,7 @@ async function seedData() {
         ];
 
 
-
+        const createdForms = [];
         // Form seeding
         const defaultForms = [
             { id: 2, title: "Injection", description: "Injection", deleteFlag: false },
@@ -141,8 +141,9 @@ async function seedData() {
         ];
         for (const form of defaultForms) {
             await db.Form.create(form);
+            createdForms.push(form);
         }
-        console.log(`Seeded ${defaultForms.length} forms.`);
+        console.log(`Seeded ${createdForms.length} forms.`);
 
         // 3. Seed Categories
         const categoriesPath = path.join(__dirname, '..', 'Front End', 'public', 'categories.json');
@@ -160,6 +161,7 @@ async function seedData() {
 
         for (const product of productsData) {
             const randomCat = createdCategories[Math.floor(Math.random() * createdCategories.length)];
+            const randomForm = createdForms[Math.floor(Math.random() * createdForms.length)];
             const randomFlavor = createdFlavors[Math.floor(Math.random() * createdFlavors.length)];
             const selectedImages = [...imagePool].sort(() => 0.5 - Math.random()).slice(0, 3);
 
@@ -177,7 +179,11 @@ async function seedData() {
                 featured: product.featured,
                 audience: product.audience,
                 stock: product.stock,
-                active: true
+                active: true,
+                comingSoon: product.id % 3 == 0,
+                catIds: randomCat.id + ',' + (randomCat.id + 1) + ',' + (randomCat.id - 2),
+                formId: randomForm.id,
+
             });
 
             const productImagesDir = path.join(publicImagesPath, String(createdProduct.id));

@@ -7,6 +7,12 @@
     {
       "source": "/images/(.*)",
       "destination": "https://ecommerce-template-api-mu.vercel.app/images/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://ecommerce-template-api-mu.vercel.app/index.html"
     }
-  ]
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
