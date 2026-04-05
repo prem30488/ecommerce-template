@@ -8,7 +8,8 @@ const sequelize = new Sequelize(dbUrl, {
     logging: console.log,
     dialect: 'postgres',
     dialectOptions: {
-        connectTimeout: 10000
+        connectTimeout: 120000,
+        ssl: false
     }
 });
 

@@ -30,6 +30,10 @@ if (config.use_env_variable && process.env[config.use_env_variable]) {
         dialect: config.dialect || 'postgres',
         logging: false,
         ...config
+      },
+      {
+        connectTimeout: 120000,
+        ssl: false
       }
     );
   } catch (error) {

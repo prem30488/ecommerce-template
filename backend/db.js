@@ -17,6 +17,10 @@ if (dbUrl) {
                 port: parsedUrl.port,
                 dialect: 'postgres',
                 logging: false,
+            },
+            {
+                connectTimeout: 120000,
+                ssl: false
             }
         );
     } catch (e) {
