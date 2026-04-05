@@ -50,9 +50,9 @@ export const CartItem = (props) => {
         <div className="h-full w-full flex overflow-x-auto custom-scrollbar snap-x snap-mandatory scroll-smooth">
           {imageURLs ? imageURLs.split(',').map((url, i) => (
             <div key={i} className="w-full h-full flex-shrink-0 snap-center">
-              {url.trim().startsWith('http') ? url.trim() : (url.trim().startsWith('/') ? url.trim() : `/${url.trim()}`)}
+              {url.trim().startsWith('http') ? url.trim().replace('https://ecommerce-template-api-mu.vercel.app', 'https://ecommerce-template-xi-tan.vercel.app') : (url.trim().startsWith('/') ? url.trim() : `/${url.trim()}`)}
               <img
-                src={url.trim().startsWith('http') ? url.trim() : (url.trim().startsWith('/') ? url.trim() : `/${url.trim()}`)}
+                src={url.trim().startsWith('http') ? url.trim().replace('https://ecommerce-template-api-mu.vercel.app', 'https://ecommerce-template-xi-tan.vercel.app') : (url.trim().startsWith('/') ? url.trim() : `/${url.trim()}`)}
                 className="w-full h-full object-cover"
                 alt={`${url} ${i}`}
               />

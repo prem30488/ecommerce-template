@@ -295,7 +295,7 @@ export const PremiumProductDetails = () => {
   };
 
   const resolveImg = (src) =>
-    src ? (src.startsWith("http") ? src : `${API_BASE_URL}${src}`) : "";
+    src ? (src.startsWith("http") ? src.replace('https://ecommerce-template-api-mu.vercel.app', 'https://ecommerce-template-xi-tan.vercel.app') : `https://ecommerce-template-xi-tan.vercel.app${src}`) : "";
 
   // ── Size options ──────────────────────────────────────────────
   const sizes = product && activeFlavorData ? [
