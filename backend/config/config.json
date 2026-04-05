@@ -34,10 +34,7 @@
       "idle": 10000
     },
     "dialectOptions": {
-      "ssl": {
-        "require": false,
-        "rejectUnauthorized": false
-      },
+      "ssl": false,
       "connectTimeout": 60000,
       "statement_timeout": 60000,
       "query_timeout": 60000
