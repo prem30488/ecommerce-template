@@ -1710,18 +1710,18 @@ const startServer = async () => {
             console.log('⚠️  Redis connection failed - continuing without it');
         }
 
-        // Database Initialization
-        await ensureDatabaseExists();
-
-        // ONLY sync/seed if NOT in production or if explicitly asked
+        // Check environment
         const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
 
+        // Database Initialization
+        if (!isProduction) {
+            await ensureDatabaseExists();
+        }
+
+        // ONLY sync/seed if NOT in production or if explicitly asked
         if (!isProduction) {
             console.log('Initializing database in development mode...');
-            //await db.sequelize.query('DROP TABLE IF EXISTS "Reviews" CASCADE;');
             await db.sequelize.sync();
-            //console.log('Database synced successfully');
-            //await seedData();
         } else {
             // In production, just sync without dropping (safe alter)
             await db.sequelize.sync({ alter: true });

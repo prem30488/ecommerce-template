@@ -13,7 +13,11 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable && process.env[config.use_env_variable]) {
-  const dbUrl = process.env[config.use_env_variable];
+  let dbUrl = process.env[config.use_env_variable];
+  // Normalize protocol for Sequelize
+  if (dbUrl.startsWith('postgresql://')) {
+    dbUrl = dbUrl.replace('postgresql://', 'postgres://');
+  }
   try {
     const parsedUrl = new URL(dbUrl);
     sequelize = new Sequelize(
