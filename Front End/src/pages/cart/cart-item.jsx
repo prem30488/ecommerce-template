@@ -50,10 +50,11 @@ export const CartItem = (props) => {
         <div className="h-full w-full flex overflow-x-auto custom-scrollbar snap-x snap-mandatory scroll-smooth">
           {imageURLs ? imageURLs.split(',').map((url, i) => (
             <div key={i} className="w-full h-full flex-shrink-0 snap-center">
+              {console.log(url)}
               <img
                 src={url.trim().includes('/images/') ? '/images/' + url.trim().split('/images/')[1] : url.trim()}
                 className="w-full h-full object-cover"
-                alt={`${title} ${i}`}
+                alt={`${url} ${i}`}
               />
             </div>
           )) : (
