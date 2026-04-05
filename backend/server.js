@@ -180,6 +180,7 @@ app.get('/api/product/getProducts', async (req, res) => {
             offset: page * size,
             limit: size,
             order: [['id', 'DESC']],
+            distinct: true,
             include: [
                 { model: db.Offer, as: 'offers', required: false },
                 {
@@ -1718,7 +1719,7 @@ const startServer = async () => {
         if (!isProduction) {
             console.log('Initializing database in development mode...');
             //await db.sequelize.query('DROP TABLE IF EXISTS "Reviews" CASCADE;');
-            await db.sequelize.sync({ alter: true });
+            await db.sequelize.sync();
             //console.log('Database synced successfully');
             //await seedData();
         } else {
