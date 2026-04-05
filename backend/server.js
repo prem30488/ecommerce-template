@@ -166,7 +166,8 @@ app.get('/api/product/weeklyBestSeller', async (req, res) => {
 app.get('/api/product/getProducts', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0;
-        const size = parseInt(req.query.size) || 10;
+        let size = parseInt(req.query.size) || 10;
+        if (size > 200) size = 200; // Cap to prevent connection overload
         const { categoryId } = req.query;
 
         const where = {};
@@ -1717,7 +1718,7 @@ const startServer = async () => {
         if (!isProduction) {
             console.log('Initializing database in development mode...');
             //await db.sequelize.query('DROP TABLE IF EXISTS "Reviews" CASCADE;');
-            await db.sequelize.sync({ force: true });
+            await db.sequelize.sync({ alter: true });
             //console.log('Database synced successfully');
             //await seedData();
         } else {
