@@ -51,15 +51,44 @@ export const NavbarMain = () => {
 
   const getComingSoonCategories = (p) => {
     const titles = new Set();
-    if (p.Category?.title) titles.add(p.Category.title);
-    if (p.category && typeof p.category === 'string') titles.add(p.category);
     
-    if (p.catIds && categories?.length > 0) {
+    // Helper to resolve a potential ID string/number to a category title
+    const resolveToTitle = (val) => {
+      if (!val) return null;
+      const cat = categories?.find(c => String(c.id) === String(val));
+      return cat?.title || null;
+    };
+
+    // 1. Check p.Category object
+    if (p.Category?.title) titles.add(p.Category.title);
+
+    // 2. Check p.category property (could be a title or an ID)
+    if (p.category) {
+      const resolved = resolveToTitle(p.category);
+      if (resolved) {
+        titles.add(resolved);
+      } else if (isNaN(p.category)) {
+        // Only add if it's a non-numeric string (presumably a title)
+        titles.add(String(p.category));
+      }
+    }
+    
+    // 3. Process catIds list
+    if (p.catIds) {
       const ids = String(p.catIds).split(',').map(id => id.trim()).filter(Boolean);
+      let foundAny = false;
       ids.forEach(id => {
-        const cat = categories.find(c => String(c.id) === String(id));
-        if (cat?.title) titles.add(cat.title);
+        const resolved = resolveToTitle(id);
+        if (resolved) {
+          titles.add(resolved);
+          foundAny = true;
+        }
       });
+
+      // Fallback: If we have IDs but nothing resolved and nothing in title yet, show raw IDs
+      if (!foundAny && titles.size === 0) {
+        return ids.join(', ');
+      }
     }
     
     return Array.from(titles).join(', ') || '';
