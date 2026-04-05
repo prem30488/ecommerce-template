@@ -294,8 +294,19 @@ export const PremiumProductDetails = () => {
     }
   };
 
-  const resolveImg = (src) =>
-    src ? (src.startsWith("http") ? src.replace('https://ecommerce-template-api-mu.vercel.app', 'https://ecommerce-template-xi-tan.vercel.app') : `https://ecommerce-template-xi-tan.vercel.app${src}`) : "";
+  const resolveImg = (src) => {
+    if (!src) return "";
+    let cleanSrc = src.trim();
+    // If it's a full backend URL, convert it to a root-relative path to use the Vercel proxy
+    if (cleanSrc.startsWith('https://ecommerce-template-api-mu.vercel.app')) {
+      cleanSrc = cleanSrc.replace('https://ecommerce-template-api-mu.vercel.app', '');
+    }
+    // If it doesn't start with http, ensure it has a leading slash
+    if (!cleanSrc.startsWith('http')) {
+      return cleanSrc.startsWith('/') ? cleanSrc : `/${cleanSrc}`;
+    }
+    return cleanSrc;
+  };
 
   // ── Size options ──────────────────────────────────────────────
   const sizes = product && activeFlavorData ? [

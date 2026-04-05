@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-const res = await fetch(`${API_BASE_URL}/api/flavor/getFlavors?size=1000`);
-import { FRONTEND_BASE_URL, } from '../../constants/index.jsx';
+import { FRONTEND_BASE_URL, API_BASE_URL } from '../../constants/index.jsx';
 import { ShopContext } from "../../context/shop-context";
 
 export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: propFlavorId = null }) => {
@@ -39,12 +38,12 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
     const fetchFolderImages = async () => {
       try {
         const targetFlavorId = flavorId || '1';
-        const res = await fetch(`${FRONTEND_BASE_URL}/images/${id}/${targetFlavorId}`);
+        const res = await fetch(`/images/${id}/${targetFlavorId}`);
         const json = await res.json();
         if (Array.isArray(json) && json.length > 0) {
           setFolderImages(json);
         } else {
-          const fallbackRes = await fetch(`${FRONTEND_BASE_URL}/images/${id}/1`);
+          const fallbackRes = await fetch(`/images/${id}/1`);
           const fallbackJson = await fallbackRes.json();
           setFolderImages(fallbackJson || []);
         }
@@ -114,17 +113,22 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
       <div className="pc-image-container">
         <div className="pc-carousel custom-scrollbar" onScroll={handleScroll}>
           {displayImages.length > 0 ? (
-            displayImages.map((src, i) => (
-              <div key={i} className="pc-carousel-item">
-                <img
-                  src={src.startsWith('http') ? src : `${FRONTEND_BASE_URL}${src}`}
-                  alt={`${title} ${i}`}
-                />
-              </div>
-            ))
+            displayImages.map((src, i) => {
+              const finalSrc = src.trim().startsWith('http') 
+                ? src.trim() 
+                : (src.trim().startsWith('/') ? src.trim() : `/images/${src.trim()}`);
+              return (
+                <div key={i} className="pc-carousel-item">
+                  <img
+                    src={finalSrc}
+                    alt={`${title} ${i}`}
+                  />
+                </div>
+              );
+            })
           ) : (
             <div className="pc-carousel-item">
-              <img src={`${FRONTEND_BASE_URL}/images/${id}/1/1.png`} alt={title} />
+              <img src={`/images/${id}/1/1.png`} alt={title} />
             </div>
           )}
         </div>
