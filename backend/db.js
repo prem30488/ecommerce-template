@@ -23,12 +23,6 @@ if (dbUrl) {
         console.error('Error parsing DATABASE_URL in db.js, using connection string directly.');
         sequelize = new Sequelize(dbUrl, { dialect: 'postgres', logging: false });
     }
-} else {
-    sequelize = new Sequelize('ecommerce_db', 'postgres', 'password', {
-        host: 'localhost',
-        port: 5432,
-        dialect: 'postgres',
-    });
 }
 
 module.exports = sequelize;

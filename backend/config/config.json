@@ -5,13 +5,13 @@
     "pool": {
       "max": 20,
       "min": 1,
-      "acquire": 200000,
-      "idle": 200000
+      "acquire": 60000,
+      "idle": 60000
     },
     "dialectOptions": {
-      "connectTimeout": 200000,
-      "statement_timeout": 200000,
-      "query_timeout": 200000
+      "connectTimeout": 60000,
+      "statement_timeout": 60000,
+      "query_timeout": 60000
     }
   },
   "test": {
@@ -24,17 +24,17 @@
     "pool": {
       "max": 20,
       "min": 1,
-      "acquire": 200000,
-      "idle": 200000
+      "acquire": 60000,
+      "idle": 60000
     },
     "dialectOptions": {
       "ssl": {
-        "require": true,
+        "require": false,
         "rejectUnauthorized": false
       },
-      "connectTimeout": 200000,
-      "statement_timeout": 200000,
-      "query_timeout": 200000
+      "connectTimeout": 60000,
+      "statement_timeout": 60000,
+      "query_timeout": 60000
     }
   }
 }
