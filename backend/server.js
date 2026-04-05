@@ -15,10 +15,25 @@ const saleRoutes = require('./routes/saleRoutes');
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-// Serve static files from the frontend's public folder
-app.use(express.static(path.join(__dirname, '..', 'Front End', 'public')));
-// Serve MDB5 static files specifically if needed
-app.use('/MDB5-STANDARD-UI-KIT-Free-9.3.0', express.static(path.join(__dirname, '..', 'Front End', 'public', 'MDB5-STANDARD-UI-KIT-Free-9.3.0')));
+// Static Assets Configuration
+const frontendPublicPath = path.join(__dirname, '..', 'Front End', 'public');
+const backendPublicPath = path.join(__dirname, 'public');
+
+// Priority serving for backend's own assets (like uploads)
+app.use(express.static(backendPublicPath));
+
+// Fallback serving for Frontend static files
+if (fs.existsSync(frontendPublicPath)) {
+    app.use(express.static(frontendPublicPath));
+    app.use('/MDB5-STANDARD-UI-KIT-Free-9.3.0', express.static(path.join(frontendPublicPath, 'MDB5-STANDARD-UI-KIT-Free-9.3.0')));
+}
+
+// Special route for /images to ensure global accessibility with CORS
+app.use('/images', (req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    next();
+}, express.static(path.join(backendPublicPath, 'images')), express.static(path.join(frontendPublicPath, 'images')));
 
 // Authentication middleware
 const authenticateToken = (req, res, next) => {
@@ -133,7 +148,7 @@ async function seedData() {
         // Drop and recreate Category table, then seed with random type
         await db.Category.drop({ force: true });
         await db.Category.sync({ force: true });
-        const categoriesPath = path.join(__dirname, '..', 'Front End', 'public', 'categories.json');
+        const categoriesPath = path.join(__dirname, 'data', 'categories.json');
         if (fs.existsSync(categoriesPath)) {
             const categoriesContent = fs.readFileSync(categoriesPath, 'utf8');
             const categories = JSON.parse(categoriesContent);
@@ -165,7 +180,7 @@ async function seedData() {
         }
 
         // Seed products
-        const productsPath = path.join(__dirname, '..', 'Front End', 'public', 'products.json');
+        const productsPath = path.join(__dirname, 'data', 'products.json');
         if (fs.existsSync(productsPath)) {
             const productsContent = fs.readFileSync(productsPath, 'utf8');
             const products = JSON.parse(productsContent);

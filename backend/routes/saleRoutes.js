@@ -24,7 +24,7 @@ const saleStorage = multer.diskStorage({
         if (!saleId) {
             return cb(new Error('Missing saleId parameter'), null);
         }
-        const uploadPath = path.join(__dirname, '..', '..', 'Front End', 'public', 'images', 'sales', String(saleId));
+        const uploadPath = path.join(__dirname, '..', 'public', 'images', 'sales', String(saleId));
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
@@ -58,7 +58,7 @@ router.post('/upload', verifyToken, isAdmin, uploadSaleBanner.single('file'), as
 router.get('/images/:saleId', verifyToken, isAdmin, async (req, res) => {
     try {
         const { saleId } = req.params;
-        const dirPath = path.join(__dirname, '..', '..', 'Front End', 'public', 'images', 'sales', String(saleId));
+        const dirPath = path.join(__dirname, '..', 'public', 'images', 'sales', String(saleId));
         if (!fs.existsSync(dirPath)) {
             return res.status(200).json({ success: true, data: [] });
         }

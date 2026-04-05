@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://ecommerce-template-api-mu.vercel.app/api/$1"
+    },
+    {
+      "source": "/images/(.*)",
+      "destination": "https://ecommerce-template-api-mu.vercel.app/images/$1"
+    }
+  ]
+}
