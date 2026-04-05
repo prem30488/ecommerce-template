@@ -7,24 +7,10 @@ import CouponCode from "../checkout/CouponCode";
 import { API_BASE_URL } from "../../constants";
 
 export const Cart = ({ onClose }) => {
-  const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, getTotalCartCount } = useContext(ShopContext);
+  const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, getTotalCartCount, products } = useContext(ShopContext);
   const totalAmount = getTotalCartAmount();
-  const [products, setProducts] = useState([]);
   const freeShippingThreshold = 2000;
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-        if (!res.ok) throw new Error("Oops! An error has occured");
-        const json = await res.json();
-        setProducts(json.content);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getData();
-  }, []);
 
   const hasItems = getTotalCartCount() > 0;
   const progressToFreeShipping = Math.min((totalAmount / freeShippingThreshold) * 100, 100);

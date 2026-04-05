@@ -3,30 +3,20 @@ import PremiumProductCard from "../components/PremiumProductCard";
 import { Link } from "react-router-dom";
 import "./product.css";
 import { API_BASE_URL } from "../constants";
+import { ShopContext } from '../context/shop-context';
+import { useContext } from 'react';
 import OnlineSupport from "../components/OnlineSupport";
 
 const Product = () => {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { products } = useContext(ShopContext);
+  const [isLoading, setIsLoading] = useState(true);
   const [err, setErr] = useState(null);
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-        if (!res.ok) throw new Error("Oops! An error has occurred while fetching products");
-        const json = await res.json();
-        const productList = json.content || json || [];
-        setProducts(productList);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        setErr(err.message);
-      }
-    };
-    getData();
-  }, []);
+    if (products && products.length > 0) {
+      setIsLoading(false);
+    }
+  }, [products]);
 
   const menProducts = useMemo(() => {
     return products.filter(prod =>

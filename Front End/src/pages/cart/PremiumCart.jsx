@@ -6,27 +6,13 @@ import "./premium-cart.css";
 import { API_BASE_URL } from "../../constants";
 
 export const PremiumCart = ({ onClose }) => {
-  const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, addTotalAfterDiscount, resetCart } = useContext(ShopContext);
+  const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, addTotalAfterDiscount, resetCart, products } = useContext(ShopContext);
   const totalAmount = getTotalCartAmount();
-  const [products, setProducts] = useState([]);
   const [coupon, setCoupon] = useState("");
   const [discountPercent, setDiscountPercent] = useState(0);
   const freeShippingThreshold = 2000;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000`);
-        if (!res.ok) throw new Error("Fetch failed");
-        const json = await res.json();
-        setProducts(json.content || []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getData();
-  }, []);
 
   // 7. Coupon code support (LOVERBOY50 should give 5% discount)
   const applyCoupon = () => {

@@ -6,11 +6,11 @@
     },
     {
       "source": "/images/(.*)",
-      "destination": "https://ecommerce-template-api-mu.vercel.app/images/$1"
+      "destination": "https://ecommerce-template-xi-tan.vercel.app/images/$1"
     },
     {
       "source": "/(.*)",
-      "destination": "https://ecommerce-template-api-mu.vercel.app/index.html"
+      "destination": "https://ecommerce-template-xi-tan.vercel.app/index.html"
     }
   ],
   "cleanUrls": true,

@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 const TaxInvoice = ({ status }) => {
 	const { orderId } = useParams();
 	const para = useRef(null);
-	const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, getTotalAfterDiscount, resetCart, getCustomerData, flavorCart } = useContext(ShopContext);
+	const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, getTotalAfterDiscount, resetCart, getCustomerData, flavorCart, products } = useContext(ShopContext);
 	const totalAmount = getTotalCartAmount();
 	const formData = getCustomerData();
 	const totalAfterDiscount = getTotalAfterDiscount();
@@ -25,29 +25,8 @@ const TaxInvoice = ({ status }) => {
 		if (size === "L") return activeFlavorData.priceLarge;
 		return 0;
 	};
-	// const [items, setItems] = useState([
-	//  // { id: 1, description: 'Item 1', quantity: 2, price: 10 },
-	//  // { id: 2, description: 'Item 2', quantity: 1, price: 15 },
-	//   // Add more items as needed
-	// ]);
-	const [products, setProducts] = useState([]);
 	const { cleanCustomerData } = useContext(ShopContext);
-	useEffect(() => {
-		const getData = async () => {
-			try {
 
-				const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-				if (!res.ok) throw new Error("Oops! An error has occured");
-				const json = await res.json();
-
-				setProducts(json.content);
-
-			} catch (err) {
-
-			}
-		};
-		getData();
-	}, []);
 
 	function generatePDF() {
 

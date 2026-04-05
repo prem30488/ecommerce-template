@@ -10,8 +10,7 @@ const ProductDetails = ({ compare }) => {
   const { id: paramId } = useParams();
   const { state: locationProduct } = useLocation();
   const [product, setProduct] = useState(locationProduct || null);
-  const { addToCart, cartItems } = useContext(ShopContext);
-  const [products, setProducts] = useState([]);
+  const { addToCart, cartItems, products } = useContext(ShopContext);
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(null);
   const [filterProducts, setFilterProducts] = useState([]);
@@ -32,20 +31,7 @@ const ProductDetails = ({ compare }) => {
       }
     };
 
-    const getAllProducts = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-        if (!res.ok) throw new Error("Oops! An error has occured");
-        const json = await res.json();
-        setProducts(json.content || json);
-        setFilterProducts(json.content || json);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
     getProductData();
-    getAllProducts();
   }, [paramId]);
 
   if (isLoading || !product)

@@ -1,33 +1,18 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useContext } from "react";
 import { API_BASE_URL } from '../constants/index.jsx';
 import SingleProduct from './SingleProduct'
 import { Link } from "react-router-dom";
 import { Compare } from './Compare/index';
+import { ShopContext } from "../context/shop-context";
+
 const NewOfferedProducts = () => {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [err, setErr] = useState(null);
-
-  const [catPath, setCatPath] = useState("all categories");
-
-  const para = useRef(null);
+  const { products } = useContext(ShopContext);
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-        if (!res.ok) throw new Error("Oops! An error has occured");
-        const json = await res.json();
-        setProducts(json.content);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        setErr(err.message);
-      }
-    };
-    getData();
-  }, []);
+    if (products && products.length > 0) {
+      setIsLoading(false);
+    }
+  }, [products]);
 
   if (isLoading)
     return (

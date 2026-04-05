@@ -44,7 +44,7 @@ export const PremiumProductDetails = () => {
   const [newReview, setNewReview] = useState({ name: '', email: '', rating: 5, comment: '' });
   const [bundleSelections, setBundleSelections] = useState(null); // { allProducts, selections }
 
-  const { addToCart, addFreeToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart, categories: allCategories } = useContext(ShopContext);
+  const { addToCart, addFreeToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart, categories: allCategories, products: allProducts } = useContext(ShopContext);
 
   // ── Category & Form Resolution ──────────────────────────────────
   const categoryItems = new Set();
@@ -155,22 +155,21 @@ export const PremiumProductDetails = () => {
       .catch(() => { });
   }, [id]);
 
-  // ── Fetch frequently bought together ──────────────────────────
+  // ── Frequently bought together ──────────────────────────
   useEffect(() => {
-    if (!product) return;
-    fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=20`)
-      .then(r => r.json())
-      .then(j => {
-        const all = j.content || j;
-        let recs = findFrequentlyBoughtTogether(product, all);
-        if (recs.length < 3) {
-          const rest = all.filter(p => p.id !== product.id && !recs.find(r => r.id === p.id));
-          recs = [...recs, ...rest.sort(() => 0.5 - Math.random()).slice(0, 3 - recs.length)];
-        }
-        setFrequentProducts(recs.slice(0, 4));
-      })
-      .catch(() => { });
-  }, [product?.id]);
+    if (!product || !allProducts || allProducts.length === 0) return;
+    try {
+      const all = allProducts;
+      let recs = findFrequentlyBoughtTogether(product, all);
+      if (recs.length < 3) {
+        const rest = all.filter(p => p.id !== product.id && !recs.find(r => r.id === p.id));
+        recs = [...recs, ...rest.sort(() => 0.5 - Math.random()).slice(0, 3 - recs.length)];
+      }
+      setFrequentProducts(recs.slice(0, 4));
+    } catch (e) {
+      // ignore
+    }
+  }, [product, allProducts]);
 
   // ── Fetch Reviews ──────────────────────────────────────────────
   useEffect(() => {

@@ -3,7 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import PremiumCollectionCard from './PremiumCollectionCard';
 import './PremiumAllProducts.css';
 import { API_BASE_URL } from '../constants';
-import { getCategoriesShort } from '../util/APIUtils';
+import { ShopContext } from '../context/shop-context';
+import { useContext } from 'react';
 import OnlineSupport from '../components/OnlineSupport';
 
 const PremiumAllProducts = () => {
@@ -11,7 +12,7 @@ const PremiumAllProducts = () => {
     const urlCategory = searchParams.get('category');
     const filter = searchParams.get('filter');
 
-    const [products, setProducts] = useState([]);
+    const { products, categories: shopCategories } = useContext(ShopContext);
     const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -30,37 +31,19 @@ const PremiumAllProducts = () => {
 
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setIsLoading(true);
-                // Fetch products (using API_BASE_URL)
-                const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-                if (!res.ok) throw new Error("Failed to fetch products");
-                const json = await res.json();
-                // Check if response is paginated (json.content) or raw array
-                const productList = Array.isArray(json) ? json : (json.content || []);
-                setProducts(productList);
+        if (products && products.length > 0) {
+            setIsLoading(false);
+        }
+    }, [products]);
 
-                // Fetch categories
-                const resC = await getCategoriesShort();
-                let categoryList = ['All'];
-                if (resC) {
-                    const dbCategories = resC.content || resC || [];
-                    const titles = dbCategories.map(cat => (typeof cat === 'string' ? cat : cat.title));
-                    categoryList = ['All', ...titles];
-                }
-                setCategories(categoryList);
-
-                setIsLoading(false);
-            } catch (err) {
-                console.error(err);
-                setError(err.message);
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
+    useEffect(() => {
+        let categoryList = ['All'];
+        if (shopCategories && shopCategories.length > 0) {
+            const titles = shopCategories.map(cat => (typeof cat === 'string' ? cat : cat.title));
+            categoryList = ['All', ...titles];
+        }
+        setCategories(categoryList);
+    }, [shopCategories]);
 
     const getEffectivePrice = (product) => {
         if (product.price && product.price > 0) return product.price;

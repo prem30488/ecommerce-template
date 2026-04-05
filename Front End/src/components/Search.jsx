@@ -1,30 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { API_BASE_URL } from '../constants/index.jsx';
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import SingleProduct from "../components/SingleProduct";
+import { ShopContext } from "../context/shop-context";
+
 const Search = () => {
   let notFound = false;
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(null);
   const { query } = useParams();
-  const [products, setProducts] = useState([]);
+  const { products } = useContext(ShopContext);
+
   useEffect(() => {
-    const getData = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-        if (!res.ok) throw new Error("Oops! An error has occured");
-        const json = await res.json();
-        setProducts(json.content);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        setErr(err.message);
-      }
-    };
-    getData();
-  }, []);
+    if (products && products.length > 0) {
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+    }
+  }, [products]);
   if (isLoading)
     return (
       <p className="h-screen flex flex-col justify-center items-center text-2xl">

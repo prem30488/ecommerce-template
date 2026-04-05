@@ -230,6 +230,7 @@ const FeatureProductsCarousel = () => {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const autoRef = useRef(null);
+  const { products: shopProducts } = useContext(ShopContext);
 
   const openQuickView = (product) => {
     setQuickViewProduct(product);
@@ -237,17 +238,12 @@ const FeatureProductsCarousel = () => {
   };
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        const featured = (data?.content || [])
-          .filter((p) => p.featured === true && p.active !== false)
-          .slice(0, 10);
-        setProducts(featured.length ? featured : [FALLBACK_PRODUCT]);
-        setLoading(false);
-      })
-      .catch(() => { setProducts([FALLBACK_PRODUCT]); setLoading(false); });
-  }, []);
+    const featured = (shopProducts || [])
+      .filter((p) => p.featured === true && p.active !== false)
+      .slice(0, 10);
+    setProducts(featured.length ? featured : [FALLBACK_PRODUCT]);
+    setLoading(false);
+  }, [shopProducts]);
 
   const maxIndex = Math.max(0, products.length - VISIBLE);
 

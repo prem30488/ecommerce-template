@@ -49,31 +49,14 @@ export default function FormDialog() {
     //cleanCustomerData();
   };
   //const { id } = useParams();
-  const { cartItems, lartItems, martItems, getTotalCartAmount, getTotalAfterDiscount } = useContext(ShopContext);
-  const [products, setProducts] = useState([]);
+  const { cartItems, lartItems, martItems, getTotalCartAmount, getTotalAfterDiscount, products } = useContext(ShopContext);
   const totalAmount = getTotalCartAmount();
   let total = totalAmount;
   const totalAfterDiscount = getTotalAfterDiscount();
 
-
-
   useEffect(() => {
-    const getData = async () => {
-      try {
-
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-        if (!res.ok) throw new Error("Oops! An error has occured");
-        const json = await res.json();
-
-        setProducts(json.content);
-        //id?total=id:total=totalAmount;
-        totalAfterDiscount ? total = totalAfterDiscount : total = totalAmount;
-      } catch (err) {
-
-      }
-    };
-    getData();
-  }, []);
+    totalAfterDiscount ? total = totalAfterDiscount : total = totalAmount;
+  }, [totalAfterDiscount, totalAmount]);
 
 
   return (

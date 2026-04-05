@@ -10,7 +10,10 @@ import FrequentlyBoughtCarousel from './FrequentlyBoughtCarousel';
 import { findFrequentlyBoughtTogether } from './eclatAlgorithm';
 import Alert from 'react-s-alert';
 
+import { ShopContext } from "../../context/shop-context";
+
 export const ProductDetailsCart = () => {
+  const { products: allProducts } = useContext(ShopContext);
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(null);
@@ -39,20 +42,21 @@ export const ProductDetailsCart = () => {
   }, [id]);
 
   useEffect(() => {
-    const fetchFrequent = async () => {
-      if (!product) return;
+    const fetchFrequent = () => {
+      if (!product || !allProducts || allProducts.length === 0) return;
       try {
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=20`);
-        const json = await res.json();
-        const allProducts = (json.content || json);
+        const remainingProducts = allProducts.filter(p => p.id !== product.id);
 
         // Use Eclat algorithm to find frequently bought together items
         const eclatRecommendations = findFrequentlyBoughtTogether(product, allProducts);
 
         // Fallback to random selection if Eclat doesn't return enough items
         if (eclatRecommendations.length < 3) {
-          const remainingProducts = allProducts.filter(p => p.id !== product.id && !eclatRecommendations.find(r => r.id === p.id));
-          const randomItems = remainingProducts.sort(() => 0.5 - Math.random()).slice(0, 3 - eclatRecommendations.length);
+          const missingCount = 3 - eclatRecommendations.length;
+          const randomItems = remainingProducts
+            .filter(p => !eclatRecommendations.find(r => r.id === p.id))
+            .sort(() => 0.5 - Math.random())
+            .slice(0, missingCount);
           eclatRecommendations.push(...randomItems);
         }
 
@@ -60,18 +64,15 @@ export const ProductDetailsCart = () => {
       } catch (e) {
         console.error(e);
         // Fallback to simple random selection
-        try {
-          const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=10`);
-          const json = await res.json();
-          const items = (json.content || json).filter(p => p.id !== product.id).sort(() => 0.5 - Math.random()).slice(0, 4);
-          setFrequentProducts(items);
-        } catch (fallbackError) {
-          console.error('Fallback also failed:', fallbackError);
-        }
+        const items = allProducts
+          .filter(p => p.id !== product.id)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4);
+        setFrequentProducts(items);
       }
-    }
+    };
     fetchFrequent();
-  }, [product?.id]);
+  }, [product?.id, allProducts]);
 
   useEffect(() => {
     const fetchFaqs = async () => {

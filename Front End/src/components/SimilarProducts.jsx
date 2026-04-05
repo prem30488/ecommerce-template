@@ -5,23 +5,7 @@ import Compare from "./Compare/index"
 import { useContext } from "react";
 import { ShopContext } from "../context/shop-context";
 const SimilarProducts = ({ productCat }) => {
-  const [products, setProducts] = useState([]);
-  const { selectedItems, setSelectedItems } = useContext(ShopContext);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-        if (!res.ok) throw new Error("Oops! An error has occured");
-        const json = await res.json();
-
-        setProducts(json.content);
-      } catch (err) {
-        console.log(err.message);
-      }
-    };
-    getData();
-  }, []);
+  const { selectedItems, setSelectedItems, products } = useContext(ShopContext);
 
   return (
     <div>

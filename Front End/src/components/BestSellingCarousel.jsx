@@ -274,6 +274,7 @@ const BestSellingCarousel = () => {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const autoRef = useRef(null);
+  const { products: shopProducts } = useContext(ShopContext);
 
   const openQuickView = (product) => {
     setQuickViewProduct(product);
@@ -281,17 +282,12 @@ const BestSellingCarousel = () => {
   };
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        const best = (data?.content || [])
-          .filter((p) => p.bestseller === true && p.active !== false)
-          .slice(0, 10);
-        setProducts(best.length ? best : [WHEY_FALLBACK]);
-        setLoading(false);
-      })
-      .catch(() => { setProducts([WHEY_FALLBACK]); setLoading(false); });
-  }, []);
+    const best = (shopProducts || [])
+      .filter((p) => p.bestseller === true && p.active !== false)
+      .slice(0, 10);
+    setProducts(best.length ? best : [WHEY_FALLBACK]);
+    setLoading(false);
+  }, [shopProducts]);
 
   const maxIndex = Math.max(0, products.length - VISIBLE);
 

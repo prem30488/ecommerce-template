@@ -1,27 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { API_BASE_URL } from '../constants/index.jsx';
 import { Link } from "react-router-dom";
-
+import { ShopContext } from "../context/shop-context";
 
 const MegaMenu = ({ isOpen, onClose }) => {
 
-  const [categories, setCategories] = useState([]);
-
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/category/getCategories?page=0&size=1000&&sort=order,asc`);
-        if (!res.ok) throw new Error("Oops! An error has occured");
-        const json = await res.json();
-
-        setCategories(json.content);
-      } catch (err) {
-        console.log(err.message);
-      }
-    };
-    getData();
-  }, []);
+  const { categories } = useContext(ShopContext);
 
   return (
     <div className={`menudropdown-content${isOpen ? ' show' : ''}`}>

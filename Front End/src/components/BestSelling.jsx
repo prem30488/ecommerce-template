@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import PremiumProductCard from "../components/PremiumProductCard";
 import BestSellingCarousel from "../components/BestSellingCarousel";
 import { Link } from "react-router-dom";
@@ -6,28 +6,15 @@ import { ShopContext } from "../context/shop-context";
 import { API_BASE_URL } from "../constants";
 const BestSelling = () => {
 
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { products } = useContext(ShopContext);
+  const [isLoading, setIsLoading] = useState(true);
   const [err, setErr] = useState(null);
 
-  const para = useRef(null);
-
   useEffect(() => {
-    const getData = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(`${API_BASE_URL}/api/product/getProducts?page=0&size=1000&sorted=true`);
-        if (!res.ok) throw new Error("Oops! An error has occured");
-        const json = await res.json();
-        setProducts(json.content);
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        setErr(err.message);
-      }
-    };
-    getData();
-  }, []);
+    if (products && products.length > 0) {
+      setIsLoading(false);
+    }
+  }, [products]);
 
   if (isLoading)
     return (

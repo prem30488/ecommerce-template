@@ -1,7 +1,9 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import Alert from 'react-s-alert';
 import { API_BASE_URL } from "../constants";
+import { ShopContext } from "./shop-context";
 export const WishlistContext = createContext(null);
+
 
 const getDefaultWishlist = () => {
   return {};
@@ -12,6 +14,8 @@ export const WishlistContextProvider = (props) => {
   const [products, setProducts] = useState([]);
   const [userId, setUserId] = useState(null);
   const [sessionId, setSessionId] = useState(null);
+
+  const { products: shopProducts } = useContext(ShopContext);
 
   // Initialize session ID and load wishlist on mount
   useEffect(() => {
@@ -208,17 +212,11 @@ export const WishlistContextProvider = (props) => {
         return [];
       }
 
-      // Fetch product details for all wishlist items
-      const productDetailsPromises = productIds.map(productId =>
-        fetch(`${API_BASE_URL}/api/product/fetchById/${productId}`)
-          .then(res => res.ok ? res.json() : null)
-          .catch(err => {
-            console.error(`Failed to fetch product ${productId}:`, err);
-            return null;
-          })
-      );
-
-      const productDetails = await Promise.all(productDetailsPromises);
+      // Grab products from the local shopProducts array
+      const productDetails = productIds.map(productId => {
+        const prod = shopProducts.find(p => p.id === Number(productId));
+        return prod ? prod : null;
+      });
 
       // Filter out null results and add wishlist metadata
       return productDetails

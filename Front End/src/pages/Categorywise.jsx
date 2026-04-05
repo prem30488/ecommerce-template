@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../constants";
+import { ShopContext } from "../context/shop-context";
+import { useContext } from "react";
 import PremiumCollectionCard from "./PremiumCollectionCard";
 import "./Categorywise.css";
 
 const Categorywise = () => {
   const { id } = useParams();
+  const { products: allProducts, categories } = useContext(ShopContext);
   const [category, setCategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -14,28 +17,22 @@ const Categorywise = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    const getData = async () => {
-      try {
+    try {
+      if (allProducts && categories) {
         setIsLoading(true);
-        setErr(null);
+        const catId = Number(id);
+        const cat = categories.find((c) => c.id === catId);
+        setCategory(cat || null);
 
-        const [catRes, prodRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/category/fetchById/${id}`),
-          fetch(`${API_BASE_URL}/api/product/getProducts?categoryId=${id}&page=0&size=1000`),
-        ]);
-
-        if (catRes.ok) setCategory(await catRes.json());
-        if (!prodRes.ok) throw new Error("Failed to load products");
-        const json = await prodRes.json();
-        setProducts(Array.isArray(json) ? json : json.content || []);
-      } catch (e) {
-        setErr(e.message);
-      } finally {
+        const filtered = allProducts.filter((p) => p.Category?.id === catId || String(p.categoryId) === id);
+        setProducts(filtered);
         setIsLoading(false);
       }
-    };
-    getData();
-  }, [id]);
+    } catch (e) {
+      setErr(e.message);
+      setIsLoading(false);
+    }
+  }, [id, allProducts, categories]);
 
   const activeProducts = useMemo(
     () => products.filter((p) => p.active !== false),
