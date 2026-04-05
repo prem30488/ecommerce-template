@@ -8,6 +8,7 @@
       "acquire": 60000,
       "idle": 60000
     },
+    "logging": true,
     "dialectOptions": {
       "connectTimeout": 60000,
       "statement_timeout": 60000,
@@ -27,6 +28,7 @@
       "acquire": 60000,
       "idle": 60000
     },
+    "logging": true,
     "dialectOptions": {
       "ssl": {
         "require": false,
