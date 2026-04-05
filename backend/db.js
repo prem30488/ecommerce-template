@@ -15,19 +15,28 @@ if (dbUrl) {
             {
                 host: parsedUrl.hostname,
                 port: parsedUrl.port,
+                pool: {
+                    max: 20,
+                    min: 0,
+                    acquire: 120000,
+                    idle: 10000
+                },
                 dialect: 'postgres',
                 dialectOptions: {
-                    ssl: false
+                    ssl: false,
+                    rejectUnauthorized: false,
+                    connectTimeout: 120000,
                 },
                 logging: false,
-                connectTimeout: 120000,
+
             }
         );
     } catch (e) {
         console.error('Error parsing DATABASE_URL in db.js, using connection string directly.');
         sequelize = new Sequelize(dbUrl, {
             dialect: 'postgres', dialectOptions: {
-                ssl: false
+                ssl: false,
+                rejectUnauthorized: false
             }, logging: false
         });
     }
