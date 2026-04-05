@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
-import { API_BASE_URL } from '../../constants/index.jsx';
+const res = await fetch(`${API_BASE_URL}/api/flavor/getFlavors?size=1000`);
+import { FRONTEND_BASE_URL, } from '../../constants/index.jsx';
 import { ShopContext } from "../../context/shop-context";
 
 export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: propFlavorId = null }) => {
@@ -38,12 +39,12 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
     const fetchFolderImages = async () => {
       try {
         const targetFlavorId = flavorId || '1';
-        const res = await fetch(`${API_BASE_URL}/api/product/images/${id}/${targetFlavorId}`);
+        const res = await fetch(`${FRONTEND_BASE_URL}/images/${id}/${targetFlavorId}`);
         const json = await res.json();
         if (Array.isArray(json) && json.length > 0) {
           setFolderImages(json);
         } else {
-          const fallbackRes = await fetch(`${API_BASE_URL}/api/product/images/${id}/1`);
+          const fallbackRes = await fetch(`${FRONTEND_BASE_URL}/images/${id}/1`);
           const fallbackJson = await fallbackRes.json();
           setFolderImages(fallbackJson || []);
         }
@@ -79,13 +80,13 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
 
   const quantity = getQuantity();
   const basePrice = getPrice();
-  
-  const activeOffer = data.offers?.find(o => 
-    o.active && 
-    o.discount > 0 && 
+
+  const activeOffer = data.offers?.find(o =>
+    o.active &&
+    o.discount > 0 &&
     (o.size === size || !o.size)
   );
-  
+
   const getFinalPrice = () => {
     if (!activeOffer) return basePrice;
     if (activeOffer.type === 2) return Math.max(0, basePrice - activeOffer.discount);
@@ -116,14 +117,14 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
             displayImages.map((src, i) => (
               <div key={i} className="pc-carousel-item">
                 <img
-                  src={src.startsWith('http') ? src : `${API_BASE_URL}${src}`}
+                  src={src.startsWith('http') ? src : `${FRONTEND_BASE_URL}${src}`}
                   alt={`${title} ${i}`}
                 />
               </div>
             ))
           ) : (
             <div className="pc-carousel-item">
-              <img src={`${API_BASE_URL}/images/${id}/1/1.png`} alt={title} />
+              <img src={`${FRONTEND_BASE_URL}/images/${id}/1/1.png`} alt={title} />
             </div>
           )}
         </div>
@@ -189,9 +190,9 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
             </div>
           )}
           {isFree && (
-             <div className="pc-controls" style={{ background: 'transparent' }}>
-                <span className="pc-qty" style={{ color: '#10b981' }}>Qty: {quantity}</span>
-             </div>
+            <div className="pc-controls" style={{ background: 'transparent' }}>
+              <span className="pc-qty" style={{ color: '#10b981' }}>Qty: {quantity}</span>
+            </div>
           )}
         </div>
       </div>
