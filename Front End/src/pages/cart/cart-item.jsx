@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { API_BASE_URL } from '../../constants/index.jsx';
 import { ShopContext } from "../../context/shop-context";
 import ImageCarousel from "../productDetails/ImageCarousel";
 import Alert from 'react-s-alert';
@@ -51,6 +50,7 @@ export const CartItem = (props) => {
         <div className="h-full w-full flex overflow-x-auto custom-scrollbar snap-x snap-mandatory scroll-smooth">
           {imageURLs ? imageURLs.split(',').map((url, i) => (
             <div key={i} className="w-full h-full flex-shrink-0 snap-center">
+              {url.trim().startsWith('http') ? url.trim() : (url.trim().startsWith('/') ? url.trim() : `/${url.trim()}`)}
               <img
                 src={url.trim().startsWith('http') ? url.trim() : (url.trim().startsWith('/') ? url.trim() : `/${url.trim()}`)}
                 className="w-full h-full object-cover"
