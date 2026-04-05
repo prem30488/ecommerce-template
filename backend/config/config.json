@@ -29,15 +29,12 @@
     },
     "pool": {
       "max": 20,
-      "min": 1,
-      "acquire": 120000,
-      "idle": 10000
+      "min": 0,
+      "acquire": 60000,
+      "idle": 60000
     },
     "dialectOptions": {
-      "ssl": false,
-      "connectTimeout": 60000,
-      "statement_timeout": 60000,
-      "query_timeout": 60000
+      "connectTimeout": 60000
     }
   }
 }
