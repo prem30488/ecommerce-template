@@ -51,7 +51,7 @@ export const CartItem = (props) => {
           {imageURLs ? imageURLs.split(',').map((url, i) => (
             <div key={i} className="w-full h-full flex-shrink-0 snap-center">
               <img
-                src={`${url.trim()}`}
+                src={url.trim().includes('/images/') ? '/images/' + url.trim().split('/images/')[1] : url.trim()}
                 className="w-full h-full object-cover"
                 alt={`${title} ${i}`}
               />
@@ -59,7 +59,7 @@ export const CartItem = (props) => {
           )) : (
             <div className="w-full h-full flex-shrink-0 snap-center">
               <img
-                src={`/images/${id}.png`}
+                src={'https://placehold.co/400x400?text=No+Image'}
                 className="w-full h-full object-cover"
                 alt={title}
               />

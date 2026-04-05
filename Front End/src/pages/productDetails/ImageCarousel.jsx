@@ -67,7 +67,7 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
                 }}
               >
                 <img
-                  src={imageUrl}
+                  src={imageUrl.includes('/images/') ? '/images/' + imageUrl.split('/images/')[1] : imageUrl}
                   alt={`${title || 'Product'} thumb ${index + 1}`}
                   className="w-full h-full object-cover rounded-md"
                   loading="lazy"
@@ -100,7 +100,7 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
           {images.map((imageUrl, index) => (
             <SwiperSlide key={`${uId}-slide-${index}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <img
-                src={imageUrl}
+                src={imageUrl.includes('/images/') ? '/images/' + imageUrl.split('/images/')[1] : imageUrl}
                 alt={`${title || 'Product'} - view ${index + 1}`}
                 className="w-full h-auto object-cover rounded-md shadow-sm"
                 style={{ maxHeight: '100%' }}
@@ -135,7 +135,7 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
                 }}
               >
                 <img
-                  src={imageUrl}
+                  src={imageUrl.includes('/images/') ? '/images/' + imageUrl.split('/images/')[1] : imageUrl}
                   alt={`${title || 'Product'} thumb ${index + 1}`}
                   className="w-full h-full object-cover rounded-md"
                   loading="lazy"
