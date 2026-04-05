@@ -29,7 +29,6 @@ if (config.use_env_variable && process.env[config.use_env_variable]) {
         port: parsedUrl.port,
         dialect: config.dialect || 'postgres',
         logging: false,
-        connectTimeout: 120000,
         ...config
       }
     );

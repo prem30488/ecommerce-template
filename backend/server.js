@@ -1710,12 +1710,15 @@ const startServer = async () => {
             console.log('⚠️  Redis connection failed - continuing without it');
         }
 
-        // Check environment
-        const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+        // Check environment accurately
+        const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1' || process.env.VERCEL_URL;
 
         // Database Initialization
         if (!isProduction) {
+            console.log('Running database existence check (Development)...');
             await ensureDatabaseExists();
+        } else {
+            console.log('Skipping database existence check (Production/Vercel)...');
         }
 
         // ONLY sync/seed if NOT in production or if explicitly asked
