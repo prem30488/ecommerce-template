@@ -28,6 +28,9 @@ if (config.use_env_variable && process.env[config.use_env_variable]) {
         host: parsedUrl.hostname,
         port: parsedUrl.port,
         dialect: config.dialect || 'postgres',
+        dialectOptions: {
+          ssl: false
+        },
         logging: false,
         ...config
       }
