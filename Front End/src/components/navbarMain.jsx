@@ -17,7 +17,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 
 export const NavbarMain = () => {
-  const { cartItems, getTotalCartCount, products } = useContext(ShopContext);
+  const { cartItems, getTotalCartCount, products, categories } = useContext(ShopContext);
   const { wishlistItems } = useContext(WishlistContext);
   const location = useLocation();
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
@@ -50,12 +50,19 @@ export const NavbarMain = () => {
   const comingSoonProducts = products ? products.filter(p => p.comingSoon === true || p.comingSoon === 'true') : [];
 
   const getComingSoonCategories = (p) => {
-    if (p.catIds) {
-      const ids = String(p.catIds).split(',').map(Number);
-      // If Category object exists, prefer it; else fallback to p.category
-      return p.Category?.title || p.category || ids.join(', ');
+    const titles = new Set();
+    if (p.Category?.title) titles.add(p.Category.title);
+    if (p.category && typeof p.category === 'string') titles.add(p.category);
+    
+    if (p.catIds && categories?.length > 0) {
+      const ids = String(p.catIds).split(',').map(id => id.trim()).filter(Boolean);
+      ids.forEach(id => {
+        const cat = categories.find(c => String(c.id) === String(id));
+        if (cat?.title) titles.add(cat.title);
+      });
     }
-    return p.Category?.title || p.category || '';
+    
+    return Array.from(titles).join(', ') || '';
   };
 
   const getComingSoonForm = (p) => {
