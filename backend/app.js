@@ -22,7 +22,7 @@ app.use((req, res, next) => {
     // Normalize origin check
     const normalizedOrigin = origin ? origin.replace(/\/$/, '') : null;
     const isAllowed = !origin || allowedOrigins.some(ao => ao.replace(/\/$/, '') === normalizedOrigin) ||
-        (origin.startsWith('https://ecommerce-template') && origin.endsWith('.vercel.app'));
+        (origin === 'https://prudent-farsighted-yareli.ngrok-free.dev');
 
     if (isAllowed) {
         res.setHeader('Access-Control-Allow-Origin', origin || '*');
