@@ -9,7 +9,7 @@ const sequelize = new Sequelize(dbUrl, {
     dialect: 'postgres',
     dialectOptions: {
         connectTimeout: 120000,
-        ssl: false,
+        ssl: true,
         rejectUnauthorized: false,
     }
 });

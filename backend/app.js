@@ -13,6 +13,7 @@ const allowedOrigins = [
     'http://localhost:3000',
     'https://ecommerce-template-xi-tan.vercel.app',
     'https://ecommerce-template-api-mu.vercel.app',
+    'https://prudent-farsighted-yareli.ngrok-free.dev',
 ];
 
 app.use((req, res, next) => {
@@ -20,8 +21,8 @@ app.use((req, res, next) => {
 
     // Normalize origin check
     const normalizedOrigin = origin ? origin.replace(/\/$/, '') : null;
-    const isAllowed = !origin || allowedOrigins.some(ao => ao.replace(/\/$/, '') === normalizedOrigin) || 
-                     (origin.startsWith('https://ecommerce-template') && origin.endsWith('.vercel.app'));
+    const isAllowed = !origin || allowedOrigins.some(ao => ao.replace(/\/$/, '') === normalizedOrigin) ||
+        (origin.startsWith('https://ecommerce-template') && origin.endsWith('.vercel.app'));
 
     if (isAllowed) {
         res.setHeader('Access-Control-Allow-Origin', origin || '*');
@@ -44,7 +45,7 @@ app.use(helmet({
 
 // Rate limiting
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
+    windowMs: 15 * 60 * 1000,
     max: 200, // Increased for a large template
     standardHeaders: true,
     legacyHeaders: false,
@@ -74,7 +75,7 @@ app.get('/api/health', (req, res) => {
     res.status(200).json({
         success: true,
         status: "healthy",
-        message: 'Ecommerce API is running', 
+        message: 'Ecommerce API is running',
         timestamp: new Date().toISOString()
     });
 });
