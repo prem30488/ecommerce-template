@@ -5,10 +5,16 @@ import {
   TextField,
   Box,
   Typography,
-  TablePagination
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Avatar,
+  IconButton,
+  CircularProgress
 } from '@mui/material';
-import { Clear as ClearIcon } from '@mui/icons-material';
-import { getLeadershipTeams, addLeadershipTeam, updateLeadershipTeam, deleteLeadershipTeam } from '../../../../util/APIUtils';
+import { Clear as ClearIcon, Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, CloudUpload as UploadIcon } from '@mui/icons-material';
+import { getLeadershipTeams, addLeadershipTeam, updateLeadershipTeam, deleteLeadershipTeam, uploadLeadershipImage } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
 
 function LeadershipManager() {
@@ -17,19 +23,16 @@ function LeadershipManager() {
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [totalElements, setTotalElements] = useState(0);
+  const [uploading, setUploading] = useState(false);
   const [teams, setTeams] = useState([]);
 
+  // Form State
+  const [open, setOpen] = useState(false);
+  const [id, setId] = useState(null);
   const [name, setName] = useState('');
   const [designation, setDesignation] = useState('');
   const [image, setImage] = useState('');
   const [order, setOrder] = useState(0);
-
-  const [editId, setEditId] = useState(null);
-  const [editName, setEditName] = useState('');
-  const [editDesignation, setEditDesignation] = useState('');
-  const [editImage, setEditImage] = useState('');
-  const [editOrder, setEditOrder] = useState(0);
 
   const fetchLeadershipList = async (page = 0, search = '') => {
     setLoading(true);
@@ -45,13 +48,76 @@ function LeadershipManager() {
     }
   };
 
-  const reloadList = () => {
-    fetchLeadershipList(currentPage, searchQuery);
-  }
-
   React.useEffect(() => {
     fetchLeadershipList(0, searchQuery);
   }, []);
+
+  const handleOpen = (member = null) => {
+    if (member) {
+      setId(member.id);
+      setName(member.name);
+      setDesignation(member.designation);
+      setImage(member.image);
+      setOrder(member.order);
+    } else {
+      setId(null);
+      setName('');
+      setDesignation('');
+      setImage('');
+      setOrder(0);
+    }
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!validTypes.includes(file.type)) {
+      Alert.error("Please upload a JPG, JPEG, or PNG image.");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const res = await uploadLeadershipImage(file);
+      // Assuming res contains the file URL
+      setImage(res);
+      Alert.success("Image uploaded!");
+    } catch (err) {
+      Alert.error("Failed to upload image: " + (err.message || err));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!name || !designation) {
+      Alert.error("Please fill in Name and Designation");
+      return;
+    }
+    const payload = { name, designation, image, order: parseInt(order) };
+    if (id) {
+      payload.id = id;
+      updateLeadershipTeam(payload).then(() => {
+        Alert.success("Updated successfully!");
+        handleClose();
+        fetchLeadershipList(currentPage, searchQuery);
+      }).catch(err => Alert.error(err.message || 'Update failed'));
+    } else {
+      addLeadershipTeam(payload).then(() => {
+        Alert.success("Added successfully!");
+        handleClose();
+        fetchLeadershipList(0, searchQuery);
+      }).catch(err => Alert.error(err.message || 'Add failed'));
+    }
+  };
 
   const handleSearch = (e) => {
     const query = e.target.value;
@@ -71,122 +137,86 @@ function LeadershipManager() {
     fetchLeadershipList(newPage, searchQuery);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setCurrentPage(0);
-    fetchLeadershipList(0, searchQuery);
-  };
-
-  const handleAdd = () => {
-    const obj = { name, designation, image, order: parseInt(order) };
-    addLeadershipTeam(obj).then(res => {
-      Alert.success("Leadership team member added!");
-      setName('');
-      setDesignation('');
-      setImage('');
-      setOrder(0);
-      reloadList();
-    }).catch(error => {
-      Alert.error((error && error.message) || 'Failed to add.');
-    });
-  };
-
-  const handleEdit = (row) => {
-    setEditId(row.id);
-    setEditName(row.name);
-    setEditDesignation(row.designation);
-    setEditImage(row.image);
-    setEditOrder(row.order);
-  };
-
-  const handleSaveEdit = () => {
-    const obj = { id: editId, name: editName, designation: editDesignation, image: editImage, order: parseInt(editOrder) };
-    updateLeadershipTeam(obj).then(res => {
-      Alert.success("Updated!");
-      setEditId(null);
-      fetchLeadershipList(currentPage, searchQuery);
-    }).catch(error => {
-      Alert.error((error && error.message) || 'Failed to update.');
-    });
-  };
-
   const handleDelete = (id) => {
     if (window.confirm("Are you sure?")) {
-      deleteLeadershipTeam(id).then(res => {
+      deleteLeadershipTeam(id).then(() => {
         Alert.success("Deleted!");
         fetchLeadershipList(currentPage, searchQuery);
-      }).catch(error => {
-        Alert.error((error && error.message) || 'Failed to delete.');
-      });
+      }).catch(err => Alert.error(err.message || 'Delete failed'));
     }
   };
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'name', headerName: 'Name', width: 200 },
-    { field: 'designation', headerName: 'Designation', width: 150 },
-    { field: 'image', headerName: 'Image URL', width: 250 },
+    {
+      field: 'image',
+      headerName: 'Photo',
+      width: 80,
+      renderCell: (params) => (
+        <Avatar
+          src={params.value}
+          variant="rounded"
+          sx={{ width: 45, height: 45, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0' }}
+        >
+          {params.row.name?.charAt(0)}
+        </Avatar>
+      )
+    },
+    { field: 'name', headerName: 'Name', flex: 1, minWidth: 200 },
+    { field: 'designation', headerName: 'Designation', flex: 1, minWidth: 150 },
     { field: 'order', headerName: 'Order', width: 80 },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 250,
+      width: 120,
       renderCell: (params) => (
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined" size="small" onClick={() => handleEdit(params.row)}>Edit</Button>
-          <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(params.row.id)}>Delete</Button>
+        <Box sx={{ display: 'flex', gap: 0.5 }}>
+          <IconButton size="small" color="primary" onClick={() => handleOpen(params.row)}>
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton size="small" color="error" onClick={() => handleDelete(params.row.id)}>
+            <DeleteIcon fontSize="small" />
+          </IconButton>
         </Box>
       )
     }
   ];
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h5" sx={{ mb: 3 }}>Leadership Team Manager</Typography>
-
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 4, bgcolor: '#f9f9f9', p: 2, borderRadius: 2 }}>
-        <TextField size="small" label="Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <TextField size="small" label="Designation" value={designation} onChange={(e) => setDesignation(e.target.value)} />
-        <TextField size="small" label="Image Path" value={image} onChange={(e) => setImage(e.target.value)} />
-        <TextField size="small" type="number" label="Order" value={order} onChange={(e) => setOrder(e.target.value)} />
-        <Button variant="contained" onClick={handleAdd}>Add Member</Button>
+    <Box sx={{ p: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box sx={{ width: 40 }} /> {/* Spacer */}
+        <Typography variant="h5" sx={{ color: '#1e293b' }}>Leadership Team Management</Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => handleOpen()}
+          sx={{ borderRadius: 2 }}
+        >
+          Add Member
+        </Button>
       </Box>
 
-      {editId && (
-        <Box sx={{ mb: 4, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
-          <Typography variant="h6">Edit Member</Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 2 }}>
-            <TextField size="small" label="Name" value={editName} onChange={(e) => setEditName(e.target.value)} />
-            <TextField size="small" label="Designation" value={editDesignation} onChange={(e) => setEditDesignation(e.target.value)} />
-            <TextField size="small" label="Image Path" value={editImage} onChange={(e) => setEditImage(e.target.value)} />
-            <TextField size="small" type="number" label="Order" value={editOrder} onChange={(e) => setEditOrder(e.target.value)} />
-            <Button variant="contained" color="success" onClick={handleSaveEdit}>Save</Button>
-            <Button variant="outlined" onClick={() => setEditId(null)}>Cancel</Button>
-          </Box>
-        </Box>
-      )}
-
-      <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+      <Box sx={{ mb: 3, display: 'flex', gap: 1, alignItems: 'center', bgcolor: '#f8fafc', p: 2, borderRadius: 3, border: '1px solid #f1f5f9' }}>
         <TextField
           fullWidth
-          label="Search"
+          label="Search members..."
           variant="outlined"
           size="small"
           value={searchQuery}
           onChange={handleSearch}
-          placeholder="Search by name, designation..."
         />
         <Button
           variant="outlined"
-          size="small"
           onClick={handleClearSearch}
           startIcon={<ClearIcon />}
+          sx={{ whiteSpace: 'nowrap' }}
         >
           Clear
         </Button>
       </Box>
 
-      <Box sx={{ height: 400, width: '100%' }}>
+      <Box sx={{ height: 600, width: '100%', bgcolor: 'white', borderRadius: 3, overflow: 'hidden', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
         <DataGrid
           rows={teams}
           columns={columns}
@@ -197,6 +227,7 @@ function LeadershipManager() {
             handleChangePage(null, newModel.page);
             if (newModel.pageSize !== rowsPerPage) {
               setRowsPerPage(newModel.pageSize);
+              fetchLeadershipList(0, searchQuery);
             }
           }}
           initialState={{
@@ -205,18 +236,76 @@ function LeadershipManager() {
             },
           }}
           pageSizeOptions={[5, 10, 25, 50]}
+          sx={{
+            border: 0,
+            '& .MuiDataGrid-columnHeaders': { bgcolor: '#f8fafc', color: '#475569', fontWeight: 'bold' },
+            '& .MuiDataGrid-cell:focus': { outline: 'none' }
+          }}
         />
       </Box>
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={currentPage}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid #f1f5f9' }}>
+          {id ? 'Edit Leadership Member' : 'Add Leadership Member'}
+        </DialogTitle>
+        <DialogContent sx={{ mt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 1 }}>
+            <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', mb: 1 }}>
+              <Avatar src={image} variant="rounded" sx={{ width: 120, height: 120, border: '2px solid #e2e8f0' }} />
+              <Box>
+                <input
+                  accept="image/jpeg,image/png,image/jpg"
+                  style={{ display: 'none' }}
+                  id="leadership-photo-upload"
+                  type="file"
+                  onChange={handleFileUpload}
+                />
+                <label htmlFor="leadership-photo-upload">
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    startIcon={uploading ? <CircularProgress size={20} /> : <UploadIcon />}
+                    disabled={uploading}
+                  >
+                    {uploading ? 'Uploading...' : 'Upload Photo'}
+                  </Button>
+                </label>
+                <Typography variant="caption" display="block" sx={{ mt: 1, color: 'text.secondary' }}>
+                  JPG, JPEG or PNG only.
+                </Typography>
+              </Box>
+            </Box>
+            <TextField
+              fullWidth
+              label="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <TextField
+              fullWidth
+              label="Designation"
+              value={designation}
+              onChange={(e) => setDesignation(e.target.value)}
+              required
+            />
+            <TextField
+              fullWidth
+              type="number"
+              label="Display Order"
+              value={order}
+              onChange={(e) => setOrder(e.target.value)}
+              helperText="Higher numbers appear later"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ p: 3, borderTop: '1px solid #f1f5f9' }}>
+          <Button onClick={handleClose} color="inherit">Cancel</Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{ px: 4 }}>
+            {id ? 'Save Changes' : 'Add Member'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

@@ -24,6 +24,7 @@ const SaleManagementPage = () => {
                     orders: privilegesData.orders,
                     coupons: privilegesData.coupons,
                     testimonials: privilegesData.testimonials,
+                    sales: privilegesData.sales,
                     deleteFlag: privilegesData.deleteFlag,
                 });
             } catch (error) {
@@ -34,9 +35,20 @@ const SaleManagementPage = () => {
         fetchPrivileges();
     }, []);
 
-    if (privileges && privileges.products === true || currentUser && currentUser.roles[0].name === 'ROLE_SUPERADMIN') {
+    if ((privileges && privileges.sales === true) || (currentUser && currentUser.roles[0].name === 'ROLE_SUPERADMIN')) {
     } else {
-        return 'You are not authorized to view this page. Please contact Admin to grant you privileges.';
+        return (
+            <Container sx={{ mt: 10 }}>
+                <Paper sx={{ p: 10, textAlign: 'center', borderRadius: 6, boxShadow: 3, border: '1px solid #f1f5f9' }}>
+                    <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 'bold', mb: 2 }}>
+                        Access Restricted
+                    </Typography>
+                    <Typography sx={{ color: '#64748b' }}>
+                      You do not have permission to view this page. Please contact to Admin to grant you privileges.
+                    </Typography>
+                </Paper>
+            </Container>
+        );
     }
 
     return (

@@ -14,6 +14,7 @@ const allowedOrigins = [
     'https://ecommerce-template-xi-tan.vercel.app',
     'https://ecommerce-template-api-mu.vercel.app',
     'https://prudent-farsighted-yareli.ngrok-free.dev',
+    'https://ecommerce-template-qr8sr5usu-parths-projects-fc15ae57.vercel.app'
 ];
 
 app.use((req, res, next) => {
@@ -22,12 +23,14 @@ app.use((req, res, next) => {
     // Normalize origin check
     const normalizedOrigin = origin ? origin.replace(/\/$/, '') : null;
     const isAllowed = !origin || allowedOrigins.some(ao => ao.replace(/\/$/, '') === normalizedOrigin) ||
-        (origin === 'https://ecommerce-template-xi-tan.vercel.app');
+        (origin.startsWith('https://ecommerce-template') && origin.endsWith('.vercel.app'));
 
-    if (isAllowed) {
-        res.setHeader('Access-Control-Allow-Origin', origin || '*');
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
-    }
+    // if (isAllowed) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    // } else {
+    //     console.log(origin + "Not Allowed...");
+    // }
 
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, Accept, X-Api-Version, Origin');

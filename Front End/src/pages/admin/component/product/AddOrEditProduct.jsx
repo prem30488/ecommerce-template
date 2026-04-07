@@ -9,6 +9,8 @@ import {
   Select,
   MenuItem,
   FormGroup,
+  Box,
+  Typography,
 } from '@mui/material';
 import FileUploader from './FileUploader';
 
@@ -126,125 +128,136 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
   };
 
   return (
-    <div>
-      <h2>{product && product.id && product.id !== null && formData ? 'Edit Product' : 'Add Product'}</h2>
-      <br />
-      {/* <p>
-        {JSON.stringify(formData)}
-      </p> */}
+    <Box sx={{ p: 2 }}>
+      <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', mb: 3 }}>
+        {product && product.id && product.id !== null && formData ? 'Edit Product' : 'Add Product'}
+      </Typography>
+
       <form onSubmit={handleSubmit}>
-        <TextField
-          name="title"
-          label="name"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          name="description"
-          label="Description"
-          value={formData.description}
-          onChange={handleChange}
-        />
-        {/* Price mapped to flavors instead of root */}
-        <TextField
-          name="stock"
-          label="Stock Qty"
-          value={formData.stock}
-          onChange={handleChange}
-          type="number"
-          required
-        />
-        <FormGroup>
-          <FormControl>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3, mb: 3 }}>
+          <TextField
+            fullWidth
+            name="title"
+            label="Product Name"
+            value={formData.title}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            fullWidth
+            name="description"
+            label="Description"
+            value={formData.description}
+            onChange={handleChange}
+          />
+          <TextField
+            fullWidth
+            name="stock"
+            label="Stock Qty"
+            value={formData.stock}
+            onChange={handleChange}
+            type="number"
+            required
+          />
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel>Form</InputLabel>
+              <Select
+                name="form"
+                value={formData.form}
+                onChange={handleChange}
+                label="Form"
+              >
+                {forms.map((form) => (
+                  form ?
+                    <MenuItem key={form.id} value={form.id}>
+                      {form.title}
+                    </MenuItem>
+                    : ""
+                ))}
+              </Select>
+            </FormControl>
 
-            <InputLabel>Form</InputLabel>
-            <Select
-              name="form"
-              value={formData.form}
-              onChange={handleChange}
-            >
+            <FormControl fullWidth>
+              <InputLabel>Categories</InputLabel>
+              <Select
+                multiple
+                name="categories"
+                value={formData.catIds}
+                onChange={handleCategoryChange}
+                label="Categories"
+              >
+                {categories.map((category) => (
+                  category ?
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.title}
+                    </MenuItem>
+                    : ""
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </Box>
 
-              {forms.map((form) => (
-                form ?
-                  <MenuItem key={form.id} value={form.id}>
-                    {form.title}
-                  </MenuItem>
-                  : ""
-              ))}
-            </Select>
-          </FormControl>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="bestseller"
+                checked={formData.bestseller}
+                onChange={handleChange}
+              />
+            }
+            label="Bestseller"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="featured"
+                checked={formData.featured}
+                onChange={handleChange}
+              />
+            }
+            label="Featured"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                name="comingSoon"
+                checked={formData.comingSoon}
+                onChange={handleChange}
+              />
+            }
+            label="Coming Soon"
+          />
+        </Box>
 
-          <FormControl>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3, mb: 4 }}>
+          <TextField
+            fullWidth
+            name="rating"
+            label="Rating (5/5)"
+            value={formData.rating}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            fullWidth
+            name="hmsCode"
+            label="HSN Code"
+            value={formData.hmsCode}
+            onChange={handleChange}
+            required
+          />
+        </Box>
 
-            <InputLabel>Categories</InputLabel>
-            <Select
-              multiple
-              name="categories"
-              value={formData.catIds}
-              onChange={handleCategoryChange}
-            >
-              {categories.map((category) => (
-                category ?
-                  <MenuItem key={category.id} value={category.id}
-                  >
-                    {category.title}
-                  </MenuItem>
-                  : ""
-              ))}
-            </Select>
-          </FormControl>
-        </FormGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="bestseller"
-              checked={formData.bestseller}
-              onChange={handleChange}
-            />
-          }
-          label="Bestseller"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="featured"
-              checked={formData.featured}
-              onChange={handleChange}
-            />
-          }
-          label="Featured"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="comingSoon"
-              checked={formData.comingSoon}
-              onChange={handleChange}
-            />
-          }
-          label="Coming Soon"
-        />
-        <TextField
-          name="rating"
-          label="Rating (5/5)"
-          value={formData.rating}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          name="hmsCode"
-          label="HSN Code"
-          value={formData.hmsCode}
-          onChange={handleChange}
-          required
-        />
-
-        <div className="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-          <h4 className="text-sm font-bold text-slate-700 mb-4 px-2">FLAVORS & PRICING</h4>
+        <Box sx={{ mt: 4, p: 3, bgcolor: '#f8fafc', borderRadius: 4, border: '1px solid #f1f5f9' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#475569', mb: 3, px: 1, letterSpacing: '0.05em' }}>
+            FLAVORS & PRICING
+          </Typography>
           {formData.productFlavors.map((pf, index) => (
-            <div key={index} className="flex gap-4 mb-4 items-center">
-              <FormControl fullWidth>
+            <Box key={index} sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3, alignItems: 'center' }}>
+              <FormControl sx={{ minWidth: 200, flex: 1 }}>
                 <InputLabel>Flavor</InputLabel>
                 <Select
                   value={pf.flavor_id}
@@ -254,6 +267,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
                     setFormData({ ...formData, productFlavors: newFlavors });
                   }}
                   required
+                  label="Flavor"
                 >
                   {flavors.map((f) => (
                     <MenuItem key={f.id} value={f.id}>{f.name}</MenuItem>
@@ -261,6 +275,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
                 </Select>
               </FormControl>
               <TextField
+                sx={{ width: 150 }}
                 label="Price Small"
                 value={pf.price}
                 onChange={(e) => {
@@ -272,6 +287,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
                 type="number"
               />
               <TextField
+                sx={{ width: 150 }}
                 label="Price Medium"
                 value={pf.priceMedium}
                 onChange={(e) => {
@@ -282,6 +298,7 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
                 type="number"
               />
               <TextField
+                sx={{ width: 150 }}
                 label="Price Large"
                 value={pf.priceLarge}
                 onChange={(e) => {
@@ -291,105 +308,108 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
                 }}
                 type="number"
               />
-              <Button color="error" onClick={() => {
+              <Button color="error" variant="outlined" onClick={() => {
                 const newFlavors = formData.productFlavors.filter((_, i) => i !== index);
                 setFormData({ ...formData, productFlavors: newFlavors });
-              }}>X</Button>
-            </div>
+              }}>Remove</Button>
+            </Box>
           ))}
-          <Button onClick={() => setFormData({ ...formData, productFlavors: [...formData.productFlavors, { flavor_id: '', price: '', priceMedium: '', priceLarge: '' }] })}>
+          <Button 
+            variant="outlined" 
+            sx={{ mt: 1 }}
+            onClick={() => setFormData({ ...formData, productFlavors: [...formData.productFlavors, { flavor_id: '', price: '', priceMedium: '', priceLarge: '' }] })}
+          >
             + Add Flavor Variant
           </Button>
-        </div>
+        </Box>
 
-        <TextField
-          name="unitMedium"
-          label="Unit Medium"
-          value={formData.unitMedium}
-          onChange={handleChange}
-          required
-          type="Number"
-        />
-
-        <TextField
-          name="unitLarge"
-          label="Unit Large"
-          value={formData.unitLarge}
-          onChange={handleChange}
-          required
-          type="Number"
-        />
-        <TextField
-          name="unitSmall"
-          label="Unit Small"
-          value={formData.unitSmall}
-          onChange={handleChange}
-          required
-          type="Number"
-        />
-        <InputLabel>Unit</InputLabel>
-        <Select
-          name="unit"
-          value={formData.unit}
-          onChange={handleChange}
-        >
-          <MenuItem key="0" value="days"         >
-            days
-          </MenuItem>
-          <MenuItem key="1" value="ml"         >
-            ml
-          </MenuItem>
-          <MenuItem key="2" value="grams"         >
-            grams
-          </MenuItem>
-          <MenuItem key="3" value="kg"         >
-            kg
-          </MenuItem>
-          <MenuItem key="4" value="Capsules"         >
-            Capsules
-          </MenuItem>
-          <MenuItem key="5" value="Gummies"         >
-            Gummies
-          </MenuItem>
-          <MenuItem key="6" value="mg"         >
-            mg
-          </MenuItem>
-        </Select>
-
-
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.audience.includes('Men')}
-                onChange={() => handleCheckboxChange('Men')}
-              />
-            }
-            label="Men"
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 3, mt: 4, mb: 4 }}>
+          <TextField
+            fullWidth
+            name="unitSmall"
+            label="Unit Small"
+            value={formData.unitSmall}
+            onChange={handleChange}
+            required
+            type="number"
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.audience.includes('Women')}
-                onChange={() => handleCheckboxChange('Women')}
-              />
-            }
-            label="Women"
+          <TextField
+            fullWidth
+            name="unitMedium"
+            label="Unit Medium"
+            value={formData.unitMedium}
+            onChange={handleChange}
+            required
+            type="number"
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.audience.includes('Kids')}
-                onChange={() => handleCheckboxChange('Kids')}
-              />
-            }
-            label="Kids"
+          <TextField
+            fullWidth
+            name="unitLarge"
+            label="Unit Large"
+            value={formData.unitLarge}
+            onChange={handleChange}
+            required
+            type="number"
           />
-        </FormGroup>
+        </Box>
+
+        <FormControl fullWidth sx={{ mb: 4 }}>
+          <InputLabel>Unit</InputLabel>
+          <Select
+            name="unit"
+            value={formData.unit}
+            onChange={handleChange}
+            label="Unit"
+          >
+            <MenuItem value="days">days</MenuItem>
+            <MenuItem value="ml">ml</MenuItem>
+            <MenuItem value="grams">grams</MenuItem>
+            <MenuItem value="kg">kg</MenuItem>
+            <MenuItem value="Capsules">Capsules</MenuItem>
+            <MenuItem value="Gummies">Gummies</MenuItem>
+            <MenuItem value="mg">mg</MenuItem>
+          </Select>
+        </FormControl>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>Target Audience</Typography>
+          <FormGroup sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.audience.includes('Men')}
+                  onChange={() => handleCheckboxChange('Men')}
+                />
+              }
+              label="Men"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.audience.includes('Women')}
+                  onChange={() => handleCheckboxChange('Women')}
+                />
+              }
+              label="Women"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.audience.includes('Kids')}
+                  onChange={() => handleCheckboxChange('Kids')}
+                />
+              }
+              label="Kids"
+            />
+          </FormGroup>
+        </Box>
+
         {/* Flavor Selection for images */}
-        <div className="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-          <h4 className="text-sm font-bold text-slate-700 mb-4 px-2">IMAGE FLAVOR SETUP</h4>
-          <FormControl fullWidth className="mb-4">
+        <Box sx={{ mt: 4, p: 3, bgcolor: '#f8fafc', borderRadius: 4, border: '1px solid #f1f5f9' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#475569', mb: 3, px: 2, letterSpacing: '0.05em' }}>
+            IMAGE FLAVOR SETUP
+          </Typography>
+          <FormControl fullWidth sx={{ mb: 4 }}>
             <InputLabel>Select Flavor for Upload</InputLabel>
             <Select
               value={currentFlavorId}
@@ -398,98 +418,92 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
             >
               <MenuItem value=""><em>None / Default</em></MenuItem>
               {flavors.map((f) => (
-                <MenuItem key={f.id} value={f.id} className="flex items-center gap-3">
-                  <div className="w-[60px] h-[40px] rounded-lg border border-slate-100 bg-slate-50 flex-shrink-0 overflow-hidden">
-                    {f.image ? (
-                      <img
-                        src={f.image.startsWith('http') ? f.image : `${API_BASE_URL}${f.image}`}
-                        style={{ "height": "40px", "width": "60px" }}
-                        alt=""
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[8px] text-slate-300">N/A</div>
-                    )}
-                  </div>
-                  <span>{f.name}</span>
+                <MenuItem key={f.id} value={f.id}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ width: 40, height: 25, borderRadius: 1, border: '1px solid #f1f5f9', overflow: 'hidden' }}>
+                      {f.image ? (
+                        <img
+                          src={f.image.startsWith('http') ? f.image : `${API_BASE_URL}${f.image}`}
+                          style={{ height: '100%', width: '100%', objectFit: 'cover' }}
+                          alt=""
+                        />
+                      ) : (
+                        <Box sx={{ width: '100%', height: '100%', bgcolor: '#f1f5f9' }} />
+                      )}
+                    </Box>
+                    <Typography variant="body2">{f.name}</Typography>
+                  </Box>
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
 
           <FileUploader
-            key={currentFlavorId} // Force fresh uploader for each flavor
+            key={currentFlavorId}
             maxNoFiles={10}
             onSave={returnFileArray}
             productId={product?.id || 'temp'}
             flavorId={currentFlavorId}
           />
 
-          <div className="mt-6 mb-4">
-            <div className="flex items-center justify-between mb-4 px-2">
-              <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">FLAVOR PREVIEW SECTION</h5>
+          <Box sx={{ mt: 4 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+              <Typography variant="caption" sx={{ fontWeight: 'black', color: '#94a3b8', letterSpacing: '0.15em' }}>
+                FLAVOR PREVIEW SECTION
+              </Typography>
               {currentFlavorId && (
-                <div className="text-[10px] font-bold text-sky-500 bg-sky-50 px-3 py-1 rounded-full border border-sky-100 uppercase tracking-widest animate-pulse">
-                  Viewing: {flavors.find(f => String(f.id) === String(currentFlavorId))?.name}
-                </div>
+                <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#0ea5e9', bgcolor: '#f0f9ff', px: 2, py: 0.5, borderRadius: 10, border: '1px solid #bae6fd' }}>
+                  VIEWING: {flavors.find(f => String(f.id) === String(currentFlavorId))?.name}
+                </Typography>
               )}
-            </div>
-            <div className="flex flex-wrap gap-4 min-h-[160px] p-4 bg-white/50 rounded-2xl border border-dotted border-slate-200 items-center justify-center">
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, minHeight: 160, p: 3, bgcolor: 'rgba(255,255,255,0.5)', borderRadius: 4, border: '2px dashed #e2e8f0', alignItems: 'center', justifyContent: 'center' }}>
               {(() => {
                 const filtered = folderImages;
 
                 if (filtered.length === 0) {
                   return (
-                    <div className="flex flex-col items-center justify-center text-slate-400 gap-2 opacity-60">
-                      <div className="w-[100px] h-[150px] border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center text-3xl font-thin bg-slate-50/50">
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, opacity: 0.6 }}>
+                      <Box sx={{ width: 80, height: 120, border: '2px dashed #cbd5e1', borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, color: '#94a3b8', bgcolor: '#f8fafc' }}>
                         +
-                      </div>
-                      <p className="text-[10px] uppercase font-bold tracking-widest">No Images Yet</p>
-                    </div>
+                      </Box>
+                      <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#94a3b8', letterSpacing: '0.05em' }}>NO IMAGES YET</Typography>
+                    </Box>
                   );
                 }
 
                 return filtered.map((imagePath, idx) => {
                   const flavorName = flavors.find(f => String(f.id) === String(currentFlavorId))?.name || 'Default';
                   return (
-                    <div key={idx} className="relative w-[100px] h-[150px] border border-slate-200 rounded-xl overflow-hidden bg-white group hover:shadow-lg transition-all flex-shrink-0">
+                    <Box key={idx} sx={{ position: 'relative', width: 100, height: 150, border: '1px solid #e2e8f0', borderRadius: 3, overflow: 'hidden', bgcolor: 'white', '&:hover': { boxShadow: 6 }, transition: 'all 0.3s' }}>
                       <img
                         src={imagePath.startsWith('http') ? imagePath : `${API_BASE_URL}${imagePath}`}
-                        className="w-full h-full object-cover"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         alt="Product variant"
                       />
-                      <div className="p-2 bg-slate-900/80 backdrop-blur-sm absolute bottom-0 left-0 right-0">
-                        <p className="text-[10px] text-white font-bold truncate text-center uppercase tracking-tighter">
+                      <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, bgcolor: 'rgba(15,23,42,0.8)', p: 0.5 }}>
+                        <Typography variant="caption" sx={{ color: 'white', display: 'block', textAlign: 'center', fontSize: '0.65rem' }}>
                           {flavorName}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setFormData(p => ({
-                          ...p,
-                          ProductImages: p.ProductImages.filter(item => item.url !== img.url)
-                        }))}
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        ×
-                      </button>
-                    </div>
+                        </Typography>
+                      </Box>
+                    </Box>
                   );
                 });
               })()}
-            </div>
+            </Box>
+          </Box>
+        </Box>
 
-          </div>
-        </div>
-
-        <br />
-        <Button type="submit" variant="contained" color="primary" size="large" className="px-10 py-3 rounded-xl shadow-lg">
-          {product && product.id && product.id !== 0 ? 'Update Product' : 'Add Product'}
-        </Button>
-        <Button variant="contained" color="secondary" onClick={onCancel}>
-          Cancel
-        </Button>
-      </form >
-    </div >
+        <Box sx={{ mt: 5, display: 'flex', gap: 2, justifyContent: 'center' }}>
+          <Button type="submit" variant="contained" color="primary" sx={{ px: 6, py: 1.5, borderRadius: 3 }}>
+            {product && product.id && product.id !== 0 ? 'Update Product' : 'Add Product'}
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={onCancel} sx={{ px: 4, py: 1.5, borderRadius: 3 }}>
+            Cancel
+          </Button>
+        </Box>
+      </form>
+    </Box>
   );
 }
 

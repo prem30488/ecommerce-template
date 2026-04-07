@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Button, IconButton, Switch, FormControlLabel, Box, TextField, TablePagination } from '@mui/material';
+import { Button, IconButton, Switch, FormControlLabel, Box, TextField, TablePagination, Typography } from '@mui/material';
 import { Clear as ClearIcon } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -186,71 +186,64 @@ const SliderManager = () => {
     ];
 
     return (
-        <div style={{ height: 600, width: '100%' }}>
-            <div style={{ marginBottom: '16px' }}>
-                <Button variant="contained" color="primary" onClick={handleAddSlider}>
+        <Box sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, position: 'relative' }}>
+                <Box sx={{ width: 150 }} /> {/* Spacer */}
+                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1e293b' }}>Slider Management</Typography>
+                <Button variant="contained" color="primary" onClick={handleAddSlider} sx={{ borderRadius: 2 }}>
                     Add New Slider
                 </Button>
-            </div>
-
-            <Box sx={{ mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
-                <TextField
-                    fullWidth
-                    label="Search"
-                    variant="outlined"
-                    size="small"
-                    value={searchQuery}
-                    onChange={handleSearch}
-                    placeholder="Search by headline, category..."
-                />
-                <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={handleClearSearch}
-                    startIcon={<ClearIcon />}
-                >
-                    Clear
-                </Button>
             </Box>
+            <Box style={{ height: 600, width: '100%' }}>
+                <Box sx={{ mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <TextField
+                        fullWidth
+                        label="Search"
+                        variant="outlined"
+                        size="small"
+                        value={searchQuery}
+                        onChange={handleSearch}
+                        placeholder="Search by headline, category..."
+                    />
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={handleClearSearch}
+                        startIcon={<ClearIcon />}
+                    >
+                        Clear
+                    </Button>
+                </Box>
 
-            <DataGrid
-                rows={sliders}
-                columns={columns}
-                loading={loading}
-                rowCount={totalCount}
-                paginationMode="server"
-                onPaginationModelChange={(newModel) => {
-                    handleChangePage(null, newModel.page);
-                    if (newModel.pageSize !== rowsPerPage) {
-                        setRowsPerPage(newModel.pageSize);
-                    }
-                }}
-                initialState={{
-                    pagination: {
-                        paginationModel: { pageSize: rowsPerPage, page: currentPage },
-                    },
-                }}
-                pageSizeOptions={[5, 10, 25, 50]}
-            />
-
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25, 50]}
-                component="div"
-                count={totalCount}
-                rowsPerPage={rowsPerPage}
-                page={currentPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-
-            {isFormOpen && (
-                <SliderForm
-                    onSubmit={handleFormSubmit}
-                    onCancel={() => setIsFormOpen(false)}
-                    initialData={selectedSlider}
+                <DataGrid
+                    rows={sliders}
+                    columns={columns}
+                    loading={loading}
+                    rowCount={totalCount}
+                    paginationMode="server"
+                    onPaginationModelChange={(newModel) => {
+                        handleChangePage(null, newModel.page);
+                        if (newModel.pageSize !== rowsPerPage) {
+                            setRowsPerPage(newModel.pageSize);
+                        }
+                    }}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: rowsPerPage, page: currentPage },
+                        },
+                    }}
+                    pageSizeOptions={[5, 10, 25, 50]}
                 />
-            )}
-        </div>
+
+                {isFormOpen && (
+                    <SliderForm
+                        onSubmit={handleFormSubmit}
+                        onCancel={() => setIsFormOpen(false)}
+                        initialData={selectedSlider}
+                    />
+                )}
+            </Box>
+        </Box>
     );
 };
 

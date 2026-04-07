@@ -26,10 +26,10 @@ import {
     InputLabel,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon, Visibility as ViewIcon, Search as SearchIcon, Clear as ClearIcon } from '@mui/icons-material';
-import axios from 'axios';
 import { API_BASE_URL } from '../../../../constants';
 import Alert from 'react-s-alert';
-
+import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
+import axios from 'axios';
 const FAQManager = () => {
     const [faqs, setFaqs] = useState([]);
     const [open, setOpen] = useState(false);
@@ -43,6 +43,9 @@ const FAQManager = () => {
     const [totalCount, setTotalCount] = useState(0);
     const [loading, setLoading] = useState(false);
     const [products, setProducts] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [privileges, setPrivileges] = useState({});
+    const [authLoading, setAuthLoading] = useState(true);
 
     const fetchProducts = async () => {
         try {
@@ -80,9 +83,33 @@ const FAQManager = () => {
     };
 
     useEffect(() => {
-        fetchFAQs(0, searchQuery);
+        const fetchAuth = async () => {
+            try {
+                const user = await getCurrentUser();
+                setCurrentUser(user);
+
+                if (user && user.roles && user.roles[0].name === "ROLE_SUPERADMIN") {
+                    setAuthLoading(false);
+                    return;
+                }
+
+                if (user && user.id) {
+                    const privs = await getPrivileges(user.id);
+                    setPrivileges(privs);
+                }
+            } catch (error) {
+                console.error('Error fetching auth:', error);
+            } finally {
+                setAuthLoading(false);
+            }
+        };
+        fetchAuth();
         fetchProducts();
     }, []);
+
+    useEffect(() => {
+        fetchFAQs(0, searchQuery);
+    }, [searchQuery]);
 
     const handleSearch = (e) => {
         const query = e.target.value;
@@ -192,24 +219,42 @@ const FAQManager = () => {
         }
     };
 
+    if (authLoading) return <Box sx={{ p: 10, textAlign: 'center' }}>Loading access control...</Box>;
+
+    if (!(currentUser?.roles[0].name === "ROLE_SUPERADMIN" || privileges?.faqs)) {
+        return (
+            <Box sx={{ p: 10 }}>
+                <Paper sx={{ p: 10, textAlign: 'center', borderRadius: 8, boxShadow: '0 10px 40px rgba(0,0,0,0.05)', border: '1px solid #f1f5f9' }}>
+                    <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 'bold', mb: 2 }}>
+                        Access Restricted
+                    </Typography>
+                    <Typography sx={{ color: '#64748b' }}>
+                        You do not have permission to manage FAQs. Please contact an administrator to grant you access.
+                    </Typography>
+                </Paper>
+            </Box>
+        );
+    }
+
     return (
-        <div className="p-6">
-            <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-slate-800">FAQ Management</h2>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={() => handleOpen()}
-                    className="bg-sky-600 hover:bg-sky-700"
-                >
-                    Add New FAQ
-                </Button>
-            </div>
+        <Box sx={{ p: 3 }}>
+            <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 4 }}>
+                <Typography variant="h5" sx={{ color: '#1e293b' }}>FAQ Management</Typography>
+                <Box sx={{ position: 'absolute', right: 0 }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<AddIcon />}
+                        onClick={() => handleOpen()}
+                    >
+                        Add New FAQ
+                    </Button>
+                </Box>
+            </Box>
 
             {/* Search Bar */}
-            <Box className="mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <div className="flex gap-2">
+            <Box sx={{ mb: 4, p: 2, bgcolor: '#f8fafc', borderRadius: 4, border: '1px solid #f1f5f9' }}>
+                <Box sx={{ display: 'flex', gap: 2 }}>
                     <TextField
                         fullWidth
                         placeholder="Search FAQs by question or asked by..."
@@ -217,19 +262,21 @@ const FAQManager = () => {
                         onChange={handleSearch}
                         size="small"
                         variant="outlined"
-                        startAdornment={<SearchIcon className="mr-2 text-slate-400" />}
+                        InputProps={{
+                            startAdornment: <SearchIcon sx={{ mr: 1, color: '#94a3b8' }} />
+                        }}
                     />
                     {searchQuery && (
                         <Button
                             variant="outlined"
                             startIcon={<ClearIcon />}
                             onClick={handleClearSearch}
-                            className="whitespace-nowrap"
+                            sx={{ whiteSpace: 'nowrap' }}
                         >
                             Clear
                         </Button>
                     )}
-                </div>
+                </Box>
             </Box>
 
             <TableContainer component={Paper} className="shadow-xl rounded-2xl border border-slate-100">
@@ -317,49 +364,49 @@ const FAQManager = () => {
 
             {/* View FAQ Dialog */}
             <Dialog open={viewOpen} onClose={handleViewClose} fullWidth maxWidth="sm">
-                <DialogTitle className="font-bold border-b border-slate-100 pb-4 bg-slate-50">
+                <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid #f1f5f9', pb: 2, bgcolor: '#f8fafc' }}>
                     View FAQ
                 </DialogTitle>
-                <DialogContent className="pt-6">
+                <DialogContent sx={{ pt: 3 }}>
                     {viewFAQ && (
-                        <div className="space-y-4">
-                            <div>
-                                <Typography className="font-bold text-slate-600 mb-2">Question</Typography>
-                                <Typography className="text-slate-700 whitespace-pre-wrap">{viewFAQ.question}</Typography>
-                            </div>
-                            <div>
-                                <Typography className="font-bold text-slate-600 mb-2">Answer</Typography>
-                                <Typography className="text-slate-700 whitespace-pre-wrap">{viewFAQ.answer}</Typography>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <Typography className="font-bold text-slate-600 mb-1">Asked By</Typography>
-                                    <Typography className="text-slate-700">{viewFAQ.askedBy || 'N/A'}</Typography>
-                                </div>
-                                <div>
-                                    <Typography className="font-bold text-slate-600 mb-1">Status</Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: '#64748b', mb: 1 }}>Question</Typography>
+                                <Typography sx={{ color: '#334155', whiteSpace: 'pre-wrap' }}>{viewFAQ.question}</Typography>
+                            </Box>
+                            <Box>
+                                <Typography sx={{ fontWeight: 'bold', color: '#64748b', mb: 1 }}>Answer</Typography>
+                                <Typography sx={{ color: '#334155', whiteSpace: 'pre-wrap' }}>{viewFAQ.answer}</Typography>
+                            </Box>
+                            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                                <Box>
+                                    <Typography sx={{ fontWeight: 'bold', color: '#64748b', mb: 0.5 }}>Asked By</Typography>
+                                    <Typography sx={{ color: '#334155' }}>{viewFAQ.askedBy || 'N/A'}</Typography>
+                                </Box>
+                                <Box>
+                                    <Typography sx={{ fontWeight: 'bold', color: '#64748b', mb: 0.5 }}>Status</Typography>
                                     <Chip
                                         label={viewFAQ.isActive ? 'Active' : 'Inactive'}
                                         color={viewFAQ.isActive ? 'success' : 'default'}
                                         size="small"
                                     />
-                                </div>
-                            </div>
-                        </div>
+                                </Box>
+                            </Box>
+                        </Box>
                     )}
                 </DialogContent>
-                <DialogActions className="p-4 border-t border-slate-100 bg-slate-50">
+                <DialogActions sx={{ p: 2, borderTop: '1px solid #f1f5f9', bgcolor: '#f8fafc' }}>
                     <Button onClick={handleViewClose} color="primary">Close</Button>
                 </DialogActions>
             </Dialog>
 
             {/* Create/Edit FAQ Dialog */}
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-                <DialogTitle className="font-bold border-b border-slate-100 pb-4 bg-slate-50">
+                <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid #f1f5f9', pb: 2, bgcolor: '#f8fafc' }}>
                     {isEditing ? 'Edit FAQ' : 'Add New FAQ'}
                 </DialogTitle>
-                <DialogContent className="pt-6">
-                    <FormControl fullWidth variant="outlined" margin="dense" className="mb-4">
+                <DialogContent sx={{ pt: 3 }}>
+                    <FormControl fullWidth variant="outlined" margin="dense" sx={{ mb: 2 }}>
                         <InputLabel id="product-select-label">Product</InputLabel>
                         <Select
                             labelId="product-select-label"
@@ -384,7 +431,7 @@ const FAQManager = () => {
                         rows={3}
                         value={currentFAQ.question}
                         onChange={(e) => setCurrentFAQ({ ...currentFAQ, question: e.target.value })}
-                        className="mb-4"
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         margin="dense"
@@ -395,7 +442,7 @@ const FAQManager = () => {
                         rows={4}
                         value={currentFAQ.answer}
                         onChange={(e) => setCurrentFAQ({ ...currentFAQ, answer: e.target.value })}
-                        className="mb-4"
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         margin="dense"
@@ -404,7 +451,7 @@ const FAQManager = () => {
                         variant="outlined"
                         value={currentFAQ.askedBy}
                         onChange={(e) => setCurrentFAQ({ ...currentFAQ, askedBy: e.target.value })}
-                        className="mb-4"
+                        sx={{ mb: 2 }}
                     />
                     <FormControlLabel
                         control={
@@ -416,14 +463,14 @@ const FAQManager = () => {
                         label="Active"
                     />
                 </DialogContent>
-                <DialogActions className="p-4 border-t border-slate-100 bg-slate-50">
+                <DialogActions sx={{ p: 2, borderTop: '1px solid #f1f5f9', bgcolor: '#f8fafc' }}>
                     <Button onClick={handleClose} color="inherit">Cancel</Button>
                     <Button onClick={handleSave} color="primary" variant="contained" disabled={!currentFAQ.question.trim()}>
                         {isEditing ? 'Update' : 'Create'}
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </Box>
     );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, MenuItem, InputAdornment, Box, Typography } from '@mui/material';
+import { TextField, Button, MenuItem, InputAdornment, Box, Typography, Grid } from '@mui/material';
 import { Person, Email, VpnKey, Phone, Security, PersonAdd, Edit } from '@mui/icons-material';
 
 function UserForm({ user, onSubmit }) {
@@ -24,123 +24,128 @@ function UserForm({ user, onSubmit }) {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} className="p-6 sm:p-8 w-full">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600">
+    <Box component="form" onSubmit={handleSubmit} sx={{ p: { xs: 3, sm: 4 }, w: '100%' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
+        <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0284c7' }}>
           {user ? <Edit /> : <PersonAdd />}
-        </div>
-        <Typography variant="h5" className="font-extrabold text-slate-800">
+        </Box>
+        <Typography variant="h5" sx={{ fontWeight: 800, color: '#1e293b' }}>
           {user ? 'Update Existing User' : 'Register New User'}
         </Typography>
-      </div>
+      </Box>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <TextField
-          label="Username"
-          name="username"
-          variant="outlined"
-          fullWidth
-          value={formData.username}
-          onChange={handleChange}
-          required
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Person className="text-slate-400" />
-              </InputAdornment>
-            ),
-            className: "bg-slate-50 border-slate-200"
-          }}
-        />
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6} lg={4}>
+          <TextField
+            label="Username"
+            name="username"
+            variant="outlined"
+            fullWidth
+            value={formData.username}
+            onChange={handleChange}
+            required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Person sx={{ color: '#94a3b8' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
 
-        <TextField
-          label="Email Address"
-          name="email"
-          type="email"
-          variant="outlined"
-          fullWidth
-          value={formData.email}
-          onChange={handleChange}
-          required
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Email className="text-slate-400" />
-              </InputAdornment>
-            ),
-            className: "bg-slate-50"
-          }}
-        />
+        <Grid item xs={12} md={6} lg={4}>
+          <TextField
+            label="Email Address"
+            name="email"
+            type="email"
+            variant="outlined"
+            fullWidth
+            value={formData.email}
+            onChange={handleChange}
+            required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Email sx={{ color: '#94a3b8' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
 
-        <TextField
-          label="Phone Number"
-          name="phoneNumber"
-          variant="outlined"
-          fullWidth
-          value={formData.phoneNumber || ''}
-          onChange={handleChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Phone className="text-slate-400" />
-              </InputAdornment>
-            ),
-            className: "bg-slate-50"
-          }}
-        />
+        <Grid item xs={12} md={6} lg={4}>
+          <TextField
+            label="Phone Number"
+            name="phoneNumber"
+            variant="outlined"
+            fullWidth
+            value={formData.phoneNumber || ''}
+            onChange={handleChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Phone sx={{ color: '#94a3b8' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
 
-        <TextField
-          select
-          label="Account Role"
-          name="role"
-          variant="outlined"
-          fullWidth
-          value={formData.role || 'user'}
-          onChange={handleChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Security className="text-slate-400" />
-              </InputAdornment>
-            ),
-            className: "bg-slate-50"
-          }}
-        >
-          <MenuItem value="user">Standard User</MenuItem>
-          <MenuItem value="admin">Administrator</MenuItem>
-          <MenuItem value="superadmin">Superadmin</MenuItem>
-        </TextField>
+        <Grid item xs={12} md={6} lg={4}>
+          <TextField
+            select
+            label="Account Role"
+            name="role"
+            variant="outlined"
+            fullWidth
+            value={formData.role || 'user'}
+            onChange={handleChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Security sx={{ color: '#94a3b8' }} />
+                </InputAdornment>
+              ),
+            }}
+          >
+            <MenuItem value="user">Standard User</MenuItem>
+            <MenuItem value="admin">Administrator</MenuItem>
+            <MenuItem value="superadmin">Superadmin</MenuItem>
+          </TextField>
+        </Grid>
 
-        <TextField
-          label="Password (optional for update)"
-          name="password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          value={formData.password || ''}
-          onChange={handleChange}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <VpnKey className="text-slate-400" />
-              </InputAdornment>
-            ),
-            className: "bg-slate-50"
-          }}
-        />
-      </div>
+        <Grid item xs={12} md={6} lg={4}>
+          <TextField
+            label="Password (optional for update)"
+            name="password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            value={formData.password || ''}
+            onChange={handleChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <VpnKey sx={{ color: '#94a3b8' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+      </Grid>
 
-      <div className="mt-8 flex justify-end">
+      <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           type="submit"
           variant="contained"
           size="large"
           startIcon={user ? <Edit /> : <PersonAdd />}
-          className="bg-sky-600 hover:bg-sky-700 font-bold px-8 shadow-md shadow-sky-200 rounded-xl py-3"
+          sx={{ fontWeight: 'bold', px: 4, borderRadius: 3, py: 1.5 }}
         >
           {user ? 'Save Changes' : 'Create User'}
         </Button>
-      </div>
+      </Box>
     </Box>
   );
 }

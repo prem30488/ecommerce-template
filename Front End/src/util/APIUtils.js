@@ -404,6 +404,13 @@ export function deleteProduct(itemRequest) {
     return api.delete("/api/product/delete/" + itemRequest.id, { data: itemRequest });
 }
 
+export function hardDeleteProduct(id) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.delete("/api/product/delete/" + id + "?hard=true");
+}
+
 export function undeleteProduct(itemRequest) {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");
@@ -634,4 +641,26 @@ export function deleteLeadershipTeam(id) {
         return Promise.reject("No access token set.");
     }
     return api.delete("/api/leadership/delete/" + id);
+}
+
+export function uploadLeadershipImage(file) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post("/api/leadership/upload", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+}
+
+export function uploadSliderImage(file) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post("/api/slider/upload", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
 }

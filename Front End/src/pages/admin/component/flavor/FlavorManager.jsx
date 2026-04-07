@@ -163,19 +163,20 @@ const FlavorManager = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-slate-800">Flavor Management</h2>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpen()}
-          className="bg-sky-600 hover:bg-sky-700"
-        >
-          Add New Flavor
-        </Button>
-      </div>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h5" sx={{ color: '#1e293b' }}>Flavor Management</Typography>
+        <Box sx={{ position: 'absolute', right: 0 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpen()}
+          >
+            Add New Flavor
+          </Button>
+        </Box>
+      </Box>
 
       {/* Search Bar */}
       <Box className="mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -328,7 +329,7 @@ const FlavorManager = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 };
 

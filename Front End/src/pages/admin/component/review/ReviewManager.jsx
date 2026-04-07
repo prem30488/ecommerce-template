@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Paper, Typography, Button, IconButton, Box, Chip, Tooltip, TextField, TablePagination } from '@mui/material';
+import { Container, Paper, Typography, Button, IconButton, Box, Chip, Tooltip, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Check, Close, Delete, Search, Clear as ClearIcon } from '@mui/icons-material';
 import axios from 'axios';
 import Alert from 'react-s-alert';
 import { API_BASE_URL } from '../../../../constants';
+import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
 
 const ReviewManager = () => {
     const [reviews, setReviews] = useState([]);
@@ -13,6 +14,9 @@ const ReviewManager = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
+    const [currentUser, setCurrentUser] = useState(null);
+    const [privileges, setPrivileges] = useState({});
+    const [authLoading, setAuthLoading] = useState(true);
 
     const fetchReviews = async (page = 0, search = '') => {
         setLoading(true);
@@ -27,7 +31,6 @@ const ReviewManager = () => {
                 headers: { Authorization: `Bearer ${token}` },
                 params
             });
-            // Handle paginated response
             const data = response.data.content || [];
             setReviews(Array.isArray(data) ? data : []);
             setTotalCount(response.data.totalElements || 0);
@@ -41,6 +44,21 @@ const ReviewManager = () => {
     };
 
     useEffect(() => {
+        const fetchAuth = async () => {
+            try {
+                const user = await getCurrentUser();
+                setCurrentUser(user);
+                if (user && user.id) {
+                    const privs = await getPrivileges(user.id);
+                    setPrivileges(privs);
+                }
+            } catch (error) {
+                console.error('Error fetching auth:', error);
+            } finally {
+                setAuthLoading(false);
+            }
+        };
+        fetchAuth();
         fetchReviews(0, searchQuery);
     }, []);
 
@@ -60,12 +78,6 @@ const ReviewManager = () => {
     const handleChangePage = (event, newPage) => {
         setCurrentPage(newPage);
         fetchReviews(newPage, searchQuery);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setCurrentPage(0);
-        fetchReviews(0, searchQuery);
     };
 
     const handleUpdateStatus = async (id, status) => {
@@ -132,7 +144,7 @@ const ReviewManager = () => {
             width: 180,
             sortable: false,
             renderCell: (params) => (
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', height: '100%' }}>
                     {params.row.status !== 'approved' && (
                         <Tooltip title="Approve">
                             <IconButton size="small" color="success" onClick={() => handleUpdateStatus(params.row.id, 'approved')}>
@@ -157,11 +169,28 @@ const ReviewManager = () => {
         }
     ];
 
+    if (authLoading) return <Box sx={{ p: 10, textAlign: 'center' }}>Loading access control...</Box>;
+
+    if (!(currentUser?.roles[0].name === "ROLE_SUPERADMIN" || privileges?.reviews)) {
+        return (
+            <Container maxWidth="md" sx={{ mt: 10 }}>
+                <Paper sx={{ p: 10, textAlign: 'center', borderRadius: 8, boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
+                    <Typography variant="h5" color="error" fontWeight="bold" gutterBottom>
+                        Access Restricted
+                    </Typography>
+                    <Typography color="textSecondary">
+                        You do not have permission to manage reviews. Please contact an administrator to grant you access.
+                    </Typography>
+                </Paper>
+            </Container>
+        );
+    }
+
     return (
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
             <Paper sx={{ p: 4, borderRadius: 4, boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-                    <Typography variant="h4" fontWeight={900} letterSpacing="-0.02em" color="#0f172a">
+                <Box display="flex" justifyContent="center" alignItems="center" mb={4}>
+                    <Typography variant="h5" fontWeight={400} letterSpacing="-0.02em" color="#0f172a">
                         Review Management
                     </Typography>
                 </Box>
@@ -197,6 +226,7 @@ const ReviewManager = () => {
                             handleChangePage(null, newModel.page);
                             if (newModel.pageSize !== rowsPerPage) {
                                 setRowsPerPage(newModel.pageSize);
+                                fetchReviews(0, searchQuery);
                             }
                         }}
                         initialState={{
@@ -230,16 +260,6 @@ const ReviewManager = () => {
                         }}
                     />
                 </div>
-
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25, 50]}
-                    component="div"
-                    count={totalCount}
-                    rowsPerPage={rowsPerPage}
-                    page={currentPage}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
             </Paper>
         </Container>
     );

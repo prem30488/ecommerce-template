@@ -26,6 +26,12 @@ module.exports = (sequelize, DataTypes) => {
         orders: { type: DataTypes.BOOLEAN, defaultValue: false },
         coupons: { type: DataTypes.BOOLEAN, defaultValue: false },
         testimonials: { type: DataTypes.BOOLEAN, defaultValue: false },
+        flavors: { type: DataTypes.BOOLEAN, defaultValue: false },
+        faqs: { type: DataTypes.BOOLEAN, defaultValue: false },
+        reviews: { type: DataTypes.BOOLEAN, defaultValue: false },
+        sales: { type: DataTypes.BOOLEAN, defaultValue: false },
+        sliders: { type: DataTypes.BOOLEAN, defaultValue: false },
+        leadership: { type: DataTypes.BOOLEAN, defaultValue: false },
         deleteFlag: { type: DataTypes.BOOLEAN, defaultValue: false }
     }, {
         sequelize,

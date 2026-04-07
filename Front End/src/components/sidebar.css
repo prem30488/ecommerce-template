@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding-bottom: 2rem;
+  padding-bottom: 300px;
 }
 
 .sidebar-section {
@@ -128,4 +128,27 @@
 
 .bm-cross {
   background: #0d9488;
-}
+  width: 3px !important;
+  border-radius: 2px;
+}
+
+.bm-cross-button {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: #f0fdfa;
+  border-radius: 50%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  z-index: 10;
+}
+
+.bm-cross-button:hover {
+  background: #ccfbf1;
+}
+

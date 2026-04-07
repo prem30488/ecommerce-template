@@ -10,6 +10,7 @@ import SearchMenu from './SearchMenu';
 import CartDrawer from "../pages/cart/CartDrawer";
 // Header wishlist now navigates to the wishlist page instead of opening the drawer
 import Sidebar from "./Sidebar";
+import FloatingSocials from "./socialIconsFloating";
 import "./sidebar.css";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
@@ -51,7 +52,7 @@ export const NavbarMain = () => {
 
   const getComingSoonCategories = (p) => {
     const titles = new Set();
-    
+
     // Helper to resolve a potential ID string/number to a category title
     const resolveToTitle = (val) => {
       if (!val) return null;
@@ -72,7 +73,7 @@ export const NavbarMain = () => {
         titles.add(String(p.category));
       }
     }
-    
+
     // 3. Process catIds list
     if (p.catIds) {
       const ids = String(p.catIds).split(',').map(id => id.trim()).filter(Boolean);
@@ -90,7 +91,7 @@ export const NavbarMain = () => {
         return ids.join(', ');
       }
     }
-    
+
     return Array.from(titles).join(', ') || '';
   };
 
@@ -104,6 +105,7 @@ export const NavbarMain = () => {
   return (
     <div className="navbar" id="navbar" style={{ position: "fixed", width: "100%" }}>
       <Sidebar />
+      <FloatingSocials />
       <div className="logo">
 
         <Link to="/" id="NavTitle">

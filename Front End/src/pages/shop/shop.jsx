@@ -12,6 +12,7 @@ import InstagramVideoCarousel from "../../components/InstagramVideoCarousel";
 import WeeklyHighlight from "../../components/WeeklyHighlight";
 import BestSellingCarousel from "../../components/BestSellingCarousel";
 import OnlineSupport from "../../components/OnlineSupport";
+import PromoSlider from "../../components/PromoSlider";
 export const Shop = () => {
 
     return (
@@ -26,6 +27,7 @@ export const Shop = () => {
                 <BestSellingCarousel />
                 <FeatureProductsCarousel />
                 {/* <NewOfferedProducts /> */}
+                <PromoSlider />
                 <Testimonials />
                 <OnlineSupport />
             </div>

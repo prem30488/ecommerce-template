@@ -106,7 +106,7 @@ export default function Footer() {
 
           <div className="footer-bottom">
             <span>© 2024 Hanley Healthcare. All Rights Reserved</span>
-            <span>Lovingly built by Labs</span>
+            <span>Lovingly built by Hanley Healthcare Team</span>
           </div>
         </div>
       </footer>

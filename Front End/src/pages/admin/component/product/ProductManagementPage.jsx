@@ -1,28 +1,28 @@
 // src/components/ProductManagement.js
-import React , {useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Paper, Typography } from '@mui/material';
 import { CssBaseline, Container } from '@mui/material';
 import ProductManager from './ProductManager';
-import {getCurrentUser, getPrivileges} from '../../../../util/APIUtils';
+import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
 import { API_BASE_URL } from '../../../../constants';
 import Alert from 'react-s-alert';
 
 const ProductManagementPage = () => {
-  const [privileges, setPrivileges] = useState({});  
-  const [currentUser,setCurrentUser] = useState();
+  const [privileges, setPrivileges] = useState({});
+  const [currentUser, setCurrentUser] = useState();
 
   useEffect(() => {
     const fetchPrivileges = async () => {
       try {
         const user = await getCurrentUser();
         setCurrentUser(user);
-        
+
         const privilegesData = await getPrivileges(user.id);
         setPrivileges({
           id: privilegesData.id,
           userId: privilegesData.user_id,
           categories: privilegesData.categories,
-          forms: privilegesData.forms, 
+          forms: privilegesData.forms,
           products: privilegesData.products,
           orders: privilegesData.orders,
           coupons: privilegesData.coupons,
@@ -37,21 +37,19 @@ const ProductManagementPage = () => {
     fetchPrivileges();
   }, []);
 
-  if(privileges && privileges.products === true || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN"){
+  if (privileges && privileges.products === true || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN") {
 
-  }else{
+  } else {
     return "You are not authorized to view this page. Please contact to Admin to grant you privileges.";
   }
 
   return (
     <Container>
-    <CssBaseline />"
-    <Paper elevation={3} style={{ padding: '20px', height: "100%" }}>
-      <Typography variant="h5" align="center">Product Management</Typography>
-      {/* <ProductManagement categories={categories} /> */}
-      <ProductManager />
-    
-    </Paper>
+      <CssBaseline />"
+      <Paper elevation={3} style={{ padding: '20px', height: "100%" }}>
+        <ProductManager />
+
+      </Paper>
     </Container>
   );
 };

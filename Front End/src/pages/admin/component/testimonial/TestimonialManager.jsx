@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { TextField, Box, TablePagination } from '@mui/material';
+import { TextField, Box, TablePagination, Typography } from '@mui/material';
 import { Clear as ClearIcon } from '@mui/icons-material';
 import axios from 'axios';
 import TestimonialForm from './TestimonialForm';
@@ -205,26 +205,32 @@ const TestimonialManager = () => {
   ];
 
   return (
-    <div>
-      <Button variant="contained" color="primary" onClick={handleAddTestimonial}>
-        Add Testimonial
-      </Button>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={handleDeleteTestimonial}
-        disabled={!selectedTestimonial || selectedTestimonial.deleteflag === 'inactive'}
-      >
-        Delete Testimonial
-      </Button>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleUndeleteTestimonial}
-        disabled={!selectedTestimonial || selectedTestimonial.deleteflag === 'active'}
-      >
-        Undelete Testimonial
-      </Button>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box sx={{ width: 150 }} />
+        <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1e293b' }}>Testimonial Management</Typography>
+        <Button variant="contained" color="primary" onClick={handleAddTestimonial} sx={{ borderRadius: 2 }}>
+          Add Testimonial
+        </Button>
+      </Box>
+      <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handleDeleteTestimonial}
+          disabled={!selectedTestimonial || selectedTestimonial.deleteflag === 'inactive'}
+        >
+          Delete Selected
+        </Button>
+        <Button
+          variant="outlined"
+          color="success"
+          onClick={handleUndeleteTestimonial}
+          disabled={!selectedTestimonial || selectedTestimonial.deleteflag === 'active'}
+        >
+          Restore Selected
+        </Button>
+      </Box>
 
       <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
         <TextField
@@ -274,25 +280,14 @@ const TestimonialManager = () => {
         />
       </div>
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={currentPage}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+      <TestimonialForm
+        open={isFormOpen}
+        key={selectedTestimonial ? selectedTestimonial.id : 'new'}
+        onSubmit={handleFormSubmit}
+        onCancel={handleFormCancel}
+        initialData={selectedTestimonial}
       />
-
-      {isFormOpen && (
-        <TestimonialForm
-          key={selectedTestimonial ? selectedTestimonial.id : 'new'}
-          onSubmit={handleFormSubmit}
-          onCancel={handleFormCancel}
-          initialData={selectedTestimonial}
-        />
-      )}
-    </div>
+    </Box>
   );
 };
 

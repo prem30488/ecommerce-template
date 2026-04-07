@@ -180,28 +180,34 @@ function UserManagement() {
   };
 
   const handleOpenDialog = (userId) => {
-    // Fetch user privileges from the backend when the component mounts
+    // Fetch user privileges from the backend
     getPrivileges(userId)
       .then(response => {
-        const data = response;
-        console.log("privileges :" + JSON.stringify(data));
+        const data = response || {};
+        console.log("privileges fetched:", data);
         setPrivileges({
           id: data.id,
           userId: data.user_id,
-          categories: data.categories,
-          forms: data.forms,
-          products: data.products,
-          orders: data.orders,
-          coupons: data.coupons,
-          testimonials: data.testimonials,
-          deleteFlag: data.deleteFlag
+          categories: !!data.categories,
+          forms: !!data.forms,
+          products: !!data.products,
+          orders: !!data.orders,
+          coupons: !!data.coupons,
+          testimonials: !!data.testimonials,
+          flavors: !!data.flavors,
+          faqs: !!data.faqs,
+          reviews: !!data.reviews,
+          sales: !!data.sales,
+          sliders: !!data.sliders,
+          leadership: !!data.leadership,
+          deleteFlag: !!data.deleteFlag
         });
+        setOpenDialog(true);
       })
       .catch(error => {
         console.error('Error fetching user privileges:', error);
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+        Alert.error('Failed to fetch user permissions. Please try again later.');
       });
-    setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
@@ -223,22 +229,22 @@ function UserManagement() {
   };
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">User Management</h2>
-          <p className="text-slate-500 mt-1">Manage user accounts, roles, and access privileges</p>
-        </div>
-      </div>
+    <Box sx={{ p: 3, maxWidth: '1600px', mx: 'auto' }}>
+      <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 800, color: '#1e293b', letterSpacing: '-0.025em' }}>User Management</Typography>
+          <Typography sx={{ color: '#64748b', mt: 0.5 }}>Manage user accounts, roles, and access privileges</Typography>
+        </Box>
+      </Box>
 
       {/* User Form Section */}
-      <Card className="mb-8 rounded-3xl shadow-lg shadow-slate-200/40 border border-slate-100 bg-white overflow-hidden transition-all duration-300">
+      <Card sx={{ mb: 4, borderRadius: 6, boxShadow: 3, border: '1px solid #f1f5f9', bgcolor: 'white', overflow: 'hidden' }}>
         <UserForm user={selectedUser} onSubmit={handleSubmit} />
       </Card>
 
       {/* Search Bar */}
-      <Box className="mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-100 transition-all hover:bg-slate-100/50">
-        <div className="flex gap-2">
+      <Box sx={{ mb: 3, p: 2, bgcolor: '#f8fafc', borderRadius: 4, border: '1px solid #f1f5f9', '&:hover': { bgcolor: '#f1f5f9' }, transition: 'all 0.3s' }}>
+        <Box sx={{ display: 'flex', gap: 2 }}>
           <TextField
             fullWidth
             placeholder="Search by username, email, phone number..."
@@ -253,16 +259,16 @@ function UserManagement() {
               size="small"
               onClick={handleClearSearch}
               startIcon={<ClearIcon />}
-              className="whitespace-nowrap border-slate-300 text-slate-600 hover:bg-slate-100"
+              sx={{ whiteSpace: 'nowrap', borderColor: '#e2e8f0', color: '#475569', '&:hover': { bgcolor: '#f1f5f9' } }}
             >
               Clear
             </Button>
           )}
-        </div>
+        </Box>
       </Box>
 
       {/* Data Table */}
-      <Paper className="shadow-2xl shadow-slate-200/30 rounded-3xl border border-slate-100 overflow-hidden bg-white">
+      <Paper sx={{ boxShadow: 4, borderRadius: 6, border: '1px solid #f1f5f9', overflow: 'hidden', bgcolor: 'white' }}>
         <DataGrid
           autoHeight
           sx={{
@@ -317,23 +323,23 @@ function UserManagement() {
               sortable: false,
               width: 180,
               renderCell: (params) => (
-                <div className="flex gap-1 items-center h-full">
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', height: '100%' }}>
                   {params.row.id === 1 ? (
-                    <span className="text-slate-400 text-[11px] uppercase font-bold tracking-widest px-3 py-1 bg-slate-100 rounded-full">System Admin</span>
+                    <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 'bold', letterSpacing: '0.05em', px: 1.5, py: 0.5, bgcolor: '#f1f5f9', borderRadius: 10 }}>SYSTEM ADMIN</Typography>
                   ) : (
                     <>
-                      <IconButton onClick={() => handleEdit(params.row.id)} color="primary" size="small" title="Edit" className="hover:bg-sky-50 transition-colors">
+                      <IconButton onClick={() => handleEdit(params.row.id)} color="primary" size="small" title="Edit">
                         <EditIcon fontSize="small" />
                       </IconButton>
-                      <IconButton onClick={() => handleOpenPrivileges(params.row.id)} color="secondary" size="small" title="Privileges" className="hover:bg-purple-50 transition-colors">
+                      <IconButton onClick={() => handleOpenPrivileges(params.row.id)} color="secondary" size="small" title="Privileges">
                         <VpnKeyIcon fontSize="small" />
                       </IconButton>
-                      <IconButton onClick={() => handleDelete(params.row.id)} color="error" size="small" title="Delete" className="hover:bg-red-50 transition-colors">
+                      <IconButton onClick={() => handleDelete(params.row.id)} color="error" size="small" title="Delete">
                         <DeleteIcon fontSize="small" />
                       </IconButton>
                     </>
                   )}
-                </div>
+                </Box>
               ),
             },
           ]}
@@ -350,43 +356,43 @@ function UserManagement() {
       /> */}
       </Paper>
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm" PaperProps={{ className: "rounded-3xl" }}>
-        <DialogTitle className="font-bold border-b border-slate-100 pb-4 bg-slate-50 text-slate-800">
+      <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm" PaperProps={{ sx: { borderRadius: 6 } }}>
+        <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid #f1f5f9', pb: 2, bgcolor: '#f8fafc', color: '#1e293b' }}>
           User Privileges Details
         </DialogTitle>
-        <DialogContent className="pt-8 pb-6">
-          <FormGroup className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <DialogContent sx={{ pt: 4, pb: 3 }}>
+          <FormGroup sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
             {Object.entries(privileges)
               .map(([moduleName, isChecked]) => (
                 moduleName !== "id" && moduleName !== "userId" && moduleName !== "deleteFlag" ?
-                  <div key={moduleName} className="bg-white border border-slate-200 rounded-xl p-2 hover:bg-slate-50 hover:border-sky-200 transition-all duration-300">
+                  <Box key={moduleName} sx={{ bgcolor: 'white', border: '1px solid #e2e8f0', borderRadius: 3, p: 1, '&:hover': { bgcolor: '#f8fafc', borderColor: '#bae6fd' }, transition: 'all 0.3s' }}>
                     <FormControlLabel
-                      className="m-0 w-full"
+                      sx={{ m: 0, w: '100%' }}
                       control={
                         <Checkbox
                           checked={isChecked}
                           onChange={() => handleCheckboxChange(moduleName)}
                           color="primary"
-                          className="text-slate-400"
+                          sx={{ color: '#94a3b8' }}
                         />
                       }
-                      label={<span className="font-semibold text-slate-700 capitalize text-sm">{moduleName}</span>}
+                      label={<Typography variant="body2" sx={{ fontWeight: 600, color: '#334155', textTransform: 'capitalize' }}>{moduleName}</Typography>}
                     />
-                  </div>
+                  </Box>
                   : ""
               ))}
           </FormGroup>
         </DialogContent>
-        <div className="p-5 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 rounded-b-3xl">
-          <Button onClick={handleCloseDialog} color="inherit" className="font-bold text-slate-500 hover:bg-slate-200 rounded-xl px-6">
+        <Box sx={{ p: 2.5, borderTop: '1px solid #f1f5f9', bgcolor: '#f8fafc', display: 'flex', justifyContent: 'flex-end', gap: 1.5, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 }}>
+          <Button onClick={handleCloseDialog} color="inherit" sx={{ fontWeight: 'bold', color: '#64748b', borderRadius: 3, px: 3 }}>
             Cancel
           </Button>
-          <Button onClick={handleSavePrivileges} color="primary" variant="contained" className="font-bold bg-sky-600 hover:bg-sky-700 rounded-xl px-6 shadow-md shadow-sky-200 flex-shrink-0">
+          <Button onClick={handleSavePrivileges} color="primary" variant="contained" sx={{ fontWeight: 'bold', borderRadius: 3, px: 3 }}>
             Save Privileges
           </Button>
-        </div>
+        </Box>
       </Dialog>
-    </div>
+    </Box>
   );
 }
 

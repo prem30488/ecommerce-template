@@ -407,16 +407,71 @@ app.post('/api/product/createProduct', authenticateToken, async (req, res) => {
     try {
         delete req.body.id;
         const productData = req.body;
-        // If ProductImages provided, handle them
+        
+        // Create product (Sequelize handles the associated ProductImages)
         const product = await db.Product.create(productData, {
             include: [{ model: db.ProductImage }, { model: db.ProductFlavor, as: 'productFlavors' }]
         });
+
+        // After creation, migrate any 'temp' images to the product's own folder
+        const images = await db.ProductImage.findAll({ where: { product_id: product.id } });
+        for (const img of images) {
+            if (img.url && img.url.includes('/images/temp/')) {
+                try {
+                    const oldPath = path.join(__dirname, '..', 'Front End', 'public', img.url);
+                    const newFileName = path.basename(img.url);
+                    // Product images are stored as: /images/:productId/:flavorId/:file
+                    // If uploaded to temp, it was: /images/temp/:flavorId/:file
+                    const urlParts = img.url.split('/'); // ["", "images", "temp", flavorId, filename]
+                    const flavorId = urlParts[3] || 'default';
+                    
+                    const newDir = path.join(__dirname, '..', 'Front End', 'public', 'images', String(product.id), flavorId);
+                    const newUrl = `/images/${product.id}/${flavorId}/${newFileName}`;
+                    const newPath = path.join(newDir, newFileName);
+
+                    if (fs.existsSync(oldPath)) {
+                        if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+                        fs.renameSync(oldPath, newPath);
+                        await img.update({ url: newUrl });
+                    }
+                } catch (err) {
+                    console.error('Error migrating product image from temp:', err);
+                }
+            }
+        }
+
         res.status(201).json(product);
     } catch (error) {
         console.error('Error creating product:', error);
         res.status(500).json({ error: 'Failed to create product' });
     }
 });
+
+// Utility to cleanup orphaned product images
+const cleanupOrphanedImages = (productId, dbImageUrls) => {
+    const productDir = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId));
+    if (!fs.existsSync(productDir)) return;
+
+    try {
+        const flavors = fs.readdirSync(productDir);
+        flavors.forEach(flavor => {
+            const flavorDir = path.join(productDir, flavor);
+            if (fs.statSync(flavorDir).isDirectory()) {
+                const files = fs.readdirSync(flavorDir);
+                files.forEach(file => {
+                    const fileUrl = `/images/${productId}/${flavor}/${file}`;
+                    // Only cleanup if it matches our path pattern and is NOT in current DB URLs
+                    if (!dbImageUrls.includes(fileUrl)) {
+                        fs.unlinkSync(path.join(flavorDir, file));
+                        console.log('Cleaned up orphaned image:', fileUrl);
+                    }
+                });
+            }
+        });
+    } catch (err) {
+        console.error('Error in cleanupOrphanedImages:', err);
+    }
+};
 
 app.put('/api/product/:id', authenticateToken, async (req, res) => {
     const t = await db.sequelize.transaction();
@@ -427,7 +482,7 @@ app.put('/api/product/:id', authenticateToken, async (req, res) => {
             transaction: t
         });
 
-        // If ProductImages are provided, sync them
+        // Sync ProductImages
         if (productData.ProductImages) {
             await db.ProductImage.destroy({
                 where: { product_id: req.params.id },
@@ -440,9 +495,13 @@ app.put('/api/product/:id', authenticateToken, async (req, res) => {
             }));
 
             await db.ProductImage.bulkCreate(imagesToCreate, { transaction: t });
+            
+            // Clean up files not in the list
+            const currentUrls = productData.ProductImages.map(img => img.url);
+            cleanupOrphanedImages(req.params.id, currentUrls);
         }
 
-        // If productFlavors are provided, sync them
+        // Sync productFlavors
         if (productData.productFlavors) {
             await db.ProductFlavor.destroy({
                 where: { product_id: req.params.id },
@@ -460,7 +519,7 @@ app.put('/api/product/:id', authenticateToken, async (req, res) => {
         await t.commit();
         res.json({ message: 'Product updated' });
     } catch (error) {
-        await t.rollback();
+        if (t) await t.rollback();
         console.error('Error updating product:', error);
         res.status(500).json({ error: 'Failed to update product' });
     }
@@ -468,16 +527,24 @@ app.put('/api/product/:id', authenticateToken, async (req, res) => {
 
 app.delete('/api/product/delete/:id', authenticateToken, async (req, res) => {
     try {
-        // Soft delete or hard delete? The frontend sends data.
-        // For now let's just update 'active' if it exists or hard delete.
-        const product = await db.Product.findByPk(req.params.id);
-        if (product) {
+        const productId = req.params.id;
+        const product = await db.Product.findByPk(productId);
+        if (!product) return res.status(404).json({ error: 'Product not found' });
+
+        // If 'hard' query param is true, perform real delete and cleanup
+        if (req.query.hard === 'true') {
+            const productFolder = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId));
+            deleteMediaFolder(productFolder);
+            
+            await product.destroy();
+            res.json({ message: 'Product permanently deleted and media cleaned up' });
+        } else {
+            // Default to soft delete
             await product.update({ active: false });
             res.json({ message: 'Product deactivated' });
-        } else {
-            res.status(404).json({ error: 'Product not found' });
         }
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Failed to delete product' });
     }
 });
@@ -510,9 +577,18 @@ app.get('/api/category/fetchById/:id', async (req, res) => {
 app.post('/api/category/createCategory', authenticateToken, async (req, res) => {
     try {
         delete req.body.id;
-        const category = await db.Category.create(req.body);
+
+        // Find maximum order value to place new item at the end
+        const maxOrder = await db.Category.max('order') || 0;
+        const newCategory = {
+            ...req.body,
+            order: maxOrder + 1
+        };
+
+        const category = await db.Category.create(newCategory);
         res.status(201).json(category);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Failed to create category' });
     }
 });
@@ -566,9 +642,31 @@ app.get('/api/flavor/getFlavors', async (req, res) => {
 
 app.post('/api/flavor/createFlavor', authenticateToken, async (req, res) => {
     try {
-        const flavor = await db.Flavor.create(req.body);
+        const flavorData = req.body;
+        const flavor = await db.Flavor.create(flavorData);
+
+        // If image was in temp folder, move it to the flavor's own folder
+        if (flavor.image && flavor.image.includes('/Flavors/temp/')) {
+            try {
+                const oldPath = path.join(__dirname, '..', 'Front End', 'public', flavor.image);
+                const newFileName = path.basename(flavor.image);
+                const newDir = path.join(__dirname, '..', 'Front End', 'public', 'images', 'Flavors', String(flavor.id));
+                const newUrl = `/images/Flavors/${flavor.id}/${newFileName}`;
+                const newPath = path.join(newDir, newFileName);
+
+                if (fs.existsSync(oldPath)) {
+                    if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+                    fs.renameSync(oldPath, newPath);
+                    await flavor.update({ image: newUrl });
+                }
+            } catch (err) {
+                console.error('Error moving flavor image from temp:', err);
+            }
+        }
+
         res.status(201).json(flavor);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Failed to create flavor' });
     }
 });
@@ -584,12 +682,45 @@ app.put('/api/flavor/:id', authenticateToken, async (req, res) => {
 
 app.delete('/api/flavor/delete/:id', authenticateToken, async (req, res) => {
     try {
-        await db.Flavor.destroy({ where: { id: req.params.id } });
+        const flavorId = req.params.id;
+        const flavor = await db.Flavor.findByPk(flavorId);
+        
+        if (flavor) {
+            // Cleanup ID-based folder
+            const flavorFolder = path.join(__dirname, '..', 'Front End', 'public', 'images', 'Flavors', String(flavorId));
+            deleteMediaFolder(flavorFolder);
+            
+            // Cleanup if it references temp path
+            if (flavor.image && flavor.image.includes('/Flavors/temp/')) {
+                const tempPath = path.join(__dirname, '..', 'Front End', 'public', flavor.image);
+                if (fs.existsSync(tempPath)) {
+                    try {
+                        fs.unlinkSync(tempPath);
+                    } catch (e) {
+                        console.error('Error unlinking temp flavor image', e);
+                    }
+                }
+            }
+        }
+        
+        await db.Flavor.destroy({ where: { id: flavorId } });
         res.json({ message: 'Flavor deleted' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete flavor' });
     }
 });
+
+// Utility to delete media folder
+const deleteMediaFolder = (folderPath) => {
+    if (fs.existsSync(folderPath)) {
+        try {
+            fs.rmSync(folderPath, { recursive: true, force: true });
+            console.log('Deleted media folder:', folderPath);
+        } catch (err) {
+            console.error(`Error deleting media folder: ${folderPath}`, err);
+        }
+    }
+};
 
 // Leadership CRUD
 app.get('/api/leadership/getTeams', async (req, res) => {
@@ -642,6 +773,13 @@ app.put('/api/leadership/:id', authenticateToken, async (req, res) => {
 
 app.delete('/api/leadership/delete/:id', authenticateToken, async (req, res) => {
     try {
+        const team = await db.LeadershipTeam.findByPk(req.params.id);
+        if (team && team.image) {
+            const imagePath = path.join(__dirname, '..', 'Front End', 'public', team.image);
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
         await db.LeadershipTeam.destroy({ where: { id: req.params.id } });
         res.json({ message: 'Leadership team deleted' });
     } catch (error) {
@@ -776,7 +914,7 @@ app.get('/api/user/privileges/:id', authenticateToken, async (req, res) => {
     try {
         const userId = req.params.id;
 
-        if (req.user.role !== 'superadmin' && req.user.id != userId) {
+        if (req.user.role.toLowerCase() !== 'superadmin' && req.user.id != userId) {
             return res.status(403).json({ error: 'Access denied' });
         }
 
@@ -794,6 +932,12 @@ app.get('/api/user/privileges/:id', authenticateToken, async (req, res) => {
                 orders: false,
                 coupons: false,
                 testimonials: false,
+                flavors: false,
+                faqs: false,
+                reviews: false,
+                sales: false,
+                sliders: false,
+                leadership: false,
                 deleteFlag: false
             };
         }
@@ -808,15 +952,20 @@ app.get('/api/user/privileges/:id', authenticateToken, async (req, res) => {
 app.put('/api/user/privileges/update/:id', authenticateToken, async (req, res) => {
     try {
         const userId = req.params.id;
-        const privilegesData = req.body;
+        const privilegesData = { ...req.body };
 
-        if (req.user.role !== 'superadmin') {
+        if (req.user.role.toLowerCase() !== 'superadmin') {
             return res.status(403).json({ error: 'Access denied' });
         }
 
+        // Sanitize data: remove primary key and alias fields to prevent Sequelize conflicts
+        delete privilegesData.id;
+        delete privilegesData.userId;
+        privilegesData.user_id = userId;
+
         let [privilege, created] = await db.Privilege.findOrCreate({
             where: { user_id: userId },
-            defaults: { ...privilegesData, user_id: userId }
+            defaults: privilegesData
         });
 
         if (!created) {
@@ -825,7 +974,7 @@ app.put('/api/user/privileges/update/:id', authenticateToken, async (req, res) =
 
         res.json({ message: 'Privileges updated successfully' });
     } catch (error) {
-        console.error(error);
+        console.error('Error updating privileges:', error);
         res.status(500).json({ error: 'Failed to update privileges' });
     }
 });
@@ -1041,6 +1190,47 @@ app.post('/api/testimonial/upload', authenticateToken, uploadTestimonial.single(
     const fileUrl = `/images/testimonials/${req.file.filename}`;
     res.send(fileUrl);
 });
+
+const leadershipStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'leadership');
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
+    }
+});
+const uploadLeadership = multer({ storage: leadershipStorage });
+
+app.post('/api/leadership/upload', authenticateToken, uploadLeadership.single('file'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const fileUrl = `/images/leadership/${req.file.filename}`;
+    res.send(fileUrl);
+});
+
+const sliderStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'sliders');
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
+    }
+});
+const uploadSlider = multer({ storage: sliderStorage });
+
+app.post('/api/slider/upload', authenticateToken, uploadSlider.single('file'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const fileUrl = `/images/sliders/${req.file.filename}`;
+    res.send(fileUrl);
+});
+
 app.put('/api/testimonial/:id', authenticateToken, async (req, res) => {
     try {
         await db.Testimonial.update(req.body, { where: { id: req.params.id } });
@@ -1454,8 +1644,14 @@ app.get('/api/faq', async (req, res) => {
             }
         }
 
+        console.log('Fetching FAQs with where:', JSON.stringify(where));
         const { count, rows: faqs } = await db.FAQ.findAndCountAll({
             where,
+            include: [{
+                model: db.Product,
+                as: 'product',
+                attributes: ['title']
+            }],
             order: [['id', 'DESC']],
             limit: pageSize,
             offset: offset
@@ -1463,8 +1659,8 @@ app.get('/api/faq', async (req, res) => {
 
         res.json(getPaginatedResponse(faqs, count, pageNum, pageSize));
     } catch (error) {
-        console.error('Error fetching FAQs:', error);
-        res.status(500).json({ error: 'Failed to load FAQs' });
+        console.error('CRITICAL: Error fetching FAQs:', error);
+        res.status(500).json({ error: 'Failed to load FAQs', message: error.message });
     }
 });
 
@@ -1724,11 +1920,44 @@ const startServer = async () => {
         // ONLY sync/seed if NOT in production or if explicitly asked
         if (!isProduction) {
             console.log('Initializing database in development mode...');
-            await db.sequelize.sync();
+            try {
+                // Ensure tables exist first
+                await db.sequelize.sync();
+                console.log('✅ Base tables synced');
+
+                // Manually add columns to Privileges table if they don't exist
+                const columnsToAdd = ['flavors', 'faqs', 'reviews', 'sales', 'sliders', 'leadership'];
+                for (const col of columnsToAdd) {
+                    try {
+                        // Using a more robust Postgres-specific way to add columns column-by-column if they don't exist
+                        await db.sequelize.query(`
+                            DO $$ 
+                            BEGIN 
+                                BEGIN
+                                    ALTER TABLE "Privileges" ADD COLUMN "${col}" BOOLEAN DEFAULT FALSE;
+                                EXCEPTION
+                                    WHEN duplicate_column THEN RAISE NOTICE 'column ${col} already exists';
+                                END;
+                            END $$;
+                        `);
+                    } catch (e) {
+                        // console.log(`Note: Tried to add column ${col} to Privileges - might already exist.`);
+                    }
+                }
+                console.log('✅ Custom privilege columns ensured');
+            } catch (syncError) {
+                console.error('⚠️ Database sync error details:', syncError);
+                await db.sequelize.sync();
+            }
         } else {
             // In production, just sync without dropping (safe alter)
-            await db.sequelize.sync({ alter: true });
-            console.log('Database synced (production/alter only)');
+            try {
+                await db.sequelize.sync({ alter: true });
+                console.log('✅ Database synced (production/alter)');
+            } catch (prodSyncError) {
+                console.error('⚠️ Production sync error (continuing):', prodSyncError);
+                await db.sequelize.sync();
+            }
         }
 
         // Start listening

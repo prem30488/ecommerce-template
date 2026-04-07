@@ -7,19 +7,27 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  TablePagination,
   Box,
+  Typography,
 } from '@mui/material';
-import { Clear as ClearIcon, Search as SearchIcon } from '@mui/icons-material';
+import { Clear as ClearIcon } from '@mui/icons-material';
 import { getCategories, addCategory, fetchCategoryById, updateCategory, deleteCategory } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
 import { getCurrentDate } from '../../../../util/util';
+
 function CategoryManager() {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  const [title, setTitle] = useState('');
+  const [type, setType] = useState(1);
+  const [editCategoryId, setEditCategoryId] = useState(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editType, setEditType] = useState(1);
 
   const fetchCategoriesList = async (page = 0, search = '') => {
     setLoading(true);
@@ -34,14 +42,6 @@ function CategoryManager() {
       setLoading(false);
     }
   };
-
-  const [categories, setCategories] = useState([]);
-
-  const [title, setTitle] = useState('');
-  const [type, setType] = useState(1);
-  const [editCategoryId, setEditCategoryId] = useState(null);
-  const [editTitle, setEditTitle] = useState('');
-  const [editType, setEditType] = useState(1);
 
   useEffect(() => {
     fetchCategoriesList(0, searchQuery);
@@ -66,17 +66,15 @@ function CategoryManager() {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    const newSize = parseInt(event.target.value, 10);
+    setRowsPerPage(newSize);
     setCurrentPage(0);
     fetchCategoriesList(0, searchQuery);
   };
 
   const handleAddCategory = () => {
-    const newId = categories.length + 1;
-    const categoryObj = { title: title, type: type, order: newId, description: ' ', createdAt: getCurrentDate('-') };
-    console.log("categoryObj :" + JSON.stringify(categoryObj));
+    const categoryObj = { title: title, type: type, description: ' ', createdAt: getCurrentDate('-') };
     addCategory(categoryObj).then(res => {
-      console.log(JSON.stringify(res));
       Alert.success("Success!");
       setTitle('');
       setType(1);
@@ -96,18 +94,9 @@ function CategoryManager() {
   };
 
   const handleSaveEdit = () => {
-    setCategories((prevCategories) =>
-      prevCategories.map((category) =>
-        category.id === editCategoryId
-          ? { ...category, title: editTitle, type: editType }
-          : category
-      )
-    );
-
     fetchCategoryById(editCategoryId).then(res => {
       let cat = res;
       if (cat) {
-        cat.description = "''";
         cat.title = editTitle;
         cat.type = editType;
         cat.updatedAt = getCurrentDate('-');
@@ -124,18 +113,13 @@ function CategoryManager() {
     }).catch(error => {
       Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
     });
-
-
   };
+
   const handleCancelSaveEdit = () => {
     setEditCategoryId(null);
-    setEditTitle(editTitle);
-    setEditType(editType);
-  }
+  };
+
   const handleDeleteCategory = (id) => {
-    setCategories((prevCategories) =>
-      prevCategories.filter((category) => category.id !== id)
-    );
     deleteCategory(id).then(res => {
       Alert.success("Success!");
       fetchCategoriesList(currentPage, searchQuery);
@@ -144,60 +128,39 @@ function CategoryManager() {
     });
   };
 
-  const handleMoveCategory = (id, direction) => {
+  const handleMoveCategory = async (id, direction) => {
     const index = categories.findIndex((category) => category.id === id);
-    const updatedCategories = [...categories];
-    const movedCategory = updatedCategories[index];
-    let cat = updatedCategories[index];
-    let order = cat.order;
-    let prev = categories.findIndex((category) => category.order === order - 1);
-    let next = categories.findIndex((category) => category.order === order + 1);
+    if (index === -1) return;
 
-    let catPrev = updatedCategories[prev];
-    let catNext = updatedCategories[next];
-    updatedCategories.splice(index, 1);
-    if (direction === 'up') {
-      if (cat.order > 1) {
-        catPrev.order = cat.order;
-        cat.order = cat.order - 1;
-      }
-      updateCategory(catPrev).then(res => {
-
-      }).catch(error => {
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-      });
-      //console.log("up : " + JSON.stringify(cat));
-      updatedCategories.splice(index - 1, 0, movedCategory);
-
-    } else if (direction === 'down') {
-      if (cat.order < categories.length) {
-        catNext.order = cat.order;
-        cat.order = cat.order + 1;
-        updateCategory(catNext).then(res => {
-
-        }).catch(error => {
-          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-        });
-      }
-      //console.log("down : " + JSON.stringify(movedCategory));
-      updatedCategories.splice(index + 1, 0, movedCategory);
+    let targetIndex = -1;
+    if (direction === 'up' && index > 0) {
+      targetIndex = index - 1;
+    } else if (direction === 'down' && index < categories.length - 1) {
+      targetIndex = index + 1;
     }
 
+    if (targetIndex !== -1) {
+      const currentItem = { ...categories[index] };
+      const targetItem = { ...categories[targetIndex] };
 
-    // Reorder the categories
-    // updatedCategories.forEach((category, index) => {
-    //   category.order = index + 1;
-    // });
-    updateCategory(cat).then(res => {
-      Alert.success("Success!");
-      fetchCategoriesList(currentPage, searchQuery);
-    }).catch(error => {
-      Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-    });
+      // Swap their order values
+      const tempOrder = currentItem.order;
+      currentItem.order = targetItem.order;
+      targetItem.order = tempOrder;
 
-
-    //setCategories(updatedCategories);
-
+      try {
+        setLoading(true);
+        // Update both in the database
+        await updateCategory(currentItem);
+        await updateCategory(targetItem);
+        Alert.success("Order updated successfully!");
+        fetchCategoriesList(currentPage, searchQuery);
+      } catch (error) {
+        Alert.error((error && error.message) || 'Failed to update order.');
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const columns = [
@@ -206,8 +169,11 @@ function CategoryManager() {
       field: 'title', headerName: 'Title', width: 200, renderCell: (params) =>
         editCategoryId === params.row.id ? (
           <TextField
+            fullWidth
+            size="small"
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
+            autoFocus
           />
         ) : (
           params.row.title
@@ -219,7 +185,7 @@ function CategoryManager() {
       width: 150,
       renderCell: (params) =>
         editCategoryId === params.row.id ? (
-          <FormControl variant="outlined">
+          <FormControl variant="outlined" size="small" fullWidth>
             <InputLabel>Type</InputLabel>
             <Select
               value={editType}
@@ -235,17 +201,18 @@ function CategoryManager() {
           params.row.type
         ),
     },
-    { field: 'order', headerName: 'Display Order', width: 95 },
+    { field: 'order', headerName: 'Display Order', width: 100 },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 500,
+      width: 380,
       renderCell: (params) =>
         editCategoryId === params.row.id ? (
-          <div>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', height: '100%' }}>
             <Button
               variant="contained"
               color="primary"
+              size="small"
               onClick={handleSaveEdit}
             >
               Save
@@ -253,16 +220,19 @@ function CategoryManager() {
             <Button
               variant="outlined"
               color="secondary"
+              size="small"
               onClick={handleCancelSaveEdit}
             >
               Cancel
             </Button>
-          </div>
+          </Box>
         ) : (
-          <div>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', height: '100%' }}>
             <Button
               variant="outlined"
               color="primary"
+              size="small"
+              disabled={indexByRow(params.row.id) === 0 && currentPage === 0}
               onClick={() => handleMoveCategory(params.row.id, 'up')}
             >
               Up
@@ -270,6 +240,8 @@ function CategoryManager() {
             <Button
               variant="outlined"
               color="primary"
+              size="small"
+              disabled={indexByRow(params.row.id) === categories.length - 1 && categories.length < rowsPerPage}
               onClick={() => handleMoveCategory(params.row.id, 'down')}
             >
               Down
@@ -277,6 +249,7 @@ function CategoryManager() {
             <Button
               variant="outlined"
               color="primary"
+              size="small"
               onClick={() => handleEditCategory(params.row.id)}
             >
               Edit
@@ -284,25 +257,32 @@ function CategoryManager() {
             <Button
               variant="outlined"
               color="secondary"
+              size="small"
               onClick={() => handleDeleteCategory(params.row.id)}
             >
               Delete
             </Button>
-          </div>
+          </Box>
         ),
     },
   ];
 
-  return (
-    <div>
+  const indexByRow = (id) => categories.findIndex(c => c.id === id);
 
-      <div>
+  return (
+    <Box sx={{ p: 2 }}>
+      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 6 }}>
+        <Typography variant="h5" sx={{ color: '#1e293b' }}>Category Management</Typography>
+      </Box>
+      <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'flex-end', flexWrap: 'wrap' }}>
         <TextField
           label="Title"
+          variant="outlined"
+          size="small"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <FormControl variant="outlined">
+        <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
           <InputLabel>Type</InputLabel>
           <Select
             value={type}
@@ -321,7 +301,7 @@ function CategoryManager() {
         >
           Add Category
         </Button>
-      </div>
+      </Box>
 
       <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
         <TextField
@@ -343,18 +323,20 @@ function CategoryManager() {
         </Button>
       </Box>
 
-      <div style={{ height: 400, width: '100%' }}>
+      <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid
           rows={categories}
           columns={columns}
-          checkboxSelection={false}
           rowCount={totalCount}
           loading={loading}
           paginationMode="server"
-          onPaginationModelChange={(newModel) => {
-            handleChangePage(null, newModel.page);
-            if (newModel.pageSize !== rowsPerPage) {
-              setRowsPerPage(newModel.pageSize);
+          onPaginationModelChange={(model) => {
+            if (model.page !== currentPage) {
+              handleChangePage(null, model.page);
+            }
+            if (model.pageSize !== rowsPerPage) {
+              setRowsPerPage(model.pageSize);
+              fetchCategoriesList(0, searchQuery);
             }
           }}
           initialState={{
@@ -364,20 +346,9 @@ function CategoryManager() {
           }}
           pageSizeOptions={[5, 10, 25, 50]}
         />
-      </div>
-
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={currentPage}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </div>
+      </Box>
+    </Box>
   );
 }
-
 
 export default CategoryManager;

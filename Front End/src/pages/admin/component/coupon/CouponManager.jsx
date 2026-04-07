@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
-import { TextField, Box, TablePagination } from '@mui/material';
+import { TextField, Box, TablePagination, Switch, FormControlLabel, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
 import { Clear as ClearIcon } from '@mui/icons-material';
 import axios from 'axios';
 import CouponForm from './CouponForm';
@@ -86,12 +86,12 @@ const CouponManager = () => {
     }
   };
 
-  const handleUndeleteCoupon = async () => {
-    if (selectedCoupon) {
+  const handleUndeleteCoupon = async (couponToUndelete) => {
+    const target = couponToUndelete || selectedCoupon;
+    if (target) {
       try {
-        //await axios.put(`/api/coupons/undelete/${selectedCoupon.id}`); // Replace with your API endpoint
-        await undeleteCoupon(selectedCoupon).then((res) => {
-          Alert.success("Success!");
+        await undeleteCoupon(target).then((res) => {
+          Alert.success("Coupon activated!");
         }).catch(error => {
           Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
         });
@@ -100,6 +100,21 @@ const CouponManager = () => {
       } catch (error) {
         console.error('Error undeleting coupon:', error);
       }
+    }
+  };
+
+  const handleToggleStatus = (params) => {
+    if (params.row.deleteFlag) {
+      handleUndeleteCoupon(params.row);
+    } else {
+      // Confirm before deactivating? For consistency with products, maybe just do it.
+      const target = params.row;
+      deleteCoupon(target).then((res) => {
+        Alert.success("Coupon deactivated!");
+        fetchCouponsData(currentPage, searchQuery);
+      }).catch(error => {
+        Alert.error((error && error.message) || 'Failed to deactivate coupon.');
+      });
     }
   };
 
@@ -139,12 +154,31 @@ const CouponManager = () => {
     { field: 'id', headerName: 'ID', width: 100 },
     { field: 'code', headerName: 'Coupon Code', width: 200 },
     { field: 'discount', headerName: 'Discount (%)', width: 150 },
-    { field: 'from', headerName: 'From Date', width: 200 },
-    { field: 'to', headerName: 'To Date', width: 200 },
     {
-      field: 'deleteflag', headerName: 'Deleted?', width: 120,
+      field: 'from',
+      headerName: 'Valid From',
+      width: 180,
+      renderCell: (params) => params.value ? new Date(params.value).toLocaleString() : 'N/A'
+    },
+    {
+      field: 'to',
+      headerName: 'Valid To',
+      width: 180,
+      renderCell: (params) => params.value ? new Date(params.value).toLocaleString() : 'N/A'
+    },
+    {
+      field: 'deleteflag', headerName: 'Status', width: 150,
       renderCell: (params) => (
-        params.row.deleteFlag ? params.row.deleteFlag.toString() : ""
+        <FormControlLabel
+          control={
+            <Switch
+              checked={!params.row.deleteFlag}
+              onChange={() => handleToggleStatus(params)}
+              color="primary"
+            />
+          }
+          label={!params.row.deleteFlag ? "Active" : "Inactive"}
+        />
       ),
     },
     {
@@ -164,7 +198,10 @@ const CouponManager = () => {
   ];
 
   return (
-    <div>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 4 }}>
+        {/* <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1e293b' }}>Coupon Management</Typography> */}
+      </Box>
       <Box sx={{ mb: 2, display: 'flex', gap: 1 }}>
         <Button variant="contained" color="primary" onClick={handleAddCoupon}>
           Add Coupon
@@ -235,24 +272,17 @@ const CouponManager = () => {
         />
       </div>
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        component="div"
-        count={totalCount}
-        rowsPerPage={rowsPerPage}
-        page={currentPage}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-
-      {isFormOpen && (
-        <CouponForm
-          onSubmit={handleFormSubmit}
-          onCancel={handleFormCancel}
-          initialData={selectedCoupon}
-        />
-      )}
-    </div>
+      <Dialog open={isFormOpen} onClose={handleFormCancel} fullWidth maxWidth="sm">
+        <DialogTitle>{selectedCoupon ? 'Edit Coupon' : 'Add Coupon'}</DialogTitle>
+        <DialogContent>
+          <CouponForm
+            onSubmit={handleFormSubmit}
+            onCancel={handleFormCancel}
+            initialData={selectedCoupon}
+          />
+        </DialogContent>
+      </Dialog>
+    </Box>
   );
 };
 

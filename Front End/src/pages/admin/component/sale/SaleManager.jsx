@@ -21,6 +21,7 @@ import {
     Checkbox,
     FormControlLabel,
     Grid,
+    Box,
 } from '@mui/material';
 import Alert from 'react-s-alert';
 import { getAllSales, createSale, updateSale, getCategories, getSaleAnalytics, getSaleImages, uploadSaleImage } from '../../../../util/APIUtils';
@@ -272,10 +273,10 @@ const SaleManager = () => {
     };
 
     return (
-        <div>
-            <Typography variant="h6" gutterBottom>
+        <Box sx={{ p: 3 }}>
+            {/* <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', mb: 3, color: '#1e293b' }}>
                 Sale Manager
-            </Typography>
+            </Typography> */}
             <Button variant="contained" color="primary" style={{ marginBottom: 16 }} onClick={handleOpenCreate}>
                 {editMode ? 'Edit Sale' : 'Create New Sale'}
             </Button>
@@ -518,7 +519,7 @@ const SaleManager = () => {
                     <Button onClick={handleCloseAnalytics}>Close</Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </Box>
     );
 };
 

@@ -31,19 +31,23 @@ const SliderManagementPage = () => {
 
     if (loading) return <div>Loading...</div>;
 
-    // Check if user is superadmin or has relevant privileges (using testimonials as a proxy if sliders not available)
-    const isAuthorized = currentUser && (
+    const isAuthorized = (currentUser && (
         currentUser.role === 'superadmin' || 
         (currentUser.roles && currentUser.roles[0].name === 'ROLE_SUPERADMIN') ||
-        privileges.testimonials === true
-    );
+        privileges.sliders === true
+    ));
 
     if (!isAuthorized) {
         return (
-            <Container>
-                <Typography variant="h6" color="error" align="center" style={{ marginTop: '50px' }}>
-                    You are not authorized to view this page. Please contact an admin to grant you privileges.
-                </Typography>
+            <Container sx={{ mt: 10 }}>
+                <Paper sx={{ p: 10, textAlign: 'center', borderRadius: 6, boxShadow: 3, border: '1px solid #f1f5f9' }}>
+                    <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 'bold', mb: 2 }}>
+                        Access Restricted
+                    </Typography>
+                    <Typography sx={{ color: '#64748b' }}>
+                        You do not have permission to view this page. Please contact an admin to grant you privileges.
+                    </Typography>
+                </Paper>
             </Container>
         );
     }

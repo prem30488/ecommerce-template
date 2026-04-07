@@ -25,12 +25,14 @@ import {
   Paper,
   IconButton,
   FormGroup,
+  Box,
+  Typography,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddOrEditProduct from './AddOrEditProduct';
 import Alert from 'react-s-alert';
 import {
-  addProduct, getProducts, deleteProduct, undeleteProduct, fetchProductById, getCategories, updateProduct,
+  addProduct, getProducts, deleteProduct, undeleteProduct, hardDeleteProduct, fetchProductById, getCategories, updateProduct,
   getForms, getOffersByProductId, getAllOffers, addOffer, deleteOffer, getActiveSales
 } from '../../../../util/APIUtils';
 
@@ -224,7 +226,15 @@ function ProductManager() {
               </Button>
             </>
           )}
-
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={() => handleHardDelete(params.row.id)}
+            style={{ marginLeft: '8px' }}
+          >
+            Hard Delete
+          </Button>
         </div>
       ),
     },
@@ -294,6 +304,19 @@ function ProductManager() {
       }).catch(error => {
         Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
       });
+    }
+  };
+
+  const handleHardDelete = (productId) => {
+    if (window.confirm("Are you sure you want to permanently delete this product and ALL its images? This action cannot be undone.")) {
+      hardDeleteProduct(productId)
+        .then(res => {
+          Alert.success("Permanently deleted successfully!");
+          reloadProductList();
+        })
+        .catch(error => {
+          Alert.error((error && error.message) || 'Failed to hard delete product.');
+        });
     }
   };
 
@@ -441,9 +464,14 @@ function ProductManager() {
   };
 
   return (
-    <div>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h5" sx={{ color: '#1e293b' }}>Product Management</Typography>
+        <Box sx={{ position: 'absolute', right: 0 }}>
+          <Button variant="contained" color="primary" onClick={handleAddProduct}>Add New Product</Button>
+        </Box>
+      </Box>
       <div style={{ height: 500, width: '100%' }}>
-        <Button variant="contained" color="primary" onClick={handleAddProduct} >Add New Product</Button>
         <DataGrid
           rows={products}
           columns={columns}
@@ -675,7 +703,7 @@ function ProductManager() {
           </DialogActions>
         </Dialog>
       )}
-    </div>
+    </Box>
   );
 }
 
