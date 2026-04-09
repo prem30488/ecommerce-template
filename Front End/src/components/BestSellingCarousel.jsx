@@ -141,7 +141,7 @@ const BscCard = ({ product, onQuickView }) => {
       : null;
 
   // Fallback image from picsum if img is missing
-  const imgSrc = img || `https://picsum.photos/seed/${encodeURIComponent(id)}/400/400`;
+  const imgSrc = product.image || img || `https://picsum.photos/seed/${encodeURIComponent(id)}/400/400`;
 
   const handleAdd = (e) => {
     e.stopPropagation();

@@ -49,7 +49,8 @@ const SingleProduct = ({ product }) => {
               title={title}
               className="product-image-slim"
               thumbs={true}
-              imageList={imageURLs}
+              mainImage={product.image}
+              imageList={product.cardCarouselImages || imageURLs}
             />
             : ""
           }

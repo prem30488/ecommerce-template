@@ -37,7 +37,7 @@
 
 /* ── MAIN LAYOUT ── */
 .ppp-main {
-  max-width: 1400px;
+  max-width: 1490px;
   margin: 0 auto;
   padding: 24px 32px 80px;
   display: grid;
@@ -61,25 +61,148 @@
 
 .ppp-gallery-main {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 5 / 4;
   border-radius: 28px;
-  overflow: visible !important;
-  /* Allow thumbs to overlay correctly */
+  overflow: hidden !important;
   background: #fff;
   border: 1px solid #e2e8f0;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
   position: relative;
 }
 
-.ppp-gallery-main img {
+/* Ensure Carousel fits the 1:1 container */
+.ppp-gallery-main .ppp-main-carousel,
+.ppp-gallery-main .ppp-main-carousel .carousel-root,
+.ppp-gallery-main .ppp-main-carousel .carousel,
+.ppp-gallery-main .ppp-main-carousel .carousel-slider,
+.ppp-gallery-main .ppp-main-carousel .slider-wrapper,
+.ppp-gallery-main .ppp-main-carousel .slider {
+  height: 100% !important;
+}
+
+.ppp-gallery-main .ppp-main-carousel .slide {
+  height: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.ppp-gallery-main .ppp-main-carousel .slide img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  /* ensures whole image is visible without distortion */
   transition: transform 0.6s ease;
 }
 
-.ppp-gallery-main:hover img {
+.ppp-gallery-main:hover .slide img {
   transform: scale(1.03);
+}
+
+/* Overlay Styles */
+.ppp-image-overlay {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  animation: pppFadeIn 0.3s ease;
+}
+
+@keyframes pppFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.ppp-overlay-close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10001;
+}
+
+.ppp-overlay-close:hover {
+  background: #ef4444;
+  transform: rotate(90deg);
+}
+
+.ppp-overlay-content {
+  width: 100%;
+  max-width: 900px;
+  height: 100%;
+  max-height: 900px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ppp-overlay-content .carousel-root {
+  height: 100%;
+}
+
+.ppp-overlay-content .carousel-slider {
+  height: calc(100% - 100px) !important;
+  /* reserve space for thumbs */
+}
+
+.ppp-overlay-item {
+  aspect-ratio: 16/9 !important;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ppp-overlay-item img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  width: 100%;
+  height: auto;
+}
+
+/* Overlay Thumbs Styling */
+.ppp-overlay-content .thumbs-wrapper {
+  margin: 20px 0 0 0 !important;
+  padding-top: 300px !important;
+}
+
+.ppp-overlay-content .thumb {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid transparent !important;
+  opacity: 0.5;
+  transition: all 0.2s;
+}
+
+.ppp-overlay-content .thumb.selected {
+  border-color: #0ea5e9 !important;
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 .ppp-gallery-badge {
@@ -94,46 +217,7 @@
   text-transform: uppercase;
   padding: 6px 14px;
   border-radius: 100px;
-}
-
-.ppp-thumbnails {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-  overflow-y: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-}
-
-.ppp-thumbnails::-webkit-scrollbar {
-  display: none;
-}
-
-.ppp-thumb {
-  flex-shrink: 0;
-  width: 80px;
-  height: 80px;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 2.5px solid transparent;
-  cursor: pointer;
-  transition: all 0.25s;
-  background: #fff;
-}
-
-.ppp-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.ppp-thumb.active {
-  border-color: #0ea5e9;
-  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
-}
-
-.ppp-thumb:hover {
-  border-color: #cbd5e1;
+  z-index: 10;
 }
 
 /* ── BENEFITS STRIP ── */
@@ -1220,7 +1304,7 @@
 
 .ppp-gallery-main .carousel .thumbs-wrapper {
   position: relative !important;
-  top: -700px !important;
+  top: -550px !important;
   left: 50px !important;
   z-index: 100000 !important;
   /* Extremely high priority */

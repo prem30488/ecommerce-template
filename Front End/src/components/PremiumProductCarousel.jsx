@@ -101,7 +101,7 @@ const PremiumProductCarousel = ({ products }) => {
                             <div className="frequent-card">
                                 {/* Image */}
                                 <div className="frequent-card-image" onClick={() => navigate(`/productDetails/${product.id}`)}>
-                                    <img src={product.img || "https://placehold.co/400x300?text=No+Image"} alt={product.title} loading="lazy" />
+                                    <img src={product.image || product.img || "https://placehold.co/400x300?text=No+Image"} alt={product.title} loading="lazy" />
 
                                     {/* Action icons column */}
                                     <div className="fbc-action-col">

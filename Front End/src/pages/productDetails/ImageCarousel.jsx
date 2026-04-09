@@ -22,10 +22,12 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
     images = [...images, ...additionalImages.map(img => img?.url || img).filter(Boolean)];
   }
 
-  // Ensure at least 10 unique images per product
-  if (images.length < 10) {
-    const fillCount = 10 - images.length;
-    for (let i = 0; i < fillCount; i++) {
+  // deduplicate and filter
+  images = Array.from(new Set(images)).filter(img => img && typeof img === 'string');
+
+  // Only use filler images if NO real images were found at all
+  if (images.length === 0) {
+    for (let i = 0; i < 5; i++) {
       images.push(`https://picsum.photos/seed/${encodeURIComponent(id)}-${i}/900/600`);
     }
   }
@@ -42,11 +44,11 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
   }
 
   return (
-    <div className={`product-carousel-container flex ${thumbDirection === 'vertical' ? 'flex-row' : 'flex-col'}`} style={{ minHeight: '100%', width: '100%', alignItems: 'flex-start' }}>
+    <div className={`product-carousel-container flex ${thumbDirection === 'vertical' ? 'flex-row' : 'flex-col'}`} style={{ minHeight: '100%', alignItems: 'flex-start' }}>
 
       {/* Vertical Thumbs (Left side) */}
       {thumbs && thumbDirection === 'vertical' && (
-        <div className="thumbs-scroll flex flex-col gap-2 pr-2" style={{ width: '100%', height: '100px', maxHeight: '100%', overflowY: 'hidden', overflowX: 'hidden' }}>
+        <div className="thumbs-scroll flex flex-col gap-2 pr-2" style={{ height: '100px', maxHeight: '100%', overflowY: 'hidden', overflowX: 'hidden' }}>
           {images.map((imageUrl, index) => {
             const isActive = index === activeIndex;
             return (
@@ -102,8 +104,8 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
               <img
                 src={imageUrl.includes('/images/') ? '/images/' + imageUrl.split('/images/')[1] : imageUrl}
                 alt={`${title || 'Product'} - view ${index + 1}`}
-                className="w-full h-auto object-cover rounded-md shadow-sm"
-                style={{ maxHeight: '100%' }}
+                className="h-full object-cover rounded-md shadow-sm"
+                style={{ height: '100%' }}
                 loading="lazy"
                 onError={(e) => { e.target.style.display = 'none'; }}
               />

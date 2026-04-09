@@ -101,7 +101,7 @@ const WeeklyHighlight = () => {
         <div className="wh-image-col">
           <div className="wh-image-frame">
             <img
-              src={img}
+              src={product.image || img}
               alt={title}
               className="wh-product-image"
               onError={(e) => {

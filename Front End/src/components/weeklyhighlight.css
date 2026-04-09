@@ -25,8 +25,15 @@
 }
 
 @keyframes wh-bounce {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .wh-badge-label {
@@ -35,15 +42,15 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: #0d9488;
-  background: linear-gradient(135deg, rgba(13,148,136,0.1), rgba(20,184,166,0.08));
-  border: 1px solid rgba(13,148,136,0.25);
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.1), rgba(20, 184, 166, 0.08));
+  border: 1px solid rgba(13, 148, 136, 0.25);
   padding: 0.35rem 1.1rem;
   border-radius: 100px;
 }
 
 /* ── Card ── */
 .wh-card {
-  max-width: 1100px;
+  max-width: 1600px;
   margin: 0 auto;
   background: #fff;
   border-radius: 2rem;
@@ -71,10 +78,8 @@
 }
 
 .wh-product-image {
-  width: 100%;
-  height: auto;
-  max-height: 400px;
-  object-fit: contain;
+  height: 400px;
+  object-fit: cover;
   position: relative;
   z-index: 2;
   filter: drop-shadow(0 16px 40px rgba(0, 0, 0, 0.15));
@@ -82,8 +87,15 @@
 }
 
 @keyframes wh-float {
-  0%, 100% { transform: translateY(0px);  }
-  50%       { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .wh-glow {
@@ -213,7 +225,7 @@
   cursor: pointer;
   border: 2px solid transparent;
   transition: background 0.22s ease, color 0.22s ease, box-shadow 0.22s ease,
-              transform 0.15s ease, border-color 0.22s ease;
+    transform 0.15s ease, border-color 0.22s ease;
   white-space: nowrap;
   letter-spacing: 0.01em;
 }
@@ -287,8 +299,13 @@
 }
 
 @keyframes wh-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* ── Responsive ── */
@@ -296,15 +313,19 @@
   .wh-card {
     grid-template-columns: 1fr;
   }
+
   .wh-image-col {
     padding: 2rem 2rem 1rem;
   }
+
   .wh-product-image {
     max-height: 260px;
   }
+
   .wh-content-col {
     padding: 1.5rem 2rem 2.5rem;
   }
+
   .wh-price {
     font-size: 1.4rem;
   }
@@ -314,13 +335,16 @@
   .wh-section {
     padding: 0 1rem 3rem;
   }
+
   .wh-content-col {
     padding: 1rem 1.25rem 2rem;
   }
+
   .wh-cta-row {
     flex-direction: column;
     align-items: stretch;
   }
+
   .wh-btn {
     justify-content: center;
   }

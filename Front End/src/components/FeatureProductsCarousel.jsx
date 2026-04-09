@@ -104,7 +104,7 @@ const FpcCard = ({ product, onQuickView }) => {
   const cartCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${id}_`) ? sum + cartItems[key] : sum, 0);
 
   // Fallback image from picsum if img is missing
-  const imgSrc = img || `https://picsum.photos/seed/${encodeURIComponent(id)}/400/400`;
+  const imgSrc = product.image || img || `https://picsum.photos/seed/${encodeURIComponent(id)}/400/400`;
 
   const handleAdd = (e) => {
     e.stopPropagation();

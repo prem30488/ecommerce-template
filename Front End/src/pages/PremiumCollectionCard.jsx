@@ -115,7 +115,7 @@ const PremiumCollectionCard = ({ product }) => {
                 )}
 
                 <img
-                    src={product.img || (product.ProductImages?.[0]?.imageUrl) || 'https://placehold.co/600x600?text=Product'}
+                    src={product.image || product.img || (product.ProductImages?.[0]?.imageUrl) || 'https://placehold.co/600x600?text=Product'}
                     alt={product.title}
                     className="card-image"
                     loading="lazy"

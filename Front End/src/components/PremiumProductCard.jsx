@@ -209,21 +209,20 @@ const PremiumProductCard = ({ product }) => {
                                 No immediate offers
                             </div>
                         )}
-                        {/* Image */}
                         <div className="frequent-card-image">
-                            {(product.imageURLs || product.img || product.ProductImages?.length) ? (
+                            {(product.cardCarouselImages?.length || product.image || product.img || product.ProductImages?.length) ? (
                                 <ImageCarousel
                                     id={product.id}
                                     title={product.title}
-                                    mainImage={product.img}
-                                    imageList={product.imageURLs}
+                                    mainImage={product.image || product.img}
+                                    imageList={product.cardCarouselImages || product.imageURLs}
                                     additionalImages={product.ProductImages}
                                     thumbs={true}
                                     thumbDirection="vertical"
-                                    style={{ "aspect-ratio": "16 / 9" }}
+                                    style={{ aspectRatio: "1 / 1" }}
                                 />
                             ) : (
-                                <img src={'https://placehold.co/400x400?text=No+Image'} alt={product.title} loading="lazy" />
+                                <img src={'https://placehold.co/800x800?text=No+Image'} alt={product.title} loading="lazy" />
                             )}
                             {/* Action icons column */}
                             <div className="fbc-action-col">

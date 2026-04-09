@@ -398,7 +398,8 @@
 }
 
 .fbc-stars-gold {
-  color: #fbbf24; /* Rich Amber Gold */
+  color: #fbbf24;
+  /* Rich Amber Gold */
   display: inline-flex;
   gap: 2px;
   filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.3));

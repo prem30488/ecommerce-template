@@ -67,8 +67,8 @@ const VerticalProductCarousel = ({ id, title, mainImage, additionalImages, selec
               key={idx}
               onClick={() => setActiveIndex(idx)}
               className={`relative flex-shrink-0 w-[100px] h-[150px] rounded-xl overflow-hidden border-2 transition-all duration-300 ${activeIndex === idx
-                  ? 'border-sky-500 ring-4 ring-sky-100 shadow-xl scale-105 z-10'
-                  : 'border-slate-100 opacity-80 hover:opacity-100 hover:border-slate-300 shadow-sm'
+                ? 'border-sky-500 ring-4 ring-sky-100 shadow-xl scale-105 z-10'
+                : 'border-slate-100 opacity-80 hover:opacity-100 hover:border-slate-300 shadow-sm'
                 }`}
             >
               <img

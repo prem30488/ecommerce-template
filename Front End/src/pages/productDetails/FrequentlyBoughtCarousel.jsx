@@ -121,7 +121,7 @@ const FrequentlyBoughtCarousel = ({ currentProduct, frequentProducts, onSelectio
                             <div className="frequent-card">
                                 {/* Image */}
                                 <div className="frequent-card-image" onClick={() => !isPlaceholder && navigate(`/productDetails/${product.id}`)} style={{ cursor: isPlaceholder ? 'default' : 'pointer' }}>
-                                    <img src={product.img} alt={product.title} loading="lazy" />
+                                    <img src={product.image || product.img} alt={product.title} loading="lazy" />
 
                                     {/* Action icons column */}
                                     <div className="fbc-action-col">

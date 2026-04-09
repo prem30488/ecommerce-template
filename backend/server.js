@@ -64,6 +64,44 @@ const getPaginatedResponse = (data, count, page, size) => {
     };
 };
 
+/**
+ * Scan filesystem for product media based on flavors
+ * Rule: Get images from the first discovered flavor folder.
+ * Returns: { mainImage: string, allImages: Array<string> }
+ */
+const scanProductFilesystemMedia = (productId) => {
+    const productIdStr = String(productId);
+    const productDir = path.join(__dirname, '..', 'Front End', 'public', 'images', productIdStr);
+    let mainImage = null;
+    let allImages = [];
+
+    if (fs.existsSync(productDir)) {
+        try {
+            // Get subdirectories (flavors)
+            const flavorFolders = fs.readdirSync(productDir)
+                .filter(f => fs.statSync(path.join(productDir, f)).isDirectory())
+                .sort((a, b) => parseInt(a) - parseInt(b)); // Sort by ID if possible
+
+            if (flavorFolders.length > 0) {
+                // Use the FIRST discovered flavor folder as requested
+                const firstFlavorDir = path.join(productDir, flavorFolders[0]);
+                const files = fs.readdirSync(firstFlavorDir)
+                    .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f));
+
+                if (files.length > 0) {
+                    files.forEach(file => {
+                        allImages.push(`/images/${productIdStr}/${flavorFolders[0]}/${file}`);
+                    });
+                    mainImage = allImages[0];
+                }
+            }
+        } catch (err) {
+            console.error(`Error scanning media for product ${productId}:`, err);
+        }
+    }
+    return { mainImage, allImages };
+};
+
 // Database Initialization (PostgreSQL only, removed SQLite references)
 async function ensureDatabaseExists() {
     const dbUrl = process.env.DATABASE_URL;
@@ -155,7 +193,15 @@ app.get('/api/product/weeklyBestSeller', async (req, res) => {
             product = await db.Product.findOne({ where: { bestseller: true }, include });
         }
 
-        if (product) res.json(product);
+        if (product) {
+            const productJson = product.toJSON();
+            const { mainImage, allImages } = scanProductFilesystemMedia(productJson.id);
+            if (mainImage) {
+                productJson.image = mainImage;
+                productJson.cardCarouselImages = allImages;
+            }
+            res.json(productJson);
+        }
         else res.status(404).json({ error: 'No product found' });
     } catch (error) {
         console.error('Error fetching weekly best seller:', error);
@@ -204,7 +250,21 @@ app.get('/api/product/getProducts', async (req, res) => {
                 }
             ]
         });
-        res.json(getPaginatedResponse(rows, count, page, size));
+
+        // Enhance products with filesystem-first media for cards
+        const enhancedRows = rows.map(product => {
+            const productJson = product.toJSON();
+            const { mainImage, allImages } = scanProductFilesystemMedia(productJson.id);
+            
+            // If filesystem has images, override the default 'image' for cards
+            if (mainImage) {
+                productJson.image = mainImage;
+                productJson.cardCarouselImages = allImages;
+            }
+            return productJson;
+        });
+
+        res.json(getPaginatedResponse(enhancedRows, count, page, size));
     } catch (error) {
         console.error('Error fetching products:', error);
         res.status(500).json({ error: 'Failed to fetch products', message: error.message });
@@ -430,6 +490,14 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
             }
             
             productData.images = productImages;
+
+            // Apply special card media logic (First folder, First image)
+            const { mainImage, allImages } = scanProductFilesystemMedia(productIdStr);
+            if (mainImage) {
+                productData.image = mainImage;
+                productData.cardCarouselImages = allImages;
+            }
+
             res.json(productData);
         } else {
             res.status(404).json({ error: 'Product not found' });

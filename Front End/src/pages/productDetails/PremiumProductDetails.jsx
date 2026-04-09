@@ -45,6 +45,7 @@ export const PremiumProductDetails = () => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [newReview, setNewReview] = useState({ name: '', email: '', rating: 5, comment: '' });
   const [bundleSelections, setBundleSelections] = useState(null); // { allProducts, selections }
+  const [isImageOverlayOpen, setIsImageOverlayOpen] = useState(false);
 
   const { addToCart, addFreeToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart, categories: allCategories, products: allProducts } = useContext(ShopContext);
 
@@ -458,7 +459,7 @@ export const PremiumProductDetails = () => {
 
         {/* ─── LEFT: Gallery ─── */}
         <div className="ppp-gallery">
-          <div className="ppp-gallery-main" style={{ background: 'transparent', height: 'auto', padding: 0 }}>
+          <div className="ppp-gallery-main">
             {allImages.length > 0 ? (
               <Carousel
                 showArrows={true}
@@ -468,10 +469,12 @@ export const PremiumProductDetails = () => {
                 showStatus={false}
                 selectedItem={activeImg}
                 onChange={(index) => setActiveImg(index)}
+                onClickItem={() => setIsImageOverlayOpen(true)}
                 key={selectedFlavor || 'default'}
+                className="ppp-main-carousel"
               >
                 {allImages.map((src, i) => (
-                  <div key={i} style={{ backgroundColor: '#fff', borderRadius: '24px', overflow: 'hidden' }}>
+                  <div key={i} className="ppp-carousel-item" style={{ cursor: 'zoom-in' }}>
                     <img src={resolveImg(src)} alt={`${product.title} view ${i}`} />
                   </div>
                 ))}
@@ -481,6 +484,30 @@ export const PremiumProductDetails = () => {
             )}
             <div className="ppp-gallery-badge" style={{ top: '24px', left: '24px', zIndex: 10 }}>Premium</div>
           </div>
+
+          {/* Image Overlay Modal */}
+          {isImageOverlayOpen && (
+            <div className="ppp-image-overlay" onClick={() => setIsImageOverlayOpen(false)}>
+              <button className="ppp-overlay-close" onClick={() => setIsImageOverlayOpen(false)}>×</button>
+              <div className="ppp-overlay-content" onClick={e => e.stopPropagation()}>
+                <Carousel
+                  showArrows={true}
+                  showThumbs={true}
+                  infiniteLoop={true}
+                  showStatus={false}
+                  selectedItem={activeImg}
+                  onChange={(index) => setActiveImg(index)}
+                  key="overlay-carousel"
+                >
+                  {allImages.map((src, i) => (
+                    <div key={i} className="ppp-overlay-item">
+                      <img src={resolveImg(src)} alt={`${product.title} view ${i}`} />
+                    </div>
+                  ))}
+                </Carousel>
+              </div>
+            </div>
+          )}
 
           {/* Benefit chips */}
           <div className="ppp-benefits">
