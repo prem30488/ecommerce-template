@@ -9,6 +9,8 @@ import StarRating from "./StarRating";
 import Alert from "react-s-alert";
 import axios from "axios";
 import { API_BASE_URL } from "../../constants";
+import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./premium-product.css";
 
 // ─── Small helpers ───────────────────────────────────────────────
@@ -115,24 +117,33 @@ export const PremiumProductDetails = () => {
     if (!product) return;
 
     const flavorId = selectedFlavor;
-    const allProdImages = product.ProductImages || [];
+    const allProdImages = product.images || product.ProductImages || [];
 
     // Filter images for the selected flavor
     const flavorImages = flavorId
       ? allProdImages.filter(img => String(img.flavor_id) === String(flavorId)).map(img => img.url)
       : [];
 
-    if (flavorImages.length > 0) {
-      setAllImages(flavorImages);
-    } else if (allProdImages.length > 0) {
-      // Fallback: all images regardless of flavor
-      setAllImages(allProdImages.map(img => img.url));
-    } else if (product.img) {
-      setAllImages([product.img]);
-    } else {
-      setAllImages([]);
+    // Deduplicate images
+    const uniqueFlavorImages = [...new Set(flavorImages)];
+
+    let finalImages = [];
+
+    if (uniqueFlavorImages.length > 0) {
+      finalImages = [...uniqueFlavorImages];
     }
 
+    // If no images for this specific flavor, fallback to all images
+    if (finalImages.length === 0 && allProdImages.length > 0) {
+      finalImages = [...new Set(allProdImages.map(img => img.url))];
+    }
+
+    // Fallback to primary product image
+    if (finalImages.length === 0 && product.img) {
+      finalImages.push(product.img);
+    }
+
+    setAllImages(finalImages);
     setActiveImg(0);
   }, [selectedFlavor, product]);
 
@@ -447,25 +458,29 @@ export const PremiumProductDetails = () => {
 
         {/* ─── LEFT: Gallery ─── */}
         <div className="ppp-gallery">
-          <div className="ppp-gallery-main">
-            <img src={displayImg} alt={product.title} />
-            <div className="ppp-gallery-badge">Premium</div>
+          <div className="ppp-gallery-main" style={{ background: 'transparent', height: 'auto', padding: 0 }}>
+            {allImages.length > 0 ? (
+              <Carousel
+                showArrows={true}
+                showThumbs={true}
+                infiniteLoop={false}
+                stopOnHover={true}
+                showStatus={false}
+                selectedItem={activeImg}
+                onChange={(index) => setActiveImg(index)}
+                key={selectedFlavor || 'default'}
+              >
+                {allImages.map((src, i) => (
+                  <div key={i} style={{ backgroundColor: '#fff', borderRadius: '24px', overflow: 'hidden' }}>
+                    <img src={resolveImg(src)} alt={`${product.title} view ${i}`} />
+                  </div>
+                ))}
+              </Carousel>
+            ) : (
+              <img src="https://placehold.co/600x600/f1f5f9/94a3b8?text=No+Image" alt="placeholder" style={{ borderRadius: '24px' }} />
+            )}
+            <div className="ppp-gallery-badge" style={{ top: '24px', left: '24px', zIndex: 10 }}>Premium</div>
           </div>
-
-          {/* Thumbnails */}
-          {allImages.length > 1 && (
-            <div className="ppp-thumbnails">
-              {allImages.map((src, i) => (
-                <div
-                  key={i}
-                  className={`ppp-thumb ${i === activeImg ? "active" : ""}`}
-                  onClick={() => setActiveImg(i)}
-                >
-                  <img src={resolveImg(src)} alt={`view-${i}`} />
-                </div>
-              ))}
-            </div>
-          )}
 
           {/* Benefit chips */}
           <div className="ppp-benefits">
@@ -548,18 +563,30 @@ export const PremiumProductDetails = () => {
             <>
               <div className="ppp-section-label">Choose Flavor</div>
               <div className="ppp-flavors">
-                {product.productFlavors.filter(pf => pf.Flavor).map(pf => {
+                {product.productFlavors.filter(pf => pf.Flavor).map((pf, index) => {
                   const f = pf.Flavor;
+                  const prodImages = product.images || product.ProductImages || [];
+                  const flavorImagesForThisFlavor = prodImages.filter(img => String(img.flavor_id) === String(f.id)).map(img => img.url);
+                  const flavorImg = flavorImagesForThisFlavor.length > 0 ? flavorImagesForThisFlavor[0] : null;
+
+                  // Enable if it's one of the product's official flavors
+                  const isAssignedFlavor = product.productFlavors.some(pf => String(pf.flavor_id) === String(f.id));
+                  const isDisabled = !flavorImg && !isAssignedFlavor && index !== 0;
+
+                  const displayThumb = flavorImg || f.image;
+
                   return (
                     <button
                       key={f.id}
-                      className={`ppp-flavor-btn ${selectedFlavor === f.id ? "active" : ""}`}
-                      onClick={() => setSelectedFlavor(f.id)}
+                      className={`ppp-flavor-btn ${String(selectedFlavor) === String(f.id) ? "active" : ""} ${isDisabled ? "disabled" : ""}`}
+                      onClick={() => { if (!isDisabled) setSelectedFlavor(f.id); }}
+                      disabled={isDisabled}
                       title={f.name}
+                      style={{ opacity: isDisabled ? 0.5 : 1, cursor: isDisabled ? 'not-allowed' : 'pointer' }}
                     >
-                      {f.image ? (
+                      {displayThumb ? (
                         <img
-                          src={resolveImg(f.image)}
+                          src={resolveImg(displayThumb)}
                           alt={f.name}
                           className="ppp-flavor-img"
                         />

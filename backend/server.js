@@ -395,8 +395,45 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
                 }
             ]
         });
-        if (product) res.json(product);
-        else res.status(404).json({ error: 'Product not found' });
+        if (product) {
+            const productData = product.toJSON();
+            const productImages = productData.images || [];
+            
+            // Scan filesystem for additional flavor images
+            const productIdStr = String(req.params.id);
+            const productDir = path.join(__dirname, '..', 'Front End', 'public', 'images', productIdStr);
+            
+            if (fs.existsSync(productDir)) {
+                try {
+                    const flavorFolders = fs.readdirSync(productDir);
+                    flavorFolders.forEach(flavorIdStr => {
+                        const flavorDirPath = path.join(productDir, flavorIdStr);
+                        if (fs.statSync(flavorDirPath).isDirectory()) {
+                            const files = fs.readdirSync(flavorDirPath).filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f));
+                            files.forEach(file => {
+                                const url = `/images/${productIdStr}/${flavorIdStr}/${file}`;
+                                // Avoid duplicates if already in DB
+                                if (!productImages.find(img => img.url === url)) {
+                                    productImages.push({
+                                        product_id: parseInt(productIdStr),
+                                        flavor_id: parseInt(flavorIdStr) || null,
+                                        url: url,
+                                        isFileSystem: true
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } catch (err) {
+                    console.error('Error scanning product image directory:', err);
+                }
+            }
+            
+            productData.images = productImages;
+            res.json(productData);
+        } else {
+            res.status(404).json({ error: 'Product not found' });
+        }
     } catch (error) {
         console.error('Error fetching product by id:', error);
         res.status(500).json({ error: 'Failed to fetch product' });
@@ -406,11 +443,15 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
 app.post('/api/product/createProduct', authenticateToken, async (req, res) => {
     try {
         delete req.body.id;
-        const productData = req.body;
+        const productData = { ...req.body };
         
+        if (productData.ProductImages) {
+            productData.images = productData.ProductImages;
+        }
+
         // Create product (Sequelize handles the associated ProductImages)
         const product = await db.Product.create(productData, {
-            include: [{ model: db.ProductImage }, { model: db.ProductFlavor, as: 'productFlavors' }]
+            include: [{ model: db.ProductImage, as: 'images' }, { model: db.ProductFlavor, as: 'productFlavors' }]
         });
 
         // After creation, migrate any 'temp' images to the product's own folder
@@ -447,31 +488,7 @@ app.post('/api/product/createProduct', authenticateToken, async (req, res) => {
     }
 });
 
-// Utility to cleanup orphaned product images
-const cleanupOrphanedImages = (productId, dbImageUrls) => {
-    const productDir = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId));
-    if (!fs.existsSync(productDir)) return;
 
-    try {
-        const flavors = fs.readdirSync(productDir);
-        flavors.forEach(flavor => {
-            const flavorDir = path.join(productDir, flavor);
-            if (fs.statSync(flavorDir).isDirectory()) {
-                const files = fs.readdirSync(flavorDir);
-                files.forEach(file => {
-                    const fileUrl = `/images/${productId}/${flavor}/${file}`;
-                    // Only cleanup if it matches our path pattern and is NOT in current DB URLs
-                    if (!dbImageUrls.includes(fileUrl)) {
-                        fs.unlinkSync(path.join(flavorDir, file));
-                        console.log('Cleaned up orphaned image:', fileUrl);
-                    }
-                });
-            }
-        });
-    } catch (err) {
-        console.error('Error in cleanupOrphanedImages:', err);
-    }
-};
 
 app.put('/api/product/:id', authenticateToken, async (req, res) => {
     const t = await db.sequelize.transaction();
@@ -495,10 +512,6 @@ app.put('/api/product/:id', authenticateToken, async (req, res) => {
             }));
 
             await db.ProductImage.bulkCreate(imagesToCreate, { transaction: t });
-            
-            // Clean up files not in the list
-            const currentUrls = productData.ProductImages.map(img => img.url);
-            cleanupOrphanedImages(req.params.id, currentUrls);
         }
 
         // Sync productFlavors

@@ -20,9 +20,15 @@ import axios from 'axios';
 function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
   const [formData, setFormData] = useState({
     ...product,
-    ProductImages: product?.ProductImages || [],
+    catIds: product?.catIds 
+      ? (Array.isArray(product.catIds) ? product.catIds.map(id => Number(id)) : String(product.catIds).split(',').map(id => Number(id.trim())).filter(id => !isNaN(id)))
+      : [],
+    form: (product?.formId || product?.form) ? Number(product.formId || product.form) : '',
+    ProductImages: product?.images || product?.ProductImages || [],
     audience: product?.audience || '',
-    productFlavors: product?.productFlavors || [{ flavor_id: '', price: '', priceMedium: '', priceLarge: '' }]
+    productFlavors: product?.productFlavors && product.productFlavors.length > 0 
+      ? product.productFlavors 
+      : [{ flavor_id: '', price: '', priceMedium: '', priceLarge: '' }]
   });
   const [flavors, setFlavors] = useState([]);
   const [currentFlavorId, setCurrentFlavorId] = useState('');
@@ -66,24 +72,25 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+    const val = type === 'checkbox' ? checked : value;
+    
+    setFormData(prev => {
+      const newData = { ...prev, [name]: val };
+      if (name === "form") {
+        newData.formId = val;
+      }
+      return newData;
     });
-    if (name === "form") {
-      setFormData(prev => ({ ...prev, formId: value }));
-    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    formData.formId = formData.form;
-    if (product.id && product.id !== 0) {
-      formData.id = product.id;
-    } else {
-      formData.id = 0;
-    }
-    onSave(formData);
+    const submissionData = { 
+      ...formData, 
+      formId: formData.formId || formData.form,
+      id: (product && product.id) ? product.id : 0 
+    };
+    onSave(submissionData);
   };
 
   const handleCategoryChange = (event) => {
@@ -177,26 +184,28 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
                 ))}
               </Select>
             </FormControl>
-
-            <FormControl fullWidth>
-              <InputLabel>Categories</InputLabel>
-              <Select
-                multiple
-                name="categories"
-                value={formData.catIds}
-                onChange={handleCategoryChange}
-                label="Categories"
-              >
-                {categories.map((category) => (
-                  category ?
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.title}
-                    </MenuItem>
-                    : ""
-                ))}
-              </Select>
-            </FormControl>
           </Box>
+        </Box>
+
+        <Box sx={{ mb: 3 }}>
+          <FormControl fullWidth>
+            <InputLabel>Categories</InputLabel>
+            <Select
+              multiple
+              name="categories"
+              value={formData.catIds}
+              onChange={handleCategoryChange}
+              label="Categories"
+            >
+              {categories.map((category) => (
+                category ?
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.title}
+                  </MenuItem>
+                  : ""
+              ))}
+            </Select>
+          </FormControl>
         </Box>
 
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>

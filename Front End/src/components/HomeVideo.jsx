@@ -21,7 +21,7 @@ const HomeVideo = () => {
             <div className="is-hidden-mobile column is-4 orange">
             </div>
             <div className="column is-4 has-text-centered">
-              <div className="is-hidden-tablet orange">FT. &nbsp; &nbsp; DWYANE &amp; ZAIRE WADE</div><a target="_blank" href="https://youtu.be/TrEkZZf42Y0"><svg data-testid="PlayArrowIcon"></svg>
+              <div className="is-hidden-tablet orange">FT. &nbsp; &nbsp; DWYANE &amp; ZAIRE WADE</div><a target="_blank" href="https://youtu.be/TXlZy3Rrqrw"><svg data-testid="PlayArrowIcon"></svg>
                 Watch Now</a>
             </div></div>
         </section>

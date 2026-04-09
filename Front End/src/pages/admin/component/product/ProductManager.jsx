@@ -37,7 +37,7 @@ import {
 } from '../../../../util/APIUtils';
 
 
-import { getCurrentDate } from '../../../../util/util';
+import { getCurrentDate, formatDate } from '../../../../util/util';
 
 function ProductManager() {
 
@@ -242,24 +242,24 @@ function ProductManager() {
 
   // Function to open the edit product form
   const handleEditProduct = product => {
-
-    product.catIds = [];
-
-    if (product.categories && product.categories.length > 0) {
-      product.categories.map(cat =>
-        product.catIds.push(cat.id)
-      );
-      //console.log(product.catIds);
-    } else {
-      //product.categories = [1];
-      product.catIds = [1];
+    // Determine existing category IDs
+    let existingCatIds = [];
+    if (product.catIds) {
+      existingCatIds = String(product.catIds).split(',').map(id => Number(id.trim())).filter(id => !isNaN(id));
+    } else if (product.categories && product.categories.length > 0) {
+      existingCatIds = product.categories.map(cat => cat.id);
+    } else if (product.category_id) {
+      existingCatIds = [Number(product.category_id)];
     }
-    if (!product.form || !product.form.id) {
-      product.form = 1;
-    } else {
-      product.formId = product.form.id;
-      product.form = product.formId;
-    }
+
+    // Fallback to default [1] only if no categories found
+    product.catIds = existingCatIds.length > 0 ? existingCatIds : [1];
+
+    // Determine existing Form ID
+    const existingFormId = product.formId || (product.form && product.form.id) || product.form || 1;
+    product.formId = Number(existingFormId);
+    product.form = product.formId;
+
     setEditingProduct(product);
     setIsPDialogOpen(true);
   };
@@ -270,19 +270,26 @@ function ProductManager() {
     setIsPDialogOpen(false);
   }
   const handleSaveEditForm = (editedProduct) => {
-    let cid = "", fid = 1;
-    if (undefined !== editedProduct.catIds) {
+    let cid = "", fid = 1, primary_cat = null;
+    if (undefined !== editedProduct.catIds && Array.isArray(editedProduct.catIds)) {
       cid = editedProduct.catIds.join(",");
+      if (editedProduct.catIds.length > 0) {
+        primary_cat = editedProduct.catIds[0];
+      }
     }
     editedProduct.categories = [];
 
     if (undefined !== editedProduct.formId) {
       fid = editedProduct.formId;
+    } else if (undefined !== editedProduct.form) {
+      fid = editedProduct.form;
     }
+
     editedProduct.form = null;
     let product = JSON.parse(JSON.stringify(editedProduct));
     product.catIds = cid;
     product.formId = fid;
+    product.category_id = primary_cat;
     console.log(product);
     if (product && product.id !== 0) {
       product.id = editingProduct.id;
@@ -674,8 +681,8 @@ function ProductManager() {
                     .filter((offer) => offer.productId === viewingOffers)
                     .map((offer) => (
                       <TableRow key={offer.id}>
-                        <TableCell>{offer.from}</TableCell>
-                        <TableCell>{offer.to}</TableCell>
+                        <TableCell>{formatDate(offer.from)}</TableCell>
+                        <TableCell>{formatDate(offer.to)}</TableCell>
                         <TableCell>{offer.discount}%</TableCell>
                         <TableCell>{offer.buy}</TableCell>
                         <TableCell>{offer.buyget}</TableCell>
