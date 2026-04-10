@@ -4,7 +4,7 @@ import { PremiumCartItem } from "./PremiumCartItem";
 import { useNavigate, Link } from "react-router-dom";
 import "./premium-cart.css";
 import { API_BASE_URL } from "../../constants";
-
+import { getCoupons } from "../../util/APIUtils";
 export const PremiumCart = ({ onClose }) => {
   const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, addTotalAfterDiscount, resetCart, products } = useContext(ShopContext);
   const totalAmount = getTotalCartAmount();
@@ -13,15 +13,32 @@ export const PremiumCart = ({ onClose }) => {
   const freeShippingThreshold = 2000;
   const navigate = useNavigate();
 
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [couponError, setCouponError] = useState("");
 
-  // 7. Coupon code support (LOVERBOY50 should give 5% discount)
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const data = await getCoupons(0, 100);
+        setAvailableCoupons(data.content || []);
+      } catch (err) {
+        console.error("Failed to fetch coupons:", err);
+      }
+    };
+    fetchCoupons();
+  }, []);
+
   const applyCoupon = () => {
-    if (coupon.toUpperCase() === "LOVERBOY50") {
-      setDiscountPercent(5);
-      const discounted = totalAmount * 0.95;
+    setCouponError("");
+    const found = availableCoupons.find(c => c.code.toUpperCase() === coupon.toUpperCase());
+
+    if (found) {
+      setDiscountPercent(found.discount);
+      const discounted = totalAmount * (1 - found.discount / 100);
       if (addTotalAfterDiscount) addTotalAfterDiscount(discounted);
     } else {
       setDiscountPercent(0);
+      setCouponError("Invalid or expired coupon code.");
     }
   };
 
@@ -139,7 +156,7 @@ export const PremiumCart = ({ onClose }) => {
           </div>
           {discountPercent > 0 && (
             <div className="p-summary-row" style={{ color: '#10b981' }}>
-              <span className="p-summary-label">Coupon Discount (5%)</span>
+              <span className="p-summary-label">Coupon Discount ({discountPercent}%)</span>
               <span className="p-summary-value">-₹{(discountAmount || 0).toLocaleString()}</span>
             </div>
           )}
@@ -162,12 +179,14 @@ export const PremiumCart = ({ onClose }) => {
           <div className="p-coupon-section">
             <input
               className="p-coupon-input"
-              placeholder="LOVERBOY50"
+              placeholder="Enter Coupon"
               value={coupon}
               onChange={(e) => setCoupon(e.target.value)}
             />
             <button className="p-coupon-btn" onClick={applyCoupon}>Apply</button>
           </div>
+          {couponError && <p style={{ color: '#ef4444', fontSize: '10px', marginTop: '4px', textAlign: 'center' }}>{couponError}</p>}
+          {discountPercent > 0 && <p style={{ color: '#10b981', fontSize: '10px', marginTop: '4px', textAlign: 'center' }}>Success! {discountPercent}% discount applied.</p>}
 
           {/* 8. Checkout Button */}
           <button
