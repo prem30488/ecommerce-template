@@ -19,6 +19,10 @@ export default ({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, '/api'),
         },
+        '/solr': {
+          target: 'http://localhost:8983',
+          changeOrigin: true,
+        },
       },
     },
   })

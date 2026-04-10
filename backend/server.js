@@ -1247,6 +1247,15 @@ app.post('/api/product/upload', authenticateToken, uploadProductImage.single('fi
     res.send(fileUrl);
 });
 
+app.get('/api/product/scanMedia/:id', (req, res) => {
+    try {
+        const { mainImage, allImages } = scanProductFilesystemMedia(req.params.id);
+        res.json({ mainImage, allImages });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to scan media' });
+    }
+});
+
 app.get('/api/product/images/:productId/:flavorId', (req, res) => {
     const { productId, flavorId } = req.params;
     const dirPath = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId), String(flavorId));

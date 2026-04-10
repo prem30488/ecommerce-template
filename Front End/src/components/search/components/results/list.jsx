@@ -1,22 +1,19 @@
 import PropTypes from 'prop-types';
 import React from "react";
-import cx from "classnames";
 
 class ResultList extends React.Component {
-
-	render() {
-		const { bootstrapCss } = this.props;
-		return (
-			<ul className={cx({"list-group": bootstrapCss})}>
-				{this.props.children}
-			</ul>
-		);
-	}
+  render() {
+    return (
+      <div className="solr-result-grid">
+        {this.props.children}
+      </div>
+    );
+  }
 }
 
 ResultList.propTypes = {
-	bootstrapCss: PropTypes.bool,
-	children: PropTypes.array
+  bootstrapCss: PropTypes.bool,
+  children: PropTypes.array
 };
 
 export default ResultList;

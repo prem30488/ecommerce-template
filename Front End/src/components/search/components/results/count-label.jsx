@@ -1,29 +1,40 @@
 import PropTypes from 'prop-types';
 import React from "react";
 
-const resultCountLabels = {
-	pl: "Found % results",
-	sg: "Found % result",
-	none: "No results"
-};
+class ResultCount extends React.Component {
+  render() {
+    const { numFound } = this.props;
+    const label = numFound > 1 ? `Found ${numFound} results` :
+      numFound === 1 ? "Found 1 result" : "No results found";
 
-class Result extends React.Component {
-	render() {
-		const { numFound } = this.props;
-		const resultLabel = numFound > 1 ? resultCountLabels.pl :
-			numFound === 1 ? resultCountLabels.sg :
-			resultCountLabels.none;
-
-		return (
-			<label>
-				{resultLabel.replace("%", numFound)}
-			</label>
-		);
-	}
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{
+          fontSize: '0.78rem',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          color: 'var(--search-muted)'
+        }}>
+          {numFound === 0 ? '⚠️' : '📋'}&nbsp;{label}
+        </span>
+        {numFound > 0 && (
+          <span style={{
+            background: 'linear-gradient(135deg,#20d391,#0ea5e9)',
+            color: '#fff',
+            borderRadius: 20,
+            padding: '2px 10px',
+            fontSize: '0.7rem',
+            fontWeight: 700
+          }}>{numFound}</span>
+        )}
+      </div>
+    );
+  }
 }
 
-Result.propTypes = {
-	numFound: PropTypes.number.isRequired
+ResultCount.propTypes = {
+  numFound: PropTypes.number.isRequired
 };
 
-export default Result;
+export default ResultCount;

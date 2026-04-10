@@ -235,7 +235,7 @@ export const NavbarMain = () => {
         <Link to="/advancedSearch" className={location.pathname === "/advancedSearch" ? "active-link" : ""}>
           Search
         </Link>
-        <Link to="/trackOrder" className={location.pathname === "/advancedSearch" ? "active-link" : ""}>
+        <Link to="/trackOrder" className={location.pathname === "/trackOrder" ? "active-link" : ""}>
           Track Order
         </Link>
 
