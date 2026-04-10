@@ -189,13 +189,21 @@ export const PremiumCart = ({ onClose }) => {
           {discountPercent > 0 && <p style={{ color: '#10b981', fontSize: '10px', marginTop: '4px', textAlign: 'center' }}>Success! {discountPercent}% discount applied.</p>}
 
           {/* 8. Checkout Button */}
-          <button
-            className="p-checkout-btn"
-            onClick={() => { onClose(); navigate("/checkout"); }}
-          >
-            Checkout Securely
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-          </button>
+          <div className="p-footer-buttons">
+            <button
+              className="p-checkout-btn"
+              onClick={() => { onClose(); navigate("/checkout"); }}
+            >
+              Checkout Securely
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </button>
+            <button
+              className="p-view-bag-btn"
+              onClick={() => { onClose(); navigate("/your-cart"); }}
+            >
+              View Detailed Bag
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -56,8 +56,11 @@ import TaxInvoice from "./pages/checkout/TaxInvoice";
 import RefundPolicy from './pages/RefundPolicy';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfUse from './pages/TermsOfUse';
+import TermsOfService from './pages/TermsOfService';
 import Shipping from './pages/Shipping';
 import FormDialog from './pages/checkout/FormDialog';
+import PremiumCheckout from './pages/checkout/PremiumCheckout';
+import YourCart from './pages/cart/YourCart';
 import TrackOrder from './pages/TrackOrder';
 import SockJsClient from 'react-stomp';
 
@@ -170,7 +173,8 @@ class App extends Component {
 							<Route path="/productDetails/:id" element={<PremiumProductDetails />} />
 							<Route path="*" element={<Notfound />} />
 							<Route path="/cart" element={<Cart />} />
-							<Route path="/checkout" element={<FormDialog />} />
+							<Route path="/your-cart" element={<YourCart />} />
+							<Route path="/checkout" element={<PremiumCheckout />} />
 
 							<Route path="/applyCoupon" element={<CouponCode />} />
 
@@ -187,6 +191,7 @@ class App extends Component {
 
 							<Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
 							<Route path="/policies/terms-of-use" element={<TermsOfUse />} />
+							<Route path="/policies/terms-of-service" element={<TermsOfService />} />
 							<Route path="/shippinganddelievery" element={<Shipping />} />
 
 							<Route exact path="/advancedSearch"

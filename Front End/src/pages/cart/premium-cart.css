@@ -413,6 +413,35 @@
   height: 28px !important;
 }
 
+.p-footer-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.p-view-bag-btn {
+  width: 100%;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--cart-border);
+  background: white;
+  color: var(--cart-text-main);
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-view-bag-btn:hover {
+  background: #f8fafc;
+  border-color: var(--cart-text-main);
+}
+
 .p-checkout-btn svg, .p-checkout-button svg {
   height: 10px;
   width: auto;

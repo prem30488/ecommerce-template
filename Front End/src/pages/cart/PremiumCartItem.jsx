@@ -38,17 +38,21 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
     const fetchFolderImages = async () => {
       try {
         const targetFlavorId = flavorId || '1';
-        const res = await fetch(`/images/${id}/${targetFlavorId}`);
+        // Use the specialized API endpoint that reliably scans the filesystem and returns JSON
+        const res = await fetch(`${API_BASE_URL}/api/product/images/${id}/${targetFlavorId}`);
         const json = await res.json();
+        
         if (Array.isArray(json) && json.length > 0) {
+          // The API returns full URLs like "/images/productId/flavorId/file.jpg"
           setFolderImages(json);
         } else {
-          const fallbackRes = await fetch(`/images/${id}/1`);
+          // Fallback to flavor 1 if current flavor has no images
+          const fallbackRes = await fetch(`${API_BASE_URL}/api/product/images/${id}/1`);
           const fallbackJson = await fallbackRes.json();
           setFolderImages(fallbackJson || []);
         }
       } catch (e) {
-        console.error('Error fetching folder images:', e);
+        console.error('Error fetching folder images in PremiumCartItem:', e);
         setFolderImages([]);
       }
     };
