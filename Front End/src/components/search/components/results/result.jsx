@@ -68,6 +68,7 @@ function ResultCard({ bootstrapCss, doc, fields, onSelect }) {
   const audience = get("audience");
   const bestseller = get("bestseller_s") || get("bestseller");
   const featured = get("featured_s") || get("featured");
+  const form = get("form_s");
   const discount = get("discount_s") || get("discount");
 
   const handleClick = () => {
@@ -167,6 +168,12 @@ function ResultCard({ bootstrapCss, doc, fields, onSelect }) {
               background: 'rgba(139,92,246,0.1)', color: '#a78bfa',
               borderRadius: 20, padding: '2px 10px', fontSize: '0.7rem', fontWeight: 600
             }}>{audience}</span>
+          )}
+          {form && (
+            <span style={{
+              background: 'rgba(234,179,8,0.1)', color: '#facc15',
+              borderRadius: 20, padding: '2px 10px', fontSize: '0.7rem', fontWeight: 600
+            }}>{form}</span>
           )}
         </div>
 

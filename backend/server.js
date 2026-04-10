@@ -343,6 +343,29 @@ app.get('/api/order/getOrders', authenticateToken, async (req, res) => {
     }
 });
 
+// BlueDart Tracking Endpoint
+app.post('/api/admin/tracking/checkpoints', async (req, res) => {
+    try {
+        const { tracking_number } = req.body;
+        // Mock success data for the bluedart-tracking-web-component
+        return res.json({
+            success: true,
+            data: {
+                tracking_number: tracking_number || "75484923054",
+                status: "In Transit",
+                checkpoints: [
+                    { location: "Mumbai", status: "Picked up", time: "2026-04-09 10:00 AM" },
+                    { location: "Pune", status: "In Transit", time: "2026-04-09 02:00 PM" },
+                    { location: "Bangalore", status: "Reached Hub", time: "2026-04-10 08:00 AM" }
+                ]
+            }
+        });
+    } catch (error) {
+        console.error("Tracking Error:", error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
 // User Management Routes
 app.get('/api/user/users', authenticateToken, async (req, res) => {
     try {

@@ -39,6 +39,7 @@ async function indexToSolr() {
         const products = await db.Product.findAll({
             include: [
                 { model: db.Category },
+                { model: db.Form, as: 'Form' },
                 {
                     model: db.ProductFlavor,
                     as: 'productFlavors',
@@ -107,6 +108,7 @@ async function indexToSolr() {
                 categories_ss:Array.from(categorySet),
                 audience:     product.audience || 'General',
                 audience_s:   product.audience || 'General',
+                form_s:       product.Form?.title || 'Other',
                 price:        basePrice,
                 price_f:      basePrice,
                 img:          resolvedImg,

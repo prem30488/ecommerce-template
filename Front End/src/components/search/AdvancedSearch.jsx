@@ -12,6 +12,7 @@ const fields = [
   { label: "Id",         field: "id",         type: "text"       },
   { label: "Title",      field: "title",       type: "text"       },
   { label: "Categories", field: "categories_ss",  type: "list-facet" },
+  { label: "Form",       field: "form_s",         type: "list-facet" },
   { label: "Audience",   field: "audience_s",    type: "list-facet" },
   { label: "Price",      field: "price_f",       type: "range-facet"},
   { label: "Bestseller", field: "bestseller_s",  type: "list-facet" },

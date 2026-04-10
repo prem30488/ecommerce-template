@@ -219,7 +219,7 @@ const PremiumProductCard = ({ product }) => {
                                     additionalImages={product.ProductImages}
                                     thumbs={true}
                                     thumbDirection="vertical"
-                                    style={{ aspectRatio: "1 / 1" }}
+                                    style={{ width: "100%", height: "500px !important" }}
                                 />
                             ) : (
                                 <img src={'https://placehold.co/800x800?text=No+Image'} alt={product.title} loading="lazy" />
