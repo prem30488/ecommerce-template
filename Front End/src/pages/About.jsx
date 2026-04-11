@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { resolveImageUrl } from "../util/imageUrl";
 import styles from "./About.module.css";
 import { 
   Person, 
@@ -238,7 +239,7 @@ const About = () => {
           <div className={styles.leadershipGrid}>
             {team.map((member) => (
               <div key={member.id} className={styles.leaderCard}>
-                <img src={member.image} alt={member.name} className={styles.leaderImage} />
+                <img src={resolveImageUrl(member.image)} alt={member.name} className={styles.leaderImage} />
                 <h3 className={styles.leaderName}>{member.name}</h3>
                 <span className={styles.leaderDesignation}>{member.designation}</span>
               </div>

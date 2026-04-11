@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../context/shop-context';
 import SaleMarquee from './SaleMarquee';
+import { resolveImageUrl } from '../util/imageUrl';
 import './SaleSlider.css';
 
 const SaleSlider = () => {
@@ -160,7 +161,7 @@ const SaleSlider = () => {
                         className="sale-slide-content"
                         style={{
                             backgroundImage: currentSale.bannerImage
-                                ? `url(/images/sales/${currentSale.bannerImage})`
+                                ? `url(${currentSale.bannerImage.startsWith('http') ? currentSale.bannerImage : resolveImageUrl(`/images/sales/${currentSale.bannerImage}`)})`
                                 : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                         }}
                     >

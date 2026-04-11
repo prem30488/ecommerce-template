@@ -7,6 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import SliderForm from './SliderForm';
 import Alert from 'react-s-alert';
 import { getSliders, addSlider, updateSlider, deleteSlider, undeleteSlider } from '../../../../util/APIUtils';
+import { resolveImageUrl } from '../../../../util/imageUrl';
 
 const SliderManager = () => {
     const [sliders, setSliders] = useState([]);
@@ -142,7 +143,7 @@ const SliderManager = () => {
             headerName: 'Image',
             width: 150,
             renderCell: (params) => (
-                <img src={params.value} alt="slider" style={{ width: '100px', height: '60px', objectFit: 'cover' }} />
+                <img src={resolveImageUrl(params.value)} alt="slider" style={{ width: '100px', height: '60px', objectFit: 'cover' }} />
             )
         },
         { field: 'headline', headerName: 'Headline', width: 250 },

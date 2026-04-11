@@ -18,7 +18,8 @@ module.exports = (sequelize, DataTypes) => {
         flavor_id: DataTypes.INTEGER,
         price: DataTypes.FLOAT,
         priceMedium: DataTypes.FLOAT,
-        priceLarge: DataTypes.FLOAT
+        priceLarge: DataTypes.FLOAT,
+        image: { type: DataTypes.STRING, allowNull: true }
     }, {
         sequelize,
         modelName: 'ProductFlavor',

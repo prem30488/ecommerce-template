@@ -6,6 +6,7 @@ import {
 } from '@mui/material';
 import { CloudUpload as UploadIcon } from '@mui/icons-material';
 import { uploadSliderImage, getCategoriesShort } from '../../../../util/APIUtils';
+import { resolveImageUrl } from '../../../../util/imageUrl';
 import Alert from 'react-s-alert';
 
 const SliderForm = ({ onSubmit, onCancel, initialData }) => {
@@ -79,7 +80,7 @@ const SliderForm = ({ onSubmit, onCancel, initialData }) => {
             <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
               {formData.src ? (
                 <img 
-                  src={formData.src} 
+                  src={resolveImageUrl(formData.src)} 
                   alt="Preview" 
                   style={{ width: '120px', height: '70px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }} 
                 />

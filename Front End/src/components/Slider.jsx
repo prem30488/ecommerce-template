@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import Slide from "./Slide";
 import { getSliders } from "../util/APIUtils";
+import { resolveImageUrl } from "../util/imageUrl";
 import "../pages/product.css";
 
 const Slider = () => {
@@ -72,7 +73,7 @@ const Slider = () => {
             style={{ width: '100px', height: '100px' }}
           >
             <img
-              src={item.src}
+              src={resolveImageUrl(item.src)}
               alt=""
               className="w-full h-full object-cover rounded-full"
               style={{ width: '100px', height: '100px' }}

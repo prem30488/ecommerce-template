@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { resolveImageUrl } from '../util/imageUrl';
 import './SalesLandingPage.css';
 
 const SalesLandingPage = () => {
@@ -123,7 +124,7 @@ const SalesLandingPage = () => {
                 className="sales-hero-section"
                 style={{
                     backgroundImage: sale.bannerImage
-                        ? `url(/images/sales/${sale.bannerImage})`
+                        ? `url(${sale.bannerImage.startsWith('http') ? sale.bannerImage : resolveImageUrl(`/images/sales/${sale.bannerImage}`)})`
                         : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 }}
             >

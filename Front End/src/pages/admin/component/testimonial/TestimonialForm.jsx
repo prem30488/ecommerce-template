@@ -10,6 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import FileUploader from '../product/FileUploader';
+import { resolveImageUrl } from '../../../../util/imageUrl';
 
 const TestimonialForm = ({ open, onSubmit, onCancel, initialData }) => {
   const [formData, setFormData] = useState(initialData || {});
@@ -106,7 +107,7 @@ const TestimonialForm = ({ open, onSubmit, onCancel, initialData }) => {
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                 <Avatar
-                  src={formData.imageURL}
+                  src={resolveImageUrl(formData.imageURL)}
                   sx={{ width: 72, height: 72, border: '2px solid #e2e8f0' }}
                 />
                 <Typography variant="caption" color="text.secondary">

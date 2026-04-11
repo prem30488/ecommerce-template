@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const { Op } = require('sequelize');
+const { uploadSaleImage } = require('../utils/blobUpload');
 const {
     getActiveSalesFromCache,
     setActiveSalesCache,
@@ -18,27 +19,14 @@ const { verifyToken, isAdmin } = require('../middlewares/authMiddleware');
 
 const { SaleEvent, Offer, Product, ProductImage } = db;
 
-const saleStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const saleId = req.query.saleId;
-        if (!saleId) {
-            return cb(new Error('Missing saleId parameter'), null);
-        }
-        const uploadPath = path.join(__dirname, '..', 'public', 'images', 'sales', String(saleId));
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
-    },
-    filename: (req, file, cb) => {
-        const cleanName = file.originalname.replace(/\s+/g, '_');
-        cb(null, `${Date.now()}-${cleanName}`);
-    }
+// ── Memory-based upload – file streamed to Vercel Blob or local FS ─────────────
+// Folder in Blob:  sales/<saleId>/
+const memUploadSale = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB cap
 });
 
-const uploadSaleBanner = multer({ storage: saleStorage });
-
-router.post('/upload', verifyToken, isAdmin, uploadSaleBanner.single('file'), async (req, res) => {
+router.post('/upload', verifyToken, isAdmin, memUploadSale.single('file'), async (req, res) => {
     try {
         const saleId = req.query.saleId;
         if (!saleId) {
@@ -47,8 +35,8 @@ router.post('/upload', verifyToken, isAdmin, uploadSaleBanner.single('file'), as
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
-        const fileUrl = `/images/sales/${saleId}/${req.file.filename}`;
-        res.status(201).json({ success: true, data: { url: fileUrl, filename: req.file.filename } });
+        const fileUrl = await uploadSaleImage(req.file, saleId);
+        res.status(201).json({ success: true, data: { url: fileUrl, filename: req.file.originalname } });
     } catch (error) {
         console.error('Error uploading sale banner:', error);
         res.status(500).json({ success: false, message: 'Failed to upload sale banner', error: error.message });

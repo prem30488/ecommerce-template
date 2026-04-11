@@ -10,6 +10,7 @@ import axios from 'axios';
 import TestimonialForm from './TestimonialForm';
 import Alert from 'react-s-alert';
 import { getTestimonials, deleteTestimonial, undeleteTestimonial, addTestimonial, updateTestimonial } from '../../../../util/APIUtils';
+import { resolveImageUrl } from '../../../../util/imageUrl';
 const TestimonialManager = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [selectedTestimonial, setSelectedTestimonial] = useState(null);
@@ -169,7 +170,7 @@ const TestimonialManager = () => {
       field: 'imageURL', headerName: 'Image', width: 150,
       renderCell: (params) => (
 
-        params.row.imageURL ? <img src={params.row.imageURL} style={{ width: "100px", height: "100px" }} /> : ""
+        params.row.imageURL ? <img src={resolveImageUrl(params.row.imageURL)} style={{ width: "100px", height: "100px" }} /> : ""
 
       )
     },

@@ -631,29 +631,45 @@ async function seedData() {
 
         console.log('Seeding process completed.');
 
-        // Seed ProductFlavors with random prices for all products
-        console.log('Seeding ProductFlavors with random prices...');
+        // Seed ProductFlavors with random prices and filesystem-resolved images
+        console.log('Seeding ProductFlavors with prices and images...');
         try {
             const allAvailableProducts = await db.Product.findAll();
             const allAvailableFlavors = await db.Flavor.findAll();
             let productFlavorsData = [];
 
             for (const prod of allAvailableProducts) {
-                // Ensure at least 1 flavor or just use all flavors so its robust
                 for (const flav of allAvailableFlavors) {
                     const randomBase = Math.floor(Math.random() * 500); // 0 to 499
+
+                    // Resolve first image from filesystem for this product+flavor combo
+                    let resolvedImage = null;
+                    const flavorFolder = path.join(publicImagesPath, String(prod.id), String(flav.id));
+                    if (fs.existsSync(flavorFolder)) {
+                        const files = fs.readdirSync(flavorFolder).filter(f =>
+                            /\.(jpg|jpeg|png|webp|gif)$/i.test(f)
+                        );
+                        if (files.length > 0) {
+                            // Sort so we consistently pick the first (e.g. "1.jpg" before "2.jpg")
+                            files.sort();
+                            resolvedImage = `/images/${prod.id}/${flav.id}/${files[0]}`;
+                        }
+                    }
+
                     productFlavorsData.push({
                         product_id: prod.id,
                         flavor_id: flav.id,
                         price: 1000 + randomBase,
                         priceMedium: 1500 + randomBase,
-                        priceLarge: 2000 + randomBase
+                        priceLarge: 2000 + randomBase,
+                        image: resolvedImage
                     });
                 }
             }
 
             await db.ProductFlavor.bulkCreate(productFlavorsData);
-            console.log(`Successfully seeded ${productFlavorsData.length} ProductFlavors.`);
+            const withImage = productFlavorsData.filter(pf => pf.image !== null).length;
+            console.log(`Successfully seeded ${productFlavorsData.length} ProductFlavors (${withImage} with images, ${productFlavorsData.length - withImage} without).`);
         } catch (error) {
             console.error('Error seeding ProductFlavors:', error);
         }

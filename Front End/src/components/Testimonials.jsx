@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { API_BASE_URL } from '../constants/index.jsx';
+import { resolveImageUrl } from '../util/imageUrl';
 import './testimonials.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -92,7 +93,7 @@ export const Testimonials = () => {
                       <div className="testi-card">
                         <div className="testi-avatar-wrap">
                           <img
-                            src={testimonial.imageURL}
+                            src={resolveImageUrl(testimonial.imageURL)}
                             alt={testimonial.title}
                             className="testi-avatar"
                             onError={(e) => { e.target.src = 'https://placehold.co/100x100?text=User'; }}

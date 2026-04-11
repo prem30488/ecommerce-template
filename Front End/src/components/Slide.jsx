@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
+import { resolveImageUrl } from "../util/imageUrl";
 
 const Slide = ({ image }) => {
   return (
     <div
       className="slide h-full flex justify-center items-center bg-cover bg-center bg-no-repeat relative"
-      style={{ backgroundImage: `url(${image.src})` }}
+      style={{ backgroundImage: `url(${resolveImageUrl(image.src)})` }}
       key={image.id}
     >
       {/* Premium Gradient Overlay */}

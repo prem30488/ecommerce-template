@@ -16,6 +16,7 @@ import {
 import { Clear as ClearIcon, Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, CloudUpload as UploadIcon } from '@mui/icons-material';
 import { getLeadershipTeams, addLeadershipTeam, updateLeadershipTeam, deleteLeadershipTeam, uploadLeadershipImage } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
+import { resolveImageUrl } from '../../../../util/imageUrl';
 
 function LeadershipManager() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -154,7 +155,7 @@ function LeadershipManager() {
       width: 80,
       renderCell: (params) => (
         <Avatar
-          src={params.value}
+          src={resolveImageUrl(params.value)}
           variant="rounded"
           sx={{ width: 45, height: 45, bgcolor: '#f1f5f9', border: '1px solid #e2e8f0' }}
         >
@@ -251,7 +252,7 @@ function LeadershipManager() {
         <DialogContent sx={{ mt: 2 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 1 }}>
             <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', mb: 1 }}>
-              <Avatar src={image} variant="rounded" sx={{ width: 120, height: 120, border: '2px solid #e2e8f0' }} />
+              <Avatar src={resolveImageUrl(image)} variant="rounded" sx={{ width: 120, height: 120, border: '2px solid #e2e8f0' }} />
               <Box>
                 <input
                   accept="image/jpeg,image/png,image/jpg"
