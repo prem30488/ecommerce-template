@@ -13,8 +13,6 @@ const allowedOrigins = [
     'http://localhost:3000',
     'https://ecommerce-template-xi-tan.vercel.app',
     'https://ecommerce-template-api-mu.vercel.app',
-    // 'https://prudent-farsighted-yareli.ngrok-free.dev',
-    'https://ecommerce-template-qr8sr5usu-parths-projects-fc15ae57.vercel.app'
 ];
 
 app.use((req, res, next) => {
