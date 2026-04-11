@@ -34,7 +34,7 @@
       "idle": 60000
     },
     "dialectOptions": {
-      "ssl": false,
+      "ssl": true,
       "rejectUnauthorized": false,
       "connectTimeout": 60000
     }
