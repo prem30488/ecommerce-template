@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://prudent-farsighted-yareli.ngrok-free.dev/api/$1"
+      "destination": "https://ecommerce-template-api-mu.vercel.app/api/$1"
     },
     {
       "source": "/images/(.*)",
-      "destination": "https://prudent-farsighted-yareli.ngrok-free.dev/images/$1"
+      "destination": "https://ecommerce-template-api-mu.vercel.app/images/$1"
     },
     {
       "source": "/(.*)",
