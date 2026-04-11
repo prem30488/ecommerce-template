@@ -46,23 +46,38 @@ app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 200, // Increased for a large template
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { success: false, message: 'Too many requests, please try again later.' },
-});
-app.use('/api', limiter);
-
 // Stricter rate limit for auth endpoints
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 50,
     message: { success: false, message: 'Too many auth attempts, please try again later.' },
 });
+
+// Relaxed rate limit for image/media endpoints to prevent blocking large product catalogs
+const mediaLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 2000,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Too many media requests, please try again later.' },
+});
+
+// Apply specific limiters BEFORE the global one
 app.use('/api/auth', authLimiter);
+app.use('/api/product/images', mediaLimiter);
+
+// Global Rate limiting for all other /api endpoints
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 500,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => {
+        return req.originalUrl.includes('/api/auth') || req.originalUrl.includes('/api/product/images');
+    },
+    message: { success: false, message: 'Too many requests, please try again later.' },
+});
+app.use('/api', limiter);
 
 // --------------- Body Parsing ---------------
 app.use(express.json({ limit: '10mb' }));
