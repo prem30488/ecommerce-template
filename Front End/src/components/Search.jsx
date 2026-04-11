@@ -30,24 +30,50 @@ const Search = () => {
         }
 
         const results = products.filter(product => {
+            const searchQuery = (q || "").toLowerCase().trim();
             const title = (product.title || "").toLowerCase();
             const description = (product.description || "").toLowerCase();
             const brand = (product.brand || "").toLowerCase();
             const audience = (product.audience || "").toLowerCase();
 
-            const hasCategoryMatch = product.categories?.some(cat => {
-                const catTitle = typeof cat === 'string' ? cat.toLowerCase() : (cat.title || "").toLowerCase();
-                return catTitle.includes(searchQuery);
-            });
+            // Extract Form Label for searching
+            const formLabel = (
+                product.Form?.title || 
+                (typeof product.form === 'string' ? product.form : '') ||
+                (product.form && typeof product.form !== 'object' ? `Form #${product.form}` : '')
+            ).toLowerCase();
 
-            const rawCategory = (product.category || "").toLowerCase();
+            // Aggregate ALL possible category strings for this product
+            const categoryKeys = new Set();
+            
+            // 1. From Category object
+            if (product.Category?.title) categoryKeys.add(product.Category.title.toLowerCase());
+            
+            // 2. From raw category string
+            if (product.category) {
+                String(product.category).split(',').forEach(c => categoryKeys.add(c.trim().toLowerCase()));
+            }
+            
+            // 3. From categories array
+            if (Array.isArray(product.categories)) {
+                product.categories.forEach(c => {
+                    const cTitle = typeof c === 'string' ? c : (c.title || String(c));
+                    categoryKeys.add(cTitle.toLowerCase());
+                });
+            }
+
+            const allCategoriesStr = Array.from(categoryKeys).join(' ');
+            const hasCategoryMatch = Array.from(categoryKeys).some(cat => cat.includes(searchQuery) || searchQuery.includes(cat));
+
+            // Token based matching check (Optional but robust: check if all query words are present somewhere)
+            const queryWords = searchQuery.split(/\s+/);
+            const searchableBlob = `${title} ${description} ${brand} ${formLabel} ${allCategoriesStr} ${audience}`.toLowerCase();
+            const matchesAllWords = queryWords.every(word => searchableBlob.includes(word));
 
             return title.includes(searchQuery) ||
-                description.includes(searchQuery) ||
-                brand.includes(searchQuery) ||
-                audience.includes(searchQuery) ||
-                rawCategory.includes(searchQuery) ||
-                hasCategoryMatch;
+                allCategoriesStr.includes(searchQuery) ||
+                hasCategoryMatch ||
+                matchesAllWords;
         });
 
         setFilteredProducts(results);
@@ -89,7 +115,7 @@ const Search = () => {
                             <input
                                 type="text"
                                 className="premium-search-input"
-                                placeholder="Search for premium products, brands, or categories..."
+                                placeholder="Search products by name, category, brand, or form..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
