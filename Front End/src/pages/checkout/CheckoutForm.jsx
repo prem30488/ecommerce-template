@@ -6,8 +6,8 @@ import './CheckoutForm.css'; // Import your CSS file for styling
 import { ShopContext } from '../../context/shop-context';
 import { useContext } from 'react';
 import Alert from 'react-s-alert';
-import axios from 'axios';
-import { API_BASE_URL} from '../../constants/index';
+import { API_BASE_URL } from '../../constants/index';
+import { createOrder } from '../../util/APIUtils';
 
 const CheckoutForm = ({subTotal,total,callbackFn}) => {
   const navigate = useNavigate();
@@ -81,16 +81,14 @@ const CheckoutForm = ({subTotal,total,callbackFn}) => {
       addToCustomerData(values);
         try{
               // Adjust the URL based on your actual API endpoint
-              const apiUrl = API_BASE_URL+'/api/order/createOrder';
-              
-              // Make a POST request using Axios
-              const response= await axios.post(apiUrl, values);
+              // Make a request using APIUtils
+              const response = await createOrder(values);
           
               // Handle the response as needed
               //console.log('Response:', response.data);
               //console.log('Response id:', response.data.id);
               Alert.success("Success!");
-              callbackFn(response.data.id);
+              callbackFn(response.id);
               // Replace the following line with your navigation logic
               //navigate('/previewInvoice'); // Navigate to the success page
         }catch (error) {

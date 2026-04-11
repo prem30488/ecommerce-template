@@ -664,3 +664,10 @@ export function uploadSliderImage(file) {
         headers: { 'Content-Type': 'multipart/form-data' }
     });
 }
+export function createOrder(orderRequest) {
+    return api.post("/api/order/createOrder", orderRequest);
+}
+
+export function verifyPayment(verifyRequest) {
+    return api.post("/api/payment/verify", verifyRequest);
+}

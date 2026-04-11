@@ -418,10 +418,17 @@ app.post('/api/order/createOrder', async (req, res) => {
         
         // Handle Razorpay specific errors specifically
         const isRazorpayError = error.code || error.statusCode || error.description;
+        const statusCode = error.statusCode || 500;
         
-        res.status(error.statusCode || 500).json({ 
+        // If it's a 401 from Razorpay, it's likely an API Key issue
+        const errorMessage = statusCode === 401 && isRazorpayError 
+            ? 'Razorpay Authentication Failed (check API keys)' 
+            : (error.description || error.message || 'Unknown error occurred');
+
+        res.status(statusCode).json({ 
+            success: false,
             error: isRazorpayError ? 'Razorpay Error' : 'Internal Server Error', 
-            message: error.description || error.message || 'Unknown error occurred',
+            message: errorMessage,
             detail: error.metadata || null
         });
     }

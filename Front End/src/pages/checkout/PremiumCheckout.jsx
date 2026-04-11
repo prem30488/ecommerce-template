@@ -3,11 +3,9 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../../context/shop-context';
-import axios from 'axios';
-import { API_BASE_URL } from '../../constants/index';
+import { getCoupons, createOrder, verifyPayment } from '../../util/APIUtils';
 import Alert from 'react-s-alert';
 import './PremiumCheckout.css';
-import { getCoupons } from '../../util/APIUtils';
 
 const loadRazorpay = () => {
     return new Promise((resolve) => {
@@ -195,10 +193,9 @@ const PremiumCheckout = () => {
 
             try {
                 // 1. Create order on backend and get Razorpay Order ID
-                const apiUrl = API_BASE_URL + '/api/order/createOrder';
-                const createResponse = await axios.post(apiUrl, submissionData);
+                const createResponse = await createOrder(submissionData);
                 
-                const { razorpayOrderId, amount, currency, id: localOrderId, key_id } = createResponse.data;
+                const { razorpayOrderId, amount, currency, id: localOrderId, key_id } = createResponse;
 
                 // 2. Load Razorpay script
                 const res = await loadRazorpay();
@@ -218,15 +215,14 @@ const PremiumCheckout = () => {
                     handler: async function (response) {
                         // 4. Verify Payment
                         try {
-                            const verifyUrl = API_BASE_URL + '/api/payment/verify';
-                            const verifyRes = await axios.post(verifyUrl, {
+                            const verifyRes = await verifyPayment({
                                 razorpay_order_id: response.razorpay_order_id,
                                 razorpay_payment_id: response.razorpay_payment_id,
                                 razorpay_signature: response.razorpay_signature,
                                 order_id: localOrderId
                             });
 
-                            if (verifyRes.data.success) {
+                            if (verifyRes.success) {
                                 Alert.success("Payment Successful!");
                                 navigate("/previewInvoice/" + localOrderId);
                             } else {
