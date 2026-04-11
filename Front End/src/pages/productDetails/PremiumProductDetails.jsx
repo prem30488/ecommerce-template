@@ -309,8 +309,8 @@ export const PremiumProductDetails = () => {
     if (!src) return "";
     let cleanSrc = src.trim();
     // If it's a full backend URL, convert it to a root-relative path to use the Vercel proxy
-    if (cleanSrc.startsWith('https://prudent-farsighted-yareli.ngrok-free.dev')) {
-      cleanSrc = cleanSrc.replace('https://prudent-farsighted-yareli.ngrok-free.dev', '');
+    if (cleanSrc.startsWith('https://ecommerce-template-api-mu.vercel.app')) {
+      cleanSrc = cleanSrc.replace('https://ecommerce-template-api-mu.vercel.app', '');
     }
     // If it doesn't start with http, ensure it has a leading slash
     if (!cleanSrc.startsWith('http')) {

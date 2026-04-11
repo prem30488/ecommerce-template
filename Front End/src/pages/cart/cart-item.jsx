@@ -51,10 +51,10 @@ export const CartItem = (props) => {
           {imageURLs ? imageURLs.split(',').map((url, i) => (
             <div key={i} className="w-full h-full flex-shrink-0 snap-center">
               <img
-                src={url.trim().startsWith('http') && !url.trim().includes('https://prudent-farsighted-yareli.ngrok-free.dev')
+                src={url.trim().startsWith('http') && !url.trim().includes('https://ecommerce-template-api-mu.vercel.app')
                   ? url.trim()
-                  : (url.trim().includes('https://prudent-farsighted-yareli.ngrok-free.dev')
-                    ? url.trim().replace('https://prudent-farsighted-yareli.ngrok-free.dev', '')
+                  : (url.trim().includes('https://ecommerce-template-api-mu.vercel.app')
+                    ? url.trim().replace('https://ecommerce-template-api-mu.vercel.app', '')
                     : (url.trim().startsWith('/') ? url.trim() : `/${url.trim()}`))}
                 className="w-full h-full object-cover"
                 alt={`${url} ${i}`}
