@@ -47,11 +47,11 @@ export function updatePrivileges(id, privileges) {
 }
 
 export function login(loginRequest) {
-    return api.post("/auth/login", loginRequest);
+    return api.post("/api/auth/login", loginRequest);
 }
 
 export function signup(signupRequest) {
-    return api.post("/auth/signup", signupRequest);
+    return api.post("/api/auth/signup", signupRequest);
 }
 
 export function getUserList(page, size, search = '') {

@@ -1014,7 +1014,7 @@ app.delete('/api/leadership/delete/:id', authenticateToken, async (req, res) => 
 });
 
 // Authentication Routes
-app.post('/auth/login', async (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
     try {
         const { username, email, password } = req.body;
         const loginIdentifier = username || email;
@@ -1067,7 +1067,7 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
-app.post('/auth/signup', async (req, res) => {
+app.post('/api/auth/signup', async (req, res) => {
     try {
         const { username, email, password, phoneNumber } = req.body;
 
