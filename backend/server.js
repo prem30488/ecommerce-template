@@ -11,9 +11,17 @@ const bcrypt = require('bcryptjs');
 const db = require('./models');
 const { initRedis } = require('./config/redis');
 const saleRoutes = require('./routes/saleRoutes');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
 
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+// Razorpay Initialization
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder',
+    key_secret: process.env.RAZORPAY_KEY_SECRET || 'placeholder_secret'
+});
 
 // Static Assets Configuration
 const frontendPublicPath = path.join(__dirname, '..', 'Front End', 'public');
@@ -340,6 +348,107 @@ app.get('/api/order/getOrders', authenticateToken, async (req, res) => {
         res.json(getPaginatedResponse(rows, count, page, size));
     } catch (error) {
         res.json(getPaginatedResponse([], 0, page, size));
+    }
+});
+
+app.post('/api/order/createOrder', async (req, res) => {
+    const t = await db.sequelize.transaction();
+    try {
+        const {
+            name, email, mobileNumber, billingAddress, shippingAddress,
+            sameAddress, subTotal, total, cartItems, martItems, lartItems
+        } = req.body;
+
+        console.log('--- CREATE ORDER REQUEST ---');
+        console.log('Total:', total);
+        console.log('Items Count:', Object.keys(cartItems || {}).length + Object.keys(martItems || {}).length + Object.keys(lartItems || {}).length);
+
+        // 1. Create order in our database
+        const order = await db.Order.create({
+            total: total,
+            status: 'pending',
+            created_at: new Date()
+        }, { transaction: t });
+
+        // Helper to process items
+        const processItems = async (items, itemsType) => {
+            if (!items) return;
+            const entries = Object.entries(items);
+            for (const [key, qty] of entries) {
+                if (qty > 0) {
+                    const [productId, flavorId] = key.split('_');
+                    await db.OrderItem.create({
+                        order_id: order.id,
+                        product_id: parseInt(productId),
+                        flavor_id: flavorId ? parseInt(flavorId) : null,
+                        quantity: qty,
+                        price: 0
+                    }, { transaction: t });
+                }
+            }
+        };
+
+        await processItems(cartItems, 'standard');
+        await processItems(martItems, 'medium');
+        await processItems(lartItems, 'large');
+
+        // 2. Create Razorpay Order
+        const options = {
+            amount: Math.round(total * 100),
+            currency: "INR",
+            receipt: `order_rcptid_${order.id}`
+        };
+
+        const razorpayOrder = await razorpay.orders.create(options);
+        console.log('Razorpay Order Created:', razorpayOrder.id);
+
+        await t.commit();
+
+        res.status(201).json({
+            id: order.id,
+            razorpayOrderId: razorpayOrder.id,
+            amount: razorpayOrder.amount,
+            currency: razorpayOrder.currency,
+            key_id: process.env.RAZORPAY_KEY_ID
+        });
+
+    } catch (error) {
+        if (t) await t.rollback();
+        console.error('CRITICAL: Error in createOrder:', error);
+        
+        // Handle Razorpay specific errors specifically
+        const isRazorpayError = error.code || error.statusCode || error.description;
+        
+        res.status(error.statusCode || 500).json({ 
+            error: isRazorpayError ? 'Razorpay Error' : 'Internal Server Error', 
+            message: error.description || error.message || 'Unknown error occurred',
+            detail: error.metadata || null
+        });
+    }
+});
+
+app.post('/api/payment/verify', async (req, res) => {
+    try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_id } = req.body;
+
+        const body = razorpay_order_id + "|" + razorpay_payment_id;
+        const expectedSignature = crypto
+            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'placeholder_secret')
+            .update(body.toString())
+            .digest('hex');
+
+        if (expectedSignature === razorpay_signature) {
+            await db.Order.update(
+                { status: 'paid' },
+                { where: { id: order_id } }
+            );
+            res.json({ success: true, message: "Payment verified successfully" });
+        } else {
+            res.status(400).json({ success: false, message: "Invalid signature" });
+        }
+    } catch (error) {
+        console.error('Payment verification error:', error);
+        res.status(500).json({ error: 'Verification failed' });
     }
 });
 
@@ -2058,6 +2167,36 @@ const startServer = async () => {
                     }
                 }
                 console.log('✅ Custom privilege columns ensured');
+
+                // Ensure Orders and OrderItems tables have correct columns
+                try {
+                    await db.sequelize.query(`
+                        CREATE TABLE IF NOT EXISTS "Orders" (
+                            id SERIAL PRIMARY KEY,
+                            user_id INTEGER,
+                            total FLOAT,
+                            status VARCHAR(255) DEFAULT 'pending',
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            "createdAt" TIMESTAMP,
+                            "updatedAt" TIMESTAMP
+                        );
+                    `);
+                    await db.sequelize.query(`
+                        CREATE TABLE IF NOT EXISTS "OrderItems" (
+                            id SERIAL PRIMARY KEY,
+                            order_id INTEGER REFERENCES "Orders"(id),
+                            product_id INTEGER,
+                            flavor_id INTEGER,
+                            quantity INTEGER,
+                            price FLOAT,
+                            "createdAt" TIMESTAMP,
+                            "updatedAt" TIMESTAMP
+                        );
+                    `);
+                    console.log('✅ Orders and OrderItems schema ensured');
+                } catch (schemaErr) {
+                    console.error('⚠️ Schema ensure minor error:', schemaErr.message);
+                }
             } catch (syncError) {
                 console.error('⚠️ Database sync error details:', syncError);
                 await db.sequelize.sync();

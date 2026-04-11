@@ -23,6 +23,7 @@
         "node-fetch": "^3.3.2",
         "pg": "^8.20.0",
         "pg-hstore": "^2.3.4",
+        "razorpay": "^2.9.6",
         "redis": "^4.6.13",
         "sequelize": "^6.37.8"
     },

@@ -9,6 +9,16 @@ import Alert from 'react-s-alert';
 import './PremiumCheckout.css';
 import { getCoupons } from '../../util/APIUtils';
 
+const loadRazorpay = () => {
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
+};
+
 const PremiumCheckout = () => {
     const navigate = useNavigate();
     const {
@@ -184,13 +194,66 @@ const PremiumCheckout = () => {
             addToCustomerData(submissionData);
 
             try {
+                // 1. Create order on backend and get Razorpay Order ID
                 const apiUrl = API_BASE_URL + '/api/order/createOrder';
-                const response = await axios.post(apiUrl, submissionData);
-                Alert.success("Order Created Successfully!");
-                navigate("/previewInvoice/" + response.data.id);
+                const createResponse = await axios.post(apiUrl, submissionData);
+                
+                const { razorpayOrderId, amount, currency, id: localOrderId, key_id } = createResponse.data;
+
+                // 2. Load Razorpay script
+                const res = await loadRazorpay();
+                if (!res) {
+                    Alert.error("Razorpay SDK failed to load. Are you online?");
+                    return;
+                }
+
+                // 3. Open Razorpay Modal
+                const options = {
+                    key: key_id, 
+                    amount: amount,
+                    currency: currency,
+                    name: "Hanley Healthcare",
+                    description: "Order Payment",
+                    order_id: razorpayOrderId,
+                    handler: async function (response) {
+                        // 4. Verify Payment
+                        try {
+                            const verifyUrl = API_BASE_URL + '/api/payment/verify';
+                            const verifyRes = await axios.post(verifyUrl, {
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                order_id: localOrderId
+                            });
+
+                            if (verifyRes.data.success) {
+                                Alert.success("Payment Successful!");
+                                navigate("/previewInvoice/" + localOrderId);
+                            } else {
+                                Alert.error("Payment verification failed.");
+                            }
+                        } catch (err) {
+                            console.error("Verification error:", err);
+                            Alert.error("Error verifying payment.");
+                        }
+                    },
+                    prefill: {
+                        name: values.name,
+                        email: values.email,
+                        contact: values.mobileNumber,
+                    },
+                    theme: {
+                        color: "#005bd3",
+                    },
+                };
+
+                const paymentObject = new window.Razorpay(options);
+                paymentObject.open();
+
             } catch (error) {
-                console.error('Error:', error.message);
-                Alert.error(error.message || 'Oops! Some error occurred!');
+                console.error('Error:', error);
+                const msg = error.response?.data?.message || error.message || 'Oops! Some error occurred!';
+                Alert.error(msg);
             }
         },
     });
