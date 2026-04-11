@@ -1328,15 +1328,19 @@ app.post('/api/testimonial/createTestimonial', authenticateToken, async (req, re
 });
 
 const multer = require('multer');
+const isVercel = process.env.VERCEL === '1' || !!process.env.VERCEL_URL;
+
+const getUploadPath = (...segments) => {
+    if (isVercel) return '/tmp';
+    const p = path.join(__dirname, '..', 'Front End', 'public', 'images', ...segments);
+    if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
+    return p;
+};
+
 const flavorStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         const flavorId = req.query.flavorId || 'temp';
-        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'Flavors', String(flavorId));
-
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
+        cb(null, getUploadPath('Flavors', String(flavorId)));
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
@@ -1347,19 +1351,15 @@ const uploadFlavorIcon = multer({ storage: flavorStorage });
 
 app.post('/api/flavor/upload', authenticateToken, uploadFlavorIcon.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-
     const flavorId = req.query.flavorId || 'temp';
+    if (isVercel) return res.status(503).json({ error: 'File uploads not supported on Vercel. Please use a storage service.' });
     const fileUrl = `/images/Flavors/${flavorId}/${req.file.filename}`;
     res.send(fileUrl);
 });
 
 const testimonialStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'testimonials');
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
+        cb(null, getUploadPath('testimonials'));
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
@@ -1369,12 +1369,7 @@ const productStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         const productId = req.query.productId || 'temp';
         const flavorId = req.query.flavorId || 'default';
-        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId), String(flavorId));
-
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
+        cb(null, getUploadPath(String(productId), String(flavorId)));
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
@@ -1385,7 +1380,7 @@ const uploadProductImage = multer({ storage: productStorage });
 
 app.post('/api/product/upload', authenticateToken, uploadProductImage.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-
+    if (isVercel) return res.status(503).json({ error: 'File uploads not supported on Vercel. Please use a storage service.' });
     const productId = req.query.productId || 'temp';
     const flavorId = req.query.flavorId || 'default';
     const fileUrl = `/images/${productId}/${flavorId}/${req.file.filename}`;
@@ -1428,11 +1423,7 @@ app.post('/api/testimonial/upload', authenticateToken, uploadTestimonial.single(
 
 const leadershipStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'leadership');
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
+        cb(null, getUploadPath('leadership'));
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
@@ -1442,17 +1433,14 @@ const uploadLeadership = multer({ storage: leadershipStorage });
 
 app.post('/api/leadership/upload', authenticateToken, uploadLeadership.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    if (isVercel) return res.status(503).json({ error: 'File uploads not supported on Vercel. Please use a storage service.' });
     const fileUrl = `/images/leadership/${req.file.filename}`;
     res.send(fileUrl);
 });
 
 const sliderStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadPath = path.join(__dirname, '..', 'Front End', 'public', 'images', 'sliders');
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-        cb(null, uploadPath);
+        cb(null, getUploadPath('sliders'));
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
@@ -1462,6 +1450,7 @@ const uploadSlider = multer({ storage: sliderStorage });
 
 app.post('/api/slider/upload', authenticateToken, uploadSlider.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    if (isVercel) return res.status(503).json({ error: 'File uploads not supported on Vercel. Please use a storage service.' });
     const fileUrl = `/images/sliders/${req.file.filename}`;
     res.send(fileUrl);
 });
