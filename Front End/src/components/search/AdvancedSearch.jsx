@@ -56,7 +56,9 @@ class AdvancedSearch extends Component {
 
     new SolrClient({
       idField: "id",
-      url: "/solr/hanley/select",
+      url: import.meta.env.VITE_SOLR_URL 
+        ? `${import.meta.env.VITE_SOLR_URL.replace(/\/$/, '')}/solr/hanley/select` 
+        : "/solr/hanley/select",
       searchFields: fields,
       sortFields: sortFields,
       pageStrategy: "paginate",

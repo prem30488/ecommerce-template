@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-const SOLR_URL = (process.env.SOLR_URL || "http://localhost:8983").replace(/\/$/, '') + "/solr/hanley/update?commit=true";
+const SOLR_URL = (process.env.VITE_SOLR_URL || "http://localhost:8983").replace(/\/$/, '') + "/solr/hanley/update?commit=true";
 
 // Root of public images folder relative to backend/
 const PUBLIC_IMAGES = path.join(__dirname, '..', 'Front End', 'public', 'images');

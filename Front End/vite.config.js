@@ -20,8 +20,12 @@ export default ({ mode }) => {
           rewrite: (path) => path.replace(/^\/api/, '/api'),
         },
         '/solr': {
-          target: env.SOLR_URL || 'http://localhost:8983',
+          target: env.VITE_SOLR_URL || 'http://localhost:8983',
           changeOrigin: true,
+          secure: false,
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          }
         },
       },
     },
