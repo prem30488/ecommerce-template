@@ -10,6 +10,7 @@ import { FaEye } from 'react-icons/fa';
 import { ShopContext } from '../../context/shop-context';
 import WishlistIcon from '../../components/WishlistIcon';
 import QuickViewModal from '../../components/QuickViewModal';
+import { COMPANY_INFO } from '../../constants/companyInfo';
 import './frequently-bought.css';
 
 const SIZES = [
@@ -37,7 +38,7 @@ const FrequentlyBoughtCarousel = ({ currentProduct, frequentProducts, onSelectio
                 title: `Premium Collection Item`,
                 img: `https://picsum.photos/seed/recommend-${i}/300/300`,
                 productFlavors: [{ price: 999, priceMedium: 1499, priceLarge: 1999, flavor_id: 1, Flavor: { name: 'Default' } }],
-                brand: 'Hanley Health',
+                brand: COMPANY_INFO.name,
                 stock: 10
             });
         }
@@ -121,7 +122,7 @@ const FrequentlyBoughtCarousel = ({ currentProduct, frequentProducts, onSelectio
                             <div className="frequent-card">
                                 {/* Image */}
                                 <div className="frequent-card-image" onClick={() => !isPlaceholder && navigate(`/productDetails/${product.id}`)} style={{ cursor: isPlaceholder ? 'default' : 'pointer' }}>
-                                    <img src={product.image || product.img} alt={product.title} loading="lazy" />
+                                    <img src={product.image || product.img} alt={product.title} title={COMPANY_INFO.name} loading="lazy" />
 
                                     {/* Action icons column */}
                                     <div className="fbc-action-col">

@@ -2,6 +2,7 @@ import React from 'react';
 import "./Footer.css";
 import "./topbutton.css";
 import { WhatsappLogo } from "phosphor-react";
+import { COMPANY_INFO } from '../constants/companyInfo';
 export default function Footer() {
 
   // When the user scrolls down 20px from the top of the document, show the button
@@ -32,7 +33,7 @@ export default function Footer() {
     <React.Fragment>
       <button onClick={topFunction} id="myBtn" title="Go to top">Top</button>
       <a
-        href="https://api.whatsapp.com/send/?phone=917777936090&text=Hi"
+        href={`https://api.whatsapp.com/send/?phone=${COMPANY_INFO.phone1.replace(/[^0-9]/g, '')}&text=Hi`}
         target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-float-btn-global"
@@ -46,14 +47,14 @@ export default function Footer() {
           <div className="footer-top">
 
             <div className="footer-col">
-              <h4>About Hanley</h4>
+              <h4>About {COMPANY_INFO.name.split(' ')[0]}</h4>
               <p>
-                At Hanley, we're dedicated to empowering your wellness journey with natural, science-backed supplements. Through cutting-edge research, we create products that truly impact lives, led by our liquid collagen supplement. Join us and become #UnstoppableYou.
+                {COMPANY_INFO.seoDescription}
               </p>
               <div className="footer-contact-info">
-                <span>Ahmedabad, India</span>
-                <span>+91 7777936090</span>
-                <span>info@hanleyhealthcare.com</span>
+                <span>{COMPANY_INFO.city}, {COMPANY_INFO.country || 'India'}</span>
+                <span>{COMPANY_INFO.phone1}</span>
+                <span>{COMPANY_INFO.email}</span>
               </div>
               <ul className="footer-socials">
                 <li><a href="#"><i className="fa fa-instagram"></i></a></li>
@@ -105,8 +106,8 @@ export default function Footer() {
           </div>
 
           <div className="footer-bottom">
-            <span>© 2024 Hanley Healthcare. All Rights Reserved</span>
-            <span>Lovingly built by Hanley Healthcare Team</span>
+            <span>© {new Date().getFullYear()} {COMPANY_INFO.name}. All Rights Reserved</span>
+            <span>Lovingly built by {COMPANY_INFO.name} Team</span>
           </div>
         </div>
       </footer>

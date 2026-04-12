@@ -1,4 +1,5 @@
 import Herotext from "../components/Herotext";
+import { COMPANY_INFO } from '../constants/companyInfo';
 const Shipping = () => {
   return (
     <>
@@ -16,7 +17,7 @@ If your tracking details show “Delivered” but you have not received it, we r
 
 <b>Returns & Replacements</b>
 <br/>
-Hanley Healthcare takes pride in making sure the customer gets what he/she sees and sees what he/she expects. Each and every product of ours is comprehensively tested and tried. On grounds of production deformities, like expired product and wrong product delivered, we will take the product back without any questions asked. 
+{COMPANY_INFO.name} takes pride in making sure the customer gets what he/she sees and sees what he/she expects. Each and every product of ours is comprehensively tested and tried. On grounds of production deformities, like expired product and wrong product delivered, we will take the product back without any questions asked. 
 <br/>
 We investigate returns & refunds request if and only if they are supported by unboxing videos shot from the scratch where you receive shrink wrapped jars in our corrugated boxes. This ensures a transparent practice and helps us to provide a better resolution.
 <br/>

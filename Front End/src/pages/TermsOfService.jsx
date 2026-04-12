@@ -1,4 +1,5 @@
 import React from 'react';
+import { COMPANY_INFO } from '../constants/companyInfo';
 import './TermsOfService.css';
 
 const TermsOfService = () => {
@@ -12,11 +13,11 @@ const TermsOfService = () => {
 
                 <div className="tos-body">
                     <blockquote>
-                        OVERVIEW: This website is operated by Hanley Healthcare. Throughout the site, the terms “we”, “us” and “our” refer to Hanley Healthcare.
+                        OVERVIEW: This website is operated by {COMPANY_INFO.name}. Throughout the site, the terms “we”, “us” and “our” refer to {COMPANY_INFO.name}.
                     </blockquote>
 
                     <p>
-                        Hanley Healthcare offers this website, including all information, tools and Services available from this site to you, the user, conditioned upon your acceptance of all terms, conditions, policies and notices stated here.
+                        {COMPANY_INFO.name} offers this website, including all information, tools and Services available from this site to you, the user, conditioned upon your acceptance of all terms, conditions, policies and notices stated here.
                     </p>
 
                     <p>
@@ -66,19 +67,19 @@ const TermsOfService = () => {
 
                     <div className="tos-section">
                         <h2>SECTION 13 - LIMITATION OF LIABILITY</h2>
-                        <p>Hanley Healthcare does not guarantee that your use of our Service will be uninterrupted, timely, secure or error-free. In no case shall Hanley Healthcare, our directors, or employees be liable for any injury, loss, or claim.</p>
+                        <p>{COMPANY_INFO.name} does not guarantee that your use of our Service will be uninterrupted, timely, secure or error-free. In no case shall {COMPANY_INFO.name}, our directors, or employees be liable for any injury, loss, or claim.</p>
                     </div>
 
                     <div className="tos-section">
                         <h2>SECTION 20 - CONTACT INFORMATION</h2>
-                        <p>Questions about the Terms of Service should be sent to us at <span className="link-highlight">Info@hanleyhealthcare.com</span>.</p>
+                        <p>Questions about the Terms of Service should be sent to us at <span className="link-highlight">{COMPANY_INFO.email}</span>.</p>
                         
                         <div className="contact-box">
-                            <h3>Hanley Healthcare LLP</h3>
-                            <p>Plot No. 233, Pushpam Industrial Estate,</p>
-                            <p>Vatwa G.I.D.C. Phase 1, Vatva, Ahmedabad,</p>
-                            <p>Gujarat - 382445, India</p>
-                            <p><strong>Phone:</strong> +91 7777936090</p>
+                            <h3>{COMPANY_INFO.name}</h3>
+                            <p>{COMPANY_INFO.address1},</p>
+                            <p>{COMPANY_INFO.address2}, {COMPANY_INFO.city},</p>
+                            <p>{COMPANY_INFO.state} - {COMPANY_INFO.pinCode}, India</p>
+                            <p><strong>Phone:</strong> {COMPANY_INFO.phone1}</p>
                         </div>
                     </div>
                 </div>

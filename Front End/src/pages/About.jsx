@@ -16,6 +16,7 @@ import {
 } from "phosphor-react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCoverflow, Pagination } from 'swiper/modules';
+import { COMPANY_INFO } from '../constants/companyInfo';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -56,7 +57,7 @@ const About = () => {
           <span className={styles.heroSub}>Pioneering Natural Wellness</span>
           <h1 className={styles.heroTitle}>Nourishing You, <br /> <span style={{ color: "var(--accent)" }}>Naturally.</span></h1>
           <p className={styles.heroDesc}>
-            At Hanley Healthcare, we don't just create supplements; we craft scientifically-backed botanical formulas that empower you to reclaim your vitality and live every moment to its fullest.
+            At {COMPANY_INFO.name}, we don't just create supplements; we craft scientifically-backed botanical formulas that empower you to reclaim your vitality and live every moment to its fullest.
           </p>
         </div>
 
@@ -64,6 +65,7 @@ const About = () => {
           <img 
             src="/images/about/about_1.jpg" 
             alt="Nature Hero" 
+            title={COMPANY_INFO.name}
             style={{ width: '100%', height: 'auto', display: 'block' }}
           />
         </div>
@@ -92,7 +94,7 @@ const About = () => {
       {/* ✨ Core Values - Modern Cards */}
       <section style={{ padding: '80px 0' }}>
         <div className={styles.sectionTitleBlock}>
-          <h2 className={styles.sectionTitle}>The Hanley Standard</h2>
+          <h2 className={styles.sectionTitle}>The {COMPANY_INFO.name.split(' ')[0]} Standard</h2>
           <p style={{ color: 'var(--text-muted)' }}>Precision in science. Purity in nature. Power in results.</p>
         </div>
         
@@ -134,19 +136,19 @@ const About = () => {
           className="mySwiper"
         >
           <SwiperSlide className={styles.swiperSlide} style={{ background: '#000' }}>
-            <img src="/images/about/8_becab0f3-82f7-4acc-92f2-e2abea04b6c9.jpg" alt="Lab" className={styles.slideImage} />
+            <img src="/images/about/8_becab0f3-82f7-4acc-92f2-e2abea04b6c9.jpg" alt="Lab" title={COMPANY_INFO.name} className={styles.slideImage} />
             <div style={{ position: 'absolute', bottom: 40, left: 40, color: 'white' }}>
               <h4 style={{ fontSize: '24px', fontWeight: 700 }}>Botanical Sourcing</h4>
             </div>
           </SwiperSlide>
           <SwiperSlide className={styles.swiperSlide}>
-            <img src="/images/about/9_0edfe37c-6d05-4698-ba7f-1d90d0c93670.jpg" alt="Science" className={styles.slideImage} />
+            <img src="/images/about/9_0edfe37c-6d05-4698-ba7f-1d90d0c93670.jpg" alt="Science" title={COMPANY_INFO.name} className={styles.slideImage} />
             <div style={{ position: 'absolute', bottom: 40, left: 40, color: 'white' }}>
               <h4 style={{ fontSize: '24px', fontWeight: 700 }}>Molecular Formulation</h4>
             </div>
           </SwiperSlide>
           <SwiperSlide className={styles.swiperSlide}>
-            <img src="/images/about/about_img_4.jpg" alt="Packaging" className={styles.slideImage} />
+            <img src="/images/about/about_img_4.jpg" alt="Packaging" title={COMPANY_INFO.name} className={styles.slideImage} />
             <div style={{ position: 'absolute', bottom: 40, left: 40, color: 'white' }}>
               <h4 style={{ fontSize: '24px', fontWeight: 700 }}>Eco-Packaging</h4>
             </div>
@@ -157,7 +159,7 @@ const About = () => {
       {/* 🧩 Unique Edge - Alternating Layout */}
       <div className={styles.splitLayout}>
         <div className={styles.imageReveal}>
-          <img src="/images/about/6_35eeab6d-142d-445d-aa82-e79cbe43a217.jpg" alt="Gut Health Illustration" />
+          <img src="/images/about/6_35eeab6d-142d-445d-aa82-e79cbe43a217.jpg" alt="Gut Health Illustration" title={COMPANY_INFO.name} />
         </div>
         <div className={styles.textContent}>
           <h2>Why We're Different</h2>
@@ -189,7 +191,7 @@ const About = () => {
           <p style={{ marginTop: '20px' }}>We invite you to scan the QR code on any of our products to see the direct lab results and origin story of that specific bottle.</p>
         </div>
         <div className={styles.imageReveal} style={{ order: 1 }}>
-          <img src="/images/about/5_d90706a2-adba-417c-a6a6-a2463dd7b22e.jpg" alt="Sourcing Table" />
+          <img src="/images/about/5_d90706a2-adba-417c-a6a6-a2463dd7b22e.jpg" alt="Sourcing Table" title={COMPANY_INFO.name} />
         </div>
       </div>
 
@@ -206,7 +208,7 @@ const About = () => {
             <div className={styles.timelineContent}>
               <span className={styles.timelineYear}>2012</span>
               <h4>The Foundation</h4>
-              <p>Dr. Hanley starts the first research lab focused on molecular botanical syncing.</p>
+              <p>Our founder starts the first research lab focused on molecular botanical syncing.</p>
             </div>
           </div>
 
@@ -233,13 +235,13 @@ const About = () => {
         <section className={styles.leadershipSection}>
           <div className={styles.sectionTitleBlock}>
             <h2 className={styles.sectionTitle}>The Visionary Team</h2>
-            <p style={{ color: 'var(--text-muted)' }}>Meet the minds behind Hanley's healthcare revolution.</p>
+            <p style={{ color: 'var(--text-muted)' }}>Meet the minds behind {COMPANY_INFO.name}'s healthcare revolution.</p>
           </div>
           
           <div className={styles.leadershipGrid}>
             {team.map((member) => (
               <div key={member.id} className={styles.leaderCard}>
-                <img src={resolveImageUrl(member.image)} alt={member.name} className={styles.leaderImage} />
+                <img src={resolveImageUrl(member.image)} alt={member.name} title={COMPANY_INFO.name} className={styles.leaderImage} />
                 <h3 className={styles.leaderName}>{member.name}</h3>
                 <span className={styles.leaderDesignation}>{member.designation}</span>
               </div>

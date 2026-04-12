@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { COMPANY_INFO } from '../../constants/companyInfo';
 import { API_BASE_URL } from '../../constants/index.jsx';
 import { WishlistContext } from '../../context/wishlist-context';
 import { ShopContext } from '../../context/shop-context';
@@ -66,6 +67,7 @@ const WishlistItem = ({ item }) => {
           <img
             src={getImageUrl()}
             alt={item.title}
+            title={COMPANY_INFO.name}
             loading="lazy"
             onError={(e) => {
               e.target.onerror = null;

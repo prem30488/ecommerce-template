@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { COMPANY_INFO } from '../../constants/companyInfo';
 // Import Swiper styles
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -71,6 +72,7 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
                 <img
                   src={imageUrl.includes('/images/') ? '/images/' + imageUrl.split('/images/')[1] : imageUrl}
                   alt={`${title || 'Product'} thumb ${index + 1}`}
+                  title={COMPANY_INFO.name}
                   className="w-full h-full object-cover rounded-md"
                   loading="lazy"
                   onError={(e) => { e.target.style.display = 'none'; }}
@@ -104,6 +106,7 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
               <img
                 src={imageUrl.includes('/images/') ? '/images/' + imageUrl.split('/images/')[1] : imageUrl}
                 alt={`${title || 'Product'} - view ${index + 1}`}
+                title={COMPANY_INFO.name}
                 className="h-full object-cover rounded-md shadow-sm"
                 style={{ height: '100%' }}
                 loading="lazy"
@@ -139,6 +142,7 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
                 <img
                   src={imageUrl.includes('/images/') ? '/images/' + imageUrl.split('/images/')[1] : imageUrl}
                   alt={`${title || 'Product'} thumb ${index + 1}`}
+                  title={COMPANY_INFO.name}
                   className="w-full h-full object-cover rounded-md"
                   loading="lazy"
                   onError={(e) => { e.target.style.display = 'none'; }}

@@ -4,6 +4,7 @@ import Alert from 'react-s-alert';
 import { FaEye } from 'react-icons/fa';
 import { ShopContext } from '../context/shop-context';
 import WishlistIcon from './WishlistIcon';
+import { COMPANY_INFO } from '../constants/companyInfo';
 import QuickViewModal from './QuickViewModal';
 import ImageCarousel from '../pages/productDetails/ImageCarousel';
 import './premium-carousel.css';
@@ -175,7 +176,7 @@ const PremiumProductCard = ({ product }) => {
                                     paddingRight: '8px',
                                     borderRight: '1px solid rgba(255,255,255,0.2)'
                                 }}>
-                                    <img src="/images/offer.gif" alt="Offer" style={{ height: '54px', width: '100px' }} />
+                                    <img src="/images/offer.gif" alt="Offer" title={COMPANY_INFO.name} style={{ height: '54px', width: '100px' }} />
                                 </div>
 
                                 {/* Scrolling Ticker */}
@@ -222,7 +223,7 @@ const PremiumProductCard = ({ product }) => {
                                     style={{ width: "100%", height: "500px !important" }}
                                 />
                             ) : (
-                                <img src={'https://placehold.co/800x800?text=No+Image'} alt={product.title} loading="lazy" />
+                                <img src={'https://placehold.co/800x800?text=No+Image'} alt={product.title} title={COMPANY_INFO.name} loading="lazy" />
                             )}
                             {/* Action icons column */}
                             <div className="fbc-action-col">
@@ -319,8 +320,8 @@ const PremiumProductCard = ({ product }) => {
                                 </svg>
                             </button>
 
-                            <img src="/images/iso.png" alt="ISO" style={{ height: '70px', width: '200px', float: "center", marginLeft: "40px", verticalAlign: "top" }} />
-                            <img src="/images/time.png" alt="Delievry time" style={{ height: '70px', width: '350px', float: "center", marginLeft: "20px", verticalAlign: "top" }} />
+                            <img src="/images/iso.png" alt="ISO" title={COMPANY_INFO.name} style={{ height: '70px', width: '200px', float: "center", marginLeft: "40px", verticalAlign: "top" }} />
+                            <img src="/images/time.png" alt="Delievry time" title={COMPANY_INFO.name} style={{ height: '70px', width: '350px', float: "center", marginLeft: "20px", verticalAlign: "top" }} />
                         </div>
 
                         {/* Flavor and Metas (side by side) */}

@@ -5,12 +5,14 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../constants/index';
 import styles from './Contact.module.css';
+import { COMPANY_INFO } from '../constants/companyInfo';
+import SEO from '../components/SEO';
 
 export const Contact = () => {
   const sendEmail = async (values) => {
     try {
       const formData = new FormData();
-      formData.append('to', 'Info@hanelyhealthcare.com');
+      formData.append('to', COMPANY_INFO.email);
       formData.append('subject', 'New Contact Form Inquiry');
       formData.append('text', `Name: ${values.name}\nEmail: ${values.email}\nPhone: ${values.phoneNumber}\nMessage: ${values.message}`);
 
@@ -58,12 +60,19 @@ export const Contact = () => {
 
   return (
     <div className={styles.contactPage}>
+      <SEO title="Contact Us" description={`Contact ${COMPANY_INFO.name} for any inquiries regarding our premium fashion products.`} />
       <div className={styles.contactHeader}>
-        <h1>Hanley - India</h1>
+        <h1>{COMPANY_INFO.name}</h1>
         <div className={styles.contactInfo}>
-          <p>Plot No. 233, Pushpam Industrial Estate, Vatwa G.I.D.C. Phase 1, Vatwa, Ahmedabad, Gujarat-382445</p>
-          <p>+91 7777936090</p>
-          <p>Info@hanleyhealthcare.com</p>
+          <p>{COMPANY_INFO.address1}, {COMPANY_INFO.address2}</p>
+          <p>{COMPANY_INFO.city}, {COMPANY_INFO.state} - {COMPANY_INFO.pinCode}</p>
+          <div className={styles.phoneGroup}>
+            <p><strong>Phone 1:</strong> {COMPANY_INFO.phone1}</p>
+            {COMPANY_INFO.phone2 && <p><strong>Phone 2:</strong> {COMPANY_INFO.phone2}</p>}
+            {COMPANY_INFO.faxNumber && <p><strong>Fax:</strong> {COMPANY_INFO.faxNumber}</p>}
+          </div>
+          <p><strong>Email:</strong> {COMPANY_INFO.email}</p>
+          <p><strong>Website:</strong> <a href={COMPANY_INFO.websiteUrl} target="_blank" rel="noopener noreferrer">{COMPANY_INFO.websiteUrl}</a></p>
         </div>
       </div>
       <div className={styles.mapContainer}>
@@ -75,7 +84,7 @@ export const Contact = () => {
           allowFullScreen=""
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          title="Hanley Healthcare Location"
+          title={`${COMPANY_INFO.name} Location`}
         ></iframe>
       </div>
 

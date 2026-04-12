@@ -1,4 +1,5 @@
 import React from 'react';
+import { COMPANY_INFO } from '../constants/companyInfo';
 import './onlineSupport.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -17,19 +18,19 @@ const OnlineSupport = () => {
                 </div>
 
                 <div className="support-grid">
-                    <a href="tel:+917777936090" className="support-card-link">
+                    <a href={`tel:${COMPANY_INFO.phone1}`} className="support-card-link">
                         <div className="support-card">
                             <div className="support-icon-wrap">
                                 <FontAwesomeIcon icon={faPhone} className="support-icon" />
                             </div>
                             <div className="support-content">
                                 <h4 className="support-card-title">Call Us</h4>
-                                <p className="support-card-text">Call now +91 7777936090</p>
+                                <p className="support-card-text">Call now {COMPANY_INFO.phone1}</p>
                             </div>
                         </div>
                     </a>
 
-                    <a href="https://wa.me/917777936090" target="_blank" rel="noopener noreferrer" className="support-card-link">
+                    <a href={`https://wa.me/${COMPANY_INFO.phone1.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="support-card-link">
                         <div className="support-card">
                             <div className="support-icon-wrap">
                                 <FontAwesomeIcon icon={faWhatsapp} className="support-icon" />
@@ -41,14 +42,14 @@ const OnlineSupport = () => {
                         </div>
                     </a>
 
-                    <a href="mailto:info@hanleyhealthcare.com" className="support-card-link">
+                    <a href={`mailto:${COMPANY_INFO.email}`} className="support-card-link">
                         <div className="support-card">
                             <div className="support-icon-wrap">
                                 <FontAwesomeIcon icon={faEnvelope} className="support-icon" />
                             </div>
                             <div className="support-content">
                                 <h4 className="support-card-title">Email Us</h4>
-                                <p className="support-card-text">Contact now with team us</p>
+                                <p className="support-card-text">Contact now with our team</p>
                             </div>
                         </div>
                     </a>
@@ -56,7 +57,7 @@ const OnlineSupport = () => {
 
                 <div className="support-footer">
                     <p className="support-footer-text">
-                        *Contact Us** Contact us at <a href="mailto:info@hanleyhealthcare.com">info@hanleyhealthcare.com</a>, and we'll get back to you within 24 hours.
+                        <strong>Contact Us:</strong> Contact us at <a href={`mailto:${COMPANY_INFO.email}`}>{COMPANY_INFO.email}</a>, and we'll get back to you within 24 hours.
                     </p>
                 </div>
             </div>

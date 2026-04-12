@@ -1,4 +1,5 @@
 import React from 'react';
+import { COMPANY_INFO } from '../constants/companyInfo';
 import './TermsOfService.css';
 
 const PrivacyPolicy = () => {
@@ -12,7 +13,7 @@ const PrivacyPolicy = () => {
 
                 <div className="tos-body">
                     <p>
-                        Hanley Healthcare operates this store and website, including all related information, content, features, tools, products and services, in order to provide you, the customer, with a curated shopping experience (the "Services"). Hanley Healthcare is powered by Shopify, which enables us to provide the Services to you.
+                        {COMPANY_INFO.name} operates this store and website, including all related information, content, features, tools, products and services, in order to provide you, the customer, with a curated shopping experience (the "Services"). {COMPANY_INFO.name} is powered by Shopify, which enables us to provide the Services to you.
                     </p>
                     <p>
                         This Privacy Policy describes how we collect, use, and disclose your personal information when you visit, use, or make a purchase or other transaction using the Services or otherwise communicate with us.
@@ -53,13 +54,13 @@ const PrivacyPolicy = () => {
 
                     <div className="tos-section">
                         <h2>Contact</h2>
-                        <p>Should you have any questions about our privacy practices, please email us at <span className="link-highlight">info@hanleyhealthcare.com</span> or contact us at:</p>
+                        <p>Should you have any questions about our privacy practices, please email us at <span className="link-highlight">{COMPANY_INFO.email}</span> or contact us at:</p>
                         
                         <div className="contact-box">
-                            <h3>Hanley Healthcare LLP</h3>
-                            <p>Plot No. 233, Pushpam Industrial Estate,</p>
-                            <p>Vatwa G.I.D.C. Phase 1, Vatva, Ahmedabad,</p>
-                            <p>Gujarat - 382445, India</p>
+                            <h3>{COMPANY_INFO.name}</h3>
+                            <p>{COMPANY_INFO.address1},</p>
+                            <p>{COMPANY_INFO.address2}, {COMPANY_INFO.city},</p>
+                            <p>{COMPANY_INFO.state} - {COMPANY_INFO.pinCode}, India</p>
                         </div>
                     </div>
                 </div>

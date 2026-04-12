@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { COMPANY_INFO } from "../../constants/companyInfo";
 import { FRONTEND_BASE_URL, API_BASE_URL } from '../../constants/index.jsx';
 import { ShopContext } from "../../context/shop-context";
 
@@ -126,13 +127,14 @@ export const PremiumCartItem = ({ data, size = "S", isFree = false, flavorId: pr
                   <img
                     src={finalSrc}
                     alt={`${title} ${i}`}
+                    title={COMPANY_INFO.name}
                   />
                 </div>
               );
             })
           ) : (
             <div className="pc-carousel-item">
-              <img src={`/images/${id}/1/1.png`} alt={title} />
+              <img src={`/images/${id}/1/1.png`} alt={title} title={COMPANY_INFO.name} />
             </div>
           )}
         </div>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/shop-context';
 import { getCategoriesShort } from '../util/APIUtils';
 import "./sidebar.css";
+import { COMPANY_INFO } from '../constants/companyInfo';
 
 export default function Sidebar() {
     const { products } = useContext(ShopContext);
@@ -55,7 +56,10 @@ export default function Sidebar() {
 
                 <div className="sidebar-section social-section">
                     <h3 className="sidebar-title">Connect with Us</h3>
-                    <a href="https://hanleyhealthcare.com" id="so" className="social-link google">www.hanleyhealthcare.com</a>
+                    <a href={COMPANY_INFO.websiteUrl} id="so" className="social-link google" target="_blank" rel="noopener noreferrer">{COMPANY_INFO.websiteUrl.replace('https://', '').replace('www.', '')}</a>
+                    <a href={`mailto:${COMPANY_INFO.email}`} className="social-link email">
+                        <i className="fa fa-envelope"></i> {COMPANY_INFO.email}
+                    </a>
                     <a href="https://www.facebook.com/hanleyhealthcare/" className="social-link facebook">
                         <i className="fa fa-facebook"></i> Facebook
                     </a>

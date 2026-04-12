@@ -63,6 +63,7 @@ import PremiumCheckout from './pages/checkout/PremiumCheckout';
 import YourCart from './pages/cart/YourCart';
 import TrackOrder from './pages/TrackOrder';
 import SockJsClient from 'react-stomp';
+import SEO from './components/SEO';
 
 import Input from './chat/components/Input/Input';
 import LoginForm from './chat/components/LoginForm';
@@ -159,6 +160,7 @@ class App extends Component {
 			<div className="App">
 				<ShopContextProvider>
 					<WishlistContextProvider>
+						<SEO />
 						{this.state.authenticated ? <NavbarLoggedIn /> : <NavbarMain />}
 						<Routes>
 							<Route path="/" element={this.state.authenticated ? <Dashboard /> : <Shop />} />

@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../constants";
 import { ShopContext } from '../context/shop-context';
 import { useContext } from 'react';
 import OnlineSupport from "../components/OnlineSupport";
+import { COMPANY_INFO } from '../constants/companyInfo';
 
 const ProductKids = () => {
   const { products } = useContext(ShopContext);
@@ -95,7 +96,7 @@ const ProductKids = () => {
         </div>
 
         {/* Global Partnership Strip */}
-        <img src="/images/certifications.png" alt="Certifications" className="certifications-banner" />
+        <img src="/images/certifications.png" alt={`Certifications - ${COMPANY_INFO.name}`} title={COMPANY_INFO.name} className="certifications-banner" />
       </div>
       <OnlineSupport />
     </div>

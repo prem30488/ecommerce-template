@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { COMPANY_INFO } from '../constants/companyInfo';
 import { ShopContext } from '../context/shop-context';
 import { WishlistContext } from '../context/wishlist-context';
 import { FaHeart, FaRegHeart, FaTimes, FaPlus, FaMinus, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -76,7 +77,7 @@ const QuickViewModal = ({ product, isOpen, onClose }) => {
                     {/* Image Gallery */}
                     <div className="qv-gallery">
                         <div className="qv-main-img-container">
-                            <img src={images[currentImgIndex]} alt={title} className="qv-main-img" />
+                            <img src={images[currentImgIndex]} alt={title} title={COMPANY_INFO.name} className="qv-main-img" />
                             {images.length > 1 && (
                                 <>
                                     <button className="qv-nav-btn qv-prev" onClick={prevImg}><FaChevronLeft /></button>

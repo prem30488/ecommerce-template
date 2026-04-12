@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useRef } from "react";
+import { COMPANY_INFO } from '../constants/companyInfo';
 import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import Alert from "react-s-alert";
@@ -167,6 +168,7 @@ const BscCard = ({ product, onQuickView }) => {
           className="bsc-main-img"
           src={imgSrc}
           alt={title}
+          title={COMPANY_INFO.name}
           loading="lazy"
           onError={(e) => {
             e.target.src = `https://placehold.co/400x400?text=Product`;

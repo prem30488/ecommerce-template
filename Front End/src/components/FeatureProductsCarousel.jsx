@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useRef } from "react";
+import { COMPANY_INFO } from '../constants/companyInfo';
 import { API_BASE_URL } from '../constants/index.jsx';
 import { useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
@@ -130,6 +131,7 @@ const FpcCard = ({ product, onQuickView }) => {
           className="fpc-main-img"
           src={imgSrc}
           alt={title}
+          title={COMPANY_INFO.name}
           loading="lazy"
           onError={(e) => {
             e.target.src = `https://placehold.co/400x400?text=Product`;

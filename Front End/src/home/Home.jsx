@@ -6,6 +6,7 @@ import { Carousel } from 'react-responsive-carousel';
 import PropTypes from 'prop-types';
 import { ACCESS_TOKEN } from '../constants';
 import AppFooter from "../common/AppFooter";
+import { COMPANY_INFO } from '../constants/companyInfo';
 const colors = ['red', 'green', 'blue','white','black','pink'];
 class Home extends Component {
     constructor(props) {
@@ -40,7 +41,7 @@ class Home extends Component {
         <React.Fragment key={index}>
         <li>
         <div className="col_1 slider-item"><a href="view_profile.html">
-              <img key={index} src={`images/${index+1}.jpg`} alt="" className="hover-animation image-zoom-in img-responsive" style={{width:"300px",height: "auto"}}/>
+              <img key={index} src={`images/${index+1}.jpg`} alt={COMPANY_INFO.name} title={COMPANY_INFO.name} className="hover-animation image-zoom-in img-responsive" style={{width:"300px",height: "auto"}}/>
                <div className="layer m_1 hidden-link hover-animation delay1 fade-in">
                   <div className="center-middle"></div>
                </div>

@@ -2,6 +2,7 @@ import { AppBar, Toolbar, Typography, Container, Paper, List, ListItem, ListItem
 import { Menu, Home, ShoppingCart, Assignment, People, Lock, GifTwoTone, Category, ViewCarousel, MonetizationOn } from '@mui/icons-material';
 import { FaBlog, FaFileContract, FaGoodreads } from 'react-icons/fa';
 import React, { useState, useEffect } from 'react';
+import { COMPANY_INFO } from '../../../constants/companyInfo';
 import { ACCESS_TOKEN } from '../../../constants';
 import Alert from 'react-s-alert';
 import { useNavigate } from "react-router-dom";
@@ -67,7 +68,7 @@ const NavbarLoggedIn = () => {
       <AppBar position="static">
         <Toolbar>
           <Menu onClick={() => toggleDrawer(true)} />
-          <Typography variant="h6">Hanley Healthcare E-commerce Dashboard</Typography>
+          <Typography variant="h6">{COMPANY_INFO.name} E-commerce Dashboard</Typography>
         </Toolbar>
       </AppBar>
       <Drawer open={open} onClose={() => toggleDrawer(false)}>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { COMPANY_INFO } from '../constants/companyInfo';
 import './TermsOfService.css';
 
 const RefundPolicy = () => {
@@ -20,7 +21,7 @@ const RefundPolicy = () => {
 
                     <div className="tos-section">
                         <h2>Starting a Return</h2>
-                        <p>To start a return, you can contact us at <span className="link-highlight">Info@hanleyhealthcare.com</span>.</p>
+                        <p>To start a return, you can contact us at <span className="link-highlight">{COMPANY_INFO.email}</span>.</p>
                         <p>
                             If your return is accepted, we’ll send you a return shipping label, as well as instructions on how and where to send your package. Items sent back to us without first requesting a return will not be accepted.
                         </p>
@@ -56,7 +57,7 @@ const RefundPolicy = () => {
                             We will notify you once we’ve received and inspected your return, and let you know if the refund was approved or not. If approved, you’ll be automatically refunded on your original payment method within 10 business days.
                         </p>
                         <p>
-                            If more than 15 business days have passed since we’ve approved your return, please contact us at <span className="link-highlight">Info@hanleyhealthcare.com</span>.
+                            If more than 15 business days have passed since we’ve approved your return, please contact us at <span className="link-highlight">{COMPANY_INFO.email}</span>.
                         </p>
                     </div>
                 </div>

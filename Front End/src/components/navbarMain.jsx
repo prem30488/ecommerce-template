@@ -17,6 +17,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
+import { COMPANY_INFO } from "../constants/companyInfo";
 
 export const NavbarMain = () => {
   const { cartItems, getTotalCartCount, products, categories } = useContext(ShopContext);
@@ -139,7 +140,7 @@ export const NavbarMain = () => {
       <div className="logo-container">
         <div className="logo">
           <Link to="/" id="NavTitle">
-            <img src="/images/logo.png" style={{ height: "60px", width: "100px" }} alt="Logo" />
+            <img src={COMPANY_INFO.logoUrl} style={{ height: "60px", width: "auto", maxWidth: "150px" }} alt={COMPANY_INFO.name} title={COMPANY_INFO.name} />
           </Link>
 
           <div className={`menudropdown${isHealthMenuOpen ? ' open' : ''}`}>

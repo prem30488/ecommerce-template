@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from "react";
 import ImageCarousel from "../../../../pages/productDetails/ImageCarousel";
+import { COMPANY_INFO } from '../../../../constants/companyInfo';
 
 // ── Field order for the card body ──────────────────────────
 const BODY_FIELDS = ["title", "categories", "audience", "price", "bestseller", "featured", "discount"];
@@ -99,6 +100,7 @@ function ResultCard({ bootstrapCss, doc, fields, onSelect }) {
           <img
             src={imgSrc}
             alt={title}
+            title={COMPANY_INFO.name}
             onError={handleImgError}
           />
         )}

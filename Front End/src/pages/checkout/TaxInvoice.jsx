@@ -8,6 +8,7 @@ import "./taxInvoice.css";
 import { getCurrentDateDDMMYYYY } from '../../util/util';
 import { useRef } from "react";
 import { useParams } from "react-router-dom";
+import { COMPANY_INFO } from '../../constants/companyInfo';
 const TaxInvoice = ({ status }) => {
 	const { orderId } = useParams();
 	const para = useRef(null);
@@ -86,11 +87,15 @@ const TaxInvoice = ({ status }) => {
 			<div id="html-template" style={{ padding: "60px", width: "100%" }}>
 				<div className="invoice-header">
 					<div className="brand-section">
-						<h1>HANLEY</h1>
-						<p>HEALTHCARE LLP</p>
+						<h1>{COMPANY_INFO.name.split(' ')[0]}</h1>
+						<p>{COMPANY_INFO.name.split(' ').slice(1).join(' ')}</p>
+						<div className="logo-invoice" style={{ marginBottom: '10px' }}>
+							<img src={COMPANY_INFO.logoUrl} alt={COMPANY_INFO.name} title={COMPANY_INFO.name} style={{ height: '40px' }} />
+						</div>
 						<p style={{ marginTop: '15px' }}>
-							Vatva GIDC, Ahmedabad, 382006<br />
-							GSTIN: 24AAAFH1234A1Z5
+							{COMPANY_INFO.address1}, {COMPANY_INFO.address2}<br />
+							{COMPANY_INFO.city}, {COMPANY_INFO.state} - {COMPANY_INFO.pinCode}<br />
+							GSTIN: {COMPANY_INFO.gstin}
 						</p>
 					</div>
 					<div className="invoice-title-section">
@@ -259,10 +264,10 @@ const TaxInvoice = ({ status }) => {
 						<p>• A finance charge of 1.5%will be made on unpaid balances after 30 days.</p>
 						<p>• Goods once sold will not be taken back or exchanged.</p>
 						<p>• This is a computer-generated invoice and does not require a signature.</p>
-						<p>• For any queries regarding your order, please contact support@hanleyhealthcare.com</p>
+						<p>• For any queries regarding your order, please contact {COMPANY_INFO.email}</p>
 					</div>
 					<div className="thank-you-msg">
-						Thank you for choosing Hanley Healthcare. We appreciate your business!
+						Thank you for choosing {COMPANY_INFO.name}. We appreciate your business!
 					</div>
 				</div>
 			</div>

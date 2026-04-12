@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../../context/shop-context';
 import { getCoupons, createOrder, verifyPayment } from '../../util/APIUtils';
 import Alert from 'react-s-alert';
+import { COMPANY_INFO } from '../../constants/companyInfo';
 import './PremiumCheckout.css';
 
 const loadRazorpay = () => {
@@ -209,7 +210,7 @@ const PremiumCheckout = () => {
                     key: key_id, 
                     amount: amount,
                     currency: currency,
-                    name: "Hanley Healthcare",
+                    name: COMPANY_INFO.name,
                     description: "Order Payment",
                     order_id: razorpayOrderId,
                     handler: async function (response) {
@@ -367,7 +368,7 @@ const PremiumCheckout = () => {
             {/* Main Form Area */}
             <div className="checkout-main">
                 <div className="checkout-header">
-                    <h1>Hanley Healthcare</h1>
+                    <h1>{COMPANY_INFO.name}</h1>
                 </div>
 
                 <form onSubmit={formik.handleSubmit}>
