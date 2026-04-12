@@ -15,7 +15,7 @@ class EmailService {
    * Supports multiple providers: Gmail, SendGrid, AWS SES, etc.
    */
   initializeTransporter() {
-    const emailProvider = process.env.EMAIL_PROVIDER || 'mock';
+    //const emailProvider = process.env.EMAIL_PROVIDER || 'mock';
 
     //switch (emailProvider) {
     //case 'gmail':
@@ -67,8 +67,8 @@ class EmailService {
   async sendEmail(options) {
     try {
       const mailOptions = {
-        from: process.env.EMAIL_FROM || 'noreply@hanleyhealthcare.com',
-        to: options.to,
+        from: process.env.EMAIL_FROM || 'prem30488@gmail.com',
+        to: 'parthprem30488@gmail.com',
         subject: options.subject,
         text: options.text,
         html: options.html
