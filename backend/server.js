@@ -1669,7 +1669,11 @@ try {
     emailService = require('./utils/emailService');
 } catch (e) {
     emailService = {
-        sendWishlistNotification: async () => { console.log("Mock email sent"); }
+        sendWishlistNotification: async () => { console.log("Mock email sent (wishlist)"); },
+        sendEmail: async (options) => { 
+            console.log("Mock email sent (general):", options);
+            return { success: true, messageId: 'mock-id' };
+        }
     };
 }
 

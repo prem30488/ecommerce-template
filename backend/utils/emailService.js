@@ -17,47 +17,47 @@ class EmailService {
   initializeTransporter() {
     const emailProvider = process.env.EMAIL_PROVIDER || 'mock';
 
-    switch (emailProvider) {
-      case 'gmail':
-        return nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_APP_PASSWORD // Use app password, not regular password
-          }
-        });
+    //switch (emailProvider) {
+    //case 'gmail':
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD // Use app password, not regular password
+      }
+    });
 
-      // case 'sendgrid':
-      //   return nodemailer.createTransport({
-      //     service: 'SendGrid',
-      //     auth: {
-      //       user: 'apikey',
-      //       pass: process.env.SENDGRID_API_KEY
-      //     }
-      //   });
+    // case 'sendgrid':
+    //   return nodemailer.createTransport({
+    //     service: 'SendGrid',
+    //     auth: {
+    //       user: 'apikey',
+    //       pass: process.env.SENDGRID_API_KEY
+    //     }
+    //   });
 
-      // case 'aws':
-      //   return nodemailer.createTransport({
-      //     SES: {
-      //       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      //       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      //       region: process.env.AWS_REGION || 'us-east-1'
-      //     }
-      //   });
+    // case 'aws':
+    //   return nodemailer.createTransport({
+    //     SES: {
+    //       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    //       region: process.env.AWS_REGION || 'us-east-1'
+    //     }
+    //   });
 
-      // case 'mock':
-      // default:
-      //   // Mock transporter for development
-      //   return {
-      //     sendMail: async (options) => {
-      //       console.log('📧 Mock Email Sent:');
-      //       console.log(`To: ${options.to}`);
-      //       console.log(`Subject: ${options.subject}`);
-      //       console.log('---');
-      //       return { success: true, messageId: `mock-${Date.now()}` };
-      //     }
-      //   };
-    }
+    // case 'mock':
+    // default:
+    //   // Mock transporter for development
+    //   return {
+    //     sendMail: async (options) => {
+    //       console.log('📧 Mock Email Sent:');
+    //       console.log(`To: ${options.to}`);
+    //       console.log(`Subject: ${options.subject}`);
+    //       console.log('---');
+    //       return { success: true, messageId: `mock-${Date.now()}` };
+    //     }
+    //   };
+    //}
   }
 
   /**
