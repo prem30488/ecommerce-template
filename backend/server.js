@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // Dynamic import for node-fetch (ESM in CommonJS)
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 /**
  * Solr Proxy Endpoint
@@ -28,7 +28,7 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 app.get('/api/solr-proxy/hanley/select', async (req, res) => {
     try {
         const solrBaseUrl = (process.env.VITE_SOLR_URL || 'http://localhost:8983').replace(/\/$/, '');
-        
+
         // Correctly handle multiple query parameters with the same name (like facet.field)
         const solrParams = new URLSearchParams();
         for (const [key, value] of Object.entries(req.query)) {
@@ -38,21 +38,21 @@ app.get('/api/solr-proxy/hanley/select', async (req, res) => {
                 solrParams.append(key, value);
             }
         }
-        
+
         const solrUrl = `${solrBaseUrl}/solr/hanley/select?${solrParams.toString()}`;
-        
+
         const response = await fetch(solrUrl, {
             headers: {
                 'ngrok-skip-browser-warning': 'true',
                 'Accept': 'application/json'
             }
         });
-        
+
         if (!response.ok) {
             const errorText = await response.text();
             return res.status(response.status).json({ error: 'Solr Error', detail: errorText });
         }
-        
+
         const data = await response.json();
         res.json(data);
     } catch (error) {
@@ -168,7 +168,7 @@ async function ensureDatabaseExists() {
         postgresUrlObj.pathname = '/postgres';
         postgresUrlObj.search = parsedUrl.search; // Keep SSL params
         const postgresUrl = postgresUrlObj.toString();
-        const client = new Client({ 
+        const client = new Client({
             connectionString: postgresUrl,
             ssl: { rejectUnauthorized: false }
         });
@@ -313,7 +313,7 @@ app.get('/api/product/getProducts', async (req, res) => {
         const enhancedRows = rows.map(product => {
             const productJson = product.toJSON();
             const { mainImage, allImages } = scanProductFilesystemMedia(productJson.id);
-            
+
             // If filesystem has images, override the default 'image' for cards
             if (mainImage) {
                 productJson.image = mainImage;
@@ -465,19 +465,19 @@ app.post('/api/order/createOrder', async (req, res) => {
     } catch (error) {
         if (t) await t.rollback();
         console.error('CRITICAL: Error in createOrder:', error);
-        
+
         // Handle Razorpay specific errors specifically
         const isRazorpayError = error.code || error.statusCode || error.description;
         const statusCode = error.statusCode || 500;
-        
+
         // If it's a 401 from Razorpay, it's likely an API Key issue
-        const errorMessage = statusCode === 401 && isRazorpayError 
-            ? 'Razorpay Authentication Failed (check API keys)' 
+        const errorMessage = statusCode === 401 && isRazorpayError
+            ? 'Razorpay Authentication Failed (check API keys)'
             : (error.description || error.message || 'Unknown error occurred');
 
-        res.status(statusCode).json({ 
+        res.status(statusCode).json({
             success: false,
-            error: isRazorpayError ? 'Razorpay Error' : 'Internal Server Error', 
+            error: isRazorpayError ? 'Razorpay Error' : 'Internal Server Error',
             message: errorMessage,
             detail: error.metadata || null
         });
@@ -647,11 +647,11 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
         if (product) {
             const productData = product.toJSON();
             const productImages = productData.images || [];
-            
+
             // Scan filesystem for additional flavor images
             const productIdStr = String(req.params.id);
             const productDir = path.join(__dirname, '..', 'Front End', 'public', 'images', productIdStr);
-            
+
             if (fs.existsSync(productDir)) {
                 try {
                     const flavorFolders = fs.readdirSync(productDir);
@@ -677,7 +677,7 @@ app.get('/api/product/fetchById/:id', async (req, res) => {
                     console.error('Error scanning product image directory:', err);
                 }
             }
-            
+
             productData.images = productImages;
 
             // Apply special card media logic (First folder, First image)
@@ -701,7 +701,7 @@ app.post('/api/product/createProduct', authenticateToken, async (req, res) => {
     try {
         delete req.body.id;
         const productData = { ...req.body };
-        
+
         if (productData.ProductImages) {
             productData.images = productData.ProductImages;
         }
@@ -722,7 +722,7 @@ app.post('/api/product/createProduct', authenticateToken, async (req, res) => {
                     // If uploaded to temp, it was: /images/temp/:flavorId/:file
                     const urlParts = img.url.split('/'); // ["", "images", "temp", flavorId, filename]
                     const flavorId = urlParts[3] || 'default';
-                    
+
                     const newDir = path.join(__dirname, '..', 'Front End', 'public', 'images', String(product.id), flavorId);
                     const newUrl = `/images/${product.id}/${flavorId}/${newFileName}`;
                     const newPath = path.join(newDir, newFileName);
@@ -805,7 +805,7 @@ app.delete('/api/product/delete/:id', authenticateToken, async (req, res) => {
         if (req.query.hard === 'true') {
             const productFolder = path.join(__dirname, '..', 'Front End', 'public', 'images', String(productId));
             deleteMediaFolder(productFolder);
-            
+
             await product.destroy();
             res.json({ message: 'Product permanently deleted and media cleaned up' });
         } else {
@@ -954,12 +954,12 @@ app.delete('/api/flavor/delete/:id', authenticateToken, async (req, res) => {
     try {
         const flavorId = req.params.id;
         const flavor = await db.Flavor.findByPk(flavorId);
-        
+
         if (flavor) {
             // Cleanup ID-based folder
             const flavorFolder = path.join(__dirname, '..', 'Front End', 'public', 'images', 'Flavors', String(flavorId));
             deleteMediaFolder(flavorFolder);
-            
+
             // Cleanup if it references temp path
             if (flavor.image && flavor.image.includes('/Flavors/temp/')) {
                 const tempPath = path.join(__dirname, '..', 'Front End', 'public', flavor.image);
@@ -972,7 +972,7 @@ app.delete('/api/flavor/delete/:id', authenticateToken, async (req, res) => {
                 }
             }
         }
-        
+
         await db.Flavor.destroy({ where: { id: flavorId } });
         res.json({ message: 'Flavor deleted' });
     } catch (error) {
@@ -1410,7 +1410,7 @@ app.post('/api/product/upload', authenticateToken, memUpload.single('file'), asy
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
     try {
         const productId = req.query.productId;
-        const flavorId  = req.query.flavorId || 'default';
+        const flavorId = req.query.flavorId || 'default';
         let fileUrl;
         if (productId) {
             fileUrl = await uploadProductFlavorImage(req.file, productId, flavorId);
@@ -1714,7 +1714,7 @@ try {
 } catch (e) {
     emailService = {
         sendWishlistNotification: async () => { console.log("Mock email sent (wishlist)"); },
-        sendEmail: async (options) => { 
+        sendEmail: async (options) => {
             console.log("Mock email sent (general):", options);
             return { success: true, messageId: 'mock-id' };
         }
@@ -1725,14 +1725,14 @@ try {
 app.post('/api/email/send', memUpload.none(), async (req, res) => {
     try {
         const { to, subject, text, html } = req.body;
-        
+
         await emailService.sendEmail({
             to: to || 'Info@hanelyhealthcare.com',
             subject: subject || 'New Inquiry',
             text: text,
             html: html
         });
-        
+
         res.json({ success: true, message: 'Email sent successfully' });
     } catch (error) {
         console.error('Email route error:', error);

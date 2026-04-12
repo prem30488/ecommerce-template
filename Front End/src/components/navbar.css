@@ -5,8 +5,10 @@
   border-bottom: 1px solid #f1f5f9;
   display: flex;
   align-items: center;
-  /* padding: 0 0.75rem; */
+  justify-content: space-between;
+  padding: 0 1.5rem;
   flex-wrap: nowrap;
+  height: 80px;
 }
 
 .navbar a {
@@ -50,11 +52,61 @@
   width: 100% !important;
 }
 
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: auto;
+}
+
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1.5rem;
   flex-wrap: nowrap;
+}
+
+.mobile-actions {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mobile-menu-toggle {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #0f172a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  transition: transform 0.2s ease;
+}
+
+.mobile-menu-toggle:active {
+  transform: scale(0.9);
+}
+
+.wishlist-mobile-trigger {
+  font-size: 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.wishlist-mobile-trigger .badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 10px;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .menudropdown {
@@ -199,12 +251,24 @@
   background-color: #c67605;
 }
 
+.nav-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: space-between;
+  margin-left: 1rem;
+}
+
 .links {
   display: flex;
   align-items: center;
-  gap: 0.10rem;
+  gap: 0.25rem;
   flex-wrap: nowrap;
-  margin-left: auto;
+}
+
+.desktop-only {
+  display: flex;
+  align-items: center;
 }
 
 #lblCartCount {
@@ -527,99 +591,146 @@
   font-weight: bold !important;
 }
 
-/* Responsive Styles for Mega Menu */
-@media (max-width: 1200px) {
-  .mega-menu-container {
-    gap: 30px;
-    padding: 0 20px;
-  }
-
-  .shop-mega-menu {
-    padding: 30px 40px;
-  }
-}
-
-@media (max-width: 992px) {
-  .mega-menu-container {
+/* Responsive Media Queries */
+@media (max-width: 1100px) {
+  .navbar {
     flex-direction: column;
-    align-items: center;
-    gap: 40px;
-  }
-
-  .mega-menu-links {
-    width: 100%;
-    align-items: center;
-    flex-direction: row;
-    justify-content: center;
-    gap: 30px;
-    padding-top: 0;
-  }
-
-  .mega-link {
-    border-bottom: none;
-    padding: 5px 15px !important;
-    background: #f8fafc;
-    border-radius: 50px;
-  }
-
-  .mega-link.active {
-    background: #0284c7;
-    color: white !important;
-  }
-
-  .mega-menu-carousel {
+    height: auto;
+    padding: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
   }
-}
 
-@media (max-width: 768px) {
-  .shop-mega-menu {
-    top: 60px;
-    /* Adjust based on your header height */
-    padding: 30px 15px;
-    height: 60vh !important;
+  .logo-container {
+    width: 100%;
+    padding: 10px 1.5rem;
+    height: 70px;
+    background: #fff;
+    border-bottom: 1px solid #f1f5f9;
+    z-index: 1001;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    gap: 0.75rem;
+  }
+
+  .logo img {
+    height: 50px !important;
+    width: 80px !important;
+  }
+
+  .mobile-actions {
+    display: flex;
+  }
+
+  .nav-content {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background: #fff;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 2rem;
+    margin-left: 0;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1000;
     overflow-y: auto;
   }
 
+  .nav-content.mobile-open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .nav-content .search-container {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .links {
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  .navbar a {
+    width: 100%;
+    text-align: left;
+    font-size: 1.1rem;
+    padding: 15px 0;
+    border-bottom: 1px solid #f8fafc;
+  }
+
+  .navbar a:hover {
+    padding-left: 10px;
+  }
+
+  .navbar a::after {
+    display: none;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .menudropdown .menudropbtn {
+    font-size: 14px;
+    padding: 10px 0;
+  }
+
+  /* Adjust dropdowns for mobile */
+  .shop-dropdown {
+    width: 100%;
+  }
+
+  .shop-mega-menu {
+     position: static;
+     width: 100%;
+     padding: 10px 0;
+     box-shadow: none;
+     border: none;
+     background: transparent;
+  }
+
+  .shop-mega-menu.show {
+    display: block !important;
+  }
+
+  .mega-menu-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
   .mega-menu-links {
-    flex-wrap: wrap;
-    gap: 10px;
+    width: 100%;
+    padding: 0;
   }
 
   .mega-link {
     font-size: 14px !important;
   }
 
-  .coming-soon-card {
-    width: 220px;
-    height: 400px;
-    min-height: 480px !important;
-  }
-
-  .coming-soon-swiper .swiper-slide {
-    width: 220px !important;
-  }
-
-  .coming-soon-image-wrapper {
-    height: 220px;
+  .mega-menu-carousel {
+    display: none; /* Hide carousel in mobile menu to keep it clean */
   }
 }
 
-@media (max-width: 480px) {
-  .mega-link {
-    width: 100%;
-    text-align: center !important;
-  }
-}
-
-@media (max-width: 992px) {
-
-  .mega-menu-carousel .swiper-slide {
-    width: 220px !important;
-    min-height: 440px !important;
-  }
-
-  .coming-soon-swiper .swiper-slide {
-    width: 220px !important;
+@media (max-width: 600px) {
+  .logo .menudropbtn {
+    display: none; /* Hide "Health & Beauty" button on very small screens to save space */
   }
 }

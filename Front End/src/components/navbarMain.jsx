@@ -3,13 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import { WishlistContext } from "../context/wishlist-context";
 import { ShoppingCart } from "phosphor-react";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaBars, FaTimes } from "react-icons/fa";
+import { HiMenuAlt3, HiX } from "react-icons/hi"; // Alternative cleaner icons
 import "./navbar.css";
 import MegaMenu from './MegaMenu';
 import SearchMenu from './SearchMenu';
 import CartDrawer from "../pages/cart/CartDrawer";
 // Header wishlist now navigates to the wishlist page instead of opening the drawer
-import Sidebar from "./Sidebar";
 import FloatingSocials from "./socialIconsFloating";
 import "./sidebar.css";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -23,6 +23,25 @@ export const NavbarMain = () => {
   const location = useLocation();
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isHealthMenuOpen, setIsHealthMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleShopClick = (e) => {
+    if (window.innerWidth <= 1100) {
+      e.preventDefault();
+      setIsShopMenuOpen(!isShopMenuOpen);
+    }
+  };
+
+  const handleHealthClick = (e) => {
+    if (window.innerWidth <= 1100) {
+      e.preventDefault();
+      setIsHealthMenuOpen(!isHealthMenuOpen);
+    }
+  };
 
   const handleShopDoubleClick = (e) => {
     e.preventDefault();
@@ -43,10 +62,19 @@ export const NavbarMain = () => {
       if (!event.target.closest('.menudropdown')) {
         setIsHealthMenuOpen(false);
       }
+      if (!event.target.closest('.links') && !event.target.closest('.mobile-menu-toggle')) {
+        setIsMobileMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const getCategoryProductCount = (catTitle) => {
+    if (!products) return 0;
+    const activeProducts = products.filter(p => p.active !== false);
+    return activeProducts.filter(p => (p.Category?.title === catTitle) || (p.category === catTitle)).length;
+  };
 
   const comingSoonProducts = products ? products.filter(p => p.comingSoon === true || p.comingSoon === 'true') : [];
 
@@ -104,41 +132,52 @@ export const NavbarMain = () => {
 
   return (
     <div className="navbar" id="navbar" style={{ position: "fixed", width: "100%" }}>
-      <Sidebar />
       <FloatingSocials />
-      <div className="logo">
+      <div className="logo-container">
+        <div className="logo">
+          <Link to="/" id="NavTitle">
+            <img src="/images/logo.png" style={{ height: "60px", width: "100px" }} alt="Logo" />
+          </Link>
 
-        <Link to="/" id="NavTitle">
-          <img src="/images/logo.png" style={{ height: "60px", width: "100px" }} alt="Logo" />
-        </Link>
+          <div className={`menudropdown${isHealthMenuOpen ? ' open' : ''}`}>
+            <button
+              className="menudropbtn"
+              onDoubleClick={handleHealthDoubleClick}
+              onClick={handleHealthClick}
+              style={{ cursor: 'pointer', userSelect: 'none' }}
+              title="Double-click to browse categories"
+            >
+              Health & Beauty Essentials{' '}
+              <i className={`fa fa-caret-down${isHealthMenuOpen ? ' rotated' : ''}`}></i>
+            </button>
+            <MegaMenu isOpen={isHealthMenuOpen} onClose={() => setIsHealthMenuOpen(false)} />
+          </div>
+        </div>
 
-        <div className={`menudropdown${isHealthMenuOpen ? ' open' : ''}`}>
-          <button
-            className="menudropbtn"
-            onDoubleClick={handleHealthDoubleClick}
-            onClick={(e) => e.preventDefault()}
-            style={{ cursor: 'pointer', userSelect: 'none' }}
-            title="Double-click to browse categories"
-          >
-            Health &amp; Beauty Essentials{' '}
-            <i className={`fa fa-caret-down${isHealthMenuOpen ? ' rotated' : ''}`}></i>
-          </button>
-          <MegaMenu isOpen={isHealthMenuOpen} onClose={() => setIsHealthMenuOpen(false)} />
+        <div className="mobile-actions">
+           <Link to="/your-wishlist" className="wishlist-mobile-trigger">
+             <FaHeart style={{ color: '#ff4757' }} />
+             <span className='badge badge-warning'>{wishlistItems ? Object.keys(wishlistItems).length : 0}</span>
+           </Link>
+           <CartDrawer />
+           <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+             {isMobileMenuOpen ? <HiX /> : <HiMenuAlt3 />}
+           </button>
         </div>
       </div>
-      <SearchMenu />
-      <div className="links">
-        <Link to="/" className={location.pathname === "/" ? "active-link" : ""}>
-          Home
-        </Link>
+
+      <div className={`nav-content ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+        <SearchMenu />
+        <div className="links">
+          <Link to="/" className={location.pathname === "/" ? "active-link" : ""} onClick={() => setIsMobileMenuOpen(false)}>
+            Home
+          </Link>
         <div className={`shop-dropdown ${isShopMenuOpen ? 'open' : ''}`}>
           <Link
             to="/products"
             className={location.pathname === "/products" ? "active-link" : ""}
             onDoubleClick={handleShopDoubleClick}
-            onClick={(e) => {
-              e.preventDefault(); // Prevent navigation on single click to prioritize double-click menu
-            }}
+            onClick={handleShopClick}
             style={{ cursor: 'pointer' }}
           >
             Shop <span className="new-badge">NEW</span> <i className="fa fa-caret-down" style={{ fontSize: '10px', marginLeft: '4px' }}></i>
@@ -226,27 +265,50 @@ export const NavbarMain = () => {
         <Link to="/productKids" className={location.pathname === "/productKids" ? "active-link" : ""} products={products}>
           Kids
         </Link>
-        <Link to="/bestsellers" className={location.pathname === "/bestsellers" ? "active-link" : ""}>
+        <Link to="/bestsellers" className={location.pathname === "/bestsellers" ? "active-link" : ""} onClick={() => setIsMobileMenuOpen(false)}>
           BestSellers
         </Link>
-        <Link to="/featured" className={location.pathname === "/featured" ? "active-link" : ""}>
+        <Link to="/featured" className={location.pathname === "/featured" ? "active-link" : ""} onClick={() => setIsMobileMenuOpen(false)}>
           Featured
         </Link>
-        <Link to="/advancedSearch" className={location.pathname === "/advancedSearch" ? "active-link" : ""}>
+        <Link to="/advancedSearch" className={location.pathname === "/advancedSearch" ? "active-link" : ""} onClick={() => setIsMobileMenuOpen(false)}>
           Search
         </Link>
-        <Link to="/trackOrder" className={location.pathname === "/trackOrder" ? "active-link" : ""}>
+        <Link to="/trackOrder" className={location.pathname === "/trackOrder" ? "active-link" : ""} onClick={() => setIsMobileMenuOpen(false)}>
           Track Order
         </Link>
 
+        {/* Categories Section for Mobile */}
+        <div className="mobile-categories-section">
+          <h3 className="mobile-section-title">Shop by Category</h3>
+          <ul className="mobile-category-list">
+            <li className="mobile-category-item">
+              <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="mobile-category-link">
+                All Products
+                <span className="cat-badge">{products ? products.filter(p => p.active !== false).length : 0}</span>
+              </Link>
+            </li>
+            {categories && categories.map(cat => (
+              <li key={cat.id} className="mobile-category-item">
+                <Link to={`/products?category=${encodeURIComponent(cat.title)}`} onClick={() => setIsMobileMenuOpen(false)} className="mobile-category-link">
+                  {cat.title}
+                  <span className="cat-badge">{getCategoryProductCount(cat.title)}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <Link to="/your-wishlist" className="wishlist-header-trigger" title="View Wishlist" style={{ fontSize: "20px", marginRight: "10px", display: 'inline-flex', alignItems: 'center' }}>
+
+        <Link to="/your-wishlist" className="wishlist-header-trigger desktop-only" title="View Wishlist" style={{ fontSize: "20px", marginRight: "10px", display: 'inline-flex', alignItems: 'center' }}>
           <FaHeart style={{ color: '#ff4757' }} />
           <span className='badge badge-warning' id='lblWishlistCount' style={{ marginLeft: 6 }}>
             {wishlistItems ? Object.keys(wishlistItems).length : 0}
           </span>
         </Link>
-        <CartDrawer></CartDrawer>
+        <div className="desktop-only">
+          <CartDrawer></CartDrawer>
+        </div>
         {/* <Link
           to="/about"
           className={location.pathname === "/about" ? "active-link" : ""}
@@ -269,6 +331,7 @@ export const NavbarMain = () => {
 
 
       </div>
+    </div>
     </div>
   );
 };
