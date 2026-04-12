@@ -17,6 +17,50 @@ const crypto = require('crypto');
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
+// Dynamic import for node-fetch (ESM in CommonJS)
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
+/**
+ * Solr Proxy Endpoint
+ * Bypasses CORS by routing search requests through the backend.
+ * Uses VITE_SOLR_URL from environment variables.
+ */
+app.get('/api/solr-proxy/hanley/select', async (req, res) => {
+    try {
+        const solrBaseUrl = (process.env.VITE_SOLR_URL || 'http://localhost:8983').replace(/\/$/, '');
+        
+        // Correctly handle multiple query parameters with the same name (like facet.field)
+        const solrParams = new URLSearchParams();
+        for (const [key, value] of Object.entries(req.query)) {
+            if (Array.isArray(value)) {
+                value.forEach(v => solrParams.append(key, v));
+            } else {
+                solrParams.append(key, value);
+            }
+        }
+        
+        const solrUrl = `${solrBaseUrl}/solr/hanley/select?${solrParams.toString()}`;
+        
+        const response = await fetch(solrUrl, {
+            headers: {
+                'ngrok-skip-browser-warning': 'true',
+                'Accept': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            return res.status(response.status).json({ error: 'Solr Error', detail: errorText });
+        }
+        
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Solr Proxy Error:', error);
+        res.status(500).json({ error: 'Failed to fetch from Solr', message: error.message });
+    }
+});
+
 // Razorpay Initialization
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder',

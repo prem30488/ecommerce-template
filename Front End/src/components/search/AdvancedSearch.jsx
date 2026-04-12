@@ -5,6 +5,8 @@ import defaultComponentPack from "./components/component-pack";
 import { SolrClient } from "./api/solr-client";
 import './advanced-search.css';
 
+import { API_BASE_URL } from '../../constants';
+
 export { SolrFacetedSearch, defaultComponentPack, SolrClient };
 
 // ── Search fields ──────────────────────────────────────────
@@ -56,9 +58,7 @@ class AdvancedSearch extends Component {
 
     new SolrClient({
       idField: "id",
-      url: import.meta.env.VITE_SOLR_URL 
-        ? `${import.meta.env.VITE_SOLR_URL.replace(/\/$/, '')}/solr/hanley/select` 
-        : "/solr/hanley/select",
+      url: `${API_BASE_URL}/api/solr-proxy/hanley/select`,
       searchFields: fields,
       sortFields: sortFields,
       pageStrategy: "paginate",
