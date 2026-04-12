@@ -56,17 +56,81 @@
 }
 
 /* ── Main layout ── */
-.as-layout {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 24px;
+.solr-faceted-search-main {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.as-main-container {
   max-width: 1400px;
   margin: 0 auto;
-  align-items: start;
+  padding: 24px;
+  border-radius: 16px;
+  width: 100%;
+}
+
+.solr-results-container {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .solr-faceted-search-main {
+    flex-direction: column;
+    gap: 24px;
+  }
 }
 
 @media (max-width: 900px) {
-  .as-layout { grid-template-columns: 1fr; }
+  .as-page { padding-top: 100px; padding-left: 12px; padding-right: 12px; overflow-x: hidden; }
+}
+
+@media (max-width: 768px) {
+  .as-main-container { padding: 12px; }
+  .as-hero { margin-bottom: 24px; }
+  .as-hero h1 { font-size: 1.8rem; }
+  
+  /* Ensure floating icons are visible as requested */
+  #floating-socials,
+  .whatsapp-float-btn-global {
+    display: flex !important;
+  }
+}
+
+/* ── Hero stats row ── */
+.as-stats-row {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.as-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+  color: var(--search-muted);
+  font-weight: 500;
+}
+
+.as-stat-icon {
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .as-stats-row {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
 }
 
 /* ── Glass card base ── */
@@ -314,16 +378,36 @@ li.facet-item-type-discount {
   padding: 14px 20px;
 }
 
-.solr-search-results .panel-heading label {
+.solr-search-header-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--search-border);
+  border-radius: 12px;
+  padding: 12px 18px;
+}
+
+.solr-search-header-bar label {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--search-label);
-  margin: 0;
+  margin: 0 !important;
+  white-space: nowrap;
 }
 
-.solr-search-results .panel-heading label strong,
-.solr-search-results .panel-heading label span {
-  color: var(--search-accent);
+@media (max-width: 650px) {
+  .solr-search-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+  }
+  .solr-search-header-bar > div:last-child {
+    width: 100%;
+    margin-left: 0 !important;
+    justify-content: space-between;
+  }
 }
 
 /* Pagination container */
@@ -734,4 +818,26 @@ select.form-control {
   padding: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
+}
+
+@media (max-width: 768px) {
+  .solr-faceted-search .col-md-3,
+  .solr-faceted-search .col-md-9 {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+    padding: 0 !important;
+  }
+  .as-sidebar {
+    position: static;
+    margin-bottom: 24px;
+    width: 100% !important;
+  }
+  .solr-result-grid {
+    grid-template-columns: 1fr;
+  }
+  /* Ensure text doesn't overflow */
+  .as-page h1 {
+     word-break: break-word;
+  }
 }

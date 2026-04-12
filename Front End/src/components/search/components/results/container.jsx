@@ -4,7 +4,7 @@ import React from "react";
 class ResultContainer extends React.Component {
   render() {
     return (
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="solr-results-container">
         {this.props.children}
       </div>
     );

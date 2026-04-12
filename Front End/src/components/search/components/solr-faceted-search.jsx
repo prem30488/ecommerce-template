@@ -40,7 +40,7 @@ class SolrFacetedSearch extends React.Component {
 			: null;
 
 		return (
-			<div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', width: '100%' }}>
+			<div className="solr-faceted-search-main">
 				{/* ── Sidebar ── */}
 				<SearchFieldContainerComponent bootstrapCss={bootstrapCss} onNewSearch={this.props.onNewSearch}>
 					{searchFields.map((searchField, i) => {
@@ -65,16 +65,7 @@ class SolrFacetedSearch extends React.Component {
 				{/* ── Results ── */}
 				<ResultContainerComponent bootstrapCss={bootstrapCss}>
 					{/* Header bar */}
-					<div style={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: 12,
-						flexWrap: 'wrap',
-						background: 'rgba(255,255,255,0.04)',
-						border: '1px solid rgba(255,255,255,0.08)',
-						borderRadius: 12,
-						padding: '12px 18px'
-					}}>
+					<div className="solr-search-header-bar">
 						<ResultCount bootstrapCss={bootstrapCss} numFound={results.numFound} />
 						{resultPending}
 						<div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>

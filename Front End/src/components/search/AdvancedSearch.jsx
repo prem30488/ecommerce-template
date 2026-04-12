@@ -90,23 +90,10 @@ class AdvancedSearch extends Component {
         <div className="as-hero">
           <h1>Advanced Product Search</h1>
           <p>Discover products with precision filtering powered by Apache Solr</p>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '32px',
-            marginTop: '18px',
-            flexWrap: 'wrap'
-          }}>
+          <div className="as-stats-row">
             {STATS.map((s, i) => (
-              <div key={i} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '7px',
-                fontSize: '0.8rem',
-                color: 'var(--search-muted)',
-                fontWeight: 500
-              }}>
-                <span style={{ fontSize: '1rem' }}>{s.icon}</span>
+              <div key={i} className="as-stat-item">
+                <span className="as-stat-icon">{s.icon}</span>
                 {s.label}
               </div>
             ))}
@@ -114,16 +101,7 @@ class AdvancedSearch extends Component {
         </div>
 
         {/* Solr renders here — we rely on its own grid classes ── */}
-        <div
-          id="solrDiv"
-          className="as-glass"
-          style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-            padding: '24px',
-            borderRadius: '16px',
-          }}
-        />
+        <div id="solrDiv" className="as-glass as-main-container" />
       </div>
     );
   }
