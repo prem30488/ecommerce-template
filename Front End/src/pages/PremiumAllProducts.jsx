@@ -19,6 +19,7 @@ const PremiumAllProducts = () => {
     const [selectedCategory, setSelectedCategory] = useState(urlCategory || 'All');
     const [sortBy, setSortBy] = useState('newest');
     const [searchQuery, setSearchQuery] = useState('');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Update selectedCategory if URL changes
     useEffect(() => {
@@ -180,45 +181,62 @@ const PremiumAllProducts = () => {
                             <div className="premium-search-icon">🔍</div>
                         </div>
                     </div>
+
+                    <div className="premium-mobile-filter-trigger" onClick={() => setIsSidebarOpen(true)}>
+                        <span>Filters & Collections</span>
+                        <div className="filter-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6" />
+                            </svg>
+                        </div>
+                    </div>
                 </header>
 
 
                 <div className="premium-content-wrapper">
                     {/* Sidebar Filters */}
-                    <aside className="premium-sidebar">
-                        <section className="premium-filter-section">
-                            <h3 className="premium-filter-title">Collections</h3>
-                            <ul className="premium-filter-list">
-                                {/* Coming Soon filter entry */}
-                                <li className="premium-filter-item">
-                                    <span
-                                        className={`premium-filter-link ${filter === 'comingSoon' ? 'active' : ''}`}
-                                        onClick={() => setSearchParams({ filter: 'comingSoon' })}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        ✨ Coming Soon
-                                        <span className="premium-filter-count">{comingSoonCount}</span>
-                                    </span>
-                                </li>
-                                {categories.map(cat => (
-                                    <li key={cat} className="premium-filter-item">
+                    <aside className={`premium-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+                        <div className="premium-sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+                        <div className="premium-sidebar-inner">
+                            <div className="premium-sidebar-header">
+                                <h3>Filters</h3>
+                                <button className="premium-close-sidebar" onClick={() => setIsSidebarOpen(false)}>×</button>
+                            </div>
+                            <section className="premium-filter-section">
+                                <h3 className="premium-filter-title">Collections</h3>
+                                <ul className="premium-filter-list">
+                                    {/* Coming Soon filter entry */}
+                                    <li className="premium-filter-item">
                                         <span
-                                            className={`premium-filter-link ${!filter && selectedCategory === cat ? 'active' : ''}`}
-                                            onClick={() => {
-                                                setSearchParams(cat !== 'All' ? { category: cat } : {});
-                                                setSelectedCategory(cat);
-                                            }}
+                                            className={`premium-filter-link ${filter === 'comingSoon' ? 'active' : ''}`}
+                                            onClick={() => { setSearchParams({ filter: 'comingSoon' }); setIsSidebarOpen(false); }}
                                             style={{ cursor: 'pointer' }}
                                         >
-                                            {cat}
-                                            <span className="premium-filter-count">
-                                                {getCategoryProductCount(cat)}
-                                            </span>
+                                            ✨ Coming Soon
+                                            <span className="premium-filter-count">{comingSoonCount}</span>
                                         </span>
                                     </li>
-                                ))}
-                            </ul>
-                        </section>
+                                    {categories.map(cat => (
+                                        <li key={cat} className="premium-filter-item">
+                                            <span
+                                                className={`premium-filter-link ${!filter && selectedCategory === cat ? 'active' : ''}`}
+                                                onClick={() => {
+                                                    setSearchParams(cat !== 'All' ? { category: cat } : {});
+                                                    setSelectedCategory(cat);
+                                                    setIsSidebarOpen(false);
+                                                }}
+                                                style={{ cursor: 'pointer' }}
+                                            >
+                                                {cat}
+                                                <span className="premium-filter-count">
+                                                    {getCategoryProductCount(cat)}
+                                                </span>
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+                        </div>
                     </aside>
 
                     {/* Main Products Grid */}

@@ -10,6 +10,7 @@ import MegaMenu from './MegaMenu';
 import SearchMenu from './SearchMenu';
 import CartDrawer from "../pages/cart/CartDrawer";
 // Header wishlist now navigates to the wishlist page instead of opening the drawer
+import Sidebar from "./Sidebar";
 import FloatingSocials from "./socialIconsFloating";
 import "./sidebar.css";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -131,7 +132,9 @@ export const NavbarMain = () => {
   };
 
   return (
-    <div className="navbar" id="navbar" style={{ position: "fixed", width: "100%" }}>
+    <>
+      <Sidebar />
+      <div className="navbar" id="navbar" style={{ position: "fixed", width: "100%" }}>
       <FloatingSocials />
       <div className="logo-container">
         <div className="logo">
@@ -333,5 +336,6 @@ export const NavbarMain = () => {
       </div>
     </div>
     </div>
+    </>
   );
 };
