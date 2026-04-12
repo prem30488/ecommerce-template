@@ -1673,6 +1673,25 @@ try {
     };
 }
 
+// Email Sending Route (Contact Form)
+app.post('/api/email/send', memUpload.none(), async (req, res) => {
+    try {
+        const { to, subject, text, html } = req.body;
+        
+        await emailService.sendEmail({
+            to: to || 'Info@hanelyhealthcare.com',
+            subject: subject || 'New Inquiry',
+            text: text,
+            html: html
+        });
+        
+        res.json({ success: true, message: 'Email sent successfully' });
+    } catch (error) {
+        console.error('Email route error:', error);
+        res.status(500).json({ success: false, message: 'Failed to send email' });
+    }
+});
+
 const optionalAuth = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
