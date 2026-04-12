@@ -58,7 +58,8 @@ docker rm solr-hanley
 
 ## 🚀 Advanced Search Integration
 
-The frontend is already configured to connect to `http://localhost:8983/solr/hanley/select`.
+The frontend and backend use the `SOLR_URL` environment variable (defined in `.env`) to connect to Solr. 
+By default, it is set to `http://localhost:8983`.
 You can access the search page at: `http://localhost:5173/advancedSearch` (assuming standard Vite port).
 
 ### Search Fields
