@@ -173,7 +173,7 @@ const ReviewManager = () => {
 
     if (!(currentUser?.roles[0].name === "ROLE_SUPERADMIN" || privileges?.reviews)) {
         return (
-            <Container maxWidth="md" sx={{ mt: 10 }}>
+            <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
                 <Paper sx={{ p: 10, textAlign: 'center', borderRadius: 8, boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
                     <Typography variant="h5" color="error" fontWeight="bold" gutterBottom>
                         Access Restricted

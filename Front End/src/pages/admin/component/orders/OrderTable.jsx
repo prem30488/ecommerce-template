@@ -1,11 +1,13 @@
 import React from 'react';
-import { useEffect,useState } from 'react';
-import {fetchOrders} from "../../../../util/APIUtils";
+import { useEffect, useState } from 'react';
+import { fetchOrders, updateOrderStatus } from "../../../../util/APIUtils";
 import Alert from 'react-s-alert';
-export const OrderTable = ({  }) => {
-  
-  const [orders,setOrders] = useState([]);
-   // = [
+import { AdminInvoice } from './AdminInvoice';
+import './OrderTable.css';
+export const OrderTable = ({ }) => {
+
+  const [orders, setOrders] = useState([]);
+  // = [
   //   {
   //     id: 1,
   //     created_at: '2023-01-01',
@@ -33,15 +35,15 @@ export const OrderTable = ({  }) => {
 
     const getData = async () => {
 
-      fetchOrders(currentPage,perPage)
-      .then(response => {
-      console.log("data : :"+ JSON.stringify(response));
-      setOrders(response.content);
-      })
-      .catch(error => {
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-      });
-      
+      fetchOrders(0, 1000)
+        .then(response => {
+          console.log("data : :" + JSON.stringify(response));
+          setOrders(response.content);
+        })
+        .catch(error => {
+          Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+        });
+
     };
     getData();
   }, []);
@@ -60,94 +62,169 @@ export const OrderTable = ({  }) => {
     setCurrentPage(1);
   };
 
+  const [printingOrder, setPrintingOrder] = useState(null);
+
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1);
   };
 
+  const handleStatusChange = (orderId, newStatus) => {
+    updateOrderStatus(orderId, newStatus)
+      .then(() => {
+        setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+        Alert.success('Order status updated successfully');
+      })
+      .catch((error) => {
+        Alert.error('Failed to update status');
+      });
+  };
+
+  const generatePDF = (order) => {
+    setPrintingOrder(order);
+  };
+
+  const handlePdfGenerated = () => {
+    setPrintingOrder(null);
+  };
+
   const filteredOrders = currentOrders.filter((order) =>
-    order.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    order.customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.customer.mobile.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.billingAddress.zipcode === searchTerm ||
-    order.delieveryAddress.zipcode === searchTerm
+    order?.customer?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+    order?.customer?.email?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+    order?.customer?.mobile?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+    order?.billingAddress?.zipcode === searchTerm ||
+    order?.delieveryAddress?.zipcode === searchTerm ||
+    order?.id?.toString() === searchTerm // Added ID search as fallback
   );
 
   return (
-    <div>
-      <input type="text" placeholder="Search by customer" value={searchTerm} onChange={handleSearch} />
+    <div className="order-management-container">
+      <div className="search-bar-container">
+        <input
+          type="text"
+          className="order-search-input"
+          placeholder="Search by customer name, email, zip, or order ID..."
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
+
       {filteredOrders.map((order) => (
-        <div key={order.id}>
-          <h3>Order Details</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Created At</th>
-                <th>Total</th>
-                <th>Subtotal</th>
-                <th>Payment Type</th>
-                <th>Status</th>
-                <th>Billing Address</th>
-                <th>Customer</th>
-                <th>Customer Email</th>
-                <th>Customer Mobile</th>
-                <th>Delivery Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{order.id}</td>
-                <td>{order.createdAt}</td>
-                <td>{order.total}</td>
-                <td>{order.subTotal}</td>
-                <td>{order.paymentType}</td>
-                <td>{order.status}</td>
-                <td>{order.billingAddress.street},{order.billingAddress.city},{order.billingAddress.state},{order.billingAddress.country},{order.billingAddress.zipcode}</td>
-                <td>{order.customer.name}</td>
-                <td>{order.customer.email}</td>
-                <td>{order.customer.mobile}</td>
-                <td>{order.delieveryAddress.street},{order.delieveryAddress.city},{order.delieveryAddress.state},{order.delieveryAddress.country},{order.delieveryAddress.zipcode}</td>
-              </tr>
-            </tbody>
-          </table>
-          <h3>Order Line Items</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Quantity</th>
-                <th>Product</th>
-                <th>Size</th>
-              </tr>
-            </thead>
-            <tbody>
-              {order.lineItems.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.product.title}</td>
-                  <td>{item.size}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div key={order.id} className="order-card">
+          <div className="order-card-header">
+            <h3 className="order-card-title">Order #{order.id}</h3>
+            <button className="export-btn" onClick={() => generatePDF(order)}>
+              Print Invoice PDF
+            </button>
+          </div>
+          <div className="order-tables-wrapper">
+            <div style={{ overflowX: 'auto' }}>
+              <table className="premium-order-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Billing Address</th>
+                    <th>Customer</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Delivery Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#{order.id}</td>
+                    <td>{new Date(order.createdAt || order.created_at).toLocaleDateString()}</td>
+                    <td>INR {order.total}</td>
+                    <td>{order.paymentType || '-'}</td>
+                    <td>
+                      <select
+                        className="status-select"
+                        value={order.status || 'Pending'}
+                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                      </select>
+                    </td>
+                    <td>
+                      {order.billingAddress ?
+                        `${order.billingAddress.street || ''}, ${order.billingAddress.city || ''}, ${order.billingAddress.zipcode || ''}`
+                        : '-'}
+                    </td>
+                    <td>{order.customer?.name || 'Guest'}</td>
+                    <td>{order.customer?.email || '-'}</td>
+                    <td>{order.customer?.mobile || '-'}</td>
+                    <td>
+                      {order.delieveryAddress ?
+                        `${order.delieveryAddress.street || ''}, ${order.delieveryAddress.city || ''}, ${order.delieveryAddress.zipcode || ''}`
+                        : '-'}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+              <h4 style={{ marginBottom: '10px', color: '#cc4555', fontWeight: 'bold' }}>Line Items</h4>
+              <table className="premium-order-table">
+                <thead>
+                  <tr>
+                    <th>Item ID</th>
+                    <th>Product</th>
+                    <th>Size</th>
+                    <th>Flavor</th>
+                    <th>Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(order.lineItems || []).map((item) => (
+                    <tr key={item.id}>
+                      <td>#{item.id}</td>
+                      <td>{item.product?.title || 'Unknown Product'}</td>
+                      <td>{item.size || '-'} Pack</td>
+                      <td>{item.flavor || '-'}</td>
+                      <td>{item.quantity}</td>
+                    </tr>
+                  ))}
+                  {(!order.lineItems || order.lineItems.length === 0) && (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: 'center' }}>No line items available</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       ))}
-      <div>
-        <span>Page {currentPage} of {totalPages}</span>
-        <button onClick={() => handleChangePage(currentPage - 1)} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <button onClick={() => handleChangePage(currentPage + 1)} disabled={currentPage === totalPages}>
-          Next
-        </button>
+
+      <div className="pagination-controls">
+        <div>
+          <span>Page {currentPage} of {totalPages || 1}</span>
+        </div>
+        <div>
+          <button onClick={() => handleChangePage(currentPage - 1)} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <button onClick={() => handleChangePage(currentPage + 1)} disabled={currentPage === totalPages || totalPages === 0}>
+            Next
+          </button>
+        </div>
         <select value={perPage} onChange={handlePerPageChange}>
           <option value={5}>5 per page</option>
           <option value={10}>10 per page</option>
           <option value={20}>20 per page</option>
+          <option value={50}>50 per page</option>
         </select>
       </div>
+
+      {printingOrder && <AdminInvoice order={printingOrder} onGenerated={handlePdfGenerated} />}
     </div>
   );
 };

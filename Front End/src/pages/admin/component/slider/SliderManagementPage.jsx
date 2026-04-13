@@ -39,7 +39,7 @@ const SliderManagementPage = () => {
 
     if (!isAuthorized) {
         return (
-            <Container sx={{ mt: 10 }}>
+            <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
                 <Paper sx={{ p: 10, textAlign: 'center', borderRadius: 6, boxShadow: 3, border: '1px solid #f1f5f9' }}>
                     <Typography variant="h6" sx={{ color: '#1e293b', fontWeight: 'bold', mb: 2 }}>
                         Access Restricted

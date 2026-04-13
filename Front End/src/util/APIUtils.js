@@ -133,6 +133,83 @@ export function fetchOrders(page, size) {
     return api.get("/api/order/getOrders?page=" + page + "&size=" + size + "&sort=id,desc");
 }
 
+export function updateOrderStatus(id, status) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put("/api/order/updateStatus/" + id, { status });
+}
+
+export async function fetchMonthlySalesSum() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    const res = await api.get("/api/order/getOrders?page=0&size=1000&sort=id,desc");
+    const orders = res?.content || [];
+    const months = { 'Jan': 0, 'Feb': 0, 'Mar': 0, 'Apr': 0, 'May': 0, 'Jun': 0, 'Jul':0, 'Aug': 0, 'Sep': 0, 'Oct': 0, 'Nov': 0, 'Dec': 0 };
+    orders.forEach(o => {
+        const d = new Date(o.createdAt || o.created_at);
+        const monthName = d.toLocaleDateString('en-US', { month: 'short' });
+        if (months[monthName] !== undefined) {
+             months[monthName] += parseFloat(o.total || 0);
+        }
+    });
+    return { data: Object.keys(months).map(name => ({ name, sales: months[name] })) };
+}
+
+export async function fetchWeeklySalesSum() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    const res = await api.get("/api/order/getOrders?page=0&size=1000&sort=id,desc");
+    const orders = res?.content || [];
+    const weeks = { 'Week 1': 0, 'Week 2': 0, 'Week 3': 0, 'Week 4': 0, 'Week 5': 0 };
+    orders.forEach(o => {
+        const d = new Date(o.createdAt || o.created_at);
+        const date = d.getDate();
+        const weekNum = Math.ceil(date / 7);
+        const weekKey = `Week ${weekNum}`;
+        if (weeks[weekKey] !== undefined) {
+            weeks[weekKey] += parseFloat(o.total || 0);
+        }
+    });
+    return { data: Object.keys(weeks).map(week => ({ week, sales: weeks[week] })) };
+}
+
+export async function fetchDailyRevenueSum() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    const res = await api.get("/api/order/getOrders?page=0&size=1000&sort=id,desc");
+    const orders = res?.content || [];
+    const days = { 'Mon': 0, 'Tue': 0, 'Wed': 0, 'Thu': 0, 'Fri': 0, 'Sat': 0, 'Sun': 0 };
+    orders.forEach(o => {
+        const d = new Date(o.createdAt || o.created_at);
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+        if (days[dayName] !== undefined) {
+             days[dayName] += parseFloat(o.total || 0);
+        }
+    });
+    return { data: Object.keys(days).map(day => ({ day, revenue: days[day] })) };
+}
+
+export async function fetchDailyTransactionsCount() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    const res = await api.get("/api/order/getOrders?page=0&size=1000&sort=id,desc");
+    const orders = res?.content || [];
+    const days = { 'Mon': 0, 'Tue': 0, 'Wed': 0, 'Thu': 0, 'Fri': 0, 'Sat': 0, 'Sun': 0 };
+    orders.forEach(o => {
+        const d = new Date(o.createdAt || o.created_at);
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+        if (days[dayName] !== undefined) {
+             days[dayName] += 1;
+        }
+    });
+    return { data: Object.keys(days).map(day => ({ day, transactions: days[day] })) };
+}
+
 export function getForms(page, size, search = '') {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");
@@ -581,37 +658,6 @@ export function findByImageUrl(page, size, sort) {
     return api.get("/api/solrSearchEntity/findByImageUrlIsNotNullOrderByIdDesc?page=" + page + "&size=" + size + "&sort=" + sort + "");
 }
 
-export function fetchDailyTransactionsCount() {
-    if (!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
-
-    return api.get("/api/order/fetchDailyTransactionsCount");
-}
-
-export function fetchDailyRevenueSum() {
-    if (!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
-
-    return api.get("/api/order/fetchDailyRevenueSum");
-}
-
-export function fetchMonthlySalesSum() {
-    if (!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
-
-    return api.get("/api/order/fetchMonthlySalesSum");
-}
-
-export function fetchWeeklySalesSum() {
-    if (!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
-
-    return api.get("/api/order/fetchWeeklySalesSum");
-}
 
 export function getLeadershipTeams(page, size, search = '') {
     let url = "/api/leadership/getTeams?page=" + page + "&size=" + size;

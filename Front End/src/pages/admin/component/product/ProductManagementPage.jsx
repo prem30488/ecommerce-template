@@ -44,7 +44,7 @@ const ProductManagementPage = () => {
   }
 
   return (
-    <Container>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <CssBaseline />"
       <Paper elevation={3} style={{ padding: '20px', height: "100%" }}>
         <ProductManager />

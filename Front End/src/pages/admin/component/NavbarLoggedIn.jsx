@@ -5,17 +5,23 @@ import React, { useState, useEffect } from 'react';
 import { COMPANY_INFO } from '../../../constants/companyInfo';
 import { ACCESS_TOKEN } from '../../../constants';
 import Alert from 'react-s-alert';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getCurrentUser, getPrivileges } from '../../../util/APIUtils';
 import axios from 'axios';
 import { API_BASE_URL } from '../../../constants';
 const NavbarLoggedIn = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [privileges, setPrivileges] = useState({});
-  const [open, setOpen] = React.useState();
+  const [open, setOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Automatically close drawer on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [location]);
   const toggleDrawer = (isOpen) => {
     setOpen(isOpen);
   };
@@ -23,6 +29,7 @@ const NavbarLoggedIn = () => {
     localStorage.removeItem(ACCESS_TOKEN);
     setAuthenticated(false);
     setCurrentUser(null);
+    setOpen(false);
     navigate("/SignIn");
     window.location.reload();
     Alert.success("You're safely logged out!");
@@ -72,10 +79,10 @@ const NavbarLoggedIn = () => {
         </Toolbar>
       </AppBar>
       <Drawer open={open} onClose={() => toggleDrawer(false)}>
-        <List>
+        <List onClick={() => setOpen(false)}>
           {/* Dashboard/Home always first */}
           <ListItem disablePadding>
-            <ListItemButton onClick={() => navigate("/dashboard")}>
+            <ListItemButton onClick={() => { navigate("/dashboard"); setOpen(false); }}>
               <Home />
               <ListItemText primary="Home" sx={{ ml: 1.5 }} />
             </ListItemButton>
@@ -103,7 +110,7 @@ const NavbarLoggedIn = () => {
             .sort((a, b) => a.label.localeCompare(b.label))
             .map((item) => (
               <ListItem key={item.label} disablePadding>
-                <ListItemButton onClick={() => navigate(item.path)}>
+                <ListItemButton onClick={() => { navigate(item.path); setOpen(false); }}>
                   {item.icon}
                   <ListItemText primary={item.label} sx={{ ml: 1.5 }} />
                 </ListItemButton>

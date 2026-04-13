@@ -44,10 +44,10 @@ const OrderManagementPage = () => {
   }
 
   return (
-    <Container>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
     <CssBaseline />
-    <Paper elevation={3} style={{ padding: '20px' }}>
-      <Typography variant="h5" align="center">View Orders</Typography>
+    <Paper elevation={3} style={{ padding: '20px', borderRadius: '12px' }}>
+      <Typography variant="h4" align="center" style={{ fontWeight: 600, color: '#333', marginBottom: '20px' }}>Order Management</Typography>
       <OrderTable />
     </Paper>
     </Container>

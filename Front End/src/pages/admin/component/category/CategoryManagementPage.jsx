@@ -45,7 +45,7 @@ const CategoryManagementPage = () => {
   }
 
   return (
-    <Container>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <CssBaseline />
       <Paper elevation={3} style={{ padding: '20px' }}>
         {/* Category management content */}

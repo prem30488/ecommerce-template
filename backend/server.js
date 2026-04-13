@@ -393,11 +393,43 @@ app.get('/api/order/getOrders', authenticateToken, async (req, res) => {
         const { count, rows } = await db.Order.findAndCountAll({
             offset: page * size,
             limit: size,
-            order: [['id', 'DESC']]
+            order: [['id', 'DESC']],
+            include: [{
+                model: db.OrderItem,
+                include: [db.Product, db.Flavor]
+            }]
         });
-        res.json(getPaginatedResponse(rows, count, page, size));
+        const mappedRows = rows.map(r => {
+            const json = r.toJSON();
+            json.lineItems = json.OrderItems?.map(item => ({
+                id: item.id,
+                quantity: item.quantity,
+                product: item.Product,
+                size: item.size || 'small',
+                flavor: item.Flavor ? item.Flavor.name : (item.flavor_id ? 'Flavor ID: ' + item.flavor_id : 'Standard')
+            })) || [];
+            return json;
+        });
+        res.json(getPaginatedResponse(mappedRows, count, page, size));
     } catch (error) {
+        console.error('getOrders error:', error);
         res.json(getPaginatedResponse([], 0, page, size));
+    }
+});
+
+app.put('/api/order/updateStatus/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        
+        await db.Order.update(
+            { status: status },
+            { where: { id: id } }
+        );
+        res.json({ success: true, message: 'Status updated successfully' });
+    } catch (error) {
+        console.error('Update status error:', error);
+        res.status(500).json({ success: false, message: 'Failed to update status' });
     }
 });
 
@@ -405,7 +437,7 @@ app.post('/api/order/createOrder', async (req, res) => {
     const t = await db.sequelize.transaction();
     try {
         const {
-            name, email, mobileNumber, billingAddress, shippingAddress,
+            name, email, mobileNumber, billingAddress, shippingAddress, paymentType,
             sameAddress, subTotal, total, cartItems, martItems, lartItems
         } = req.body;
 
@@ -413,10 +445,17 @@ app.post('/api/order/createOrder', async (req, res) => {
         console.log('Total:', total);
         console.log('Items Count:', Object.keys(cartItems || {}).length + Object.keys(martItems || {}).length + Object.keys(lartItems || {}).length);
 
+        const customerInfo = { name, email, mobile: mobileNumber };
+
         // 1. Create order in our database
         const order = await db.Order.create({
             total: total,
-            status: 'pending',
+            subTotal: subTotal || total,
+            paymentType: paymentType || 'Razorpay',
+            customer: customerInfo,
+            billingAddress: billingAddress,
+            delieveryAddress: shippingAddress,
+            status: 'Pending',
             created_at: new Date()
         }, { transaction: t });
 
@@ -431,6 +470,7 @@ app.post('/api/order/createOrder', async (req, res) => {
                         order_id: order.id,
                         product_id: parseInt(productId),
                         flavor_id: flavorId ? parseInt(flavorId) : null,
+                        size: itemsType,
                         quantity: qty,
                         price: 0
                     }, { transaction: t });
@@ -438,7 +478,7 @@ app.post('/api/order/createOrder', async (req, res) => {
             }
         };
 
-        await processItems(cartItems, 'standard');
+        await processItems(cartItems, 'small');
         await processItems(martItems, 'medium');
         await processItems(lartItems, 'large');
 
@@ -496,7 +536,7 @@ app.post('/api/payment/verify', async (req, res) => {
 
         if (expectedSignature === razorpay_signature) {
             await db.Order.update(
-                { status: 'paid' },
+                { status: 'Processing' },
                 { where: { id: order_id } }
             );
             res.json({ success: true, message: "Payment verified successfully" });

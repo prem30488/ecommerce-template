@@ -31,7 +31,7 @@ function UserManagementPage() {
   }
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <CssBaseline />
       <Paper elevation={3} style={{ padding: '20px', margin: '20px 0' }}>
         <Typography variant="h5" align="center">User Management</Typography>

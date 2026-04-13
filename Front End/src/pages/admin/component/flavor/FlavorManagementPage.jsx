@@ -33,7 +33,7 @@ const FlavorManagementPage = () => {
 
   if (!(currentUser?.roles[0].name === "ROLE_SUPERADMIN" || privileges?.flavors)) {
     return (
-      <Container sx={{ mt: 10 }}>
+      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
         <Paper sx={{ p: 10, textAlign: 'center' }}>
           <Typography variant="h6" color="error">
             You are not authorized to view this page. Please contact to Admin to grant you privileges.

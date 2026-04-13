@@ -209,7 +209,7 @@ const TestimonialManager = () => {
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box sx={{ width: 150 }} />
-        <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1e293b' }}>Testimonial Management</Typography>
+        <Typography variant="h5" sx={{ color: '#1e293b' }}>Testimonial Management</Typography>
         <Button variant="contained" color="primary" onClick={handleAddTestimonial} sx={{ borderRadius: 2 }}>
           Add Testimonial
         </Button>

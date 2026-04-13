@@ -43,7 +43,7 @@ const CouponManagementPage = () => {
     return "You are not authorized to view this page. Please contact to Admin to grant you privileges.";
   }
   return (
-    <Container>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
     <CssBaseline />
     <Paper elevation={3} style={{ padding: '20px' }}>
       <Typography variant="h5" align="center">Coupon Management</Typography>
