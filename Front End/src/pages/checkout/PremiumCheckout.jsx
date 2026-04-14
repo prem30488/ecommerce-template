@@ -3,9 +3,10 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../../context/shop-context';
-import { getCoupons, createOrder, verifyPayment } from '../../util/APIUtils';
+import { getCoupons, createOrder, verifyPayment, getCurrentUser } from '../../util/APIUtils';
 import Alert from 'react-s-alert';
 import { COMPANY_INFO } from '../../constants/companyInfo';
+import { API_BASE_URL } from '../../constants';
 import './PremiumCheckout.css';
 
 const loadRazorpay = () => {
@@ -24,6 +25,9 @@ const PremiumCheckout = () => {
         cartItems,
         martItems,
         lartItems,
+        freeCartItems,
+        freeMartItems,
+        freeLartItems,
         getTotalCartAmount,
         getTotalAfterDiscount,
         products,
@@ -126,7 +130,8 @@ const PremiumCheckout = () => {
 
     const formik = useFormik({
         initialValues: {
-            name: '',
+            firstName: '',
+            lastName: '',
             email: '',
             mobileNumber: '',
             billingAddress: {
@@ -149,7 +154,8 @@ const PremiumCheckout = () => {
             sameAddress: true,
         },
         validationSchema: Yup.object({
-            name: Yup.string().required('Name is required'),
+            firstName: Yup.string().required('First Name is required'),
+            lastName: Yup.string().required('Last Name is required'),
             email: Yup.string().email('Invalid email address').required('Email is required'),
             mobileNumber: Yup.string()
                 .matches(/^\d+$/, 'Mobile Number must only contain digits')
@@ -177,6 +183,19 @@ const PremiumCheckout = () => {
             }),
         }),
         onSubmit: async (values) => {
+            // Check if user is blocked (by email or mobile from the order history)
+            try {
+                debugger;
+                const blockCheck = await fetch(`${API_BASE_URL}/api/public/checkBlockStatus?email=${values.email}&mobile=${values.mobileNumber}`);
+                const blockData = await blockCheck.json();
+                if (blockData.is_blocked) {
+                    Alert.error("Operation is not allowed, please contact company incharge.");
+                    return;
+                }
+            } catch (err) {
+                console.warn("Block check failed, proceeding...");
+            }
+
             const detailedItems = [];
             const processSet = (items, size) => {
                 Object.keys(items).forEach(key => {
@@ -203,9 +222,33 @@ const PremiumCheckout = () => {
             processSet(martItems, 'medium');
             processSet(lartItems, 'large');
 
+            const processFreeSet = (items, size) => {
+                Object.keys(items).forEach(pid => {
+                    const qty = items[pid];
+                    if (qty > 0) {
+                        const product = products.find(p => String(p.id) === String(pid));
+                        if (product) {
+                            detailedItems.push({
+                                productId: parseInt(pid),
+                                flavorId: null, // Free items often lack a specific flavor in this logic
+                                size: size,
+                                quantity: qty,
+                                price: 0,
+                                isFree: true
+                            });
+                        }
+                    }
+                });
+            };
+
+            processFreeSet(freeCartItems, 'small');
+            processFreeSet(freeMartItems, 'medium');
+            processFreeSet(freeLartItems, 'large');
+
             const submissionData = {
                 ...values,
                 subTotal: totalAmount,
+
                 total: finalTotal,
                 cartItems,
                 martItems,
@@ -227,7 +270,7 @@ const PremiumCheckout = () => {
             try {
                 // 1. Create order on backend and get Razorpay Order ID
                 const createResponse = await createOrder(submissionData);
-                
+
                 const { razorpayOrderId, amount, currency, id: localOrderId, key_id } = createResponse;
 
                 // 2. Load Razorpay script
@@ -239,7 +282,7 @@ const PremiumCheckout = () => {
 
                 // 3. Open Razorpay Modal
                 const options = {
-                    key: key_id, 
+                    key: key_id,
                     amount: amount,
                     currency: currency,
                     name: COMPANY_INFO.name,
@@ -385,6 +428,45 @@ const PremiumCheckout = () => {
         });
     };
 
+    const renderFreeItem = (product, type) => {
+        let itemsMap;
+        let sizeLabel;
+        if (type === 'S') { itemsMap = freeCartItems; sizeLabel = 'Small'; }
+        else if (type === 'M') { itemsMap = freeMartItems; sizeLabel = 'Medium'; }
+        else if (type === 'L') { itemsMap = freeLartItems; sizeLabel = 'Large'; }
+
+        return Object.keys(itemsMap).map(pid => {
+            if (pid === String(product.id) && itemsMap[pid] > 0) {
+                const qty = itemsMap[pid];
+                return (
+                    <div key={`free_${pid}_${type}`} className="summary-item free-gift">
+                        <div className="item-info">
+                            <div className="item-img-container">
+                                <img
+                                    src={product.productFlavors?.[0]?.productImage || product.image || "/images/placeholder.png"}
+                                    alt={product.productName}
+                                    onError={(e) => { e.target.src = "/images/placeholder.png" }}
+                                />
+                                <span className="item-badge">{qty}</span>
+                            </div>
+                            <div className="item-details">
+                                <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    {product.productName}
+                                    <span style={{ fontSize: '10px', background: '#FFEDD5', color: '#C2410C', padding: '2px 6px', borderRadius: '4px' }}>FREE GIFT</span>
+                                </h4>
+                                <p>{sizeLabel} Pack</p>
+                            </div>
+                        </div>
+                        <div className="item-price" style={{ color: '#10B981', fontWeight: '700' }}>
+                            ₹0
+                        </div>
+                    </div>
+                );
+            }
+            return null;
+        });
+    };
+
     return (
         <div className="premium-checkout-container">
             {/* Mobile Summary Toggle */}
@@ -446,20 +528,24 @@ const PremiumCheckout = () => {
                             <div className="form-group">
                                 <input
                                     type="text"
-                                    className={`input-field ${formik.touched.name && formik.errors.name ? 'error' : ''}`}
-                                    placeholder="First name (optional)"
-                                    {...formik.getFieldProps('name')}
+                                    className={`input-field ${formik.touched.firstName && formik.errors.firstName ? 'error' : ''}`}
+                                    placeholder="First name"
+                                    {...formik.getFieldProps('firstName')}
                                 />
-                                {formik.touched.name && formik.errors.name && (
-                                    <div className="error-msg">{formik.errors.name}</div>
+                                {formik.touched.firstName && formik.errors.firstName && (
+                                    <div className="error-msg">{formik.errors.firstName}</div>
                                 )}
                             </div>
                             <div className="form-group">
                                 <input
                                     type="text"
-                                    className="input-field"
+                                    className={`input-field ${formik.touched.lastName && formik.errors.lastName ? 'error' : ''}`}
                                     placeholder="Last name"
+                                    {...formik.getFieldProps('lastName')}
                                 />
+                                {formik.touched.lastName && formik.errors.lastName && (
+                                    <div className="error-msg">{formik.errors.lastName}</div>
+                                )}
                             </div>
                         </div>
 
@@ -694,8 +780,11 @@ const PremiumCheckout = () => {
                     {products.map(product => (
                         <React.Fragment key={product.id}>
                             {renderOrderItem(product, 'S')}
+                            {renderFreeItem(product, 'S')}
                             {renderOrderItem(product, 'M')}
+                            {renderFreeItem(product, 'M')}
                             {renderOrderItem(product, 'L')}
+                            {renderFreeItem(product, 'L')}
                         </React.Fragment>
                     ))}
                 </div>
@@ -709,8 +798,8 @@ const PremiumCheckout = () => {
                             value={discountCode}
                             onChange={(e) => setDiscountCode(e.target.value)}
                         />
-                        <button 
-                            type="button" 
+                        <button
+                            type="button"
                             className={`apply-btn ${discountCode ? 'active' : ''}`}
                             onClick={applyDiscountCode}
                         >
@@ -720,7 +809,7 @@ const PremiumCheckout = () => {
                     {discountError && <p className="discount-error-msg">{discountError}</p>}
                     {appliedDiscount && (
                         <div className="applied-discount-tag">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.72 2.03L21 2.23l.2 8.28-11.28 11.28a2 2 0 01-2.83 0l-7.07-7.07a2 2 0 010-2.83L12.72 2.03zM17.5 8.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.72 2.03L21 2.23l.2 8.28-11.28 11.28a2 2 0 01-2.83 0l-7.07-7.07a2 2 0 010-2.83L12.72 2.03zM17.5 8.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" /></svg>
                             <span>{appliedDiscount.code} ({appliedDiscount.discount}% OFF)</span>
                             <button onClick={() => { setAppliedDiscount(null); setDiscountCode(''); cleanTotalAfterDiscount(); }}>×</button>
                         </div>
@@ -739,7 +828,7 @@ const PremiumCheckout = () => {
                     {totalAfterDiscount > 0 && appliedDiscount && (
                         <div className="total-row discount">
                             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="currentColor"><path d="M12.72 2.03L21 2.23l.2 8.28-11.28 11.28a2 2 0 01-2.83 0l-7.07-7.07a2 2 0 010-2.83L12.72 2.03zM17.5 8.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                                <svg style={{ width: '14px', height: '14px' }} viewBox="0 0 24 24" fill="currentColor"><path d="M12.72 2.03L21 2.23l.2 8.28-11.28 11.28a2 2 0 01-2.83 0l-7.07-7.07a2 2 0 010-2.83L12.72 2.03zM17.5 8.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" /></svg>
                                 <span>Discount</span>
                             </div>
                             <span style={{ color: '#10b981' }}>-₹{(totalAmount - totalAfterDiscount).toLocaleString()}</span>

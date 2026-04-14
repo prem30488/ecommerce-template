@@ -1,3 +1,4 @@
+// v1.0.1 - Updated with Customer Management exports
 import axios from 'axios';
 import { API_BASE_URL, ACCESS_TOKEN } from '../constants';
 
@@ -793,4 +794,18 @@ export function fetchDashboardTopCustomers() {
         return Promise.reject("No access token set.");
     }
     return api.get("/api/admin/dashboard-top-customers");
+}
+
+export function fetchCustomers() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/getCustomers");
+}
+
+export function toggleBlockUser(email) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/admin/toggleBlockUser", { email });
 }

@@ -200,12 +200,14 @@ const TaxInvoice = ({ status }) => {
 					</tbody>
 				</table>
 
-				{Array.isArray(Object.keys(freeCartItems)) && Object.keys(freeCartItems).length > 0 && (
+				{(Object.keys(freeCartItems).length > 0 || Object.keys(freeMartItems).length > 0 || Object.keys(freeLartItems).length > 0) && (
 					<>
-						<div className="free-items-banner">Compimentary / Bonus Items</div>
+						<div className="free-items-banner" style={{ marginTop: '30px', background: '#F8FAFC', padding: '8px 15px', fontWeight: '800', borderLeft: '4px solid #C2410C', fontSize: '0.9rem' }}>
+							COMPLIMENTARY GIFTS / BONUS ITEMS
+						</div>
 						<table className="invoice-items-table">
 							<tbody>
-								{products.filter(p => p.active).map(product => {
+								{products.map(product => {
 									const freeSizes = [
 										{ key: 'freeCartItems', label: 'S', name: 'Small Pack' },
 										{ key: 'freeMartItems', label: 'M', name: 'Medium Pack' },
@@ -219,8 +221,8 @@ const TaxInvoice = ({ status }) => {
 											return (
 												<tr key={`free_${product.id}_${sizeInfo.label}`}>
 													<td style={{ width: '40%' }}>
-														<span className="item-desc">{product.title}</span>
-														<span className="item-size">{sizeInfo.name} • {product.productFlavors?.find(pf => String(pf.flavor_id) === String(key.split('_')[1]))?.Flavor?.name || "Original"}</span>
+														<span className="item-desc">{product.productName || product.title} (Free Gift)</span>
+														<span className="item-size">{sizeInfo.name}</span>
 													</td>
 													<td style={{ width: '15%' }}>{product.hmscode || "3004"}</td>
 													<td style={{ width: '15%' }}>₹0.00</td>

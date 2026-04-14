@@ -47,6 +47,7 @@ import FlavorManagementPage from './pages/admin/component/flavor/FlavorManagemen
 import FAQManager from './pages/admin/component/faq/FAQManager';
 import ReviewManager from './pages/admin/component/review/ReviewManager';
 import SaleManagementPage from './pages/admin/component/sale/SaleManagementPage';
+import CustomerManagement from './pages/admin/CustomerManagement';
 import SalesLandingPage from './pages/SalesLandingPage';
 import PremiumAllProducts from './pages/PremiumAllProducts';
 
@@ -205,6 +206,7 @@ class App extends Component {
 							<Route exact path="/SignIn" element={<SignIn />} />
 							<Route exact path="/dashboard" element={<Dashboard />} />
 							<Route exact path="/userManagement" element={<UserManagementPage />} />
+							<Route exact path="/customerManagement" element={<CustomerManagement />} />
 							<Route exact path="/categoryManagement" element={<CategoryManagementPage />} />
 							<Route exact path="/productManagement" element={<ProductManagementPage />} />
 							<Route exact path="/formManagement" element={<FormManagementPage />} />

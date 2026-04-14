@@ -27,7 +27,11 @@ module.exports = (sequelize, DataTypes) => {
         email: DataTypes.STRING,
         password: DataTypes.STRING,
         role: DataTypes.ENUM('user', 'admin', 'superadmin'),
-        phoneNumber: DataTypes.STRING
+        phoneNumber: DataTypes.STRING,
+        isBlocked: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        }
     }, {
         sequelize,
         modelName: 'User',

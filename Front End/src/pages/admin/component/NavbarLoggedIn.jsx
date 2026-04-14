@@ -105,6 +105,7 @@ const NavbarLoggedIn = () => {
             { label: "Sliders", path: "/sliderManagement", icon: <ViewCarousel />, show: privileges.sliders || (currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN") },
             { label: "Testimonials", path: "/testimonialManagement", icon: <FaGoodreads />, show: privileges.testimonials || (currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN") },
             { label: "Users", path: "/userManagement", icon: <People />, show: (currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN") },
+            { label: "Customers", path: "/customerManagement", icon: <People />, show: (currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN") },
           ]
             .filter(item => item.show)
             .sort((a, b) => a.label.localeCompare(b.label))

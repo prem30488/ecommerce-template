@@ -423,7 +423,7 @@ app.put('/api/order/updateStatus/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
-        
+
         await db.Order.update(
             { status: status },
             { where: { id: id } }
@@ -434,12 +434,11 @@ app.put('/api/order/updateStatus/:id', authenticateToken, async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to update status' });
     }
 });
-
 app.post('/api/order/createOrder', async (req, res) => {
     const t = await db.sequelize.transaction();
     try {
         const {
-            name, email, mobileNumber, billingAddress, shippingAddress, paymentType,
+            firstName, lastName, email, mobileNumber, billingAddress, shippingAddress, paymentType,
             sameAddress, subTotal, total, cartItems, martItems, lartItems,
             couponCode, discountAmount
         } = req.body;
@@ -448,7 +447,7 @@ app.post('/api/order/createOrder', async (req, res) => {
         console.log('Total:', total);
         console.log('Items Count:', Object.keys(cartItems || {}).length + Object.keys(martItems || {}).length + Object.keys(lartItems || {}).length);
 
-        const customerInfo = { name, email, mobile: mobileNumber };
+        const customerInfo = { firstName, lastName, email, mobile: mobileNumber, name: `${firstName} ${lastName}`.trim() };
 
         // 1. Create order in our database
         const order = await db.Order.create({
@@ -471,12 +470,12 @@ app.post('/api/order/createOrder', async (req, res) => {
             for (const [key, qty] of entries) {
                 if (qty > 0) {
                     const [productId, flavorId] = key.split('_');
-                    
+
                     let unitPrice = 0;
                     try {
                         const pf = await db.ProductFlavor.findOne({
-                            where: { 
-                                product_id: parseInt(productId), 
+                            where: {
+                                product_id: parseInt(productId),
                                 flavor_id: flavorId ? parseInt(flavorId) : 1
                             }
                         });
@@ -2256,31 +2255,31 @@ app.get('/api/admin/dashboard-kpis', async (req, res) => {
         // 4. Total Purchasers
         let totalPurchasers = 0;
         let firstTimePurchasers = 0;
-        
+
         try {
-           const usersQuery = await db.sequelize.query('SELECT COUNT(DISTINCT user_id) as total_purchasers FROM "Orders" WHERE user_id IS NOT NULL');
-           totalPurchasers = parseInt(usersQuery[0][0].total_purchasers) || 0;
-           
-           const firstTimeQuery = await db.sequelize.query(`
+            const usersQuery = await db.sequelize.query('SELECT COUNT(DISTINCT user_id) as total_purchasers FROM "Orders" WHERE user_id IS NOT NULL');
+            totalPurchasers = parseInt(usersQuery[0][0].total_purchasers) || 0;
+
+            const firstTimeQuery = await db.sequelize.query(`
                SELECT COUNT(*) as first_time FROM (
                    SELECT user_id FROM "Orders" WHERE user_id IS NOT NULL GROUP BY user_id HAVING COUNT(id) = 1
                ) as sub
            `);
-           firstTimePurchasers = parseInt(firstTimeQuery[0][0].first_time) || 0;
-           
-           if (totalPurchasers === 0) {
-              const guestQuery = await db.sequelize.query(`SELECT COUNT(DISTINCT customer->>'email') as total_purchasers FROM "Orders" WHERE customer->>'email' IS NOT NULL`);
-              totalPurchasers = parseInt(guestQuery[0][0].total_purchasers) || 0;
-              
-              const guestFirstTimeQuery = await db.sequelize.query(`
+            firstTimePurchasers = parseInt(firstTimeQuery[0][0].first_time) || 0;
+
+            if (totalPurchasers === 0) {
+                const guestQuery = await db.sequelize.query(`SELECT COUNT(DISTINCT customer->>'email') as total_purchasers FROM "Orders" WHERE customer->>'email' IS NOT NULL`);
+                totalPurchasers = parseInt(guestQuery[0][0].total_purchasers) || 0;
+
+                const guestFirstTimeQuery = await db.sequelize.query(`
                 SELECT COUNT(*) as first_time FROM (
                    SELECT customer->>'email' as email FROM "Orders" WHERE customer->>'email' IS NOT NULL GROUP BY customer->>'email' HAVING COUNT(id) = 1
                ) as sub
               `);
-              firstTimePurchasers = parseInt(guestFirstTimeQuery[0][0].first_time) || 0;
-           }
+                firstTimePurchasers = parseInt(guestFirstTimeQuery[0][0].first_time) || 0;
+            }
         } catch (e) {
-           console.log("Error running raw queries for dashboard KPIs", e);
+            console.log("Error running raw queries for dashboard KPIs", e);
         }
 
         if (totalPurchasers === 0 && totalOrders > 0) {
@@ -2365,7 +2364,7 @@ app.get('/api/admin/dashboard-order-stats-week', async (req, res) => {
                 status: 'Cancelled'
             }
         });
-        
+
         let cancelPercent = 0;
         if (cancellationsLastWeek > 0) {
             cancelPercent = ((cancellationsThisWeek - cancellationsLastWeek) / cancellationsLastWeek) * 100;
@@ -2649,9 +2648,9 @@ app.get('/api/admin/dashboard-goals', async (req, res) => {
     try {
         const month = new Date().toISOString().slice(0, 7); // "YYYY-MM"
         let goal = await db.Goal.findOne({ where: { month } });
-        
+
         if (!goal) {
-            goal = await db.Goal.create({ 
+            goal = await db.Goal.create({
                 month,
                 revenueTarget: 25000,
                 ordersTarget: 100,
@@ -2669,7 +2668,7 @@ app.post('/api/admin/dashboard-goals', async (req, res) => {
     try {
         const month = new Date().toISOString().slice(0, 7);
         const { revenueTarget, ordersTarget, customersTarget } = req.body;
-        
+
         let goal = await db.Goal.findOne({ where: { month } });
         if (goal) {
             await goal.update({ revenueTarget, ordersTarget, customersTarget });
@@ -2714,6 +2713,318 @@ app.get('/api/admin/dashboard-top-customers', async (req, res) => {
     } catch (error) {
         console.error('Top Customers API Error:', error);
         res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/admin/getCustomers', async (req, res) => {
+    try {
+        const query = `
+            WITH GeneralStats AS (
+                SELECT 
+                    LOWER(CAST(customer->>'email' AS TEXT)) as email_id,
+                    COALESCE(MAX(customer->>'firstName'), split_part(MAX(customer->>'name'), ' ', 1), 'Guest') as firstname,
+                    COALESCE(MAX(customer->>'lastName'), split_part(MAX(customer->>'name'), ' ', 2), '') as lastname,
+                    COALESCE(MAX(customer->>'mobile'), MAX(customer->>'phone'), '-') as mobile_num,
+                    COUNT(id) as total_orders_count,
+                    MAX(id) as last_order_id,
+                    (MAX(CASE WHEN "is_blocked" THEN 1 ELSE 0 END) > 0) as is_blocked_final
+                FROM "Orders"
+                WHERE customer->>'email' IS NOT NULL AND customer->>'email' != ''
+                GROUP BY LOWER(CAST(customer->>'email' AS TEXT))
+            ),
+            LatestAddresses AS (
+                SELECT DISTINCT ON (LOWER(customer->>'email'))
+                    LOWER(customer->>'email') as email_id,
+                    "billingAddress",
+                    "delieveryAddress"
+                FROM "Orders"
+                ORDER BY LOWER(customer->>'email'), "createdAt" DESC
+            ),
+            ProductCounts AS (
+                SELECT 
+                    LOWER(CAST(o.customer->>'email' AS TEXT)) as email_id,
+                    COALESCE(p.title, 'Product #' || oi.product_id) as productName,
+                    SUM(COALESCE(oi.quantity, 1)) as totalQty,
+                    MAX(oi.id) as last_oi_id
+                FROM "OrderItems" oi
+                JOIN "Orders" o ON oi.order_id = o.id
+                LEFT JOIN "Products" p ON oi.product_id = p.id
+                WHERE o.customer->>'email' IS NOT NULL AND o.customer->>'email' != ''
+                GROUP BY LOWER(CAST(o.customer->>'email' AS TEXT)), productName
+            ),
+            TopProductPerCustomer AS (
+                SELECT DISTINCT ON (email_id)
+                    email_id,
+                    productName
+                FROM ProductCounts
+                ORDER BY email_id, totalQty DESC, last_oi_id DESC
+            )
+            SELECT 
+                gs.*,
+                la."billingAddress" as billingaddress,
+                la."delieveryAddress" as deliveryaddress,
+                tp.productName as topproduct
+            FROM GeneralStats gs
+            LEFT JOIN LatestAddresses la ON gs.email_id = la.email_id
+            LEFT JOIN TopProductPerCustomer tp ON gs.email_id = tp.email_id
+            ORDER BY gs.total_orders_count DESC
+        `;
+
+        const result = await db.sequelize.query(query, { type: db.sequelize.QueryTypes.SELECT });
+
+        res.json(result.map(r => ({
+            id: `UID-${r.email_id}`,
+            name: `${r.firstname} ${r.lastname}`.trim(),
+            email: r.email_id,
+            mobile: r.mobile_num,
+            is_blocked: !!r.is_blocked_final,
+            isBlocked: !!r.is_blocked_final,
+            totalOrders: parseInt(r.total_orders_count) || 0,
+            topProduct: r.topproduct || 'N/A',
+            lastOrderId: r.last_order_id,
+            billingAddress: r.billingaddress,
+            deliveryAddress: r.deliveryaddress,
+        })));
+    } catch (error) {
+        console.error('Get Customers Error:', error);
+        res.status(500).json({ error: 'Failed', details: error.message });
+    }
+});
+
+app.post('/api/admin/toggleBlockUser', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: 'Email required' });
+
+        const trimmedEmail = email.trim();
+
+        // 1. Get current status specifically from our new column
+        const blockQuery = await db.sequelize.query(
+            'SELECT is_blocked FROM "Orders" WHERE customer->>\'email\' = :email ORDER BY "createdAt" DESC LIMIT 1',
+            { replacements: { email: trimmedEmail }, type: db.sequelize.QueryTypes.SELECT }
+        );
+
+        const currentStatus = blockQuery.length > 0 ? !!blockQuery[0].is_blocked : false;
+        const newStatus = !currentStatus;
+
+        // 2. Update all orders with this email
+        await db.sequelize.query(
+            'UPDATE "Orders" SET "is_blocked" = :status WHERE customer->>\'email\' = :email',
+            { replacements: { status: newStatus, email: trimmedEmail } }
+        );
+
+        // 3. Also update User table if registered
+        await db.User.update(
+            { isBlocked: newStatus },
+            { where: { email: trimmedEmail } }
+        );
+
+        res.json({ success: true, is_blocked: newStatus });
+    } catch (error) {
+        console.error('Toggle Block Error:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/public/checkBlockStatus', async (req, res) => {
+    try {
+        const { email, mobile } = req.query;
+        if (!email && !mobile) return res.json({ is_blocked: false });
+
+        const trimmedEmail = email ? email.trim() : null;
+        const trimmedMobile = mobile ? mobile.trim() : null;
+
+        const blockQuery = await db.sequelize.query(`
+            SELECT "is_blocked" 
+            FROM "Orders" 
+            WHERE (customer->>'email' = :email AND :email IS NOT NULL AND :email != '')
+               OR (customer->>'mobile' = :mobile AND :mobile IS NOT NULL AND :mobile != '')
+               OR (customer->>'phone' = :mobile AND :mobile IS NOT NULL AND :mobile != '')
+            ORDER BY "createdAt" DESC 
+            LIMIT 1
+        `, {
+            replacements: { email: trimmedEmail, mobile: trimmedMobile },
+            type: db.sequelize.QueryTypes.SELECT
+        });
+
+        res.json({ is_blocked: blockQuery.length > 0 ? !!blockQuery[0].is_blocked : false });
+    } catch (error) {
+        console.error('Public Block Check Error:', error);
+        res.status(500).json({ is_blocked: false });
+    }
+});
+
+app.get('/api/order/printInvoice/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await db.Order.findByPk(orderId, {
+            include: [{
+                model: db.OrderItem,
+                include: [db.Product, db.Flavor]
+            }]
+        });
+
+        if (!order) {
+            return res.status(404).send('<h1>Order Not Found</h1>');
+        }
+
+        const formatAddressInternal = (addr) => {
+            if (!addr) return 'N/A';
+            if (typeof addr === 'string') return addr;
+            const parts = [
+                addr.firstName && addr.lastName ? `${addr.firstName} ${addr.lastName}` : (addr.name || ''),
+                addr.addressLine1 || addr.address || addr.street || '',
+                addr.addressLine2 || '',
+                addr.city || '',
+                addr.state || addr.province || '',
+                addr.zipcode || addr.pincode || addr.zip || ''
+            ].filter(p => p && p.trim() !== '');
+            return parts.length > 0 ? parts.join(', ') : 'Address Details Missing';
+        };
+
+        const items = order.OrderItems || [];
+        const subTotal = order.subTotal || order.total || 0;
+        const discountAmount = order.discountAmount || 0;
+        const total = order.total || 0;
+        const createdAt = order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A';
+
+        const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Invoice - #${order.id}</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; margin: 0; padding: 40px; }
+        .invoice-box { max-width: 800px; margin: auto; border: 1px solid #eee; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #3b82f6; padding-bottom: 20px; margin-bottom: 20px; }
+        .company-info h1 { margin: 0; color: #3b82f6; font-size: 24px; }
+        .company-info p { margin: 2px 0; font-size: 13px; color: #64748b; }
+        .invoice-details { text-align: right; }
+        .invoice-details h2 { margin: 0; font-size: 20px; }
+        .invoice-details p { margin: 2px 0; font-size: 13px; }
+        .addresses { display: flex; gap: 40px; margin-bottom: 30px; }
+        .address-box { flex: 1; }
+        .address-box h3 { font-size: 14px; text-transform: uppercase; color: #64748b; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+        .address-box p { margin: 2px 0; font-size: 14px; line-height: 1.5; }
+        table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; margin-bottom: 20px; }
+        table th { background: #f8fafc; padding: 12px; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; }
+        table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        .total-section { display: flex; justify-content: flex-end; }
+        .total-table { width: 250px; }
+        .total-table td { border: none; padding: 5px 12px; }
+        .grand-total { font-weight: bold; color: #3b82f6; font-size: 18px !important; border-top: 1px solid #e2e8f0 !important; }
+        .footer { margin-top: 50px; text-align: center; color: #94a3b8; font-size: 12px; border-top: 1px solid #eee; padding-top: 20px; }
+        @media print {
+            .no-print { display: none; }
+            body { padding: 0; }
+            .invoice-box { border: none; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="text-align: right; margin-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">Print Invoice</button>
+    </div>
+    <div class="invoice-box">
+        <div class="header">
+            <div class="company-info">
+                <h1>Hanely Healthcare</h1>
+                <p>Corporate Office, New Delhi, India</p>
+                <p>Email: info@hanelyhealthcare.com</p>
+                <p>GSTIN: 07AAACH1234A1Z5 (Sample)</p>
+            </div>
+            <div class="invoice-details">
+                <h2>TAX INVOICE</h2>
+                <p><b>Order ID:</b> #${order.id}</p>
+                <p><b>Date:</b> ${createdAt}</p>
+                <p><b>Status:</b> ${order.status}</p>
+            </div>
+        </div>
+
+        <div class="addresses">
+            <div class="address-box">
+                <h3>Billing To</h3>
+                <p>${formatAddressInternal(order.billingAddress)}</p>
+                <p>Email: ${order.customer?.email || 'N/A'}</p>
+                <p>Contact: ${order.customer?.mobile || order.customer?.phone || 'N/A'}</p>
+            </div>
+            <div class="address-box">
+                <h3>Shipping To</h3>
+                <p>${formatAddressInternal(order.delieveryAddress || order.billingAddress)}</p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th style="text-align: center;">Size</th>
+                    <th style="text-align: center;">Qty</th>
+                    <th style="text-align: right;">Price</th>
+                    <th style="text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${items.map(item => `
+                    <tr>
+                        <td>
+                            <b>${item.Product?.title || 'Unknown Product'}</b>
+                            <div style="font-size: 12px; color: #64748b;">${item.Flavor?.name || 'Standard'}</div>
+                        </td>
+                        <td style="text-align: center; text-transform: capitalize;">${item.size || 'small'}</td>
+                        <td style="text-align: center;">${item.quantity}</td>
+                        <td style="text-align: right;">₹${parseFloat(item.price).toFixed(2)}</td>
+                        <td style="text-align: right;">₹${(item.quantity * item.price).toFixed(2)}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            <table class="total-table">
+                <tr>
+                    <td>Subtotal:</td>
+                    <td style="text-align: right;">₹${parseFloat(subTotal).toFixed(2)}</td>
+                </tr>
+                ${discountAmount > 0 ? `
+                <tr>
+                    <td>Discount (${order.couponCode || 'PROMO'}):</td>
+                    <td style="text-align: right; color: #ef4444;">-₹${parseFloat(discountAmount).toFixed(2)}</td>
+                </tr>
+                ` : ''}
+                <tr>
+                    <td class="grand-total">Grand Total:</td>
+                    <td class="grand-total" style="text-align: right;">₹${parseFloat(total).toFixed(2)}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>This is a computer generated invoice and does not require a physical signature.</p>
+            <p>Thank you for shopping with Hanely Healthcare!</p>
+        </div>
+    </div>
+</body>
+</html>
+        `;
+        res.send(html);
+    } catch (error) {
+        console.error('Invoice Print Error:', error);
+        res.status(500).send('<h1>Error generating invoice</h1>');
+    }
+});
+
+app.get('/api/admin/checkBlockStatus', async (req, res) => {
+    // Reuse public logic but keep the route if needed
+    try {
+        const { email, mobile } = req.query;
+        const response = await fetch(`${req.protocol}://${req.get('host')}/api/public/checkBlockStatus?email=${email}&mobile=${mobile}`);
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.json({ is_blocked: false });
     }
 });
 
@@ -2836,6 +3147,14 @@ const startServer = async () => {
                     console.log('✅ Orders schema updated with discount fields');
                 } catch (schemaErr) {
                     console.error('⚠️ Schema ensure minor error:', schemaErr.message);
+                }
+
+                // Ensure 'is_blocked' exists on Orders
+                try {
+                    await db.sequelize.query('ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS "is_blocked" BOOLEAN DEFAULT false');
+                    console.log('✅ Order schema updated with is_blocked field');
+                } catch (orderErr) {
+                    console.log('⚠️ is_blocked Order check note:', orderErr.message);
                 }
             } catch (syncError) {
                 console.error('⚠️ Database sync error details:', syncError);

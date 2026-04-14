@@ -1,0 +1,146 @@
+.customer-management-container {
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+
+.customers-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.search-bar-container {
+  display: flex;
+  flex: 1;
+  max-width: 500px;
+  gap: 15px;
+}
+
+.customer-search-input {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.customer-search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.customer-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #ebaeb4;
+  margin-bottom: 30px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.customer-card-header {
+  background: #fdf2f3;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ebaeb4;
+}
+
+.customer-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #cc4555;
+}
+
+.premium-customer-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.premium-customer-table th {
+  background-color: #f9f9f9;
+  color: #555;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 15px;
+  border-bottom: 2px solid #eee;
+  white-space: nowrap;
+}
+
+.premium-customer-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  color: #444;
+  vertical-align: middle;
+}
+
+.block-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #fb7185;
+  background: #fff;
+  color: #e11d48;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.block-btn:hover {
+  background: #fff1f2;
+}
+
+.block-btn.blocked {
+  background: #e11d48;
+  color: white;
+}
+
+.view-invoice-btn {
+  background-color: #cc4555;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.view-invoice-btn:hover {
+  background-color: #b53948;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-top: 1px solid #eee;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-blocked {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.status-active {
+  background-color: #dcfce7;
+  color: #166534;
+}

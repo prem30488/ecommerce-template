@@ -31,7 +31,11 @@ module.exports = (sequelize, DataTypes) => {
         delieveryAddress: DataTypes.JSON,
         created_at: DataTypes.DATE,
         couponCode: DataTypes.STRING,
-        discountAmount: DataTypes.FLOAT
+        discountAmount: DataTypes.FLOAT,
+        is_blocked: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        }
     }, {
         sequelize,
         modelName: 'Order',
