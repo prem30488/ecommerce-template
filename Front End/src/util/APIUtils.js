@@ -752,3 +752,45 @@ export function fetchDashboardProductAudience() {
     }
     return api.get("/api/admin/dashboard-product-audience");
 }
+
+export function fetchDashboardSalesOverview() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-sales-overview");
+}
+
+export function fetchDashboardOrderStatus() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-order-status");
+}
+
+export function fetchDashboardSalesByCategory() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-sales-by-category");
+}
+
+export function fetchDashboardGoals() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-goals");
+}
+
+export function updateDashboardGoals(goalData) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/admin/dashboard-goals", goalData);
+}
+
+export function fetchDashboardTopCustomers() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-top-customers");
+}

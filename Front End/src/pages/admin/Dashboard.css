@@ -91,6 +91,7 @@
 .kpi-card.kpi-orders::before { background: linear-gradient(90deg, #10b981, #34d399); }
 .kpi-card.kpi-customers::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .kpi-card.kpi-conversion::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+.kpi-card.kpi-refund::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
 
 .kpi-card-header {
   display: flex;
@@ -129,6 +130,12 @@
 .kpi-customers .kpi-icon-wrapper { background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.2)); color: #f59e0b; border: 1px solid rgba(245,158,11,0.1); }
 .kpi-conversion .kpi-icon-wrapper { background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(236, 72, 153, 0.2)); color: #ec4899; border: 1px solid rgba(236,72,153,0.1); }
 
+.refund-icon {
+  background: #FFF9E5 !important;
+  color: #F5A623 !important;
+  border: 1px solid rgba(245, 166, 35, 0.1) !important;
+}
+
 .kpi-value {
   font-size: 2.25rem;
   font-weight: 800;
@@ -147,8 +154,21 @@
 }
 
 .kpi-trend.positive { color: #10b981; }
-.kpi-trend.negative { color: #ef4444; }
-.kpi-trend span { color: #64748b; font-weight: 600; font-size: 0.85rem; }
+.kpi-trend.negative, .kpi-trend.trend-down { color: #ef4444; }
+.kpi-trend span { color: #8e8e8e; font-weight: 600; font-size: 0.85rem; margin-left: 5px; }
+
+/* Squiggly Wave at bottom of Refund card */
+.kpi-card-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23FFF9E5' fill-opacity='1' d='M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,213.3C672,203,768,149,864,138.7C960,128,1056,160,1152,181.3C1248,203,1344,213,1392,218.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z' stroke='%23F5A623' stroke-width='2'%3E%3C/path%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+}
 
 /* --- Dashboard Flow Layout --- */
 .dashboard-subtitle {
@@ -192,7 +212,7 @@
 
 .product-compare-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 1.5rem;
 }
 

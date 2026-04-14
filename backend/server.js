@@ -2291,13 +2291,18 @@ app.get('/api/admin/dashboard-kpis', async (req, res) => {
         const avgRevenuePerUser = totalPurchasers > 0 ? (purchaseRevenue / totalPurchasers) : 0;
         const purchaserRate = totalRegisteredUsers > 0 ? ((totalPurchasers / totalRegisteredUsers) * 100) : 0;
 
+        // 5. Refund Rate (Cancelled / Total)
+        const cancelledOrders = await db.Order.count({ where: { status: 'Cancelled' } });
+        const refundRate = totalOrders > 0 ? (cancelledOrders / totalOrders) * 100 : 0;
+
         res.json({
             purchaseRevenue: purchaseRevenue,
             ecommercePurchases: totalOrders,
             purchaserRate: purchaserRate,
             firstTimePurchasers: firstTimePurchasers,
             totalPurchasers: totalPurchasers,
-            avgRevenuePerUser: avgRevenuePerUser
+            avgRevenuePerUser: avgRevenuePerUser,
+            refundRate: refundRate
         });
     } catch (error) {
         console.error('KPI error:', error);
@@ -2517,6 +2522,197 @@ app.get('/api/admin/dashboard-product-audience', async (req, res) => {
         });
     } catch (error) {
         console.error('❌ Analytics API Crash:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+// --------------- Sales Overview (Monthly Daily Data) ---------------
+app.get('/api/admin/dashboard-sales-overview', async (req, res) => {
+    try {
+        const { Op } = db.Sequelize;
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+        // Fetch daily stats for the current month
+        const dailyStats = await db.sequelize.query(`
+            WITH RECURSIVE days AS (
+                SELECT DATE_TRUNC('day', CAST(:start AS TIMESTAMP)) as day
+                UNION ALL
+                SELECT day + INTERVAL '1 day'
+                FROM days
+                WHERE day < DATE_TRUNC('day', CAST(:end AS TIMESTAMP))
+            )
+            SELECT 
+                TO_CHAR(days.day, 'Mon DD') as date,
+                COALESCE(SUM(o.total), 0) as revenue,
+                COUNT(o.id) as orders,
+                COALESCE(SUM(o.total * 0.15), 0) as profit -- Estimation: 15% profit margin
+            FROM days
+            LEFT JOIN "Orders" o ON DATE_TRUNC('day', o."createdAt") = days.day
+            GROUP BY days.day
+            ORDER BY days.day ASC
+        `, {
+            replacements: { start: startOfMonth.toISOString(), end: endOfMonth.toISOString() },
+            type: db.sequelize.QueryTypes.SELECT
+        });
+
+        res.json(dailyStats.map(d => ({
+            date: d.date,
+            revenue: parseFloat(d.revenue) || 0,
+            orders: parseInt(d.orders) || 0,
+            profit: parseFloat(d.profit) || 0
+        })));
+    } catch (error) {
+        console.error('Sales Overview API Error:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/admin/dashboard-order-status', async (req, res) => {
+    try {
+        const stats = await db.Order.findAll({
+            attributes: [
+                'status',
+                [db.Sequelize.fn('COUNT', db.Sequelize.col('id')), 'count']
+            ],
+            group: ['status']
+        });
+
+        // Map statuses to standard names for the frontend
+        const statusMap = {
+            'Delivered': 'Completed',
+            'Processing': 'Processing',
+            'Pending': 'Pending',
+            'Cancelled': 'Cancelled',
+            'Shipped': 'Processing' // Grouping Shipped as Processing for the 4-color chart in photo
+        };
+
+        const result = {
+            'Completed': 0,
+            'Processing': 0,
+            'Pending': 0,
+            'Cancelled': 0
+        };
+
+        stats.forEach(s => {
+            const status = s.status || 'Pending';
+            const mapped = statusMap[status] || 'Pending';
+            result[mapped] += parseInt(s.get('count'));
+        });
+
+        res.json(result);
+    } catch (error) {
+        console.error('Order Status API Error:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/admin/dashboard-sales-by-category', async (req, res) => {
+    try {
+        // 1. Discover Table and Column names dynamically (standardizing across all analytics)
+        const oiResults = await db.sequelize.query(`
+            SELECT table_name, column_name 
+            FROM information_schema.columns 
+            WHERE table_schema = 'public' 
+            AND (table_name ILIKE 'OrderItems' OR table_name ILIKE 'order_items')
+        `, { type: db.sequelize.QueryTypes.SELECT });
+
+        const oiTable = oiResults[0]?.table_name || 'OrderItems';
+        const productIdCol = oiResults.find(c => c.column_name.toLowerCase().includes('product'))?.column_name || 'product_id';
+        const priceCol = oiResults.find(c => c.column_name.toLowerCase().includes('price'))?.column_name || 'price';
+        const quantityCol = oiResults.find(c => c.column_name.toLowerCase().includes('quantity'))?.column_name || 'quantity';
+
+        const stats = await db.sequelize.query(`
+            SELECT 
+                COALESCE(c.title, 'General') as category,
+                SUM(COALESCE(oi."${priceCol}", 0) * COALESCE(oi."${quantityCol}", 0)) as revenue
+            FROM "${oiTable}" oi
+            INNER JOIN "Products" p ON oi."${productIdCol}" = p.id
+            LEFT JOIN "Categories" c ON p.category_id = c.id
+            GROUP BY COALESCE(c.title, 'General')
+            ORDER BY revenue DESC
+            LIMIT 5
+        `, { type: db.sequelize.QueryTypes.SELECT });
+
+        res.json(stats.map(s => ({
+            category: s.category || 'Uncategorized',
+            revenue: parseFloat(s.revenue) || 0
+        })));
+    } catch (error) {
+        console.error('Sales By Category API Error:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/admin/dashboard-goals', async (req, res) => {
+    try {
+        const month = new Date().toISOString().slice(0, 7); // "YYYY-MM"
+        let goal = await db.Goal.findOne({ where: { month } });
+        
+        if (!goal) {
+            goal = await db.Goal.create({ 
+                month,
+                revenueTarget: 25000,
+                ordersTarget: 100,
+                customersTarget: 50
+            });
+        }
+        res.json(goal);
+    } catch (error) {
+        console.error('Goals API Error:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.post('/api/admin/dashboard-goals', async (req, res) => {
+    try {
+        const month = new Date().toISOString().slice(0, 7);
+        const { revenueTarget, ordersTarget, customersTarget } = req.body;
+        
+        let goal = await db.Goal.findOne({ where: { month } });
+        if (goal) {
+            await goal.update({ revenueTarget, ordersTarget, customersTarget });
+        } else {
+            goal = await db.Goal.create({ month, revenueTarget, ordersTarget, customersTarget });
+        }
+        res.json(goal);
+    } catch (error) {
+        console.error('Update Goals Error:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/admin/dashboard-top-customers', async (req, res) => {
+    try {
+        const stats = await db.sequelize.query(`
+            SELECT 
+                COALESCE(o.customer->>'firstName', o.customer->>'name', 'Guest') as firstname,
+                COALESCE(o.customer->>'lastName', '') as lastname,
+                o.customer->>'email' as email,
+                o.customer->>'phone' as phone,
+                COUNT(o.id) as orders,
+                SUM(o.total) as revenue
+            FROM "Orders" o
+            WHERE o.customer->>'email' IS NOT NULL
+            GROUP BY firstname, lastname, email, phone
+            ORDER BY revenue DESC
+            LIMIT 5
+        `, { type: db.sequelize.QueryTypes.SELECT });
+
+        res.json(stats.map(s => {
+            const fullName = `${s.firstname} ${s.lastname}`.trim();
+            return {
+                name: fullName,
+                email: s.email,
+                phone: s.phone || '-',
+                orders: parseInt(s.orders) || 0,
+                revenue: parseFloat(s.revenue) || 0,
+                initials: (fullName || 'G').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+            };
+        }));
+    } catch (error) {
+        console.error('Top Customers API Error:', error);
         res.status(500).json({ error: 'Failed' });
     }
 });

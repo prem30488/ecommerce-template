@@ -2,6 +2,7 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { fetchOrders, updateOrderStatus } from "../../../../util/APIUtils";
 import Alert from 'react-s-alert';
+import * as XLSX from 'xlsx';
 import { AdminInvoice } from './AdminInvoice';
 import './OrderTable.css';
 export const OrderTable = ({ }) => {
@@ -30,6 +31,9 @@ export const OrderTable = ({ }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+
+  const statuses = ['All', 'Delivered', 'Shipped', 'Processing', 'Pending', 'Cancelled'];
 
   useEffect(() => {
 
@@ -47,11 +51,25 @@ export const OrderTable = ({ }) => {
     };
     getData();
   }, []);
+  // Chain filters: Status -> Search -> Pagination
+  const filteredByStatus = statusFilter === 'All' 
+    ? orders 
+    : orders.filter(o => (o.status || 'Pending') === statusFilter);
+
+  const filteredBySearch = filteredByStatus.filter((order) =>
+    order?.customer?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+    order?.customer?.email?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+    order?.customer?.mobile?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+    order?.billingAddress?.zipcode === searchTerm ||
+    order?.delieveryAddress?.zipcode === searchTerm ||
+    order?.id?.toString() === searchTerm
+  );
+
   const indexOfLastOrder = currentPage * perPage;
   const indexOfFirstOrder = indexOfLastOrder - perPage;
-  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const currentOrders = filteredBySearch.slice(indexOfFirstOrder, indexOfLastOrder);
 
-  const totalPages = Math.ceil(orders.length / perPage);
+  const totalPages = Math.ceil(filteredBySearch.length / perPage);
 
   const handleChangePage = (newPage) => {
     setCurrentPage(newPage);
@@ -88,34 +106,126 @@ export const OrderTable = ({ }) => {
     setPrintingOrder(null);
   };
 
-  const filteredOrders = currentOrders.filter((order) =>
-    order?.customer?.name?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-    order?.customer?.email?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-    order?.customer?.mobile?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-    order?.billingAddress?.zipcode === searchTerm ||
-    order?.delieveryAddress?.zipcode === searchTerm ||
-    order?.id?.toString() === searchTerm // Added ID search as fallback
-  );
+  const exportToExcel = () => {
+    if (orders.length === 0) {
+      Alert.warning('No orders to export');
+      return;
+    }
+
+    // Export based on CURRENT filters (status + search)
+    const dataToExport = filteredBySearch.map(order => ({
+      'Order ID': `#${order.id}`,
+      'Date': new Date(order.createdAt || order.created_at).toLocaleDateString(),
+      'Status': order.status || 'Pending',
+      'Customer': order.customer?.name || 'Guest',
+      'Email': order.customer?.email || '-',
+      'Phone': order.customer?.mobile || '-',
+      'Total Amount': order.total,
+      'Discount': order.discountAmount || 0,
+      'Coupon': order.couponCode || '-',
+      'Payment Type': order.paymentType || '-',
+      'Billing Address': order.billingAddress ? `${order.billingAddress.street}, ${order.billingAddress.city}, ${order.billingAddress.zipcode}` : '-',
+      'City': order.billingAddress?.city || '-'
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders Report");
+    
+    // Auto-size columns (approximate)
+    const maxWidths = {};
+    dataToExport.forEach(row => {
+      Object.keys(row).forEach(key => {
+        const val = String(row[key]);
+        maxWidths[key] = Math.max(maxWidths[key] || 10, val.length + 2);
+      });
+    });
+    worksheet['!cols'] = Object.keys(maxWidths).map(key => ({ wch: maxWidths[key] }));
+
+    XLSX.writeFile(workbook, `Orders_Export_${statusFilter}_${new Date().toISOString().split('T')[0]}.xlsx`);
+    Alert.success('Excel export started');
+  };
+
+  const exportToExcelSingle = (order) => {
+    // Detailed export for a single order including line items
+    const orderData = [{
+      'Order ID': `#${order.id}`,
+      'Date': new Date(order.createdAt || order.created_at).toLocaleString(),
+      'Status': order.status || 'Pending',
+      'Customer': order.customer?.name || 'Guest',
+      'Email': order.customer?.email || '-',
+      'Phone': order.customer?.mobile || '-',
+      'Total Amount': order.total,
+      'Payment': order.paymentType || '-',
+      'Coupon': order.couponCode || '-',
+      'Discount': order.discountAmount || 0,
+    }];
+
+    const itemsData = (order.lineItems || []).map(item => ({
+      'Product': item.product?.title || 'Unknown',
+      'Size': item.size,
+      'Flavor': item.flavor,
+      'Quantity': item.quantity,
+      'Unit Price': item.price,
+      'Subtotal': (item.price || 0) * (item.quantity || 0)
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    const wsOrder = XLSX.utils.json_to_sheet(orderData);
+    const wsItems = XLSX.utils.json_to_sheet(itemsData);
+
+    XLSX.utils.book_append_sheet(workbook, wsOrder, "Order Summary");
+    XLSX.utils.book_append_sheet(workbook, wsItems, "Line Items");
+
+    XLSX.writeFile(workbook, `Order_${order.id}_Detail.xlsx`);
+    Alert.success(`Exported Order #${order.id}`);
+  };
+
+  const filteredOrders = currentOrders;
 
   return (
     <div className="order-management-container">
-      <div className="search-bar-container">
-        <input
-          type="text"
-          className="order-search-input"
-          placeholder="Search by customer name, email, zip, or order ID..."
-          value={searchTerm}
-          onChange={handleSearch}
-        />
+      <div className="orders-header-actions">
+        <div className="status-filter-container">
+          {statuses.map(status => (
+            <button
+              key={status}
+              className={`filter-btn ${statusFilter === status ? 'active' : ''}`}
+              onClick={() => {
+                setStatusFilter(status);
+                setCurrentPage(1);
+              }}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
+        <div className="search-bar-container">
+          <input
+            type="text"
+            className="order-search-input"
+            placeholder="Search by customer, email, phone or zipcode..."
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+          <button className="export-excel-btn" onClick={exportToExcel} title="Export current view to Excel">
+            Export Excel
+          </button>
+        </div>
       </div>
 
       {filteredOrders.map((order) => (
         <div key={order.id} className="order-card">
           <div className="order-card-header">
             <h3 className="order-card-title">Order #{order.id}</h3>
-            <button className="export-btn" onClick={() => generatePDF(order)}>
-              Print Invoice PDF
-            </button>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button className="export-btn" onClick={() => generatePDF(order)}>
+                Print Invoice PDF
+              </button>
+              <button className="export-excel-btn" onClick={() => exportToExcelSingle(order)}>
+                Export Excel
+              </button>
+            </div>
           </div>
           <div className="order-tables-wrapper">
             <div style={{ overflowX: 'auto' }}>

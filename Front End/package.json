@@ -73,6 +73,7 @@
     "swiper": "^11.1.4",
     "web-vitals": "^3.5.2",
     "xhr": "^2.6.0",
+    "xlsx": "^0.18.5",
     "yup": "^1.4.0"
   },
   "devDependencies": {

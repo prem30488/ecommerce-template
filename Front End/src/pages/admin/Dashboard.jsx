@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import SalesValueChart from './component/SalesValueChart';
+import SalesOverview from './component/SalesOverview';
+import OrderStatusPieChart from './component/OrderStatusPieChart';
+import SalesByCategoryChart from './component/SalesByCategoryChart';
+import RevenueTargets from './component/RevenueTargets';
+import TopCustomers from './component/TopCustomers';
 import { getCurrentDate } from '../../util/util';
 import WeeklySalesGraph from './component/WeeklySalesGraph';
 import DailyRevenueBarGraph from './component/DailyRevenueBarGraph';
@@ -17,7 +22,8 @@ import {
   OrdersMonth 
 } from './component/DashboardMockWidgets';
 
-import { FaChartLine, FaShoppingCart, FaPercentage, FaUserPlus, FaUsers, FaCoins } from 'react-icons/fa';
+import { FaChartLine, FaShoppingCart, FaPercentage, FaUserPlus, FaUsers, FaCoins, FaUndo } from 'react-icons/fa';
+import { LuTrendingDown } from "react-icons/lu";
 import { MdOutlineDateRange } from 'react-icons/md';
 import { fetchDashboardKPIs } from '../../util/APIUtils';
 import './Dashboard.css';
@@ -29,7 +35,8 @@ const Dashboard = () => {
     purchaserRate: 0,
     firstTimePurchasers: 0,
     totalPurchasers: 0,
-    avgRevenuePerUser: 0
+    avgRevenuePerUser: 0,
+    refundRate: 0
   });
 
   useEffect(() => {
@@ -80,6 +87,20 @@ const Dashboard = () => {
           </div>
           <h3 className="kpi-value">{Number(kpiData.purchaserRate || 0).toFixed(1)}%</h3>
         </div>
+
+        {/* --- REFUND RATE CARD --- */}
+        <div className="kpi-card kpi-refund">
+          <div className="kpi-card-header">
+            <span className="kpi-title">Refund Rate</span>
+            <div className="kpi-icon-wrapper refund-icon"><FaUndo /></div>
+          </div>
+          <h3 className="kpi-value">{Number(kpiData.refundRate || 0).toFixed(1)}%</h3>
+          <div className="kpi-trend trend-down">
+            <LuTrendingDown size={14} />
+            <span>-0.3%</span>
+          </div>
+          <div className="kpi-card-wave"></div>
+        </div>
         <div className="kpi-card kpi-customers">
           <div className="kpi-card-header">
             <span className="kpi-title">First Time Purchasers</span>
@@ -110,8 +131,16 @@ const Dashboard = () => {
           <div className="chart-wrapper">
             <SalesValueChart />
           </div>
+          <div className="chart-wrapper" style={{ marginTop: '1.5rem' }}>
+            <SalesOverview />
+          </div>
+          <div className="chart-wrapper" style={{ marginTop: '1.5rem' }}>
+            <TopCustomers />
+          </div>
         </div>
         <div className="dashboard-col-sidebar">
+          <OrderStatusPieChart />
+          <RevenueTargets kpiData={kpiData} />
           <RevenueMonth />
           <OrdersMonth />
           <DiscountCodeWeek />
@@ -148,6 +177,7 @@ const Dashboard = () => {
           <div className="product-compare-grid">
             <TopProducts />
             <BestsellersWeek />
+            <SalesByCategoryChart />
           </div>
         </div>
         <div className="dashboard-col-sidebar">
