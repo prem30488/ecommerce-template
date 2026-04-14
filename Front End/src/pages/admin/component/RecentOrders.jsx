@@ -48,7 +48,7 @@ const RecentOrders = () => {
                 <td className="font-semibold">#{order.id}</td>
                 <td>{order.customer?.name || 'Guest'}</td>
                 <td className="text-muted">{new Date(order.createdAt || order.created_at).toLocaleDateString()}</td>
-                <td className="font-semibold">INR {order.total}</td>
+                <td className="font-semibold">INR {Number(order.total || 0).toFixed(2)}</td>
                 <td>
                   <span className="status-badge" style={{ color: getStatusColor(order.status), backgroundColor: `${getStatusColor(order.status)}15` }}>
                     <FaCircle size={8} style={{ marginRight: '6px' }} />

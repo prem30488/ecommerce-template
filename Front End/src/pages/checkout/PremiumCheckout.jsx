@@ -177,6 +177,32 @@ const PremiumCheckout = () => {
             }),
         }),
         onSubmit: async (values) => {
+            const detailedItems = [];
+            const processSet = (items, size) => {
+                Object.keys(items).forEach(key => {
+                    const qty = items[key];
+                    if (qty > 0) {
+                        const [pid, fid] = key.split('_');
+                        const product = products.find(p => String(p.id) === String(pid));
+                        if (product) {
+                            const sizeLabel = size === 'small' ? 'S' : (size === 'medium' ? 'M' : 'L');
+                            const unitPriceTotal = getFinalItemPrice(product, sizeLabel, fid, qty);
+                            detailedItems.push({
+                                productId: parseInt(pid),
+                                flavorId: fid ? parseInt(fid) : null,
+                                size: size,
+                                quantity: qty,
+                                price: unitPriceTotal / qty
+                            });
+                        }
+                    }
+                });
+            };
+
+            processSet(cartItems, 'small');
+            processSet(martItems, 'medium');
+            processSet(lartItems, 'large');
+
             const submissionData = {
                 ...values,
                 subTotal: totalAmount,
@@ -184,7 +210,13 @@ const PremiumCheckout = () => {
                 cartItems,
                 martItems,
                 lartItems,
+                detailedItems
             };
+
+            if (appliedDiscount) {
+                submissionData.couponCode = appliedDiscount.code;
+                submissionData.discountAmount = totalAmount - finalTotal;
+            }
 
             if (values.sameAddress) {
                 submissionData.shippingAddress = { ...values.billingAddress, type: 'shipping' };

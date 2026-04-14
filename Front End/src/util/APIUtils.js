@@ -717,3 +717,38 @@ export function createOrder(orderRequest) {
 export function verifyPayment(verifyRequest) {
     return api.post("/api/payment/verify", verifyRequest);
 }
+
+export function fetchDashboardKPIs() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-kpis");
+}
+
+export function fetchDashboardDiscountCodes() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-discount-codes");
+}
+
+export function fetchDashboardOrderStatsWeek() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-order-stats-week");
+}
+
+export function fetchDashboardMonthlyStats() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-monthly-stats");
+}
+
+export function fetchDashboardProductAudience() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-product-audience");
+}

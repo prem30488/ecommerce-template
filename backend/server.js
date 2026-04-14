@@ -268,9 +268,9 @@ app.get('/api/product/weeklyBestSeller', async (req, res) => {
 });
 
 app.get('/api/product/getProducts', async (req, res) => {
+    const page = parseInt(req.query.page) || 0;
+    let size = parseInt(req.query.size) || 10;
     try {
-        const page = parseInt(req.query.page) || 0;
-        let size = parseInt(req.query.size) || 10;
         if (size > 200) size = 200; // Cap to prevent connection overload
         const { categoryId } = req.query;
 
@@ -330,9 +330,9 @@ app.get('/api/product/getProducts', async (req, res) => {
 });
 
 app.get('/api/category/getCategories', async (req, res) => {
+    const page = parseInt(req.query.page) || 0;
+    const size = parseInt(req.query.size) || 10;
     try {
-        const page = parseInt(req.query.page) || 0;
-        const size = parseInt(req.query.size) || 10;
         const search = req.query.search || '';
         const { Op } = db.Sequelize;
 
@@ -357,9 +357,9 @@ app.get('/api/category/getCategories', async (req, res) => {
 });
 
 app.get('/api/coupon/getCoupon', async (req, res) => {
+    const page = parseInt(req.query.page) || 0;
+    const size = parseInt(req.query.size) || 10;
     try {
-        const page = parseInt(req.query.page) || 0;
-        const size = parseInt(req.query.size) || 10;
         const search = req.query.search || '';
         const { Op } = db.Sequelize;
 
@@ -387,9 +387,9 @@ app.get('/api/coupon/getCoupon', async (req, res) => {
 });
 
 app.get('/api/order/getOrders', authenticateToken, async (req, res) => {
+    const page = parseInt(req.query.page) || 0;
+    const size = parseInt(req.query.size) || 10;
     try {
-        const page = parseInt(req.query.page) || 0;
-        const size = parseInt(req.query.size) || 10;
         const { count, rows } = await db.Order.findAndCountAll({
             offset: page * size,
             limit: size,
@@ -406,7 +406,9 @@ app.get('/api/order/getOrders', authenticateToken, async (req, res) => {
                 quantity: item.quantity,
                 product: item.Product,
                 size: item.size || 'small',
-                flavor: item.Flavor ? item.Flavor.name : (item.flavor_id ? 'Flavor ID: ' + item.flavor_id : 'Standard')
+                flavor: item.Flavor ? item.Flavor.name : (item.flavor_id ? 'Flavor ID: ' + item.flavor_id : 'Standard'),
+                price: item.price,
+                createdAt: item.createdAt
             })) || [];
             return json;
         });
@@ -438,7 +440,8 @@ app.post('/api/order/createOrder', async (req, res) => {
     try {
         const {
             name, email, mobileNumber, billingAddress, shippingAddress, paymentType,
-            sameAddress, subTotal, total, cartItems, martItems, lartItems
+            sameAddress, subTotal, total, cartItems, martItems, lartItems,
+            couponCode, discountAmount
         } = req.body;
 
         console.log('--- CREATE ORDER REQUEST ---');
@@ -456,7 +459,9 @@ app.post('/api/order/createOrder', async (req, res) => {
             billingAddress: billingAddress,
             delieveryAddress: shippingAddress,
             status: 'Pending',
-            created_at: new Date()
+            created_at: new Date(),
+            couponCode: couponCode || null,
+            discountAmount: discountAmount || 0
         }, { transaction: t });
 
         // Helper to process items
@@ -466,21 +471,54 @@ app.post('/api/order/createOrder', async (req, res) => {
             for (const [key, qty] of entries) {
                 if (qty > 0) {
                     const [productId, flavorId] = key.split('_');
+                    
+                    let unitPrice = 0;
+                    try {
+                        const pf = await db.ProductFlavor.findOne({
+                            where: { 
+                                product_id: parseInt(productId), 
+                                flavor_id: flavorId ? parseInt(flavorId) : 1
+                            }
+                        });
+                        if (pf) {
+                            if (itemsType === 'small') unitPrice = pf.price || 0;
+                            else if (itemsType === 'medium') unitPrice = pf.priceMedium || 0;
+                            else if (itemsType === 'large') unitPrice = pf.priceLarge || 0;
+                        }
+                    } catch (e) {
+                        console.error('Price lookup error:', e);
+                    }
+
                     await db.OrderItem.create({
                         order_id: order.id,
                         product_id: parseInt(productId),
                         flavor_id: flavorId ? parseInt(flavorId) : null,
                         size: itemsType,
                         quantity: qty,
-                        price: 0
+                        price: unitPrice,
+                        createdAt: new Date()
                     }, { transaction: t });
                 }
             }
         };
 
-        await processItems(cartItems, 'small');
-        await processItems(martItems, 'medium');
-        await processItems(lartItems, 'large');
+        if (req.body.detailedItems && Array.isArray(req.body.detailedItems)) {
+            for (const item of req.body.detailedItems) {
+                await db.OrderItem.create({
+                    order_id: order.id,
+                    product_id: item.productId,
+                    flavor_id: item.flavorId,
+                    size: item.size,
+                    quantity: item.quantity,
+                    price: item.price,
+                    createdAt: new Date()
+                }, { transaction: t });
+            }
+        } else {
+            await processItems(cartItems, 'small');
+            await processItems(martItems, 'medium');
+            await processItems(lartItems, 'large');
+        }
 
         // 2. Create Razorpay Order
         const options = {
@@ -574,9 +612,9 @@ app.post('/api/admin/tracking/checkpoints', async (req, res) => {
 
 // User Management Routes
 app.get('/api/user/users', authenticateToken, async (req, res) => {
+    const page = parseInt(req.query.page) || 0;
+    const size = parseInt(req.query.size) || 10;
     try {
-        const page = parseInt(req.query.page) || 0;
-        const size = parseInt(req.query.size) || 10;
         const search = req.query.search || '';
         const { Op } = db.Sequelize;
 
@@ -2200,6 +2238,289 @@ app.delete('/api/review/:id', authenticateToken, async (req, res) => {
 // Mount Sale Routes
 app.use('/api/sale', saleRoutes);
 
+// --------------- Dashboard KPI Range ---------------
+app.get('/api/admin/dashboard-kpis', async (req, res) => {
+    try {
+        const { Op } = db.Sequelize;
+
+        // 1. Total Revenue
+        const totalRevenueResult = await db.Order.sum('total');
+        const purchaseRevenue = totalRevenueResult || 0;
+
+        // 2. Total Purchases (Orders)
+        const totalOrders = await db.Order.count();
+
+        // 3. Total Users (registered)
+        const totalRegisteredUsers = await db.User.count();
+
+        // 4. Total Purchasers
+        let totalPurchasers = 0;
+        let firstTimePurchasers = 0;
+        
+        try {
+           const usersQuery = await db.sequelize.query('SELECT COUNT(DISTINCT user_id) as total_purchasers FROM "Orders" WHERE user_id IS NOT NULL');
+           totalPurchasers = parseInt(usersQuery[0][0].total_purchasers) || 0;
+           
+           const firstTimeQuery = await db.sequelize.query(`
+               SELECT COUNT(*) as first_time FROM (
+                   SELECT user_id FROM "Orders" WHERE user_id IS NOT NULL GROUP BY user_id HAVING COUNT(id) = 1
+               ) as sub
+           `);
+           firstTimePurchasers = parseInt(firstTimeQuery[0][0].first_time) || 0;
+           
+           if (totalPurchasers === 0) {
+              const guestQuery = await db.sequelize.query(`SELECT COUNT(DISTINCT customer->>'email') as total_purchasers FROM "Orders" WHERE customer->>'email' IS NOT NULL`);
+              totalPurchasers = parseInt(guestQuery[0][0].total_purchasers) || 0;
+              
+              const guestFirstTimeQuery = await db.sequelize.query(`
+                SELECT COUNT(*) as first_time FROM (
+                   SELECT customer->>'email' as email FROM "Orders" WHERE customer->>'email' IS NOT NULL GROUP BY customer->>'email' HAVING COUNT(id) = 1
+               ) as sub
+              `);
+              firstTimePurchasers = parseInt(guestFirstTimeQuery[0][0].first_time) || 0;
+           }
+        } catch (e) {
+           console.log("Error running raw queries for dashboard KPIs", e);
+        }
+
+        if (totalPurchasers === 0 && totalOrders > 0) {
+            totalPurchasers = totalOrders;
+            firstTimePurchasers = totalOrders;
+        }
+
+        const avgRevenuePerUser = totalPurchasers > 0 ? (purchaseRevenue / totalPurchasers) : 0;
+        const purchaserRate = totalRegisteredUsers > 0 ? ((totalPurchasers / totalRegisteredUsers) * 100) : 0;
+
+        res.json({
+            purchaseRevenue: purchaseRevenue,
+            ecommercePurchases: totalOrders,
+            purchaserRate: purchaserRate,
+            firstTimePurchasers: firstTimePurchasers,
+            totalPurchasers: totalPurchasers,
+            avgRevenuePerUser: avgRevenuePerUser
+        });
+    } catch (error) {
+        console.error('KPI error:', error);
+        res.status(500).json({ error: 'Failed to fetch dashboard KPIs' });
+    }
+});
+
+app.get('/api/admin/dashboard-discount-codes', async (req, res) => {
+    try {
+        const { Op } = db.Sequelize;
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        const orders = await db.Order.findAll({
+            where: {
+                createdAt: { [Op.gte]: oneWeekAgo },
+                couponCode: { [Op.ne]: null }
+            }
+        });
+
+        const discountStats = {};
+        orders.forEach(o => {
+            const code = o.couponCode;
+            if (!code) return;
+            if (!discountStats[code]) {
+                discountStats[code] = { code, uses: 0, revenue: 0 };
+            }
+            discountStats[code].uses += 1;
+            discountStats[code].revenue += (o.total || 0);
+        });
+
+        const sortedStats = Object.values(discountStats)
+            .sort((a, b) => b.uses - a.uses)
+            .slice(0, 5);
+
+        res.json(sortedStats);
+    } catch (error) {
+        console.error('Discount code KPI error:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/admin/dashboard-order-stats-week', async (req, res) => {
+    try {
+        const { Op } = db.Sequelize;
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+        const cancellationsThisWeek = await db.Order.count({
+            where: {
+                createdAt: { [Op.gte]: oneWeekAgo },
+                status: 'Cancelled'
+            }
+        });
+
+        const cancellationsLastWeek = await db.Order.count({
+            where: {
+                createdAt: { [Op.gte]: twoWeeksAgo, [Op.lt]: oneWeekAgo },
+                status: 'Cancelled'
+            }
+        });
+        
+        let cancelPercent = 0;
+        if (cancellationsLastWeek > 0) {
+            cancelPercent = ((cancellationsThisWeek - cancellationsLastWeek) / cancellationsLastWeek) * 100;
+        } else if (cancellationsThisWeek > 0) {
+            cancelPercent = 100;
+        }
+
+        const unfulfilledThisWeek = await db.Order.count({
+            where: {
+                createdAt: { [Op.gte]: oneWeekAgo },
+                status: { [Op.notIn]: ['Delivered', 'Cancelled', 'Shipped'] }
+            }
+        });
+
+        res.json({
+            cancellations: cancellationsThisWeek,
+            cancellationsPercentVsLastWeek: cancelPercent,
+            unfulfilled: unfulfilledThisWeek
+        });
+    } catch (error) {
+        console.error('Order stats KPI error:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/admin/dashboard-monthly-stats', async (req, res) => {
+    try {
+        const { Op } = db.Sequelize;
+        const now = new Date();
+        const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+
+        // Current Month Stats
+        const currentMonthRevenue = await db.Order.sum('total', {
+            where: { createdAt: { [Op.gte]: startOfCurrentMonth } }
+        }) || 0;
+        const currentMonthOrders = await db.Order.count({
+            where: { createdAt: { [Op.gte]: startOfCurrentMonth } }
+        });
+
+        // Last Month Stats
+        const lastMonthRevenue = await db.Order.sum('total', {
+            where: { createdAt: { [Op.gte]: startOfLastMonth, [Op.lte]: endOfLastMonth } }
+        }) || 0;
+        const lastMonthOrders = await db.Order.count({
+            where: { createdAt: { [Op.gte]: startOfLastMonth, [Op.lte]: endOfLastMonth } }
+        });
+
+        // Percent changes
+        const revChange = lastMonthRevenue > 0 ? ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 : (currentMonthRevenue > 0 ? 100 : 0);
+        const ordChange = lastMonthOrders > 0 ? ((currentMonthOrders - lastMonthOrders) / lastMonthOrders) * 100 : (currentMonthOrders > 0 ? 100 : 0);
+
+        res.json({
+            revenue: currentMonthRevenue,
+            revenuePercent: revChange,
+            orders: currentMonthOrders,
+            ordersPercent: ordChange
+        });
+    } catch (error) {
+        console.error('Monthly stats KPI error:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
+app.get('/api/admin/dashboard-product-audience', async (req, res) => {
+    try {
+        const { Op } = db.Sequelize;
+
+        // 1. Discover Table and Column names dynamically
+        const columns = await db.sequelize.query(`
+            SELECT table_name, column_name 
+            FROM information_schema.columns 
+            WHERE table_schema = 'public' 
+            AND (table_name ILIKE '%OrderItems%' OR table_name ILIKE '%order_items%')
+        `, { type: db.sequelize.QueryTypes.SELECT });
+
+        if (columns.length === 0) {
+            console.warn('⚠️ No OrderItems table found in information_schema');
+            return res.json({ topProducts: [], bestsellers: [], locations: [] });
+        }
+
+        const oiTable = columns[0].table_name;
+        // Find which column represents the product ID (usually product_id or productId)
+        const productIdCol = columns.find(c => c.column_name.toLowerCase().includes('product'))?.column_name || 'product_id';
+        const quantityCol = columns.find(c => c.column_name.toLowerCase().includes('quantity'))?.column_name || 'quantity';
+
+        console.log(`📊 Analytics using table: "${oiTable}", product column: "${productIdCol}", qty column: "${quantityCol}"`);
+
+        // 2. Top Products (All Time) - Robust Query
+        const topProducts = await db.sequelize.query(`
+            SELECT 
+                p.id, 
+                p.title as name, 
+                p.img, 
+                c.title as category,
+                SUM(COALESCE(oi."${quantityCol}", 0)) as sales,
+                (SELECT MIN(pf.price) FROM "ProductFlavors" pf WHERE pf.product_id = p.id) as price
+            FROM "Products" p
+            INNER JOIN "${oiTable}" oi ON p.id = oi."${productIdCol}"
+            LEFT JOIN "Categories" c ON c.id = p.category_id
+            GROUP BY p.id, p.title, p.img, c.title
+            ORDER BY sales DESC
+            LIMIT 5
+        `, { type: db.sequelize.QueryTypes.SELECT });
+
+        // 3. Bestsellers
+        const bestsellers = await db.sequelize.query(`
+            SELECT 
+                p.id, 
+                p.title as name, 
+                p.img,
+                c.title as category,
+                SUM(COALESCE(oi."${quantityCol}", 0)) as sales
+            FROM "${oiTable}" oi
+            INNER JOIN "Products" p ON p.id = oi."${productIdCol}"
+            LEFT JOIN "Categories" c ON c.id = p.category_id
+            GROUP BY p.id, p.title, p.img, c.title
+            ORDER BY sales DESC
+            LIMIT 5
+        `, { type: db.sequelize.QueryTypes.SELECT });
+
+        // 4. Locations
+        const locations = await db.sequelize.query(`
+            SELECT 
+                COALESCE("billingAddress"->>'city', "billingAddress"->>'City', 'Other') as name, 
+                count(*) as count 
+            FROM "Orders" 
+            GROUP BY name 
+            ORDER BY count DESC 
+            LIMIT 5
+        `, { type: db.sequelize.QueryTypes.SELECT });
+
+        res.json({
+            topProducts: topProducts.map(p => ({
+                id: p.id,
+                name: p.name,
+                image: p.img,
+                category: p.category || 'General',
+                sales: parseInt(p.sales) || 0,
+                price: parseFloat(p.price) || 0
+            })),
+            bestsellers: bestsellers.map(p => ({
+                id: p.id,
+                name: p.name,
+                image: p.img,
+                category: p.category || 'General',
+                sales: parseInt(p.sales) || 0
+            })),
+            locations: locations.map(l => ({
+                name: l.name,
+                count: parseInt(l.count) || 0
+            }))
+        });
+    } catch (error) {
+        console.error('❌ Analytics API Crash:', error);
+        res.status(500).json({ error: 'Failed' });
+    }
+});
+
 // --------------- 404 Handler ---------------
 app.use((req, res) => {
     res.status(404).json({ success: false, message: 'Route not found: ' + req.originalUrl });
@@ -2278,7 +2599,9 @@ const startServer = async () => {
                             status VARCHAR(255) DEFAULT 'pending',
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             "createdAt" TIMESTAMP,
-                            "updatedAt" TIMESTAMP
+                            "updatedAt" TIMESTAMP,
+                            "couponCode" VARCHAR(255),
+                            "discountAmount" FLOAT
                         );
                     `);
                     await db.sequelize.query(`
@@ -2294,6 +2617,27 @@ const startServer = async () => {
                         );
                     `);
                     console.log('✅ Orders and OrderItems schema ensured');
+
+                    // Check for coupon fields explicitly since they are newly added
+                    try {
+                        await db.sequelize.query(`
+                            DO $$ 
+                            BEGIN 
+                                BEGIN
+                                    ALTER TABLE "Orders" ADD COLUMN "couponCode" VARCHAR(255);
+                                EXCEPTION
+                                    WHEN duplicate_column THEN RAISE NOTICE 'column couponCode already exists';
+                                END;
+                                BEGIN
+                                    ALTER TABLE "Orders" ADD COLUMN "discountAmount" FLOAT;
+                                EXCEPTION
+                                    WHEN duplicate_column THEN RAISE NOTICE 'column discountAmount already exists';
+                                END;
+                            END $$;
+                        `);
+                    } catch (e) {
+                    }
+                    console.log('✅ Orders schema updated with discount fields');
                 } catch (schemaErr) {
                     console.error('⚠️ Schema ensure minor error:', schemaErr.message);
                 }

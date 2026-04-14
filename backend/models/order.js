@@ -29,7 +29,9 @@ module.exports = (sequelize, DataTypes) => {
         customer: DataTypes.JSON,
         billingAddress: DataTypes.JSON,
         delieveryAddress: DataTypes.JSON,
-        created_at: DataTypes.DATE
+        created_at: DataTypes.DATE,
+        couponCode: DataTypes.STRING,
+        discountAmount: DataTypes.FLOAT
     }, {
         sequelize,
         modelName: 'Order',

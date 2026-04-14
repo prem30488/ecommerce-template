@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import SalesValueChart from './component/SalesValueChart';
 import { getCurrentDate } from '../../util/util';
 import WeeklySalesGraph from './component/WeeklySalesGraph';
@@ -19,9 +19,31 @@ import {
 
 import { FaChartLine, FaShoppingCart, FaPercentage, FaUserPlus, FaUsers, FaCoins } from 'react-icons/fa';
 import { MdOutlineDateRange } from 'react-icons/md';
+import { fetchDashboardKPIs } from '../../util/APIUtils';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  const [kpiData, setKpiData] = useState({
+    purchaseRevenue: 0,
+    ecommercePurchases: 0,
+    purchaserRate: 0,
+    firstTimePurchasers: 0,
+    totalPurchasers: 0,
+    avgRevenuePerUser: 0
+  });
+
+  useEffect(() => {
+    fetchDashboardKPIs()
+      .then(res => setKpiData(res || {}))
+      .catch(err => console.error("Error fetching KPIs:", err));
+  }, []);
+
+  const formatNumber = (num, isCurrency=false) => {
+    const val = Number(num) || 0;
+    if (val >= 1000000) return (val / 1000000).toFixed(1) + 'm';
+    if (val >= 1000) return (val / 1000).toFixed(1) + 'k';
+    return isCurrency ? val.toFixed(2) : val.toString();
+  };
   return (
     <div className="premium-dashboard">
       <div className="dashboard-header">
@@ -42,42 +64,42 @@ const Dashboard = () => {
             <span className="kpi-title">Purchase Revenue</span>
             <div className="kpi-icon-wrapper"><FaChartLine /></div>
           </div>
-          <h3 className="kpi-value">164.4k</h3>
+          <h3 className="kpi-value">{formatNumber(kpiData.purchaseRevenue, true)}</h3>
         </div>
         <div className="kpi-card kpi-orders">
           <div className="kpi-card-header">
             <span className="kpi-title">E-commerce Purchases</span>
             <div className="kpi-icon-wrapper"><FaShoppingCart /></div>
           </div>
-          <h3 className="kpi-value">3.0k</h3>
+          <h3 className="kpi-value">{formatNumber(kpiData.ecommercePurchases)}</h3>
         </div>
         <div className="kpi-card kpi-conversion">
           <div className="kpi-card-header">
             <span className="kpi-title">Purchaser Rate</span>
             <div className="kpi-icon-wrapper"><FaPercentage /></div>
           </div>
-          <h3 className="kpi-value">2.6%</h3>
+          <h3 className="kpi-value">{Number(kpiData.purchaserRate || 0).toFixed(1)}%</h3>
         </div>
         <div className="kpi-card kpi-customers">
           <div className="kpi-card-header">
             <span className="kpi-title">First Time Purchasers</span>
             <div className="kpi-icon-wrapper"><FaUserPlus /></div>
           </div>
-          <h3 className="kpi-value">2.0k</h3>
+          <h3 className="kpi-value">{formatNumber(kpiData.firstTimePurchasers)}</h3>
         </div>
         <div className="kpi-card kpi-customers">
           <div className="kpi-card-header">
             <span className="kpi-title">Total Purchasers</span>
             <div className="kpi-icon-wrapper"><FaUsers /></div>
           </div>
-          <h3 className="kpi-value">2.5k</h3>
+          <h3 className="kpi-value">{formatNumber(kpiData.totalPurchasers)}</h3>
         </div>
         <div className="kpi-card kpi-revenue">
           <div className="kpi-card-header">
             <span className="kpi-title">Avg Revenue / User</span>
             <div className="kpi-icon-wrapper"><FaCoins /></div>
           </div>
-          <h3 className="kpi-value">1.7</h3>
+          <h3 className="kpi-value">{Number(kpiData.avgRevenuePerUser || 0).toFixed(1)}</h3>
         </div>
       </div>
 

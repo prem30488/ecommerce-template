@@ -125,6 +125,8 @@ export const OrderTable = ({ }) => {
                     <th>ID</th>
                     <th>Date</th>
                     <th>Total</th>
+                    <th>Coupon</th>
+                    <th>Discount</th>
                     <th>Payment</th>
                     <th>Status</th>
                     <th>Billing Address</th>
@@ -138,7 +140,9 @@ export const OrderTable = ({ }) => {
                   <tr>
                     <td>#{order.id}</td>
                     <td>{new Date(order.createdAt || order.created_at).toLocaleDateString()}</td>
-                    <td>INR {order.total}</td>
+                    <td>INR {Number(order.total || 0).toFixed(2)}</td>
+                    <td className="font-semibold" style={{color: '#6366f1'}}>{order.couponCode || '-'}</td>
+                    <td className="font-semibold" style={{color: '#10b981'}}>{order.discountAmount > 0 ? `₹${Number(order.discountAmount).toFixed(2)}` : '-'}</td>
                     <td>{order.paymentType || '-'}</td>
                     <td>
                       <select
@@ -150,6 +154,7 @@ export const OrderTable = ({ }) => {
                         <option value="Processing">Processing</option>
                         <option value="Shipped">Shipped</option>
                         <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
                       </select>
                     </td>
                     <td>
@@ -180,21 +185,31 @@ export const OrderTable = ({ }) => {
                     <th>Size</th>
                     <th>Flavor</th>
                     <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                    <th>Time</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(order.lineItems || []).map((item) => (
                     <tr key={item.id}>
                       <td>#{item.id}</td>
-                      <td>{item.product?.title || 'Unknown Product'}</td>
-                      <td>{item.size || '-'} Pack</td>
+                      <td>{item.product?.title || 'Product #' + item.productId}</td>
+                      <td>{(item.size || '-').charAt(0).toUpperCase() + (item.size || '').slice(1)} Pack</td>
                       <td>{item.flavor || '-'}</td>
                       <td>{item.quantity}</td>
+                      <td className="font-semibold">₹{Number(item.price || 0).toLocaleString()}</td>
+                      <td className="font-semibold" style={{color: 'var(--primary-color)'}}>
+                        ₹{Number((item.price || 0) * (item.quantity || 0)).toLocaleString()}
+                      </td>
+                      <td style={{fontSize: '11px', color: '#666'}}>
+                        {item.createdAt ? new Date(item.createdAt).toLocaleString([], {hour: '2-digit', minute:'2-digit', day: '2-digit', month: 'short'}) : '-'}
+                      </td>
                     </tr>
                   ))}
                   {(!order.lineItems || order.lineItems.length === 0) && (
                     <tr>
-                      <td colSpan="5" style={{ textAlign: 'center' }}>No line items available</td>
+                      <td colSpan="8" style={{ textAlign: 'center' }}>No line items available</td>
                     </tr>
                   )}
                 </tbody>
