@@ -166,7 +166,10 @@ const CustomerManagement = () => {
                                                         <button
                                                             className="view-invoice-btn"
                                                             style={{ padding: '6px 12px', fontSize: '0.8rem' }}
-                                                            onClick={() => window.open(`${API_BASE_URL}/api/order/printInvoice/${customer.lastOrderId}`, '_blank')}
+                                                            onClick={() => {
+                                                                const token = localStorage.getItem('accessToken');
+                                                                window.open(`${API_BASE_URL}/api/order/printInvoice/${customer.lastOrderId}?token=${token}`, '_blank');
+                                                            }}
                                                             title="View Last Invoice PDF"
                                                         >
                                                             <FaFilePdf size={14} /> PDF

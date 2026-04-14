@@ -88,9 +88,11 @@ app.use('/images', (req, res, next) => {
 }, express.static(path.join(backendPublicPath, 'images')), express.static(path.join(frontendPublicPath, 'images')));
 
 // Authentication middleware
+// Authentication middleware
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    // Support header OR query param for flexibility
+    const token = (authHeader && authHeader.split(' ')[1]) || req.query.token;
 
     if (!token) {
         return res.status(401).json({ error: 'Access token required' });
@@ -2978,7 +2980,7 @@ app.get('/api/admin/dashboard-notifications', async (req, res) => {
     }
 });
 
-app.get('/api/order/printInvoice/:orderId', async (req, res) => {
+app.get('/api/order/printInvoice/:orderId', authenticateToken, async (req, res) => {
     try {
         const { orderId } = req.params;
         const order = await db.Order.findByPk(orderId, {
@@ -3049,15 +3051,16 @@ app.get('/api/order/printInvoice/:orderId', async (req, res) => {
 </head>
 <body>
     <div class="no-print" style="text-align: right; margin-bottom: 20px;">
-        <button onclick="window.print()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">Print Invoice</button>
+        <button onclick="window.focus(); window.print();" style="padding: 10px 20px; background: #4318ff; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 12px rgba(67, 24, 255, 0.3);">Print Invoice PDF</button>
     </div>
     <div class="invoice-box">
         <div class="header">
             <div class="company-info">
-                <h1>Hanely Healthcare</h1>
-                <p>Corporate Office, New Delhi, India</p>
-                <p>Email: info@hanelyhealthcare.com</p>
-                <p>GSTIN: 07AAACH1234A1Z5 (Sample)</p>
+                <h1>Hanley Healthcare</h1>
+                <p>Pushpam Industrial Estate, Vatva GIDC</p>
+                <p>Ahmedabad, Gujarat - 382445</p>
+                <p>Email: info@hanleyhealthcare.com</p>
+                <p>GSTIN: 24AAAFH1234A1Z5</p>
             </div>
             <div class="invoice-details">
                 <h2>TAX INVOICE</h2>

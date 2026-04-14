@@ -5,6 +5,7 @@ import Alert from 'react-s-alert';
 import * as XLSX from 'xlsx';
 import { AdminInvoice } from './AdminInvoice';
 import { formatCurrency, formatDate } from '../../../../util/regionalSettings';
+import { API_BASE_URL } from '../../../../constants';
 import './OrderTable.css';
 export const OrderTable = ({ }) => {
 
@@ -100,7 +101,9 @@ export const OrderTable = ({ }) => {
   };
 
   const generatePDF = (order) => {
-    setPrintingOrder(order);
+    const token = localStorage.getItem('accessToken'); 
+    const printUrl = `${API_BASE_URL}/api/order/printInvoice/${order.id}?token=${token}`;
+    window.open(printUrl, '_blank');
   };
 
   const handlePdfGenerated = () => {
