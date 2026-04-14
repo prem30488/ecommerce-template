@@ -68,7 +68,7 @@ export default function Footer() {
               <ul className="footer-links">
                 <li><a href="/advancedSearch">Search</a></li>
                 <li><a href="/">Home</a></li>
-                <li><a href="/productMen">All Products</a></li>
+                <li><a href="/products">All Products</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="/contact">Contact</a></li>
                 <li><a href="/your-wishlist">Wishlist</a></li>

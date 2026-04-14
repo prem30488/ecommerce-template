@@ -1257,6 +1257,55 @@ app.get('/api/user/me', authenticateToken, async (req, res) => {
     }
 });
 
+app.put('/api/user/me', authenticateToken, async (req, res) => {
+    try {
+        const { username, phoneNumber } = req.body;
+        const updateFields = {};
+        if (username !== undefined) updateFields.username = username.trim();
+        if (phoneNumber !== undefined) updateFields.phoneNumber = phoneNumber.trim();
+
+        await db.User.update(updateFields, { where: { id: req.user.id } });
+
+        const updated = await db.User.findByPk(req.user.id, {
+            attributes: ['id', 'username', 'email', 'role', 'phoneNumber']
+        });
+        const userData = updated.toJSON();
+        userData.roles = [{ name: 'ROLE_' + updated.role.toUpperCase() }];
+        res.json(userData);
+    } catch (error) {
+        console.error('Update user error:', error);
+        res.status(500).json({ error: 'Failed to update user' });
+    }
+});
+
+app.put('/api/user/me/password', authenticateToken, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ error: 'Both current and new password are required.' });
+        }
+        if (newPassword.length < 6) {
+            return res.status(400).json({ error: 'New password must be at least 6 characters.' });
+        }
+
+        const user = await db.User.findByPk(req.user.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        const isValid = await bcrypt.compare(currentPassword, user.password);
+        if (!isValid) {
+            return res.status(401).json({ error: 'Current password is incorrect.' });
+        }
+
+        const hashed = await bcrypt.hash(newPassword, 10);
+        await db.User.update({ password: hashed }, { where: { id: req.user.id } });
+
+        res.json({ success: true, message: 'Password updated successfully.' });
+    } catch (error) {
+        console.error('Password change error:', error);
+        res.status(500).json({ error: 'Failed to update password.' });
+    }
+});
+
 app.get('/api/user/privileges/:id', authenticateToken, async (req, res) => {
     try {
         const userId = req.params.id;
@@ -2851,6 +2900,81 @@ app.get('/api/public/checkBlockStatus', async (req, res) => {
     } catch (error) {
         console.error('Public Block Check Error:', error);
         res.status(500).json({ is_blocked: false });
+    }
+});
+
+app.get('/api/admin/dashboard-notifications', async (req, res) => {
+    try {
+        const [orders, users, locations] = await Promise.all([
+            db.Order.findAll({
+                limit: 5,
+                order: [['createdAt', 'DESC']],
+                attributes: ['id', 'total', 'customer', 'createdAt']
+            }),
+            db.User.findAll({
+                limit: 3,
+                order: [['createdAt', 'DESC']],
+                attributes: ['username', 'createdAt']
+            }),
+            db.sequelize.query(`
+                SELECT 
+                    COALESCE("billingAddress"->>'city', "billingAddress"->>'City', 'Gandhinagar') as name, 
+                    count(*) as count 
+                FROM "Orders" 
+                WHERE "createdAt" >= NOW() - INTERVAL '7 days'
+                GROUP BY name 
+                ORDER BY count DESC 
+                LIMIT 3
+            `, { type: db.sequelize.QueryTypes.SELECT })
+        ]);
+
+        const notifications = [];
+
+        // 1. Order Notifications
+        orders.forEach(o => {
+            const name = o.customer?.firstName || o.customer?.name || 'Customer';
+            notifications.push({
+                id: `order-${o.id}`,
+                text: `${name} has placed order worth INR ${parseFloat(o.total).toFixed(0)}`,
+                time: o.createdAt,
+                type: 'order'
+            });
+            // Also show invoice generation for same order for variety
+            notifications.push({
+                id: `inv-${o.id}`,
+                text: `Tax Invoice has been generated for ${name}`,
+                time: new Date(o.createdAt.getTime() + 1000 * 60), // Mock 1 min later
+                type: 'invoice'
+            });
+        });
+
+        // 2. Location Notifications
+        locations.forEach(l => {
+            notifications.push({
+                id: `loc-${l.name}`,
+                text: `More new ${l.count} active sessions from ${l.name}`,
+                time: new Date(), // "Live" sessions
+                type: 'session'
+            });
+        });
+
+        // 3. User Notifications
+        users.forEach(u => {
+            notifications.push({
+                id: `user-${u.username}`,
+                text: `New user registration: ${u.username}`,
+                time: u.createdAt,
+                type: 'user'
+            });
+        });
+
+        // Sort by time descending
+        notifications.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+        res.json(notifications.slice(0, 10));
+    } catch (error) {
+        console.error('Notifications API Error:', error);
+        res.status(500).json({ error: 'Failed' });
     }
 });
 

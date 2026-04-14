@@ -26,6 +26,7 @@ import { FaChartLine, FaShoppingCart, FaPercentage, FaUserPlus, FaUsers, FaCoins
 import { LuTrendingDown } from "react-icons/lu";
 import { MdOutlineDateRange } from 'react-icons/md';
 import { fetchDashboardKPIs } from '../../util/APIUtils';
+import { formatCurrency, formatDate } from '../../util/regionalSettings';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -45,12 +46,18 @@ const Dashboard = () => {
       .catch(err => console.error("Error fetching KPIs:", err));
   }, []);
 
-  const formatNumber = (num, isCurrency=false) => {
+  const formatNumber = (num, isCurrency = false) => {
     const val = Number(num) || 0;
+    if (isCurrency) {
+      if (val >= 1000000) return formatCurrency(val / 1000000).replace(/(\d+(\.\d+)?)/, '$1m').replace('.00m', 'm');
+      if (val >= 1000) return formatCurrency(val / 1000).replace(/(\d+(\.\d+)?)/, '$1k').replace('.00k', 'k');
+      return formatCurrency(val);
+    }
     if (val >= 1000000) return (val / 1000000).toFixed(1) + 'm';
     if (val >= 1000) return (val / 1000).toFixed(1) + 'k';
-    return isCurrency ? val.toFixed(2) : val.toString();
+    return val.toLocaleString();
   };
+
   return (
     <div className="premium-dashboard">
       <div className="dashboard-header">
@@ -60,7 +67,7 @@ const Dashboard = () => {
         </div>
         <div className="dashboard-date">
           <MdOutlineDateRange size={20} color="#6366f1" />
-          {getCurrentDate('-')}
+          {formatDate(new Date())}
         </div>
       </div>
 
@@ -120,7 +127,7 @@ const Dashboard = () => {
             <span className="kpi-title">Avg Revenue / User</span>
             <div className="kpi-icon-wrapper"><FaCoins /></div>
           </div>
-          <h3 className="kpi-value">{Number(kpiData.avgRevenuePerUser || 0).toFixed(1)}</h3>
+          <h3 className="kpi-value">{formatNumber(kpiData.avgRevenuePerUser, true)}</h3>
         </div>
       </div>
 

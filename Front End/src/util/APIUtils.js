@@ -35,8 +35,21 @@ export function getCurrentUser() {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");
     }
-
     return api.get("/api/user/me");
+}
+
+export function updateUserProfile(data) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put("/api/user/me", data);
+}
+
+export function changePassword(data) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put("/api/user/me/password", data);
 }
 
 export function getPrivileges(id) {
@@ -808,4 +821,11 @@ export function toggleBlockUser(email) {
         return Promise.reject("No access token set.");
     }
     return api.post("/api/admin/toggleBlockUser", { email });
+}
+
+export function fetchDashboardNotifications() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/dashboard-notifications");
 }

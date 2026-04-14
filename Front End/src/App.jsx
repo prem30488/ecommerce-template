@@ -52,6 +52,9 @@ import SalesLandingPage from './pages/SalesLandingPage';
 import PremiumAllProducts from './pages/PremiumAllProducts';
 
 import TaxInvoice from "./pages/checkout/TaxInvoice";
+import Settings from "./pages/admin/Settings";
+import AdminNotifications from "./pages/admin/AdminNotifications";
+import AdminLayout from './pages/admin/component/AdminLayout';
 
 
 import RefundPolicy from './pages/RefundPolicy';
@@ -162,9 +165,9 @@ class App extends Component {
 				<ShopContextProvider>
 					<WishlistContextProvider>
 						<SEO />
-						{this.state.authenticated ? <NavbarLoggedIn /> : <NavbarMain />}
+						{(!this.state.authenticated && !window.location.pathname.includes('Management') && window.location.pathname !== '/dashboard') && <NavbarMain />}
 						<Routes>
-							<Route path="/" element={this.state.authenticated ? <Dashboard /> : <Shop />} />
+							<Route path="/" element={this.state.authenticated ? <AdminLayout><Dashboard /></AdminLayout> : <Shop />} />
 							<Route path="/about" element={<About />} />
 							<Route path="/contact" element={<Contact />} />
 							<Route path="/productMen" element={<Product />} />
@@ -204,22 +207,24 @@ class App extends Component {
 							{/*  ////////////////////////////////////////////// Admin Pages /////////////////////////////////////////////*/}
 
 							<Route exact path="/SignIn" element={<SignIn />} />
-							<Route exact path="/dashboard" element={<Dashboard />} />
-							<Route exact path="/userManagement" element={<UserManagementPage />} />
-							<Route exact path="/customerManagement" element={<CustomerManagement />} />
-							<Route exact path="/categoryManagement" element={<CategoryManagementPage />} />
-							<Route exact path="/productManagement" element={<ProductManagementPage />} />
-							<Route exact path="/formManagement" element={<FormManagementPage />} />
-							<Route exact path="/testimonialManagement" element={<TestimonialManagementPage />} />
-							<Route exact path="/couponManagement" element={<CouponManagementPage />} />
-							<Route exact path="/orderManagement" element={<OrderManagementPage />} />
-							<Route exact path="/sliderManagement" element={<SliderManagementPage />} />
-							<Route exact path="/leadershipManagement" element={<LeadershipManagementPage />} />
-							<Route exact path="/flavorManagement" element={<FlavorManagementPage />} />
+							<Route exact path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />
+							<Route exact path="/userManagement" element={<AdminLayout><UserManagementPage /></AdminLayout>} />
+							<Route exact path="/customerManagement" element={<AdminLayout><CustomerManagement /></AdminLayout>} />
+							<Route exact path="/categoryManagement" element={<AdminLayout><CategoryManagementPage /></AdminLayout>} />
+							<Route exact path="/productManagement" element={<AdminLayout><ProductManagementPage /></AdminLayout>} />
+							<Route exact path="/formManagement" element={<AdminLayout><FormManagementPage /></AdminLayout>} />
+							<Route exact path="/testimonialManagement" element={<AdminLayout><TestimonialManagementPage /></AdminLayout>} />
+							<Route exact path="/couponManagement" element={<AdminLayout><CouponManagementPage /></AdminLayout>} />
+							<Route exact path="/orderManagement" element={<AdminLayout><OrderManagementPage /></AdminLayout>} />
+							<Route exact path="/sliderManagement" element={<AdminLayout><SliderManagementPage /></AdminLayout>} />
+							<Route exact path="/leadershipManagement" element={<AdminLayout><LeadershipManagementPage /></AdminLayout>} />
+							<Route exact path="/flavorManagement" element={<AdminLayout><FlavorManagementPage /></AdminLayout>} />
 
-							<Route exact path="/faqManagement" element={<FAQManager />} />
-							<Route exact path="/reviewManagement" element={<ReviewManager />} />
-							<Route exact path="/saleManagement" element={<SaleManagementPage />} />
+							<Route exact path="/faqManagement" element={<AdminLayout><FAQManager /></AdminLayout>} />
+							<Route exact path="/reviewManagement" element={<AdminLayout><ReviewManager /></AdminLayout>} />
+							<Route exact path="/saleManagement" element={<AdminLayout><SaleManagementPage /></AdminLayout>} />
+							<Route exact path="/settings" element={<AdminLayout><Settings /></AdminLayout>} />
+							<Route exact path="/adminNotifications" element={<AdminLayout><AdminNotifications /></AdminLayout>} />
 
 							{/* Wishlist Routes */}
 							<Route path="/wishlist" element={<Wishlist />} />
@@ -229,7 +234,7 @@ class App extends Component {
 						</Routes>
 					</WishlistContextProvider>
 				</ShopContextProvider>
-				<Footer />
+				{!window.location.pathname.includes('Management') && window.location.pathname !== '/dashboard' && <Footer />}
 				<Alert stack={{ limit: 3 }}
 					timeout={3000}
 					position='top-right' effect='slide' offset={65} />

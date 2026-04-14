@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaCircle } from 'react-icons/fa';
 import { fetchOrders } from '../../../util/APIUtils';
+import { formatCurrency } from '../../../util/regionalSettings';
 import { Link } from 'react-router-dom';
 
 const getStatusColor = (status) => {
@@ -48,7 +49,7 @@ const RecentOrders = () => {
                 <td className="font-semibold">#{order.id}</td>
                 <td>{order.customer?.name || 'Guest'}</td>
                 <td className="text-muted">{new Date(order.createdAt || order.created_at).toLocaleDateString()}</td>
-                <td className="font-semibold">INR {Number(order.total || 0).toFixed(2)}</td>
+                <td className="font-semibold">{formatCurrency(order.total)}</td>
                 <td>
                   <span className="status-badge" style={{ color: getStatusColor(order.status), backgroundColor: `${getStatusColor(order.status)}15` }}>
                     <FaCircle size={8} style={{ marginRight: '6px' }} />

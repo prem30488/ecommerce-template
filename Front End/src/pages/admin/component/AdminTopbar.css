@@ -1,0 +1,417 @@
+.admin-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 15px;
+    margin: 15px 30px;
+    border-radius: 20px;
+    z-index: 900;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.topbar-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.breadcrumb-path {
+    color: #707ebe;
+}
+
+.breadcrumb-sep {
+    color: #707ebe;
+}
+
+.breadcrumb-current {
+    color: #1b2559;
+    font-weight: 500;
+}
+
+.topbar-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1b2559;
+    margin: 0;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 15px;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.topbar-search {
+    display: flex;
+    align-items: center;
+    background: #f4f7fe;
+    padding: 8px 15px;
+    border-radius: 20px;
+    gap: 8px;
+    width: 200px;
+}
+
+.search-icon {
+    color: #1b2559;
+    font-size: 20px;
+}
+
+.topbar-search input {
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 14px;
+    color: #1b2559;
+    width: 100%;
+}
+
+.new-order-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #01b574;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.new-order-btn:hover {
+    background: #00a369;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: #a3aed0;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 4px;
+    border-radius: 8px;
+    transition: color 0.2s;
+}
+
+.action-btn:hover {
+    color: #1b2559;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+.profile-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.user-initials-btn {
+    width: 35px;
+    height: 35px;
+    background: #e1e7ff;
+    color: #4318ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.user-initials-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    width: 240px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    z-index: 1001;
+    overflow: hidden;
+    padding: 15px 0;
+    animation: slideUp 0.3s ease;
+}
+
+.profile-header {
+    padding: 0 20px 15px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.profile-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1b2559;
+}
+
+.profile-email {
+    font-size: 12px;
+    color: #a3aed0;
+    margin-top: 2px;
+}
+
+.profile-menu {
+    padding-top: 8px;
+}
+
+.profile-menu-item {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #1b2559;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.profile-menu-item:hover {
+    background: rgba(244, 247, 254, 0.8);
+}
+
+.profile-menu-item.logout {
+    color: #ef4444;
+}
+
+.profile-menu-item.logout:hover {
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.profile-divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 8px 0;
+}
+
+.menu-icon {
+    font-size: 20px;
+    color: #a3aed0;
+}
+
+.profile-menu-item:hover .menu-icon {
+    color: inherit;
+}
+
+/* Dark Mode Support for Profile Dropdown */
+.dark-theme .user-initials-btn {
+    background: #111c44;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .profile-dropdown {
+    background: rgba(17, 28, 68, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .profile-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .profile-name,
+.dark-theme .profile-menu-item {
+    color: #ffffff;
+}
+
+.dark-theme .profile-menu-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dark-theme .profile-divider {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 1200px) {
+    .topbar-search {
+        width: 151px;
+    }
+}
+
+.notifications-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.notifications-dropdown {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
+    width: 320px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    z-index: 1001;
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.notifications-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notifications-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1b2559;
+}
+
+.mark-read {
+    font-size: 11px;
+    color: #01b574;
+    font-weight: 600;
+}
+
+.notifications-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background: rgba(244, 247, 254, 0.5);
+}
+
+.notif-text {
+    margin: 0 0 4px 0;
+    font-size: 13px;
+    color: #1b2559;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.notif-time {
+    font-size: 11px;
+    color: #a3aed0;
+}
+
+.no-notifications {
+    padding: 20px;
+    text-align: center;
+    color: #a3aed0;
+    font-size: 14px;
+}
+
+/* Notification Types Coloring */
+.notification-item.order { border-left: 4px solid #01b574; }
+.notification-item.invoice { border-left: 4px solid #4318ff; }
+.notification-item.session { border-left: 4px solid #ffb547; }
+.notification-item.user { border-left: 4px solid #ef4444; }
+
+/* Dark Mode Overrides */
+.dark-theme .admin-topbar {
+    background: rgba(11, 20, 55, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .breadcrumb-path,
+.dark-theme .breadcrumb-sep {
+    color: #a3aed0;
+}
+
+.dark-theme .breadcrumb-current,
+.dark-theme .topbar-title {
+    color: #ffffff;
+}
+
+.dark-theme .topbar-right {
+    background: #111c44;
+}
+
+.dark-theme .notifications-dropdown {
+    background: rgba(17, 28, 68, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.dark-theme .notifications-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .notifications-header h3,
+.dark-theme .notif-text {
+    color: #ffffff;
+}
+
+.dark-theme .notification-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dark-theme .notification-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+@media (max-width: 768px) {
+    .admin-topbar {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+        margin: 10px;
+        padding: 15px;
+    }
+    .topbar-right {
+        justify-content: space-between;
+    }
+}

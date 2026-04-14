@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { fetchDashboardGoals, updateDashboardGoals } from '../../../util/APIUtils';
+import { getRegionalSettings, formatCurrency } from '../../../util/regionalSettings';
 import Alert from 'react-s-alert';
 import { FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 
 const RevenueTargets = ({ kpiData }) => {
+  const settings = getRegionalSettings();
   const [goals, setGoals] = useState({
     revenueTarget: 100, // Default placeholders
     ordersTarget: 10,
@@ -46,7 +48,7 @@ const RevenueTargets = ({ kpiData }) => {
   const ordersProgress = calculateProgress(kpiData.ecommercePurchases, goals.ordersTarget);
   const customersProgress = calculateProgress(kpiData.firstTimePurchasers, goals.customersTarget);
 
-  const ProgressBar = ({ label, current, target, progress, color, unit = "" }) => (
+  const ProgressBar = ({ label, current, target, progress, color, isCurrency = false }) => (
     <div style={{ marginBottom: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'flex-end' }}>
         <span style={{ fontWeight: '700', color: '#1E293B', fontSize: '1rem' }}>{label}</span>
@@ -62,8 +64,8 @@ const RevenueTargets = ({ kpiData }) => {
         }}></div>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#64748B', fontWeight: '500' }}>
-        <span>{unit}{Number(current || 0).toLocaleString()}</span>
-        <span>Target: {unit}{Number(target || 0).toLocaleString()}</span>
+        <span>{isCurrency ? formatCurrency(current) : Number(current || 0).toLocaleString()}</span>
+        <span>Target: {isCurrency ? formatCurrency(target) : Number(target || 0).toLocaleString()}</span>
       </div>
     </div>
   );
@@ -100,7 +102,9 @@ const RevenueTargets = ({ kpiData }) => {
       {isEditing ? (
         <div style={{ padding: '10px 0' }}>
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '5px', color: '#475569' }}>Revenue Target (INR)</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', marginBottom: '5px', color: '#475569' }}>
+               Revenue Target ({settings.currency})
+            </label>
             <input 
               type="number" 
               value={formData.revenueTarget} 
@@ -135,7 +139,7 @@ const RevenueTargets = ({ kpiData }) => {
             target={goals.revenueTarget} 
             progress={revenueProgress} 
             color="#C05621"
-            unit="₹"
+            isCurrency={true}
           />
           <ProgressBar 
             label="Orders" 

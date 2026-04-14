@@ -4,6 +4,7 @@ import { fetchOrders, updateOrderStatus } from "../../../../util/APIUtils";
 import Alert from 'react-s-alert';
 import * as XLSX from 'xlsx';
 import { AdminInvoice } from './AdminInvoice';
+import { formatCurrency, formatDate } from '../../../../util/regionalSettings';
 import './OrderTable.css';
 export const OrderTable = ({ }) => {
 
@@ -249,10 +250,10 @@ export const OrderTable = ({ }) => {
                 <tbody>
                   <tr>
                     <td>#{order.id}</td>
-                    <td>{new Date(order.createdAt || order.created_at).toLocaleDateString()}</td>
-                    <td>INR {Number(order.total || 0).toFixed(2)}</td>
+                    <td>{formatDate(order.createdAt || order.created_at)}</td>
+                    <td>{formatCurrency(order.total)}</td>
                     <td className="font-semibold" style={{color: '#6366f1'}}>{order.couponCode || '-'}</td>
-                    <td className="font-semibold" style={{color: '#10b981'}}>{order.discountAmount > 0 ? `₹${Number(order.discountAmount).toFixed(2)}` : '-'}</td>
+                    <td className="font-semibold" style={{color: '#10b981'}}>{order.discountAmount > 0 ? formatCurrency(order.discountAmount) : '-'}</td>
                     <td>{order.paymentType || '-'}</td>
                     <td>
                       <select
@@ -308,12 +309,12 @@ export const OrderTable = ({ }) => {
                       <td>{(item.size || '-').charAt(0).toUpperCase() + (item.size || '').slice(1)} Pack</td>
                       <td>{item.flavor || '-'}</td>
                       <td>{item.quantity}</td>
-                      <td className="font-semibold">₹{Number(item.price || 0).toLocaleString()}</td>
+                      <td className="font-semibold">{formatCurrency(item.price)}</td>
                       <td className="font-semibold" style={{color: 'var(--primary-color)'}}>
-                        ₹{Number((item.price || 0) * (item.quantity || 0)).toLocaleString()}
+                        {formatCurrency((item.price || 0) * (item.quantity || 0))}
                       </td>
                       <td style={{fontSize: '11px', color: '#666'}}>
-                        {item.createdAt ? new Date(item.createdAt).toLocaleString([], {hour: '2-digit', minute:'2-digit', day: '2-digit', month: 'short'}) : '-'}
+                        {item.createdAt ? formatDate(item.createdAt) : '-'}
                       </td>
                     </tr>
                   ))}
