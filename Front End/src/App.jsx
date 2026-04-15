@@ -72,6 +72,7 @@ import SEO from './components/SEO';
 import Input from './chat/components/Input/Input';
 import LoginForm from './chat/components/LoginForm';
 import Messages from './chat/components/Messages/Messages';
+import ChatWidget from './components/ChatWidget';
 import chatAPI from './chat/services/chatapi';
 import { randomColor } from './chat/utils/common';
 import { API_BASE_URL } from './constants/index'
@@ -238,6 +239,7 @@ class App extends Component {
 				<Alert stack={{ limit: 3 }}
 					timeout={3000}
 					position='top-right' effect='slide' offset={65} />
+				<ChatWidget />
 			</div>);
 
 	};
