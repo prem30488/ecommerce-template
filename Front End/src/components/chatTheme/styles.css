@@ -1,0 +1,46 @@
+.rcb-bot-avatar {
+  border-radius: 50%;
+}
+
+.rcb-options-container {
+  height: 41px;
+}
+
+.rcb-close-chat-icon::after {
+  background-color: transparent;
+  transition: none;
+}
+
+.rcb-checkbox-row-container:hover {
+  margin-top: 1px;
+  margin-left: 1px;
+}
+
+.rcb-checkbox-next-button:hover {
+  margin-top: 1px;
+  margin-left: 1px;
+  background-color: #ffa500;
+}
+
+.rcb-dot {
+  background-color: #d0f0c0;
+}
+
+.rcb-toggle-button {
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  bottom: 20px;
+  right: 100px !important;
+  z-index: 9999;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 4px #0003;
+}
+
+.rcb-chat-tooltip {
+  right: 185px !important;
+}

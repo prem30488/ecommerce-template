@@ -72,7 +72,7 @@ import SEO from './components/SEO';
 import Input from './chat/components/Input/Input';
 import LoginForm from './chat/components/LoginForm';
 import Messages from './chat/components/Messages/Messages';
-import ChatWidget from './components/ChatWidget';
+import ChatWidget from './components/chatTheme/ChatWidget';
 import chatAPI from './chat/services/chatapi';
 import { randomColor } from './chat/utils/common';
 import { API_BASE_URL } from './constants/index'

@@ -1,0 +1,122 @@
+{
+  "chatWindowStyle": {
+    "backgroundColor": "#274C4A",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 10px 0px rgba(0,0,0,0.5)"
+  },
+  "headerStyle": {
+    "backgroundImage": "linear-gradient(to right, #B6E2A1, #D0F0C0)",
+    "borderRadius": 0
+  },
+  "chatInputContainerStyle": {
+    "backgroundColor": "#B6E2A1"
+  },
+  "footerStyle": {
+    "backgroundColor": "#2F4F4F"
+  },
+  "userBubbleStyle": {
+    "color": "#000",
+    "backgroundColor": "#F5F5DC",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 5px 0px rgba(0,0,0,0.2)"
+  },
+  "botBubbleStyle": {
+    "color": "#000",
+    "backgroundColor": "#B6E2A1",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 5px 0px rgba(0,0,0,0.2)"
+  },
+  "botOptionStyle": {
+    "color": "#000",
+    "backgroundColor": "#B6E2A1",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 5px 0px rgba(0,0,0,0.2)"
+  },
+  "botOptionHoveredStyle": {
+    "color": "#000",
+    "backgroundColor": "#F5F5DC",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "marginTop": 1,
+    "marginLeft": 1,
+    "boxShadow": "inset 3px 3px 5px 3px rgba(0,0,0,0.1)"
+  },
+  "botCheckboxRowStyle": {
+    "color": "#000",
+    "backgroundColor": "#B6E2A1",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 5px 0px rgba(0,0,0,0.2)"
+  },
+  "botCheckboxNextStyle": {
+    "color": "#000",
+    "backgroundColor": "#B6E2A1",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 5px 0px rgba(0,0,0,0.2)"
+  },
+  "botCheckMarkSelectedStyle": {
+    "color": "#81C784",
+    "backgroundColor": "#2F4F4F"
+  },
+  "chatHistoryButtonStyle": {
+    "color": "#000",
+    "backgroundColor": "#B6E2A1",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 5px 0px rgba(0,0,0,0.2)"
+  },
+  "chatHistoryButtonHoveredStyle": {
+    "color": "#000",
+    "backgroundColor": "#F5F5DC",
+    "borderRadius": 0,
+    "borderColor": "#004D25",
+    "border": "2px solid",
+    "marginTop": 1,
+    "marginLeft": 1,
+    "boxShadow": "inset 3px 3px 5px 3px rgba(0,0,0,0.1)"
+  },
+  "chatHistoryLineBreakStyle": {
+    "color": "#000",
+    "backgroundColor": "#2F4F4F",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 5px 0px rgba(0,0,0,0.2)"
+  },
+  "loadingSpinnerStyle": {
+    "borderTop": "4px solid #81C784"
+  },
+  "chatInputAreaStyle": {
+    "backgroundColor": "#F5F5DC",
+    "borderRadius": 0,
+    "border": "2px solid transparent"
+  },
+  "chatInputAreaFocusedStyle": {
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 5px 0px rgba(0,0,0,0.2)"
+  },
+  "sendButtonStyle": {
+    "color": "#000",
+    "backgroundColor": "#2F4F4F",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "0px 0px 5px 0px rgba(0,0,0,0.2)"
+  },
+  "sendButtonHoveredStyle": {
+    "color": "#000",
+    "backgroundColor": "#81C784",
+    "borderRadius": 0,
+    "border": "2px solid #004D25",
+    "boxShadow": "inset 3px 3px 5px 3px rgba(0,0,0,0.1)"
+  },
+  "chatButtonStyle": {
+    "borderRadius": 0
+  },
+  "toolTipStyle": {
+    "borderRadius": 0
+  }
+}

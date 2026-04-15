@@ -76,7 +76,7 @@ export const Testimonials = () => {
               '--swiper-pagination-color': '#0d9488',
               'height': '550px',
             }}
-            loop={true}
+            loop={chunks.length > 1}
             spaceBetween={10}
             navigation={true}
             thumbs={{ swiper: thumbsSwiper }}
