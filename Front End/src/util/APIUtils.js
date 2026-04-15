@@ -732,6 +732,10 @@ export function verifyPayment(verifyRequest) {
     return api.post("/api/payment/verify", verifyRequest);
 }
 
+export function trackOrder(orderId) {
+    return api.get("/api/order/track/" + orderId);
+}
+
 export function fetchDashboardKPIs() {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");

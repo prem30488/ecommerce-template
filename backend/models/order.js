@@ -35,7 +35,11 @@ module.exports = (sequelize, DataTypes) => {
         is_blocked: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
-        }
+        },
+        processing_at: DataTypes.DATE,
+        shipped_at: DataTypes.DATE,
+        delivered_at: DataTypes.DATE,
+        cancelled_at: DataTypes.DATE
     }, {
         sequelize,
         modelName: 'Order',

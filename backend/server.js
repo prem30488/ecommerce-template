@@ -426,14 +426,41 @@ app.put('/api/order/updateStatus/:id', authenticateToken, async (req, res) => {
         const { id } = req.params;
         const { status } = req.body;
 
+        const updateData = { status: status };
+        
+        // Record timestamp based on status
+        const now = new Date();
+        if (status.toLowerCase() === 'processing') updateData.processing_at = now;
+        if (status.toLowerCase() === 'shipped') updateData.shipped_at = now;
+        if (status.toLowerCase() === 'delivered') updateData.delivered_at = now;
+        if (status.toLowerCase() === 'cancelled') updateData.cancelled_at = now;
+
         await db.Order.update(
-            { status: status },
+            updateData,
             { where: { id: id } }
         );
         res.json({ success: true, message: 'Status updated successfully' });
     } catch (error) {
         console.error('Update status error:', error);
         res.status(500).json({ success: false, message: 'Failed to update status' });
+    }
+});
+
+app.get('/api/order/track/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const order = await db.Order.findByPk(id, {
+            attributes: ['id', 'status', 'created_at', 'processing_at', 'shipped_at', 'delivered_at', 'cancelled_at']
+        });
+        
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+        
+        res.json({ success: true, order });
+    } catch (error) {
+        console.error('Track order error:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch tracking info' });
     }
 });
 app.post('/api/order/createOrder', async (req, res) => {
@@ -3279,9 +3306,13 @@ const startServer = async () => {
                 // Ensure 'is_blocked' exists on Orders
                 try {
                     await db.sequelize.query('ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS "is_blocked" BOOLEAN DEFAULT false');
-                    console.log('✅ Order schema updated with is_blocked field');
+                    await db.sequelize.query('ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS "processing_at" TIMESTAMP');
+                    await db.sequelize.query('ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS "shipped_at" TIMESTAMP');
+                    await db.sequelize.query('ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS "delivered_at" TIMESTAMP');
+                    await db.sequelize.query('ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS "cancelled_at" TIMESTAMP');
+                    console.log('✅ Order schema updated with tracking timestamps');
                 } catch (orderErr) {
-                    console.log('⚠️ is_blocked Order check note:', orderErr.message);
+                    console.log('⚠️ Tracking columns Order check note:', orderErr.message);
                 }
             } catch (syncError) {
                 console.error('⚠️ Database sync error details:', syncError);

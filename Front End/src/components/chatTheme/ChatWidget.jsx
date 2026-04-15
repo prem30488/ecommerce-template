@@ -31,8 +31,15 @@ const ChatWidget = () => {
     },
   }
 
+  // themes available for browsing at: https://react-chatbotify.com
+  const themes = [
+    // { id: "tropical_green", version: "0.1.0" }
+    { id: "solid_purple_haze", version: "0.1.0" },
+    { id: "simple_blue", version: "0.1.0" }
+  ]
+
   return (
-    <ChatBot plugins={[LlmConnector()]} flow={flow} settings={settings} />
+    <ChatBot plugins={[LlmConnector()]} flow={flow} themes={themes} settings={settings} />
   );
 };
 export default ChatWidget;
