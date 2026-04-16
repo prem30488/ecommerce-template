@@ -2662,12 +2662,13 @@ app.get('/api/admin/dashboard-order-status', async (req, res) => {
             'Processing': 'Processing',
             'Pending': 'Pending',
             'Cancelled': 'Cancelled',
-            'Shipped': 'Processing' // Grouping Shipped as Processing for the 4-color chart in photo
+            'Shipped': 'Shipped'
         };
 
         const result = {
             'Completed': 0,
             'Processing': 0,
+            'Shipped': 0,
             'Pending': 0,
             'Cancelled': 0
         };
@@ -2675,7 +2676,13 @@ app.get('/api/admin/dashboard-order-status', async (req, res) => {
         stats.forEach(s => {
             const status = s.status || 'Pending';
             const mapped = statusMap[status] || 'Pending';
-            result[mapped] += parseInt(s.get('count'));
+            if (result[mapped] !== undefined) {
+                result[mapped] += parseInt(s.get('count'));
+            } else {
+                // If it's a new status not in map, maybe we should just add it to result?
+                // For now, default to Pending if not mapped
+                result['Pending'] += parseInt(s.get('count'));
+            }
         });
 
         res.json(result);
@@ -3313,6 +3320,14 @@ const startServer = async () => {
                     console.log('✅ Order schema updated with tracking timestamps');
                 } catch (orderErr) {
                     console.log('⚠️ Tracking columns Order check note:', orderErr.message);
+                }
+
+                // Ensure 'saleEventId' exists on Offers
+                try {
+                    await db.sequelize.query('ALTER TABLE "Offers" ADD COLUMN IF NOT EXISTS "saleEventId" INTEGER REFERENCES "SaleEvents"(id)');
+                    console.log('✅ Offers schema updated with saleEventId');
+                } catch (offerErr) {
+                    console.log('⚠️ Offers schema update note:', offerErr.message);
                 }
             } catch (syncError) {
                 console.error('⚠️ Database sync error details:', syncError);

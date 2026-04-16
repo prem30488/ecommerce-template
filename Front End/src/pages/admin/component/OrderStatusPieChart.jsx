@@ -11,6 +11,7 @@ const OrderStatusPieChart = () => {
       .then(res => {
         const chartData = [
           { name: 'Completed', value: res.Completed || 0, color: '#C05621' }, // Orange
+          { name: 'Shipped', value: res.Shipped || 0, color: '#7C3AED' }, // Purple
           { name: 'Processing', value: res.Processing || 0, color: '#0D9488' }, // Teal
           { name: 'Pending', value: res.Pending || 0, color: '#1A535C' }, // Navy
           { name: 'Cancelled', value: res.Cancelled || 0, color: '#F6AD55' } // Yellow
