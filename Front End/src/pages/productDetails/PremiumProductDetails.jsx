@@ -1055,15 +1055,15 @@ export const PremiumProductDetails = () => {
                 </span>
                 <div style={{ fontSize: 44, fontWeight: 950, color: '#0ea5e9', letterSpacing: '-0.04em', marginBottom: 24 }}>
                   ₹{(
-                    bundleSelections ? 
-                    bundleSelections.allProducts.reduce((sum, p, idx) => {
-                      const sel = bundleSelections.selections[idx] || { flavorIdx: 0, size: 'S' };
-                      const flavor = p.productFlavors?.[sel.flavorIdx];
-                      if (!flavor) return sum;
-                      const sizePrice = sel.size === 'S' ? flavor.price : (sel.size === 'M' ? flavor.priceMedium : flavor.priceLarge);
-                      return sum + (sizePrice || flavor.price || 0);
-                    }, 0) :
-                    ((product?.productFlavors?.[0]?.price || 0) + frequentProducts.reduce((sum, p) => sum + (p.productFlavors?.[0]?.price || 0), 0))
+                    bundleSelections ?
+                      bundleSelections.allProducts.reduce((sum, p, idx) => {
+                        const sel = bundleSelections.selections[idx] || { flavorIdx: 0, size: 'S' };
+                        const flavor = p.productFlavors?.[sel.flavorIdx];
+                        if (!flavor) return sum;
+                        const sizePrice = sel.size === 'S' ? flavor.price : (sel.size === 'M' ? flavor.priceMedium : flavor.priceLarge);
+                        return sum + (sizePrice || flavor.price || 0);
+                      }, 0) :
+                      ((product?.productFlavors?.[0]?.price || 0) + frequentProducts.reduce((sum, p) => sum + (p.productFlavors?.[0]?.price || 0), 0))
                   ).toLocaleString()}
                 </div>
                 <button
