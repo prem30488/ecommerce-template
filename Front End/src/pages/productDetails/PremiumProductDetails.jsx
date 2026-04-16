@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { ShopContext } from "../../context/shop-context";
 import { WishlistContext } from "../../context/wishlist-context";
 import WishlistIcon from "../../components/WishlistIcon";
@@ -29,6 +29,7 @@ const RatingStars = ({ rating = 4.5 }) => {
 
 // ─── Main Component ───────────────────────────────────────────────
 export const PremiumProductDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -277,6 +278,18 @@ export const PremiumProductDetails = () => {
     ? `${Math.round(activeOffer.discount)}% off`
     : null;
 
+  const handleBuyNow = () => {
+    // Check if we can add one more, or if we have at least one in cart to proceed to checkout
+    if (getSizeCount() < product.stock) {
+      handleAddToCart();
+      navigate('/checkout');
+    } else if (getSizeCount() > 0) {
+      navigate('/checkout');
+    } else {
+      Alert.warning("Out of stock!");
+    }
+  };
+
   const handleAddToCart = () => {
     // Note: Stock limit currently checked against total of all sizes for this product
     const totalCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + cartItems[key] : sum, 0) +
@@ -300,8 +313,10 @@ export const PremiumProductDetails = () => {
         normalizeSize(o.size) === normalizeSize(selectedSize)
       );
       Alert.success(`${product.title} added to collection!`);
+      return true;
     } else {
       Alert.warning("Out of stock!");
+      return false;
     }
   };
 
@@ -482,7 +497,7 @@ export const PremiumProductDetails = () => {
             ) : (
               <img src="https://placehold.co/600x600/f1f5f9/94a3b8?text=No+Image" alt="placeholder" style={{ borderRadius: '24px' }} />
             )}
-            <div className="ppp-gallery-badge" style={{ top: '24px', left: '24px', zIndex: 10 }}>Premium</div>
+            <div className="ppp-gallery-badge">PREMIUM</div>
           </div>
 
           {/* Image Overlay Modal */}
@@ -712,13 +727,42 @@ export const PremiumProductDetails = () => {
               </div>
             ) : (
               /* ── Add button (shown when 0 in cart) ── */
-              <button className="ppp-add-btn" onClick={handleAddToCart}>
+              <button className="ppp-add-btn" onClick={handleAddToCart} style={{ flex: 1 }}>
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                Add to Collection
+                Add to Cart
               </button>
             )}
+            
+            <button 
+              className="ppp-buy-now-btn" 
+              onClick={handleBuyNow}
+              style={{
+                flex: 1,
+                height: 54,
+                backgroundColor: '#0f172a',
+                color: '#fff',
+                borderRadius: 16,
+                fontWeight: 800,
+                fontSize: 14,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                transition: 'all 0.2s',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={e => e.target.style.backgroundColor = '#1e293b'}
+              onMouseLeave={e => e.target.style.backgroundColor = '#0f172a'}
+            >
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Buy Now
+            </button>
+
             <div>
               <WishlistIcon
                 productId={String(product.id)}

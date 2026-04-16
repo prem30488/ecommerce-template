@@ -61,12 +61,12 @@
 
 .ppp-gallery-main {
   width: 100%;
-  aspect-ratio: 5 / 4;
-  border-radius: 28px;
+  aspect-ratio: 1 / 0.7;
+  border-radius: 24px;
   overflow: hidden !important;
-  background: #fff;
+  background: #000;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
   position: relative;
 }
 
@@ -85,13 +85,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: #000;
 }
 
 .ppp-gallery-main .ppp-main-carousel .slide img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
   /* ensures whole image is visible without distortion */
   transition: transform 0.6s ease;
 }
@@ -207,17 +208,18 @@
 
 .ppp-gallery-badge {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 24px;
+  left: 24px;
   background: #0f172a;
   color: #fff;
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: 0.15em;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 100px;
-  z-index: 10;
+  z-index: 30;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ── BENEFITS STRIP ── */
@@ -1266,154 +1268,157 @@
   display: block !important;
   position: relative !important;
   height: 100% !important;
-  min-height: 500px;
   width: 100% !important;
+  aspect-ratio: 16 / 9;
+}
+
+@media (max-width: 768px) {
+  .ppp-gallery-main .carousel-root {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 .ppp-gallery-main .carousel.carousel-slider {
   width: 100% !important;
   height: 100% !important;
   border-radius: 24px;
-  overflow: visible !important;
-  /* Allow thumbnails to float over */
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+  overflow: hidden !important;
   background: #fff;
   position: relative !important;
-  z-index: 1;
 }
 
-.ppp-gallery-main .carousel-root {
-  display: block !important;
+/* Custom Thumbnails Positioning (Desktop) - Reverting to relative offset for compatibility */
+.ppp-gallery-main .thumbs-wrapper {
   position: relative !important;
-  height: 100% !important;
-  min-height: 550px !important;
-  width: 100% !important;
-}
-
-.ppp-gallery-main .carousel.carousel-slider {
-  width: 100% !important;
-  height: 100% !important;
-  border-radius: 24px;
-  overflow: visible !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-  background: #fff;
-  position: relative !important;
-  z-index: 1 !important;
-  /* Low z-index */
-}
-
-.ppp-gallery-main .carousel .thumbs-wrapper {
-  position: relative !important;
-  top: -550px !important;
-  left: 50px !important;
-  z-index: 100000 !important;
-  /* Extremely high priority */
+  top: -88% !important;
+  left: 24px !important;
+  z-index: 100 !important;
   margin: 0 !important;
   width: 90px !important;
-  height: auto !important;
-  max-height: calc(100% - 60px) !important;
-  background: rgba(255, 255, 255, 0.92) !important;
-  backdrop-filter: blur(25px) !important;
-  -webkit-backdrop-filter: blur(25px) !important;
-  border-radius: 24px !important;
-  padding: 20px 0 !important;
-  border: 1px solid rgba(255, 255, 255, 1) !important;
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15) !important;
-  overflow-y: auto !important;
-  scrollbar-width: none;
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-radius: 20px !important;
+  padding: 15px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
   display: block !important;
-  opacity: 0.5 !important;
-  /* Non-intrusive by default */
   visibility: visible !important;
-  transition: opacity 0.4s ease !important;
-}
-
-/* Illuminate to full opacity on hover */
-.ppp-gallery-main:hover .carousel .thumbs-wrapper {
   opacity: 1 !important;
 }
 
-.ppp-gallery-main .carousel .thumbs-wrapper::-webkit-scrollbar {
-  display: none;
+.ppp-gallery-main:hover .thumbs-wrapper {
+  background: rgba(255, 255, 255, 0.7) !important;
 }
 
-.ppp-gallery-main .carousel .thumbs {
+.ppp-gallery-main .thumbs {
   display: flex !important;
   flex-direction: column !important;
+  gap: 12px !important;
   padding: 0 !important;
   margin: 0 !important;
   transform: none !important;
-  gap: 15px !important;
-  align-items: center !important;
   list-style: none !important;
 }
 
-.ppp-gallery-main .carousel .thumb {
-  width: 60px !important;
-  height: 60px !important;
-  border-radius: 12px !important;
-  border: 3px solid transparent !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  overflow: hidden;
-  opacity: 0.8 !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  background: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  flex-shrink: 0;
+@media (max-width: 768px) {
+  .ppp-gallery-main .thumbs-wrapper {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 10px 0 !important;
+  }
+
+  .ppp-gallery-main .thumbs {
+    flex-direction: row !important;
+    justify-content: center !important;
+  }
 }
 
-.ppp-gallery-main .carousel .thumb img {
+.ppp-gallery-main .thumb {
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 14px !important;
+  border: 2px solid transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  opacity: 0.7 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
+  background: #fff !important;
+}
+
+@media (max-width: 768px) {
+  .ppp-gallery-main .thumb {
+    width: 50px !important;
+    height: 50px !important;
+  }
+}
+
+.ppp-gallery-main .thumb img {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
 }
 
-.ppp-gallery-main .carousel .thumb.selected {
+.ppp-gallery-main .thumb.selected {
   border-color: #0ea5e9 !important;
   opacity: 1 !important;
-  transform: scale(1.1) translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);
+  transform: scale(1.05) !important;
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.2) !important;
 }
 
-.ppp-gallery-main .carousel .thumb:hover {
+.ppp-gallery-main .thumb:hover {
   opacity: 1 !important;
-  transform: translateY(-4px);
+  transform: scale(1.05) !important;
 }
 
-.ppp-gallery-main .carousel.carousel-slider .slide {
-  background: transparent !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  height: 100% !important;
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-.ppp-gallery-main .carousel.carousel-slider .slide img {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important;
-  object-fit: contain !important;
-  transition: transform 0.5s ease;
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-.ppp-gallery-main .carousel .control-dots {
+/* Hide navigation extras */
+.ppp-gallery-main .control-dots {
   display: none !important;
 }
 
-.ppp-gallery-main .carousel .control-arrow {
-  background: rgba(0, 0, 0, 0.1) !important;
-  height: 40px !important;
-  width: 40px !important;
-  border-radius: 20px !important;
+.ppp-gallery-main .control-arrow {
+  background: #000 !important;
+  height: 44px !important;
+  width: 44px !important;
+  border-radius: 22px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
-  margin: 0 10px !important;
-  z-index: 100 !important;
-  /* Stay below thumbnails */
+  color: #0f172a !important;
+  font-size: 20px !important;
+  z-index: 60 !important;
+  transition: all 0.2s ease !important;
+  opacity: 0;
+}
+
+.ppp-gallery-main:hover .control-arrow {
+  opacity: 1;
+}
+
+.ppp-gallery-main .control-arrow:hover {
+  background: #000 !important;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Carousel Inner Slide Positioning */
+.ppp-gallery-main .carousel-slider .slide {
+  background: #fff !important;
+}
+
+.ppp-gallery-main .carousel-slider .slide img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.ppp-gallery-main .carousel .thumbs-wrapper::-webkit-scrollbar {
+  display: none;
 }

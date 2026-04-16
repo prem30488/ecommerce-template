@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MdSettings, MdSecurity, MdNotifications, MdPalette, MdLanguage, MdHelp, MdPerson, MdEdit, MdSave, MdClose } from 'react-icons/md';
+import { COMPANY_INFO } from '../../constants/companyInfo';
 import { getCurrentUser, updateUserProfile, changePassword } from '../../util/APIUtils';
 import { getRegionalSettings, saveRegionalSettings } from '../../util/regionalSettings';
 import './Settings.css';
@@ -185,7 +186,7 @@ const HelpCenter = () => {
         return (
             <div className="settings-pane">
                 <div className="pane-header">
-                    <div><h3>Full Admin Documentation</h3><p>Comprehensive guide for the Hanley Healthcare Management System.</p></div>
+                    <div><h3>Full Admin Documentation</h3><p>Comprehensive guide for the {COMPANY_INFO.name} Management System.</p></div>
                     <button className="cancel-btn" onClick={() => setView('links')}>Back</button>
                 </div>
                 <div className="docs-content" style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '10px' }}>
@@ -257,7 +258,7 @@ const HelpCenter = () => {
                     <div style={{fontSize: '18px', marginBottom: '5px'}}>📖 Full Documentation</div>
                     <p style={{fontSize: '13px', color: '#64748b', margin: 0}}>In-depth guide for every module.</p>
                 </div>
-                <a className="help-link-item" href="mailto:info@hanleyhealthcare.com" style={{ textDecoration: 'none' }}>
+                <a className="help-link-item" href={`mailto:${COMPANY_INFO.email}`} style={{ textDecoration: 'none' }}>
                     <div style={{fontSize: '18px', marginBottom: '5px'}}>✉️ Contact Support</div>
                     <p style={{fontSize: '13px', color: '#64748b', margin: 0}}>Direct email to technical support.</p>
                 </a>

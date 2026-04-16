@@ -427,7 +427,7 @@ app.put('/api/order/updateStatus/:id', authenticateToken, async (req, res) => {
         const { status } = req.body;
 
         const updateData = { status: status };
-        
+
         // Record timestamp based on status
         const now = new Date();
         if (status.toLowerCase() === 'processing') updateData.processing_at = now;
@@ -452,11 +452,11 @@ app.get('/api/order/track/:id', async (req, res) => {
         const order = await db.Order.findByPk(id, {
             attributes: ['id', 'status', 'created_at', 'processing_at', 'shipped_at', 'delivered_at', 'cancelled_at']
         });
-        
+
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
-        
+
         res.json({ success: true, order });
     } catch (error) {
         console.error('Track order error:', error);
@@ -3083,10 +3083,10 @@ app.get('/api/order/printInvoice/:orderId', authenticateToken, async (req, res) 
     <div class="invoice-box">
         <div class="header">
             <div class="company-info">
-                <h1>Hanley Healthcare</h1>
+                <h1>${companyInfo.name}</h1>
                 <p>Pushpam Industrial Estate, Vatva GIDC</p>
                 <p>Ahmedabad, Gujarat - 382445</p>
-                <p>Email: info@hanleyhealthcare.com</p>
+                <p>Email: ${companyInfo.email}</p>
                 <p>GSTIN: 24AAAFH1234A1Z5</p>
             </div>
             <div class="invoice-details">
@@ -3157,7 +3157,7 @@ app.get('/api/order/printInvoice/:orderId', authenticateToken, async (req, res) 
 
         <div class="footer">
             <p>This is a computer generated invoice and does not require a physical signature.</p>
-            <p>Thank you for shopping with Hanely Healthcare!</p>
+            <p>Thank you for shopping with ${companyInfo.name}!</p>
         </div>
     </div>
 </body>

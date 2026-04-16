@@ -1,4 +1,5 @@
 import React from 'react';
+import { COMPANY_INFO } from './src/constants/companyInfo';
 
 const TermsOfUse = () => {
   return (
@@ -9,7 +10,7 @@ const TermsOfUse = () => {
 
         <div style={{ color: '#334e4e', lineHeight: '1.8', fontSize: '17px' }}>
           <p>
-            Welcome to Hanley Healthcare. These Terms of Use govern your use of our website and services. By accessing or using our website, you agree to be bound by these terms.
+            Welcome to {COMPANY_INFO.name}. These Terms of Use govern your use of our website and services. By accessing or using our website, you agree to be bound by these terms.
           </p>
 
           <h2 style={{ fontSize: '28px', fontWeight: 700, marginTop: '40px', marginBottom: '20px', color: '#1a3a3a' }}>1. Use of Service</h2>
@@ -24,7 +25,7 @@ const TermsOfUse = () => {
 
           <h2 style={{ fontSize: '28px', fontWeight: 700, marginTop: '40px', marginBottom: '20px', color: '#1a3a3a' }}>3. Limitation of Liability</h2>
           <p>
-            Hanley Healthcare will not be liable for any direct, indirect, incidental, special or consequential damages resulting from the use or the inability to use the services or for the cost of procurement of substitute goods and services.
+            {COMPANY_INFO.name} will not be liable for any direct, indirect, incidental, special or consequential damages resulting from the use or the inability to use the services or for the cost of procurement of substitute goods and services.
           </p>
 
           <h2 style={{ fontSize: '28px', fontWeight: 700, marginTop: '40px', marginBottom: '20px', color: '#1a3a3a' }}>4. Changes to Terms</h2>
@@ -37,10 +38,10 @@ const TermsOfUse = () => {
             For any questions regarding these terms, please contact:
           </p>
           <div style={{ backgroundColor: '#f4f9f4', padding: '30px', borderRadius: '16px', borderLeft: '5px solid #4CAF50', marginTop: '20px' }}>
-            <p style={{ margin: 0, fontWeight: 700, color: '#1a3a3a' }}>Hanley Healthcare LLP</p>
-            <p style={{ margin: '5px 0' }}>S-2, 2nd Floor, Heritage Plaza, Opp. Gurukul,</p>
-            <p style={{ margin: '5px 0' }}>Drive-In Road, Ahmedabad,</p>
-            <p style={{ margin: '5px 0', fontWeight: 600 }}>Gujarat - 380052, India</p>
+            <p style={{ margin: 0, fontWeight: 700, color: '#1a3a3a' }}>{COMPANY_INFO.name}</p>
+            <p style={{ margin: '5px 0' }}>{COMPANY_INFO.address1},</p>
+            <p style={{ margin: '5px 0' }}>{COMPANY_INFO.address2}, {COMPANY_INFO.city},</p>
+            <p style={{ margin: '5px 0', fontWeight: 600 }}>{COMPANY_INFO.state} - {COMPANY_INFO.pinCode}, {COMPANY_INFO.country}</p>
           </div>
         </div>
       </div>

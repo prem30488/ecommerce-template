@@ -1,5 +1,6 @@
 // ProductSelector.js
 import React, { useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShopContext } from '../../context/shop-context';
 import { WishlistContext } from '../../context/wishlist-context';
 import WishlistIcon from '../../components/WishlistIcon';
@@ -64,6 +65,24 @@ const ProductSelector = ({ product, onFlavorChange }) => {
   const isSizePopular = (size) => {
     // You can implement your own logic to determine popularity
     return size.id === 'M';
+  };
+
+  const navigate = useNavigate();
+  const handleBuyNow = () => {
+    const currentQty = (() => {
+      if (selectedSize === 'S') return cartItemCount;
+      if (selectedSize === 'M') return martItemCount;
+      return lartItemCount;
+    })() || 0;
+
+    if ((cartItemCount + martItemCount + lartItemCount) < stock) {
+      addToCart(id, selectedSize, selectedFlavorId);
+      navigate('/checkout');
+    } else if (currentQty > 0) {
+      navigate('/checkout');
+    } else {
+      Alert.info('Item Out of stock!');
+    }
   };
 
   return (
@@ -151,7 +170,8 @@ const ProductSelector = ({ product, onFlavorChange }) => {
 
         <div className="flex items-stretch gap-4">
           <button
-            className="flex-grow bg-slate-900 text-white hover:bg-sky-600 px-10 py-6 rounded-[2.5rem] font-bold shadow-2xl transition-all active:scale-95 group flex items-center justify-center gap-4"
+            style={{ flex: 1.5 }}
+            className="bg-slate-900 text-white hover:bg-sky-600 px-6 py-5 rounded-[2.5rem] font-bold shadow-2xl transition-all active:scale-95 group flex items-center justify-center gap-3"
             onClick={() => {
               if ((cartItemCount + martItemCount + lartItemCount) < stock) {
                 addToCart(id, selectedSize, selectedFlavorId);
@@ -161,14 +181,22 @@ const ProductSelector = ({ product, onFlavorChange }) => {
               }
             }}
           >
-            ADD TO COLLECTION
-            <span className="bg-white/10 px-3 py-1 rounded-full text-xs">
+            ADD TO CART
+            <span className="bg-white/10 px-3 py-1 rounded-full text-[10px]">
               {(() => {
                 if (selectedSize === 'S') return cartItemCount;
                 if (selectedSize === 'M') return martItemCount;
                 return lartItemCount;
               })() || 0}
             </span>
+          </button>
+
+          <button
+            style={{ flex: 1 }}
+            className="bg-emerald-600 text-white hover:bg-emerald-700 px-6 py-5 rounded-[2.5rem] font-bold shadow-2xl transition-all active:scale-95 flex items-center justify-center"
+            onClick={handleBuyNow}
+          >
+            BUY NOW
           </button>
 
           <div className="flex items-center justify-center p-1 bg-white border-2 border-slate-100 rounded-full shadow-lg">

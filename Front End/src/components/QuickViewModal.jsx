@@ -2,11 +2,13 @@ import React, { useState, useContext, useEffect } from 'react';
 import { COMPANY_INFO } from '../constants/companyInfo';
 import { ShopContext } from '../context/shop-context';
 import { WishlistContext } from '../context/wishlist-context';
+import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaRegHeart, FaTimes, FaPlus, FaMinus, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Alert from 'react-s-alert';
 import './quick-view-modal.css';
 
 const QuickViewModal = ({ product, isOpen, onClose }) => {
+    const navigate = useNavigate();
     const { addToCart, removeFromCart, cartItems } = useContext(ShopContext);
     const { isInWishlist, addToWishlist, removeFromWishlist } = useContext(WishlistContext);
     
@@ -41,10 +43,11 @@ const QuickViewModal = ({ product, isOpen, onClose }) => {
     const handleAddToCart = () => {
         if (quantity >= stock) {
             Alert.info('Item Out of stock!');
-            return;
+            return false;
         }
         addToCart(id, 'S', firstFlavorId);
         Alert.success(`${title} added!`);
+        return true;
     };
 
     const handleRemoveFromCart = () => {
@@ -118,7 +121,23 @@ const QuickViewModal = ({ product, isOpen, onClose }) => {
                                 </button>
                             </div>
 
-                            <button className="qv-buy-btn" onClick={() => { if (quantity === 0) handleAddToCart(); /* navigate to checkout logic */ }}>BUY IT NOW</button>
+                            <button className="qv-buy-btn" onClick={() => { 
+                                // Always attempt to add to cart if stock allows. 
+                                // If already in cart, adding another one is fine for "Buy Now" 
+                                // as long as stock allows it. If it fails due to stock but we 
+                                // already have some, we still navigate.
+                                if (quantity < stock) {
+                                    handleAddToCart();
+                                    onClose();
+                                    navigate('/checkout');
+                                } else if (quantity > 0) {
+                                    // Already in cart but can't add more, just go to checkout
+                                    onClose();
+                                    navigate('/checkout');
+                                } else {
+                                    Alert.info('Item Out of stock!');
+                                }
+                            }}>BUY IT NOW</button>
                         </div>
                     </div>
                 </div>
