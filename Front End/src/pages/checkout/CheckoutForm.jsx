@@ -19,6 +19,7 @@ const CheckoutForm = ({subTotal,total,callbackFn}) => {
       mobileNumber: '',
       billingAddress: {
         street: '',
+        addressLine2: '',
         city: '',
         state: '',
         country: '',
@@ -27,6 +28,7 @@ const CheckoutForm = ({subTotal,total,callbackFn}) => {
       },
       shippingAddress: {
         street: '',
+        addressLine2: '',
         city: '',
         state: '',
         country: '',
@@ -182,6 +184,17 @@ const CheckoutForm = ({subTotal,total,callbackFn}) => {
           {formik.touched.billingAddress?.street && formik.errors.billingAddress?.street && (
             <div className="error-message">{formik.errors.billingAddress?.street}</div>
           )}
+        </div>
+        <div>
+          <label htmlFor="billingAddressLine2">Apartment, suite, etc. (optional):</label>
+          <input
+            type="text"
+            id="billingAddressLine2"
+            name="billingAddress.addressLine2"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.billingAddress.addressLine2}
+          />
         </div>
 
         <div>

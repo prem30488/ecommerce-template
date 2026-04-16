@@ -89,6 +89,7 @@ export const AdminInvoice = ({ order, onGenerated }) => {
                         <p>{order.customer?.email}</p>
                         <p>
                             {order.billingAddress?.street || ''}<br />
+                            {order.billingAddress?.addressLine2 && <>{order.billingAddress.addressLine2}<br /></>}
                             {order.billingAddress?.city || ''}, {order.billingAddress?.state || ''}<br />
                             {order.billingAddress?.country || ''} - {order.billingAddress?.zipcode || ''}
                         </p>
@@ -100,6 +101,7 @@ export const AdminInvoice = ({ order, onGenerated }) => {
                         <p>{order.customer?.email}</p>
                         <p>
                             {order.delieveryAddress?.street || ''}<br />
+                            {order.delieveryAddress?.addressLine2 && <>{order.delieveryAddress.addressLine2}<br /></>}
                             {order.delieveryAddress?.city || ''}, {order.delieveryAddress?.state || ''}<br />
                             {order.delieveryAddress?.country || ''} - {order.delieveryAddress?.zipcode || ''}
                         </p>

@@ -11,29 +11,31 @@ export { SolrFacetedSearch, defaultComponentPack, SolrClient };
 
 // ── Search fields ──────────────────────────────────────────
 const fields = [
-  { label: "Id",         field: "id",         type: "text"       },
-  { label: "Title",      field: "title",       type: "text"       },
-  { label: "Categories", field: "categories_ss",  type: "list-facet" },
-  { label: "Form",       field: "form_s",         type: "list-facet" },
-  { label: "Audience",   field: "audience_s",    type: "list-facet" },
-  { label: "Price",      field: "price_f",       type: "range-facet"},
-  { label: "Bestseller", field: "bestseller_s",  type: "list-facet" },
-  { label: "Featured",   field: "featured_s",    type: "list-facet" },
-  { label: "Discount",   field: "discount_s",    type: "list-facet" },
-  { label: "Updated",    field: "updated_at",  type: "text"       },
+  { label: "Id", field: "id", type: "text" },
+  { label: "Title", field: "title", type: "text" },
+  { label: "In Stock?", field: "in_stock_s", type: "list-facet" },
+  { label: "Categories", field: "categories_ss", type: "list-facet" },
+  { label: "Form", field: "form_s", type: "list-facet" },
+  { label: "Audience", field: "audience_s", type: "list-facet" },
+  { label: "Price", field: "price_f", type: "range-facet" },
+  { label: "Bestseller", field: "bestseller_s", type: "list-facet" },
+  { label: "Featured", field: "featured_s", type: "list-facet" },
+  { label: "Minimum Rating", field: "rating_f", type: "range-facet" },
+  { label: "Discount", field: "discount_s", type: "list-facet" },
+  { label: "Updated", field: "updated_at", type: "text" },
 ];
 
 const sortFields = [
-  { label: "Title",    field: "title_s"    },
-  { label: "Price",    field: "price_f"    },
+  { label: "Title", field: "title_s" },
+  { label: "Price", field: "price_f" },
   { label: "Discount", field: "discount_s" },
 ];
 
 // ── Premium Stats Bar ──────────────────────────────────────
 const STATS = [
   { icon: "🔍", label: "AI-powered Search" },
-  { icon: "⚡", label: "Real-time Filters"  },
-  { icon: "📦", label: "Live Inventory"     },
+  { icon: "⚡", label: "Real-time Filters" },
+  { icon: "📦", label: "Live Inventory" },
 ];
 
 class AdvancedSearch extends Component {
@@ -43,7 +45,7 @@ class AdvancedSearch extends Component {
     this.editUser = this.editUser.bind(this);
   }
 
-  editUser(id) {}
+  editUser(id) { }
 
   componentDidMount() {
     this.timer = setInterval(

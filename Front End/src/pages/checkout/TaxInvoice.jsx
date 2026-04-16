@@ -31,6 +31,15 @@ const TaxInvoice = ({ status }) => {
 
 
 	const [isGenerating, setIsGenerating] = useState(false);
+	const [isPDFDownloaded, setIsPDFDownloaded] = useState(false);
+
+	useEffect(() => {
+		// Clear cart when invoice page is loaded (indicates successful order completion)
+		if (isPDFDownloaded == true) {
+			resetCart();
+		}
+		//resetCart();
+	}, [isPDFDownloaded]);
 
 	function generatePDF() {
 		const element = document.querySelector('#html-template');
@@ -50,6 +59,7 @@ const TaxInvoice = ({ status }) => {
 			callback: function (doc) {
 				doc.save(`Tax_Invoice_${orderId}.pdf`);
 				setIsGenerating(false);
+				setIsPDFDownloaded(true);
 			},
 			x: margin,
 			y: margin,
@@ -128,6 +138,7 @@ const TaxInvoice = ({ status }) => {
 						<p>{formData.email}</p>
 						<p>
 							{formData.billingAddress?.street}<br />
+							{formData.billingAddress?.addressLine2 && <>{formData.billingAddress.addressLine2}<br /></>}
 							{formData.billingAddress?.city}, {formData.billingAddress?.state}<br />
 							{formData.billingAddress?.country} - {formData.billingAddress?.zipcode}
 						</p>
@@ -139,6 +150,7 @@ const TaxInvoice = ({ status }) => {
 						<p>{formData.email}</p>
 						<p>
 							{formData.shippingAddress?.street}<br />
+							{formData.shippingAddress?.addressLine2 && <>{formData.shippingAddress.addressLine2}<br /></>}
 							{formData.shippingAddress?.city}, {formData.shippingAddress?.state}<br />
 							{formData.shippingAddress?.country} - {formData.shippingAddress?.zipcode}
 						</p>

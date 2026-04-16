@@ -54,8 +54,8 @@ export const OrderTable = ({ }) => {
     getData();
   }, []);
   // Chain filters: Status -> Search -> Pagination
-  const filteredByStatus = statusFilter === 'All' 
-    ? orders 
+  const filteredByStatus = statusFilter === 'All'
+    ? orders
     : orders.filter(o => (o.status || 'Pending') === statusFilter);
 
   const filteredBySearch = filteredByStatus.filter((order) =>
@@ -101,7 +101,7 @@ export const OrderTable = ({ }) => {
   };
 
   const generatePDF = (order) => {
-    const token = localStorage.getItem('accessToken'); 
+    const token = localStorage.getItem('accessToken');
     const printUrl = `${API_BASE_URL}/api/order/printInvoice/${order.id}?token=${token}`;
     window.open(printUrl, '_blank');
   };
@@ -128,14 +128,14 @@ export const OrderTable = ({ }) => {
       'Discount': order.discountAmount || 0,
       'Coupon': order.couponCode || '-',
       'Payment Type': order.paymentType || '-',
-      'Billing Address': order.billingAddress ? `${order.billingAddress.street}, ${order.billingAddress.city}, ${order.billingAddress.zipcode}` : '-',
+      'Billing Address': order.billingAddress ? `${order.billingAddress.street}${order.billingAddress.addressLine2 ? ', ' + order.billingAddress.addressLine2 : ''}, ${order.billingAddress.city}, ${order.billingAddress.zipcode}` : '-',
       'City': order.billingAddress?.city || '-'
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Orders Report");
-    
+
     // Auto-size columns (approximate)
     const maxWidths = {};
     dataToExport.forEach(row => {
@@ -255,8 +255,8 @@ export const OrderTable = ({ }) => {
                     <td>#{order.id}</td>
                     <td>{formatDate(order.createdAt || order.created_at)}</td>
                     <td>{formatCurrency(order.total)}</td>
-                    <td className="font-semibold" style={{color: '#6366f1'}}>{order.couponCode || '-'}</td>
-                    <td className="font-semibold" style={{color: '#10b981'}}>{order.discountAmount > 0 ? formatCurrency(order.discountAmount) : '-'}</td>
+                    <td className="font-semibold" style={{ color: '#6366f1' }}>{order.couponCode || '-'}</td>
+                    <td className="font-semibold" style={{ color: '#10b981' }}>{order.discountAmount > 0 ? formatCurrency(order.discountAmount) : '-'}</td>
                     <td>{order.paymentType || '-'}</td>
                     <td>
                       <select
@@ -273,7 +273,7 @@ export const OrderTable = ({ }) => {
                     </td>
                     <td>
                       {order.billingAddress ?
-                        `${order.billingAddress.street || ''}, ${order.billingAddress.city || ''}, ${order.billingAddress.zipcode || ''}`
+                        `${order.billingAddress.street || ''}${order.billingAddress.addressLine2 ? ', ' + order.billingAddress.addressLine2 : ''}, ${order.billingAddress.city || ''}, ${order.billingAddress.zipcode || ''}`
                         : '-'}
                     </td>
                     <td>{order.customer?.name || 'Guest'}</td>
@@ -281,7 +281,7 @@ export const OrderTable = ({ }) => {
                     <td>{order.customer?.mobile || '-'}</td>
                     <td>
                       {order.delieveryAddress ?
-                        `${order.delieveryAddress.street || ''}, ${order.delieveryAddress.city || ''}, ${order.delieveryAddress.zipcode || ''}`
+                        `${order.delieveryAddress.street || ''}${order.delieveryAddress.addressLine2 ? ', ' + order.delieveryAddress.addressLine2 : ''}, ${order.delieveryAddress.city || ''}, ${order.delieveryAddress.zipcode || ''}`
                         : '-'}
                     </td>
                   </tr>
@@ -313,10 +313,10 @@ export const OrderTable = ({ }) => {
                       <td>{item.flavor || '-'}</td>
                       <td>{item.quantity}</td>
                       <td className="font-semibold">{formatCurrency(item.price)}</td>
-                      <td className="font-semibold" style={{color: 'var(--primary-color)'}}>
+                      <td className="font-semibold" style={{ color: 'var(--primary-color)' }}>
                         {formatCurrency((item.price || 0) * (item.quantity || 0))}
                       </td>
-                      <td style={{fontSize: '11px', color: '#666'}}>
+                      <td style={{ fontSize: '11px', color: '#666' }}>
                         {item.createdAt ? formatDate(item.createdAt) : '-'}
                       </td>
                     </tr>

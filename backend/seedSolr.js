@@ -121,6 +121,8 @@ async function indexToSolr() {
                 discount:     discountLabel,
                 discount_s:   discountLabel,
                 stock:        product.stock || 0,
+                in_stock_s:   (product.stock || 0) > 0 ? 'Yes' : 'No',
+                rating_f:     parseFloat(product.rating) || 0,
                 brand:        product.brand || '',
                 updated_at:   product.updatedAt
                     ? product.updatedAt.toISOString()

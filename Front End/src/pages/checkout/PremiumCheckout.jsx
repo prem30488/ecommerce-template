@@ -136,6 +136,7 @@ const PremiumCheckout = () => {
             mobileNumber: '',
             billingAddress: {
                 street: '',
+                addressLine2: '',
                 city: '',
                 state: 'Gujarat',
                 country: 'India',
@@ -144,6 +145,7 @@ const PremiumCheckout = () => {
             },
             shippingAddress: {
                 street: '',
+                addressLine2: '',
                 city: '',
                 state: 'Gujarat',
                 country: 'India',
@@ -566,6 +568,7 @@ const PremiumCheckout = () => {
                                 type="text"
                                 className="input-field"
                                 placeholder="Apartment, suite, etc. (optional)"
+                                {...formik.getFieldProps('billingAddress.addressLine2')}
                             />
                         </div>
 
@@ -719,6 +722,7 @@ const PremiumCheckout = () => {
                                             type="text"
                                             className="input-field"
                                             placeholder="Apartment, suite, etc. (optional)"
+                                            {...formik.getFieldProps('billingAddress.addressLine2')}
                                         />
                                     </div>
 
