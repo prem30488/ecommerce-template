@@ -32,7 +32,7 @@
   position: fixed;
   bottom: 20px;
   right: 60px !important;
-  z-index: 9999;
+  z-index: 99;
   width: 35px;
   height: 35px;
   border-radius: 50%;
