@@ -31,10 +31,10 @@
   flex-direction: row;
   position: fixed;
   bottom: 20px;
-  right: 100px !important;
+  right: 60px !important;
   z-index: 9999;
-  width: 75px;
-  height: 75px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
@@ -43,4 +43,5 @@
 
 .rcb-chat-tooltip {
   right: 185px !important;
+  display: none !important;
 }

@@ -3,6 +3,8 @@ import "./Footer.css";
 import "./topbutton.css";
 import { WhatsappLogo } from "phosphor-react";
 import { COMPANY_INFO } from '../constants/companyInfo';
+
+import { FcUp } from "react-icons/fc";
 export default function Footer() {
 
   // When the user scrolls down 20px from the top of the document, show the button
@@ -31,7 +33,7 @@ export default function Footer() {
 
   return (
     <React.Fragment>
-      <button onClick={topFunction} id="myBtn" title="Go to top">Top</button>
+      <button onClick={topFunction} id="myBtn" title="Go to top"><FcUp size={24} /></button>
       <a
         href={`https://api.whatsapp.com/send/?phone=${COMPANY_INFO.phone1.replace(/[^0-9]/g, '')}&text=Hi`}
         target="_blank"
