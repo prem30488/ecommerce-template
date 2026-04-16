@@ -281,45 +281,17 @@ export const PremiumProductDetails = () => {
     : null;
 
   const handleBuyNow = () => {
-    // Check if we can add one more, or if we have at least one in cart to proceed to checkout
-    if (getSizeCount() < product.stock) {
-      handleAddToCart();
+    // Attempt to add. If it succeeds, navigate.
+    if (addToCart(product.id, selectedSize, selectedFlavor)) {
       navigate('/checkout');
     } else if (getSizeCount() > 0) {
+      // If add failed but we already have items (e.g. at max stock), still allow going to checkout
       navigate('/checkout');
-    } else {
-      Alert.warning("Out of stock!");
     }
   };
 
   const handleAddToCart = () => {
-    // Note: Stock limit currently checked against total of all sizes for this product
-    const totalCount = Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + cartItems[key] : sum, 0) +
-      Object.keys(martItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + martItems[key] : sum, 0) +
-      Object.keys(lartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) ? sum + lartItems[key] : sum, 0);
-
-    if (totalCount < product.stock) {
-      addToCart(product.id, selectedSize, selectedFlavor);
-
-      const activeOffer = product?.offers?.find(
-        (o) =>
-          o.active &&
-          o.discount > 0 &&
-          o.type === 0 &&
-          normalizeSize(o.size) === normalizeSize(selectedSize)
-      );
-      const activeFreeOffer = product?.offers?.find((o) =>
-        o.active &&
-        Number(o.buy) >= 1 &&
-        Number(o.buyget) >= 1 &&
-        normalizeSize(o.size) === normalizeSize(selectedSize)
-      );
-      Alert.success(`${product.title} added to collection!`);
-      return true;
-    } else {
-      Alert.warning("Out of stock!");
-      return false;
-    }
+    return addToCart(product.id, selectedSize, selectedFlavor);
   };
 
   const resolveImg = (src) => {

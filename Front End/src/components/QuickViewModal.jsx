@@ -41,19 +41,12 @@ const QuickViewModal = ({ product, isOpen, onClose }) => {
     const inWishlist = isInWishlist(id);
 
     const handleAddToCart = () => {
-        if (quantity >= stock) {
-            Alert.info('Item Out of stock!');
-            return false;
-        }
-        addToCart(id, 'S', firstFlavorId);
-        Alert.success(`${title} added!`);
-        return true;
+        return addToCart(id, 'S', firstFlavorId);
     };
 
     const handleRemoveFromCart = () => {
         if (quantity > 0) {
             removeFromCart(id, 'S', firstFlavorId);
-            Alert.warning(`${title} removed!`);
         }
     };
 

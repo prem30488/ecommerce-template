@@ -42,12 +42,9 @@ const SimilarProduct = ({ product }) => {
             className={`fbc-action-btn fbc-add-btn ${currentCartCount > 0 ? 'active' : ''}`}
             onClick={(e) => {
               e.stopPropagation();
-              if (currentCartCount < (stock || 99)) {
-                const flavorId = productFlavors?.[0]?.flavor_id;
-                if (flavorId) {
-                  addToCart(id, 'S', flavorId);
-                  Alert.success(`${title.slice(0, 15)}... added!`);
-                }
+              const flavorId = productFlavors?.[0]?.flavor_id;
+              if (flavorId) {
+                addToCart(id, 'S', flavorId);
               }
             }}
           >

@@ -10,10 +10,16 @@ import './PremiumCollectionCard.css';
 
 const PremiumCollectionCard = ({ product }) => {
     const navigate = useNavigate();
-    const { addToCart, categories } = useContext(ShopContext);
+    const { addToCart, categories, cartItems, martItems, lartItems } = useContext(ShopContext);
     const { addToWishlist, removeFromWishlist, isInWishlist } = useContext(WishlistContext);
 
     if (!product) return null;
+
+    // Aggregated cart count across all flavors and sizes for this product
+    const cartCount = 
+        (Object.keys(cartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) || key === String(product.id) ? sum + cartItems[key] : sum, 0)) +
+        (Object.keys(martItems).reduce((sum, key) => key.startsWith(`${product.id}_`) || key === String(product.id) ? sum + martItems[key] : sum, 0)) +
+        (Object.keys(lartItems).reduce((sum, key) => key.startsWith(`${product.id}_`) || key === String(product.id) ? sum + lartItems[key] : sum, 0));
 
     const isComingSoon = product.comingSoon === true || product.comingSoon === 'true';
 
@@ -80,12 +86,18 @@ const PremiumCollectionCard = ({ product }) => {
         e.preventDefault();
         e.stopPropagation();
 
-        const flavorId = (product.productFlavors && product.productFlavors.length > 0)
-            ? product.productFlavors[0].flavor_id
-            : null;
+        const firstFlavor = product.productFlavors?.[0];
+        const flavorId = firstFlavor?.flavor_id || null;
+        
+        // Determine the best size to add based on price availability
+        let bestSize = 'S';
+        if (firstFlavor) {
+            if (firstFlavor.price) bestSize = 'S';
+            else if (firstFlavor.priceMedium) bestSize = 'M';
+            else if (firstFlavor.priceLarge) bestSize = 'L';
+        }
 
-        addToCart(product.id, 'S', flavorId); // default size (S) and first flavor
-        Alert.success(`${(product.title || '').slice(0, 20)} added to cart!`);
+        addToCart(product.id, bestSize, flavorId);
     };
 
     const handleQuickView = (e) => {
@@ -135,7 +147,7 @@ const PremiumCollectionCard = ({ product }) => {
                     <div className="card-overlay">
                         <div className="overlay-top-row">
                             <button className="overlay-btn overlay-btn-primary" onClick={handleAddToCart}>
-                                Add to Cart
+                                {cartCount > 0 ? `In Cart (${cartCount})` : 'Add to Cart'}
                             </button>
                             <button className="overlay-btn overlay-btn-secondary" onClick={handleQuickView}>
                                 View Details

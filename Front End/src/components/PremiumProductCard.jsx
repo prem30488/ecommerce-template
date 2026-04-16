@@ -73,9 +73,7 @@ const PremiumProductCard = ({ product }) => {
         const flavor = product.productFlavors?.[sel.flavorIdx];
         const flavorId = flavor?.flavor_id || (product.productFlavors && product.productFlavors.length > 0 ? product.productFlavors[0].flavor_id : null);
 
-        if (getCartCount() >= (product.stock || 99)) { Alert.info('Out of stock!'); return; }
         addToCart(product.id, sel.size, flavorId);
-        Alert.success(`${(product.title || '').slice(0, 20)} added!`);
     };
 
     const flavors = product.productFlavors || [];

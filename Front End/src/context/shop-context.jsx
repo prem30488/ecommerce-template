@@ -66,11 +66,11 @@ export const ShopContextProvider = (props) => {
           if (!itemInfo) continue;
 
           const unitPrice = getProductFlavorPrice(itemInfo, size, flavorId);
-          
+
           // Match the logic in PremiumProductCard/PremiumCartItem
-          const activeOffer = itemInfo.offers?.find(o => 
-            o.active && 
-            o.discount > 0 && 
+          const activeOffer = itemInfo.offers?.find(o =>
+            o.active &&
+            o.discount > 0 &&
             (o.size === size || !o.size)
           );
 
@@ -155,25 +155,25 @@ export const ShopContextProvider = (props) => {
     if (!product || product.stock === undefined || product.stock === null) return true;
 
     const pidStr = String(productId);
-    
+
     // 1. Calculate total paid items for this product across all sizes, 
     // replacing the count for the current size with newAmount
     let totalPaid = 0;
-    
+
     // Size S
     if (size === "S") {
       totalPaid += newAmount;
     } else {
       for (const k in cartItems) if (k.split('_')[0] === pidStr) totalPaid += cartItems[k];
     }
-    
+
     // Size M
     if (size === "M") {
       totalPaid += newAmount;
     } else {
       for (const k in martItems) if (k.split('_')[0] === pidStr) totalPaid += martItems[k];
     }
-    
+
     // Size L
     if (size === "L") {
       totalPaid += newAmount;
@@ -183,7 +183,7 @@ export const ShopContextProvider = (props) => {
 
     // 2. Predict total free items for this product based on ALL paid items (including the newAmount)
     let totalFree = 0;
-    
+
     // The BOGO/Offer logic from useEffect (lines 116-140)
     const sizes = ["S", "M", "L"];
     sizes.forEach(s => {
@@ -210,23 +210,23 @@ export const ShopContextProvider = (props) => {
 
     // 3. Also check if OTHER products give THIS product for free
     products.forEach(otherProduct => {
-        if (otherProduct.id === product.id) return; // Already handled above
-        if (otherProduct.offers) {
-            otherProduct.offers.forEach(offer => {
-                if (offer.active && offer.buy > 0 && offer.buyget > 0 && String(offer.freeProductid) === pidStr) {
-                    // Check how many of this other product we have in the paid maps
-                    sizes.forEach(s => {
-                        let paidOfOtherInSize = 0;
-                        const itemMap = s === "S" ? cartItems : (s === "M" ? martItems : lartItems);
-                        for (const k in itemMap) if (k.split('_')[0] === String(otherProduct.id)) paidOfOtherInSize += itemMap[k];
-                        
-                        if (offer.size === s || !offer.size) {
-                            totalFree += Math.floor(paidOfOtherInSize / offer.buy) * offer.buyget;
-                        }
-                    });
-                }
+      if (otherProduct.id === product.id) return; // Already handled above
+      if (otherProduct.offers) {
+        otherProduct.offers.forEach(offer => {
+          if (offer.active && offer.buy > 0 && offer.buyget > 0 && String(offer.freeProductid) === pidStr) {
+            // Check how many of this other product we have in the paid maps
+            sizes.forEach(s => {
+              let paidOfOtherInSize = 0;
+              const itemMap = s === "S" ? cartItems : (s === "M" ? martItems : lartItems);
+              for (const k in itemMap) if (k.split('_')[0] === String(otherProduct.id)) paidOfOtherInSize += itemMap[k];
+
+              if (offer.size === s || !offer.size) {
+                totalFree += Math.floor(paidOfOtherInSize / offer.buy) * offer.buyget;
+              }
             });
-        }
+          }
+        });
+      }
     });
 
     if (totalPaid + totalFree > product.stock) {
@@ -244,13 +244,13 @@ export const ShopContextProvider = (props) => {
     for (const k in itemMap) if (k.split('_')[0] === pidStr) currentPaidInSize += itemMap[k];
 
     if (!checkStockAvailability(itemId, currentPaidInSize + 1, size)) {
-      return;
+      return false;
     }
 
     // If flavorId is not provided, try to find the first flavor of the product
     let activeFlavorId = flavorId;
+    const product = products.find(p => p.id === Number(itemId));
     if (!activeFlavorId) {
-      const product = products.find(p => p.id === Number(itemId));
       activeFlavorId = product?.productFlavors?.[0]?.flavor_id || null;
     }
 
@@ -273,6 +273,9 @@ export const ShopContextProvider = (props) => {
     } else {
       setCartItems(updater);
     }
+
+    Alert.success(`${product?.title || 'Item'} added to cart!`);
+    return true;
   };
 
   const removeFromCart = (itemId, size, flavorId = null) => {
@@ -293,7 +296,7 @@ export const ShopContextProvider = (props) => {
 
   const updateCartItemCount = (newAmount, itemId, size, flavorId = null) => {
     if (newAmount > 0 && !checkStockAvailability(itemId, newAmount, size)) {
-       return;
+      return false;
     }
     const cartKey = flavorId ? `${itemId}_${flavorId}` : itemId;
     const updater = (prev) => ({
@@ -308,6 +311,7 @@ export const ShopContextProvider = (props) => {
     } else {
       setCartItems(updater);
     }
+    return true;
   };
 
   const updateFreeToCart = (newAmount, itemId, size) => {

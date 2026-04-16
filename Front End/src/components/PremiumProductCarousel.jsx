@@ -61,9 +61,7 @@ const PremiumProductCarousel = ({ products }) => {
         const flavor = product.productFlavors?.[sel.flavorIdx];
         const flavorId = flavor?.flavor_id;
         if (!flavorId) { Alert.warning('No flavor available'); return; }
-        if (getCartCount(product.id) >= (product.stock || 99)) { Alert.info('Out of stock!'); return; }
         addToCart(product.id, sel.size, flavorId);
-        Alert.success(`${(product.title || '').slice(0, 20)} added!`);
     };
 
     return (

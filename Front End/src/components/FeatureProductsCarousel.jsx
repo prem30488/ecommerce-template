@@ -109,9 +109,7 @@ const FpcCard = ({ product, onQuickView }) => {
 
   const handleAdd = (e) => {
     e.stopPropagation();
-    if (cartCount >= stock) { Alert.info("Item out of stock!"); return; }
     addToCart(id, "S", firstFlavorId);
-    Alert.success(`${title.slice(0, 20)} added!`);
   };
 
   return (

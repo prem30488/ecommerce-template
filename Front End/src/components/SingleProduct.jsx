@@ -94,9 +94,7 @@ const SingleProduct = ({ product }) => {
           <button className="btn-info" onClick={() => navigate("/productDetails/" + product.id)}>More Info</button>
           <button className="btn-cart"
             onClick={() => {
-              if (cartItemCount < stock) { addToCart(id, "S", firstFlavorId); } else {
-                Alert.info('Item Out of stock!');
-              }
+              addToCart(id, "S", firstFlavorId);
             }
             }>
             Add To Cart {cartItemCount > 0 && <> ({cartItemCount})</>}

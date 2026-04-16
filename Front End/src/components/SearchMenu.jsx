@@ -10,6 +10,7 @@ const SearchMenu = (props) => {
   const handleSearch = () => {
     if (searchinput.trim()) {
       navigate("/Search/" + searchinput);
+      if (props.onSearch) props.onSearch();
     }
   };
 

@@ -107,9 +107,7 @@ const BestSingleProduct = ({ product }) => {
             <button 
               className="px-4 py-2 bg-rose-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-rose-500 transition-colors shadow-lg shadow-rose-200"
               onClick={() => {
-                if (cartItemCount < stock) { addToCart(id, "S", firstFlavorId); } else {
-                  Alert.info('Out of stock!');
-                }
+                addToCart(id, "S", firstFlavorId);
               }}
             >
               {cartItemCount > 0 ? `In Cart (${cartItemCount})` : "Add To Cart"}

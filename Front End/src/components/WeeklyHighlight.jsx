@@ -75,12 +75,7 @@ const WeeklyHighlight = () => {
       Alert.info("Please search for this product on our site!");
       return;
     }
-    if (cartCount >= stock) {
-      Alert.info("Item is out of stock!");
-      return;
-    }
     addToCart(id, "S", firstFlavorId);
-    Alert.success(`${title} added to cart!`);
   };
 
   const handleMoreInfo = () => {
