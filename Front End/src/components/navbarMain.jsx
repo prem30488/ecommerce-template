@@ -64,7 +64,7 @@ export const NavbarMain = () => {
       if (!event.target.closest('.menudropdown')) {
         setIsHealthMenuOpen(false);
       }
-      if (!event.target.closest('.links') && !event.target.closest('.mobile-menu-toggle')) {
+      if (!event.target.closest('.links') && !event.target.closest('.mobile-menu-toggle') && !event.target.closest('.search-container')) {
         setIsMobileMenuOpen(false);
       }
     };

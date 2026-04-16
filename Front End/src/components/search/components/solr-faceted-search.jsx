@@ -11,7 +11,7 @@ class SolrFacetedSearch extends React.Component {
 
 	render() {
 		const { customComponents, bootstrapCss, query, results, truncateFacetListsAt } = this.props;
-		const { onSearchFieldChange, onSortFieldChange, onPageChange, onCsvExport } = this.props;
+		const { onSearchFieldChange, onSortFieldChange, onPageChange, onCsvExport, onPdfExport } = this.props;
 		const { searchFields, sortFields, start, rows } = query;
 
 		const SearchFieldContainerComponent = customComponents.searchFields.container;
@@ -24,6 +24,7 @@ class SolrFacetedSearch extends React.Component {
 		const PaginateComponent = customComponents.results.paginate;
 		const PreloadComponent = customComponents.results.preloadIndicator;
 		const CsvExportComponent = customComponents.results.csvExport;
+		const PdfExportComponent = customComponents.results.pdfExport || customComponents.results.csvExport;
 		const CurrentQueryComponent = customComponents.searchFields.currentQuery;
 		const SortComponent = customComponents.sortFields.menu;
 
@@ -73,6 +74,9 @@ class SolrFacetedSearch extends React.Component {
 							{this.props.showCsvExport
 								? <CsvExportComponent bootstrapCss={bootstrapCss} onClick={onCsvExport} />
 								: null}
+							{this.props.showPdfExport
+								? <PdfExportComponent bootstrapCss={bootstrapCss} onClick={onPdfExport} label="Export PDF" />
+								: null}
 						</div>
 					</div>
 
@@ -117,7 +121,8 @@ SolrFacetedSearch.defaultProps = {
 	],
 	sortFields: [],
 	truncateFacetListsAt: -1,
-	showCsvExport: false
+	showCsvExport: true,
+	showPdfExport: true
 };
 
 SolrFacetedSearch.propTypes = {
@@ -132,6 +137,8 @@ SolrFacetedSearch.propTypes = {
 	query: PropTypes.object,
 	results: PropTypes.object,
 	showCsvExport: PropTypes.bool,
+	showPdfExport: PropTypes.bool,
+	onPdfExport: PropTypes.func,
 	truncateFacetListsAt: PropTypes.number
 };
 

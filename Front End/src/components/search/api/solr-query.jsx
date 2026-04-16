@@ -109,19 +109,21 @@ const solrQuery = (query, format = {wt: "json"}) => {
 	const sortParam = buildSort(sortFields.concat(idSort));
 	const groupParam = group && group.field ? `group=on&group.field=${encodeURIComponent(group.field)}` : "";
 
+	const facetsEnabled = format.facet !== "off";
 
-	return `q=*:*&${queryParams.length > 0 ? queryParams : ""}` +
+	const fullFormat = { facet: facetsEnabled ? "on" : "off", ...format };
+
+	return `q=*:*${queryParams.length > 0 ? `&${queryParams}` : ""}` +
 		`${sortParam.length > 0 ? `&sort=${sortParam}` : ""}` +
-		`${facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
-		`${facetSortParams.length > 0 ? `&${facetSortParams}` : ""}` +
+		`${facetsEnabled && facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
+		`${facetsEnabled && facetSortParams.length > 0 ? `&${facetSortParams}` : ""}` +
 		`${groupParam.length > 0 ? `&${groupParam}` : ""}` +
 		`&rows=${rows}` +
 		`&${facetLimitParam}` +
 		`&${facetSortParam}` +
-		`&${cursorMarkParam}` +
+		`${cursorMarkParam.length > 0 ? `&${cursorMarkParam}` : ""}` +
 		(start === null ? "" : `&start=${start}`) +
-		"&facet=on" +
-		`&${buildFormat(format)}`;
+		`&${buildFormat(fullFormat)}`;
 };
 
 export default solrQuery;

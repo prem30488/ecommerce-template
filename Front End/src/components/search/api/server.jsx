@@ -1,7 +1,7 @@
 import xhr from "xhr";
 import solrQuery from "./solr-query";
 
-const MAX_INT = 2147483647;
+const MAX_INT = 10000;
 
 let server = {};
 
@@ -30,8 +30,9 @@ server.submitQuery = (query, callback) => {
 server.fetchCsv = (query, callback) => {
 	const params = solrQuery({...query, rows: MAX_INT}, {
 		wt: "csv",
+		facet: "off",
 		"csv.mv.separator": "|",
-		"csv.separator": ";"
+		"csv.separator": ","
 	});
 	const separator = query.url.includes("?") ? "&" : "?";
 

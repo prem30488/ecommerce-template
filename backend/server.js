@@ -43,18 +43,26 @@ app.get('/api/solr-proxy/hanley/select', async (req, res) => {
 
         const response = await fetch(solrUrl, {
             headers: {
-                'ngrok-skip-browser-warning': 'true',
-                'Accept': 'application/json'
+                'ngrok-skip-browser-warning': 'true'
             }
         });
 
         if (!response.ok) {
             const errorText = await response.text();
+            console.error('--- SOLR ERROR DETAILS ---');
+            console.error(errorText);
             return res.status(response.status).json({ error: 'Solr Error', detail: errorText });
         }
 
-        const data = await response.json();
-        res.json(data);
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            res.json(data);
+        } else {
+            const text = await response.text();
+            res.setHeader('Content-Type', contentType || 'text/plain');
+            res.send(text);
+        }
     } catch (error) {
         console.error('Solr Proxy Error:', error);
         res.status(500).json({ error: 'Failed to fetch from Solr', message: error.message });
@@ -491,6 +499,54 @@ app.post('/api/order/createOrder', async (req, res) => {
             couponCode: couponCode || null,
             discountAmount: discountAmount || 0
         }, { transaction: t });
+        
+        // --- Stock Management Logic ---
+        // Aggregate all items (including free ones) to check total demand per product
+        const stockDemand = {};
+        const itemsToProcess = req.body.detailedItems || [];
+        
+        const collectFromMap = (map) => {
+            if (!map) return;
+            Object.entries(map).forEach(([key, qty]) => {
+                const pid = key.split('_')[0];
+                if (qty > 0) {
+                    stockDemand[pid] = (stockDemand[pid] || 0) + qty;
+                }
+            });
+        };
+        
+        if (itemsToProcess.length === 0) {
+            collectFromMap(cartItems);
+            collectFromMap(martItems);
+            collectFromMap(lartItems);
+        } else {
+            itemsToProcess.forEach(item => {
+                stockDemand[item.productId] = (stockDemand[item.productId] || 0) + item.quantity;
+            });
+        }
+
+        // Validate and Decrement Stock atomically
+        for (const [pid, qty] of Object.entries(stockDemand)) {
+            const product = await db.Product.findByPk(pid, { 
+                transaction: t, 
+                lock: true // FOR UPDATE lock to prevent race conditions during transaction
+            });
+            
+            if (!product) {
+                throw new Error(`Product with ID ${pid} not found.`);
+            }
+
+            // Check for availability
+            if (product.stock === null || product.stock === undefined || product.stock < qty) {
+                throw new Error(`Insufficient stock for "${product.title}". Requested: ${qty}, Available: ${product.stock || 0}`);
+            }
+
+            // Decrement stock
+            await product.update({ 
+                stock: Math.max(0, product.stock - qty) 
+            }, { transaction: t });
+        }
+        // --- End Stock Management Logic ---
 
         // Helper to process items
         const processItems = async (items, itemsType) => {
