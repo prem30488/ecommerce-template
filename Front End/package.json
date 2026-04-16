@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "styleguide": "styleguidist server --config styleguide.config.cjs",
+    "styleguide:build": "styleguidist build --config styleguide.config.cjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -80,14 +82,25 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.5",
+    "@babel/preset-env": "^7.24.5",
+    "@babel/preset-react": "^7.24.1",
     "@eslint/js": "^9.10.0",
     "@types/react": "^18.2.73",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.3.4",
+    "ajv": "^8.13.0",
+    "ajv-keywords": "^5.1.0",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^7.1.4",
     "eslint": "^9.10.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "glob": "^11.0.0",
     "globals": "^15.9.0",
-    "vite": "^5.4.10"
+    "react-styleguidist": "^13.1.1",
+    "style-loader": "^4.0.0",
+    "vite": "^5.4.10",
+    "webpack": "^5.91.0"
   }
 }

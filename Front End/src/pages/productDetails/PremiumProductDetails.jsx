@@ -734,9 +734,9 @@ export const PremiumProductDetails = () => {
                 Add to Cart
               </button>
             )}
-            
-            <button 
-              className="ppp-buy-now-btn" 
+
+            <button
+              className="ppp-buy-now-btn"
               onClick={handleBuyNow}
               style={{
                 flex: 1,
@@ -1001,31 +1001,36 @@ export const PremiumProductDetails = () => {
         {frequentProducts.length > 0 && (
           <div className="ppp-bundle-section">
             <h2 className="ppp-section-title">Complete Your Stack</h2>
-            <div style={{ background: '#fff', borderRadius: 28, padding: 40, border: '1px solid #e2e8f0' }}>
+            <div className="ppp-bundle-container">
               <FrequentlyBoughtCarousel
                 currentProduct={product}
                 frequentProducts={frequentProducts}
                 onSelectionsChange={(allProds, sels) => setBundleSelections({ allProducts: allProds, selections: sels })}
               />
-              <div style={{ marginTop: 32, paddingTop: 28, borderTop: '1px solid #f1f5f9', textAlign: 'center' }}>
+              <div style={{ marginTop: 40, paddingTop: 32, borderTop: '1px solid #f1f5f9', textAlign: 'center' }}>
                 <span style={{ fontSize: 11, fontWeight: 900, color: '#94a3b8', letterSpacing: '0.15em', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}>
-                  Bundle Price
+                  Total Bundle Value
                 </span>
-                <div style={{ fontSize: 44, fontWeight: 900, color: '#0ea5e9', letterSpacing: '-0.04em', marginBottom: 24 }}>
+                <div style={{ fontSize: 44, fontWeight: 950, color: '#0ea5e9', letterSpacing: '-0.04em', marginBottom: 24 }}>
                   ₹{(
-                    (product?.productFlavors?.[0]?.price || 0) +
-                    frequentProducts.reduce((sum, p) => sum + (p.productFlavors?.[0]?.price || 0), 0)
+                    bundleSelections ? 
+                    bundleSelections.allProducts.reduce((sum, p, idx) => {
+                      const sel = bundleSelections.selections[idx] || { flavorIdx: 0, size: 'S' };
+                      const flavor = p.productFlavors?.[sel.flavorIdx];
+                      if (!flavor) return sum;
+                      const sizePrice = sel.size === 'S' ? flavor.price : (sel.size === 'M' ? flavor.priceMedium : flavor.priceLarge);
+                      return sum + (sizePrice || flavor.price || 0);
+                    }, 0) :
+                    ((product?.productFlavors?.[0]?.price || 0) + frequentProducts.reduce((sum, p) => sum + (p.productFlavors?.[0]?.price || 0), 0))
                   ).toLocaleString()}
                 </div>
                 <button
-                  style={{ background: '#0f172a', color: '#fff', border: 'none', borderRadius: 16, padding: '16px 40px', fontWeight: 900, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.2s' }}
-                  onMouseEnter={e => e.target.style.background = '#0ea5e9'}
-                  onMouseLeave={e => e.target.style.background = '#0f172a'}
+                  className="ppp-bundle-buy-btn"
                   onClick={() => {
                     const allBundle = bundleSelections?.allProducts || [product, ...frequentProducts];
                     const sels = bundleSelections?.selections || {};
-                    const SIZES_MAP = { S: 'price', M: 'priceMedium', L: 'priceLarge' };
                     allBundle.forEach((item, idx) => {
+                      if (String(item.id).startsWith('placeholder')) return;
                       const sel = sels[idx] || { flavorIdx: 0, size: 'S' };
                       const flavor = item.productFlavors?.[sel.flavorIdx];
                       const fid = flavor?.flavor_id;

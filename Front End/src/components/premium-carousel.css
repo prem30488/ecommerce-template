@@ -10,8 +10,8 @@
 }
 
 .frequent-swiper .swiper-wrapper {
-  height: 800px !important;
-  width: 1200px !important;
+  height: auto !important;
+  width: auto !important;
 }
 
 

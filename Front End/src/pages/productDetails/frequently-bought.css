@@ -5,7 +5,12 @@
 }
 
 .frequent-swiper {
-  padding: 12px 10px 40px !important;
+  padding: 8px 10px !important;
+}
+
+.frequent-swiper .swiper-wrapper {
+  height: auto !important;
+  align-items: flex-start !important;
 }
 
 .frequent-card {
@@ -14,11 +19,11 @@
   border: 1px solid #f1f5f9;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100% !important;
+  height: auto !important;
   display: flex !important;
   flex-direction: column !important;
   position: relative;
-  min-height: 340px;
+  min-height: auto;
 }
 
 .frequent-card:hover {
@@ -28,7 +33,8 @@
 }
 
 .frequent-card-image {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 2.2 / 1;
+  max-height: 100px;
   overflow: hidden;
   background: #f8fafc;
   position: relative;
@@ -105,7 +111,7 @@
 }
 
 .frequent-card-content {
-  padding: 16px;
+  padding: 10px 12px;
   flex-grow: 1 !important;
   display: flex !important;
   flex-direction: column !important;
@@ -125,8 +131,8 @@
   font-size: 11px;
   font-weight: 800;
   color: #1e293b;
-  line-height: 1.4;
-  margin-bottom: 12px;
+  line-height: 1.25;
+  margin-bottom: 6px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -139,11 +145,32 @@
   color: #0ea5e9;
 }
 
+.fbc-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.fbc-rating .stars {
+  color: #f59e0b;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.fbc-rating .rating-val {
+  font-size: 9px;
+  font-weight: 800;
+  color: #64748b;
+}
+
 .frequent-card-footer {
   margin-top: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
 }
 
 .frequent-card-price {
@@ -274,4 +301,39 @@
 .fbc-size.disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+.fbc-visual-plus {
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: #0ea5e9;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 950;
+  z-index: 5;
+  box-shadow: 0 4px 10px rgba(14, 165, 233, 0.4);
+}
+
+.fbc-label-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  z-index: 2;
 }

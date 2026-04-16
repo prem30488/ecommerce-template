@@ -1422,3 +1422,28 @@
 .ppp-gallery-main .carousel .thumbs-wrapper::-webkit-scrollbar {
   display: none;
 }
+
+.ppp-bundle-buy-btn {
+  background: #0d9488;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 40px;
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+}
+
+.ppp-bundle-buy-btn:hover {
+  background: #0f766e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4);
+}
+
+.ppp-bundle-buy-btn:active {
+  transform: translateY(0);
+}

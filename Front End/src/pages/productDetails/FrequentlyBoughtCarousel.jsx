@@ -91,17 +91,17 @@ const FrequentlyBoughtCarousel = ({ currentProduct, frequentProducts, onSelectio
             <Swiper
                 style={{
                     '--swiper-navigation-color': '#0f172a',
-                    '--swiper-navigation-size': '14px',
-                    minHeight: "480px"
+                    '--swiper-navigation-size': '12px'
                 }}
+                autoHeight={true}
                 loop={false}
-                spaceBetween={20}
-                slidesPerView={1}
+                spaceBetween={12}
+                slidesPerView={1.2}
                 breakpoints={{
-                    480: { slidesPerView: 2 },
-                    768: { slidesPerView: 2 },
-                    1024: { slidesPerView: 3 },
-                    1280: { slidesPerView: 4 }
+                    480: { slidesPerView: 2.2 },
+                    768: { slidesPerView: 3 },
+                    1024: { slidesPerView: 4 },
+                    1280: { slidesPerView: 5 }
                 }}
                 navigation={true}
                 modules={[Navigation]}
@@ -120,9 +120,19 @@ const FrequentlyBoughtCarousel = ({ currentProduct, frequentProducts, onSelectio
                     return (
                         <SwiperSlide key={`${uId}-frequent-${product.id || index}`}>
                             <div className="frequent-card">
+                                {/* Badge */}
+                                <div className="fbc-label-badge">
+                                    {index === 0 ? 'Current Item' : 'Add To Stack'}
+                                </div>
+
                                 {/* Image */}
                                 <div className="frequent-card-image" onClick={() => !isPlaceholder && navigate(`/productDetails/${product.id}`)} style={{ cursor: isPlaceholder ? 'default' : 'pointer' }}>
                                     <img src={product.image || product.img} alt={product.title} title={COMPANY_INFO.name} loading="lazy" />
+                                    
+                                    {/* Visual Plus (except for the last visible one) */}
+                                    {index < allProducts.length - 1 && (
+                                        <div className="fbc-visual-plus">+</div>
+                                    )}
 
                                     {/* Action icons column */}
                                     <div className="fbc-action-col">
@@ -179,6 +189,12 @@ const FrequentlyBoughtCarousel = ({ currentProduct, frequentProducts, onSelectio
                                 <div className="frequent-card-content">
                                     <div className="frequent-card-brand">{product.brand || 'Elite Selection'}</div>
                                     <h6 className="frequent-card-title">{product.title}</h6>
+                                    
+                                    {/* Rating */}
+                                    <div className="fbc-rating">
+                                        <span className="stars">★★★★★</span>
+                                        <span className="rating-val">{product.rating || '4.5'}</span>
+                                    </div>
 
                                     {/* Flavor Pills */}
                                     {flavors.length > 0 && (
