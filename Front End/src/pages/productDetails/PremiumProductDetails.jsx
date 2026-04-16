@@ -12,6 +12,8 @@ import { API_BASE_URL } from "../../constants";
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./premium-product.css";
+import Compare from "../../components/Compare";
+import SimilarProducts from "../../components/SimilarProducts";
 
 // ─── Small helpers ───────────────────────────────────────────────
 const Star = ({ filled }) => (
@@ -48,7 +50,7 @@ export const PremiumProductDetails = () => {
   const [bundleSelections, setBundleSelections] = useState(null); // { allProducts, selections }
   const [isImageOverlayOpen, setIsImageOverlayOpen] = useState(false);
 
-  const { addToCart, addFreeToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart, categories: allCategories, products: allProducts } = useContext(ShopContext);
+  const { addToCart, addFreeToCart, removeFromCart, cartItems, martItems, lartItems, flavorCart, categories: allCategories, products: allProducts, addToCompare, removeFromCompare, selectedItems } = useContext(ShopContext);
 
   // ── Category & Form Resolution ──────────────────────────────────
   const categoryItems = new Set();
@@ -781,6 +783,41 @@ export const PremiumProductDetails = () => {
                 }}
               />
             </div>
+
+            {/* Compare Button */}
+            <div>
+              <button
+                onClick={() => {
+                  const isItemCompared = selectedItems.some(p => p.id === product.id);
+                  if (isItemCompared) {
+                    removeFromCompare(product);
+                    Alert.info("Removed from comparison");
+                  } else {
+                    addToCompare(product);
+                    Alert.success("Added to comparison");
+                  }
+                }}
+                style={{
+                  width: 54,
+                  height: 54,
+                  borderRadius: 14,
+                  border: `2px solid ${selectedItems.some(p => p.id === product.id) ? '#0ea5e9' : '#e2e8f0'}`,
+                  background: selectedItems.some(p => p.id === product.id) ? '#f0f9ff' : '#fff',
+                  color: selectedItems.some(p => p.id === product.id) ? '#0ea5e9' : '#94a3b8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0,
+                  transition: 'all 0.2s',
+                  cursor: 'pointer'
+                }}
+                title={selectedItems.some(p => p.id === product.id) ? "Remove from comparison" : "Add to comparison"}
+              >
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* NEW: Ask Question & Share */}
@@ -830,7 +867,6 @@ export const PremiumProductDetails = () => {
         </div>
       </div>
 
-      {/* ── BELOW THE FOLD ── */}
       <div className="ppp-below">
 
         {/* Stats */}
@@ -852,7 +888,7 @@ export const PremiumProductDetails = () => {
         {/* Description */}
         <h2 className="ppp-section-title">About This Product</h2>
         <div className="ppp-desc-block">
-          {product.description || "Premium quality supplement crafted with precision and care. Each serving is carefully dosed to deliver maximum results. Our formulas undergo rigorous third-party testing to ensure purity, potency, and safety. We believe in transparency — no proprietary blends, no hidden fillers, just pure science-backed ingredients."}
+          {product.description || "Premium quality supplement crafted with precision and care. Each serving is carefully dosed to deliver maximum results. Our formulas undergo rigorous third-party testing to ensure purity, potency, and safety. We believe in transparency - no proprietary blends, no hidden fillers, just pure science-backed ingredients."}
         </div>
 
 
@@ -996,6 +1032,12 @@ export const PremiumProductDetails = () => {
             </div>
           </div>
         )}
+
+        {/* Similar Products */}
+        <SimilarProducts productCat={product} />
+
+        {/* Comparison Section */}
+        <Compare />
 
         {/* Frequently Bought Together */}
         {frequentProducts.length > 0 && (

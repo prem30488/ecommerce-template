@@ -333,6 +333,7 @@ export const ShopContextProvider = (props) => {
     getTotalCartCount,
     addToCompare,
     removeFromCompare,
+    setSelectedItems,
     resetCart,
     addToCustomerData,
     getCustomerData,
