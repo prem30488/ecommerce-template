@@ -9,7 +9,7 @@ import './styles.css';
 import { Navigation } from 'swiper/modules';
 import { useId } from 'react'
 
-const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thumbs = true, thumbDirection = 'horizontal' }) => {
+const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thumbs = true, thumbDirection = 'horizontal', style, className }) => {
   const uId = useId();
   const mainSwiperRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -38,14 +38,14 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
 
   if (images.length === 0) {
     return (
-      <div className="flex items-center justify-center p-10 bg-gray-200 rounded-lg text-gray-500">
+      <div className={`flex items-center justify-center p-10 bg-gray-200 rounded-lg text-gray-500 ${className || ''}`} style={style}>
         No images available
       </div>
     );
   }
 
   return (
-    <div className={`product-carousel-container flex ${thumbDirection === 'vertical' ? 'flex-row' : 'flex-col'}`} style={{ minHeight: '100%', alignItems: 'flex-start' }}>
+    <div className={`product-carousel-container flex ${thumbDirection === 'vertical' ? 'flex-row' : 'flex-col'} ${className || ''}`} style={{ minHeight: '100%', alignItems: 'flex-start', overflow: 'hidden', ...style }}>
 
       {/* Vertical Thumbs (Left side) */}
       {thumbs && thumbDirection === 'vertical' && (

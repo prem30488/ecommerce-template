@@ -1,0 +1,550 @@
+/* PREMIUM PRODUCT CAROUSEL STYLING */
+
+.premium-carousel-container {
+  padding: 10px 0 !important;
+  width: 100%;
+}
+
+.frequent-swiper {
+  padding: 12px 10px 40px !important;
+}
+
+.frequent-swiper .swiper-wrapper {
+  height: auto !important;
+  width: auto !important;
+}
+
+
+.frequent-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  overflow: visible;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  height: max-content !important;
+  min-height: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative;
+}
+
+.frequent-card:hover {
+  border-color: #0ea5e9;
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.05);
+}
+
+.frequent-card-image {
+  overflow: visible;
+  background: #f8fafc;
+  position: relative;
+  cursor: pointer;
+}
+
+.frequent-card-image img {
+  max-width: 85%;
+  max-height: 85%;
+  margin: auto;
+  padding: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.frequent-card-image .product-carousel-container {
+  width: 100%;
+  height: 100%;
+}
+
+.frequent-card-image .product-carousel-container .main-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.frequent-card:hover .frequent-card-image img {
+  transform: scale(1.15);
+}
+
+/* ─── Action Column ──────────────────────────────────────── */
+.fbc-action-col {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.frequent-card:hover .fbc-action-col {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.fbc-action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  color: #475569;
+}
+
+.fbc-add-btn:hover {
+  background: #0ea5e9;
+  color: white;
+  border-color: #0ea5e9;
+  box-shadow: 0 6px 16px -4px rgba(14, 165, 233, 0.4);
+  transform: scale(1.08);
+}
+
+.fbc-eye-btn:hover {
+  background: #0f172a;
+  color: white;
+  border-color: #0f172a;
+  transform: scale(1.08);
+}
+
+.fbc-cart-count {
+  font-size: 10px;
+  font-weight: 900;
+  color: #0ea5e9;
+}
+
+.frequent-card-content {
+  padding: 16px;
+  flex-grow: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between;
+}
+
+.frequent-card-brand {
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.frequent-card-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.3s;
+}
+
+.frequent-card:hover .frequent-card-title {
+  color: #0ea5e9;
+}
+
+.frequent-card-meta {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.frequent-card-meta-item {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.2;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.frequent-card-category {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #bbf7d0;
+}
+
+.frequent-card-form {
+  background: #f5f3ff;
+  color: #5b21b6;
+  border-color: #ddd6fe;
+}
+
+.frequent-card-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.frequent-card-price {
+  font-size: 14px;
+  font-weight: 950;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.frequent-card-stock {
+  font-size: 8px;
+  font-weight: 900;
+  padding: 4px 8px;
+  background: #f0fdf4;
+  color: #10b981;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Swiper Nav Overrides */
+.frequent-swiper .swiper-button-next,
+.frequent-swiper .swiper-button-prev {
+  width: 32px !important;
+  height: 32px !important;
+  background: white !important;
+  border: 1px solid #f1f5f9 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.3s !important;
+}
+
+.frequent-swiper .swiper-button-next:after,
+.frequent-swiper .swiper-button-prev:after {
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+
+.frequent-swiper .swiper-button-next:hover,
+.frequent-swiper .swiper-button-prev:hover {
+  background: #0f172a !important;
+  color: white !important;
+  border-color: #0f172a !important;
+}
+
+/* Pagination Overrides */
+.frequent-swiper .swiper-pagination-bullet {
+  background: #94a3b8 !important;
+  opacity: 0.5 !important;
+}
+
+.frequent-swiper .swiper-pagination-bullet-active {
+  background: #0ea5e9 !important;
+  opacity: 1 !important;
+}
+
+/* ─── Flavor & Size Controls ─────────────────────────── */
+.fbc-label {
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #94a3b8;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.fbc-flavor-row {
+  margin-bottom: 8px;
+}
+
+.fbc-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.fbc-pill {
+  font-size: 8px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 100px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.fbc-pill.active {
+  background: #0f172a;
+  color: white;
+  border-color: #0f172a;
+}
+
+.fbc-pill:hover:not(.active) {
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.fbc-flavor-meta-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.fbc-flavor-row {
+  flex: 1 1 60%;
+  min-width: 240px;
+}
+
+.fbc-meta-side {
+  flex: 1 1 35%;
+  min-width: 180px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.fbc-meta-pill {
+  font-size: 8px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.fbc-meta-category {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #bbf7d0;
+}
+
+.fbc-meta-form {
+  background: #f5f3ff;
+  color: #5b21b6;
+  border-color: #ddd6fe;
+}
+
+.fbc-size-row {
+  margin-bottom: 10px;
+}
+
+.fbc-sizes {
+  display: flex;
+  gap: 5px;
+}
+
+.fbc-size {
+  width: 30px;
+  height: 24px;
+  font-size: 9px;
+  font-weight: 900;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fbc-size.active {
+  background: #0ea5e9;
+  color: white;
+  border-color: #0ea5e9;
+  box-shadow: 0 4px 10px -2px rgba(14, 165, 233, 0.4);
+}
+
+.fbc-size:hover:not(.active):not(.disabled) {
+  border-color: #0ea5e9;
+  color: #0ea5e9;
+}
+
+.fbc-size.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ─── Premium Marquee ─── */
+@keyframes premiumMarquee {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  animation: premiumMarquee 15s linear infinite;
+  will-change: transform;
+}
+
+.premium-marquee-wrapper:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+/* ─── Premium Product Reviews ────────────────────────── */
+.fbc-reviews-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.fbc-stars-gold {
+  color: #fbbf24;
+  /* Rich Amber Gold */
+  display: inline-flex;
+  gap: 2px;
+  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.3));
+}
+
+.fbc-review-pill {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 12px;
+  padding: 6px 12px;
+  transition: all 0.3s ease;
+}
+
+.fbc-review-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.1);
+}
+
+.fbc-review-item {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 10px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+.fbc-review-item:hover {
+  border-color: #fbbf24;
+  background: #fff;
+  transform: scale(1.02);
+}
+
+.fbc-review-name {
+  font-size: 9px;
+  font-weight: 800;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fbc-review-comment {
+  font-size: 10px;
+  color: #64748b;
+  line-height: 1.5;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ─── Premium Product FAQs ──────────────────────────── */
+.fbc-faq-section {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.4);
+}
+
+.fbc-faq-item {
+  background: #f0f9ff;
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid #e0f2fe;
+  transition: all 0.3s ease;
+  margin-bottom: 8px;
+}
+
+.fbc-faq-item:hover {
+  border-color: #0ea5e9;
+  background: #fff;
+  transform: scale(1.02);
+}
+
+.fbc-faq-question {
+  font-size: 9px;
+  font-weight: 900;
+  color: #0c4a6e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fbc-faq-answer {
+  font-size: 10px;
+  color: #0369a1;
+  line-height: 1.5;
+  margin-top: 6px;
+  padding-left: 14px;
+  border-left: 2px solid #bae6fd;
+}
+
+/* Trust Metric Enhancements */
+.fbc-trust-snapshot {
+  flex: 1;
+  border-radius: 16px;
+  padding: 12px 10px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.fbc-trust-faq {
+  background: #f0f9ff;
+  border-color: #e0f2fe;
+}
+
+.fbc-trust-faq:hover {
+  background: #e0f2fe;
+  border-color: #38bdf8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.1);
+}
+
+.fbc-trust-reviews {
+  background: #fffbeb;
+  border-color: #fef3c7;
+}
+
+.fbc-trust-reviews:hover {
+  background: #fef3c7;
+  border-color: #fbbf24;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(251, 191, 36, 0.1);
+}

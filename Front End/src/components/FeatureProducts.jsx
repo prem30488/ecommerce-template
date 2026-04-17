@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { API_BASE_URL } from '../constants/index.jsx';
-import PremiumProductCard from "../components/PremiumProductCard";
+import PremiumCard from "../components/PremiumCard";
 import FeatureProductsCarousel from "../components/FeatureProductsCarousel";
 import { Link } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
@@ -48,7 +48,7 @@ const FeatureProducts = () => {
                 .filter((product) => product.featured === true && product.active === true)
                 .map((product, index) => {
                   if (index > 7) { return "" }
-                  return <PremiumProductCard key={product.id} product={product} />;
+                  return <PremiumCard key={product.id} product={product} />;
                 })}
           </div>
         </div>

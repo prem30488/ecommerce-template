@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import PremiumProductCard from "../components/PremiumProductCard";
+import PremiumCard from "../components/PremiumCard";
 import BestSellingCarousel from "../components/BestSellingCarousel";
 import { Link } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
@@ -54,7 +54,7 @@ const BestSelling = () => {
 
                 .map((product, index) => {
                   if (index > 7) { return "" }
-                  return <PremiumProductCard key={product.id} product={product} />;
+                  return <PremiumCard key={product.id} product={product} />;
                 })}
           </div>
         </div>

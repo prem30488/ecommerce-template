@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import PremiumProductCard from "../components/PremiumProductCard";
+import PremiumCard from "../components/PremiumCard";
 import { Link } from "react-router-dom";
 import "./product.css";
 import { API_BASE_URL } from "../constants";
@@ -89,7 +89,7 @@ const ProductKids = () => {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="glow-card group transition-all duration-700">
-                <PremiumProductCard product={product} />
+                <PremiumCard product={product} />
               </div>
             </div>
           ))}
