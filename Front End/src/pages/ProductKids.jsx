@@ -49,35 +49,33 @@ const ProductKids = () => {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fffbf5", paddingTop: "80px" }}>
-      {/* Premium Multi-Layer Hero Section (Kids) */}
-      <div className="relative overflow-hidden mb-16 shadow-2xl"
-        style={{ background: "linear-gradient(135deg, #7c2d12 0%, #c2410c 100%)", padding: "8rem 2rem", textAlign: "center" }}>
-
-        {/* Advanced Atmospheric FX */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(249,115,22,0.1),transparent_50%)]"></div>
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[-100px] left-[-100px] w-96 h-96 bg-amber-500/10 rounded-full blur-[100px]"></div>
-
-        <div className="relative z-10 max-w-4xl mx-auto backdrop-blur-xl bg-white/5 p-16 rounded-[4.5rem] border border-white/10 shadow-inner">
-          <div className="mb-6 inline-flex items-center gap-2.5 px-6 py-2 bg-orange-500 text-white text-[11px] font-black uppercase tracking-[0.3em] rounded-full shadow-2xl shadow-orange-500/40">
-            <span className="animate-pulse">✦</span> Junior Excellence
+      {/* Kids' Banner */}
+      <div style={{ position: "relative", width: "100%", overflow: "hidden", marginBottom: "2rem", boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}>
+        <img
+          src="/images/banner_kids.png"
+          alt="Kids' Collection"
+          style={{ width: "100%", height: "400px", objectFit: "contain", objectPosition: "center", display: "block" }}
+        />
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(90deg, rgba(124,45,18,0.65) 0%, rgba(124,45,18,0.15) 60%, transparent 100%)",
+          display: "flex", alignItems: "center", paddingLeft: "5%"
+        }}>
+          <div>
+            <p style={{ color: "#fdba74", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "0.5rem" }}>Health &amp; Wellness</p>
+            <h1 style={{ color: "#fff", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 900, margin: 0, letterSpacing: "-0.03em", lineHeight: 1.1 }}>Kids' Collection</h1>
+            <p style={{ color: "#fed7aa", fontSize: "1rem", marginTop: "0.75rem", maxWidth: 420 }}>Safe, purity-first wellness for the next generation.</p>
           </div>
-          <h1 style={{ fontSize: "4.5rem", fontWeight: "900", margin: "0 0 2rem 0", letterSpacing: "-0.05em", color: "white", lineHeight: "1.1" }}>
-            Pure <span style={{ color: "#fb923c", textShadow: "0 0 30px rgba(249,115,22,0.3)" }}>Growth.</span>
-          </h1>
-          <p style={{ fontSize: "1.35rem", color: "#fed7aa", maxWidth: "800px", margin: "0 auto", lineHeight: "1.8", fontWeight: "400" }}>
-            Safe, purity-first wellness tailored for the next generation. Discover handpicked favorites chosen for their performance and pediatric-grade excellence.
-          </p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 pb-20 translate-y-[-2rem] relative z-20">
         {/* Breadcrumb - Glassmorphism Style */}
-        <div className="mb-10">
+        <div className="mb-3">
           <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-xl px-6 py-2.5 rounded-2xl shadow-xl shadow-orange-100/50">
-            <Link to="/" className="text-orange-600 hover:text-orange-500 font-bold text-sm transition-colors uppercase tracking-widest">Home</Link>
+            <Link to="/" className="text-orange-600 hover:text-orange-500 font-bold text-sm transition-colors uppercase tracking-widest">Home </Link>
             <span className="text-orange-200">/</span>
-            <span className="text-orange-600 font-black text-sm uppercase tracking-widest">Junior Suite</span>
+            <span className="text-orange-600 font-black text-sm uppercase tracking-widest"> Junior Suite</span>
           </div>
         </div>
 

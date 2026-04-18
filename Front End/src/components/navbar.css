@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem 0 4rem;
+  padding: 0 0px 0 35px;
   flex-wrap: nowrap;
   height: 80px;
 }
@@ -15,7 +15,7 @@
   font-size: 14px;
   color: #475569;
   text-align: center;
-  padding: 8px 12px;
+  padding: 8px 10px;
   text-decoration: none;
   white-space: nowrap;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -62,7 +62,6 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
   flex-wrap: nowrap;
 }
 
@@ -255,7 +254,6 @@
   align-items: center;
   flex-grow: 1;
   justify-content: space-between;
-  margin-left: 1rem;
 }
 
 .links {
@@ -604,7 +602,8 @@
 
   .logo-container {
     width: 100%;
-    padding: 10px 1.5rem 10px 3.5rem; /* Increased left padding for sidebar button on mobile */
+    padding: 10px 1.5rem 10px 3.5rem;
+    /* Increased left padding for sidebar button on mobile */
     height: 70px;
     background: #fff;
     border-bottom: 1px solid #f1f5f9;
@@ -697,12 +696,12 @@
   }
 
   .shop-mega-menu {
-     position: static;
-     width: 100%;
-     padding: 10px 0;
-     box-shadow: none;
-     border: none;
-     background: transparent;
+    position: static;
+    width: 100%;
+    padding: 10px 0;
+    box-shadow: none;
+    border: none;
+    background: transparent;
   }
 
   .shop-mega-menu.show {
@@ -724,7 +723,8 @@
   }
 
   .mega-menu-carousel {
-    display: none; /* Hide carousel in mobile menu to keep it clean */
+    display: none;
+    /* Hide carousel in mobile menu to keep it clean */
   }
 
   .mobile-categories-section {
@@ -779,6 +779,7 @@
 
 @media (max-width: 600px) {
   .logo .menudropbtn {
-    display: none; /* Hide "Health & Beauty" button on very small screens to save space */
+    display: none;
+    /* Hide "Health & Beauty" button on very small screens to save space */
   }
 }

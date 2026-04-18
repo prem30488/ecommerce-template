@@ -49,35 +49,33 @@ const ProductWomen = () => {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fff5f5", paddingTop: "80px" }}>
-      {/* Premium Multi-Layer Hero Section (Women) */}
-      <div className="relative overflow-hidden mb-16 shadow-2xl"
-        style={{ background: "linear-gradient(135deg, #4c0519 0%, #831843 100%)", padding: "8rem 2rem", textAlign: "center" }}>
-
-        {/* Advanced Atmospheric FX */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(236,72,153,0.1),transparent_50%)]"></div>
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[-100px] left-[-100px] w-96 h-96 bg-rose-500/10 rounded-full blur-[100px]"></div>
-
-        <div className="relative z-10 max-w-4xl mx-auto backdrop-blur-xl bg-white/5 p-16 rounded-[4.5rem] border border-white/10 shadow-inner">
-          <div className="mb-6 inline-flex items-center gap-2.5 px-6 py-2 bg-pink-500 text-white text-[11px] font-black uppercase tracking-[0.3em] rounded-full shadow-2xl shadow-pink-500/40">
-            <span className="animate-pulse">✦</span> Elite Femininity
+      {/* Women's Banner */}
+      <div style={{ position: "relative", width: "100%", overflow: "hidden", marginBottom: "2rem", boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}>
+        <img
+          src="/images/women.png"
+          alt="Women's Collection"
+          style={{ width: "100%", height: "400px", objectFit: "contain", objectPosition: "center", display: "block" }}
+        />
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(90deg, rgba(76,5,25,0.65) 0%, rgba(76,5,25,0.15) 60%, transparent 100%)",
+          display: "flex", alignItems: "center", paddingLeft: "5%"
+        }}>
+          <div>
+            <p style={{ color: "#f9a8d4", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "0.5rem" }}>Health &amp; Wellness</p>
+            <h1 style={{ color: "#fff", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 900, margin: 0, letterSpacing: "-0.03em", lineHeight: 1.1 }}>Women's Collection</h1>
+            <p style={{ color: "#fce7f3", fontSize: "1rem", marginTop: "0.75rem", maxWidth: 420 }}>Curated wellness designed for the modern woman.</p>
           </div>
-          <h1 style={{ fontSize: "4.5rem", fontWeight: "900", margin: "0 0 2rem 0", letterSpacing: "-0.05em", color: "white", lineHeight: "1.1" }}>
-            Feminine <span style={{ color: "#f472b6", textShadow: "0 0 30px rgba(236,72,153,0.3)" }}>Radiance.</span>
-          </h1>
-          <p style={{ fontSize: "1.35rem", color: "#f9a8d4", maxWidth: "800px", margin: "0 auto", lineHeight: "1.8", fontWeight: "400" }}>
-            The perfect confluence of nature and biotechnology. Experience curated wellness solutions designed for the modern woman who values brilliance and inner harmony.
-          </p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 pb-20 translate-y-[-2rem] relative z-20">
         {/* Breadcrumb - Glassmorphism Style */}
-        <div className="mb-10">
+        <div className="mb-3">
           <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-xl px-6 py-2.5 rounded-2xl shadow-xl shadow-pink-100/50">
-            <Link to="/" className="text-pink-400 hover:text-pink-600 font-bold text-sm transition-colors uppercase tracking-widest">Home</Link>
+            <Link to="/" className="text-pink-400 hover:text-pink-600 font-bold text-sm transition-colors uppercase tracking-widest">Home </Link>
             <span className="text-pink-200">/</span>
-            <span className="text-pink-600 font-black text-sm uppercase tracking-widest">Women's Collection</span>
+            <span className="text-pink-600 font-black text-sm uppercase tracking-widest"> Women's Collection</span>
           </div>
         </div>
 

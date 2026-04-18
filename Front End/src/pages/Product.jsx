@@ -49,35 +49,33 @@ const Product = () => {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f8fafc", paddingTop: "80px" }}>
-      {/* Premium Catalog Header (Men) */}
-      <div className="relative overflow-hidden mb-16 shadow-2xl"
-        style={{ background: "linear-gradient(135deg, #020617 0%, #0f172a 100%)", padding: "8rem 2rem", textAlign: "center" }}>
-
-        {/* Advanced Atmospheric FX */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.08),transparent_50%)]"></div>
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/10 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[-100px] left-[-100px] w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px]"></div>
-
-        <div className="relative z-10 max-w-4xl mx-auto backdrop-blur-xl bg-white/5 p-16 rounded-[4.5rem] border border-white/10 shadow-inner">
-          <div className="mb-6 inline-flex items-center gap-2.5 px-6 py-2 bg-sky-500 text-white text-[11px] font-black uppercase tracking-[0.3em] rounded-full shadow-2xl shadow-sky-500/40">
-            <span className="animate-pulse">✦</span> Curated Excellence
+      {/* Men's Banner */}
+      <div style={{ position: "relative", width: "100%", overflow: "hidden", marginBottom: "2rem", boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}>
+        <img
+          src="/images/man.png"
+          alt="Men's Collection"
+          style={{ width: "100%", height: "400px", objectFit: "contain", objectPosition: "center", display: "block" }}
+        />
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(90deg, rgba(2,6,23,0.65) 0%, rgba(2,6,23,0.15) 60%, transparent 100%)",
+          display: "flex", alignItems: "center", paddingLeft: "5%"
+        }}>
+          <div>
+            <p style={{ color: "#38bdf8", fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: "0.5rem" }}>Health &amp; Wellness</p>
+            <h1 style={{ color: "#fff", fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: 900, margin: 0, letterSpacing: "-0.03em", lineHeight: 1.1 }}>Men's Collection</h1>
+            <p style={{ color: "#cbd5e1", fontSize: "1rem", marginTop: "0.75rem", maxWidth: 420 }}>Science-backed vitality for the high-achiever.</p>
           </div>
-          <h1 style={{ fontSize: "4.5rem", fontWeight: "900", margin: "0 0 2rem 0", letterSpacing: "-0.05em", color: "white", lineHeight: "1.1" }}>
-            Maximum <span style={{ color: "#38bdf8", textShadow: "0 0 30px rgba(56,189,248,0.3)" }}>Precision.</span>
-          </h1>
-          <p style={{ fontSize: "1.35rem", color: "#94a3b8", maxWidth: "800px", margin: "0 auto", lineHeight: "1.8", fontWeight: "400" }}>
-            The definitive masterclass in grooming and science-backed vitality. Precision-engineered solutions for the high-achiever who demands uncompromising results.
-          </p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 pb-20 translate-y-[-2rem] relative z-20">
         {/* Breadcrumb - Glassmorphism Style */}
-        <div className="mb-10">
+        <div className="mb-3">
           <div className="inline-flex items-center gap-3 bg-white/70 backdrop-blur-xl px-6 py-2.5 rounded-2xl shadow-xl shadow-slate-200/50">
-            <Link to="/" className="text-slate-400 hover:text-sky-500 font-bold text-sm transition-colors uppercase tracking-widest">Home</Link>
+            <Link to="/" className="text-slate-400 hover:text-sky-500 font-bold text-sm transition-colors uppercase tracking-widest">Home </Link>
             <span className="text-slate-300">/</span>
-            <span className="text-sky-500 font-black text-sm uppercase tracking-widest">Men's Suite</span>
+            <span className="text-sky-500 font-black text-sm uppercase tracking-widest"> Men's Suite</span>
           </div>
         </div>
 

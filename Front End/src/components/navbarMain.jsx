@@ -131,12 +131,13 @@ export const NavbarMain = () => {
     if (p.formId) return `Form #${p.formId}`;
     return '';
   };
+  const isMobile = window.innerWidth <= 1100;
 
   return (
     <>
       <Sidebar />
       <div className="navbar" id="navbar" style={{ position: "fixed", width: "100%" }}>
-        <FloatingSocials />
+        {!isMobile ? <FloatingSocials /> : null}
         <div className="logo-container">
           <div className="logo">
             <Link to="/" id="NavTitle">
@@ -189,10 +190,16 @@ export const NavbarMain = () => {
               <div className={`shop-mega-menu ${isShopMenuOpen ? 'show' : ''}`}>
                 <div className="mega-menu-container">
                   <div className="mega-menu-links">
-                    <Link to="/products" className="mega-link active" onClick={() => setIsShopMenuOpen(false)}>
+                    <Link to="/products" className="mega-link active" onClick={() => {
+                      setIsShopMenuOpen(false);
+                      setIsMobileMenuOpen(false);
+                    }}>
                       All Products
                     </Link>
-                    <Link to="/products?filter=comingSoon" className="mega-link" onClick={() => setIsShopMenuOpen(false)}>
+                    <Link to="/products?filter=comingSoon" className="mega-link" onClick={() => {
+                      setIsShopMenuOpen(false);
+                      setIsMobileMenuOpen(false);
+                    }}>
                       ✨ Coming Soon
                     </Link>
                     {/* Additional categories could go here to match screenshot */}

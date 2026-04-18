@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { 
-  Paper, 
-  Typography, 
-  Container, 
-  TextField, 
-  Button, 
-  Box, 
-  Divider,
-  Stepper,
-  Step,
-  StepLabel,
-  StepContent,
-  Alert,
-  CircularProgress
+import {
+    Paper,
+    Typography,
+    Container,
+    TextField,
+    Button,
+    Box,
+    Divider,
+    Stepper,
+    Step,
+    StepLabel,
+    StepContent,
+    Alert,
+    CircularProgress
 } from '@mui/material';
 import { trackOrder } from '../util/APIUtils';
 import dayjs from 'dayjs';
@@ -111,8 +111,8 @@ const TrackOrder = () => {
     const activeStep = steps.filter(s => s.completed).length - 1;
 
     return (
-        <div style={{ 
-            minHeight: '100vh', 
+        <div style={{
+            minHeight: '100vh',
             background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
             paddingTop: '120px',
             paddingBottom: '50px'
@@ -120,7 +120,7 @@ const TrackOrder = () => {
             <SEO title="Track Your Order" description="Easily track your order status in real-time." />
             <Container maxWidth="md">
                 <Paper elevation={6} sx={{ borderRadius: '15px', overflow: 'hidden' }}>
-                    <Box sx={{ p: 4, bgcolor: '#4318ff', color: 'white', textAlign: 'center' }}>
+                    <Box sx={{ p: 4, bgcolor: '#54C440', color: 'white', textAlign: 'center' }}>
                         <Typography variant="h4" fontWeight="bold" gutterBottom>
                             Track Your Order
                         </Typography>
@@ -138,21 +138,21 @@ const TrackOrder = () => {
                                     placeholder="Enter Order ID (e.g. 101)"
                                     value={orderId}
                                     onChange={(e) => setOrderId(e.target.value)}
-                                    sx={{ 
+                                    sx={{
                                         '& .MuiOutlinedInput-root': {
                                             borderRadius: '10px'
                                         }
                                     }}
                                 />
-                                <Button 
-                                    variant="contained" 
+                                <Button
+                                    variant="contained"
                                     type="submit"
                                     disabled={loading || !orderId.trim()}
-                                    sx={{ 
+                                    sx={{
                                         borderRadius: '10px',
                                         px: 4,
-                                        bgcolor: '#4318ff',
-                                        '&:hover': { bgcolor: '#3311cc' }
+                                        bgcolor: '#54C440',
+                                        '&:hover': { bgcolor: '#0D9286' }
                                     }}
                                 >
                                     {loading ? <CircularProgress size={24} color="inherit" /> : <FaSearch />}
@@ -174,8 +174,8 @@ const TrackOrder = () => {
                                             Order #{trackingData.id}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            Current Status: <span style={{ 
-                                                fontWeight: 'bold', 
+                                            Current Status: <span style={{
+                                                fontWeight: 'bold',
                                                 color: trackingData.status?.toLowerCase() === 'cancelled' ? '#f44336' : '#4318ff',
                                                 textTransform: 'uppercase'
                                             }}>
@@ -190,9 +190,9 @@ const TrackOrder = () => {
                                 <Stepper activeStep={activeStep} orientation="vertical" sx={{ mb: 2 }}>
                                     {steps.map((step, index) => (
                                         <Step key={step.label} active={index <= activeStep}>
-                                            <StepLabel 
+                                            <StepLabel
                                                 StepIconComponent={() => (
-                                                    <Box sx={{ 
+                                                    <Box sx={{
                                                         color: index <= activeStep ? '#4318ff' : '#ccc',
                                                         fontSize: '20px',
                                                         display: 'flex',
