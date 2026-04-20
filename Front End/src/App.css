@@ -39,7 +39,7 @@ footer p {
   flex-grow: 1;
   overflow: auto;
   position: absolute;
-  float:right;
+  float: right;
   vertical-align: bottom;
 }
 
@@ -124,8 +124,8 @@ footer p {
   cursor: pointer;
   border: 2px solid transparent;
   transition: background 0.22s ease, color 0.22s ease,
-              box-shadow 0.22s ease, transform 0.15s ease,
-              border-color 0.22s ease;
+    box-shadow 0.22s ease, transform 0.15s ease,
+    border-color 0.22s ease;
   white-space: nowrap;
   letter-spacing: 0.01em;
   line-height: 1;

@@ -131,7 +131,7 @@ export const NavbarMain = () => {
     if (p.formId) return `Form #${p.formId}`;
     return '';
   };
-  const isMobile = window.innerWidth <= 1100;
+  const isMobile = window.innerWidth < 1100;
 
   return (
     <>

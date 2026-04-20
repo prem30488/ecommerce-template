@@ -54,7 +54,7 @@ const ProductKids = () => {
         <img
           src="/images/banner_kids.png"
           alt="Kids' Collection"
-          style={{ width: "100%", height: "400px", objectFit: "contain", objectPosition: "center", display: "block" }}
+          style={{ width: "100%", height: "400px", objectFit: "cover", objectPosition: "center", display: "block" }}
         />
         <div style={{
           position: "absolute", inset: 0,

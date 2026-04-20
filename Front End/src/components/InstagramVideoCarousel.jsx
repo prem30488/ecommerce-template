@@ -75,23 +75,32 @@ const InstagramVideoCarousel = () => {
         <div className="ivc-track" ref={trackRef}>
           {reels.map((reel, index) => {
             const offset = index - activeIndex;
-            let className = "ivc-slide";
-            if (offset === 0) className += " ivc-slide--active";
+            let slideClass = "ivc-slide";
+            if (offset === 0) slideClass += " ivc-slide--active";
             else if (offset === -1 || (activeIndex === 0 && index === reels.length - 1))
-              className += " ivc-slide--prev";
+              slideClass += " ivc-slide--prev";
             else if (offset === 1 || (activeIndex === reels.length - 1 && index === 0))
-              className += " ivc-slide--next";
-            else className += " ivc-slide--hidden";
+              slideClass += " ivc-slide--next";
+            else slideClass += " ivc-slide--hidden";
+
+            const isActive = index === activeIndex;
 
             return (
               <div
                 key={index}
-                className={className}
+                className={slideClass}
                 onClick={() => offset !== 0 && goTo(index)}
               >
-                {/* Instagram Embed */}
+                {/* Instagram Embed — only mount for the active slide to prevent
+                    Instagram's embed.js from conflicting with React's VDOM */}
                 <div className="ivc-embed-wrapper">
-                  <InstagramEmbed url={reel.url} width={328} />
+                  {isActive ? (
+                    <InstagramEmbed key={`embed-${index}`} url={reel.url} width={328} />
+                  ) : (
+                    <div className="ivc-embed-placeholder">
+                      <span>{reel.tag}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Caption Card */}
