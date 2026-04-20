@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 0px 0 35px;
+  padding: 0 0px 0 65px;
   flex-wrap: nowrap;
   height: 80px;
 }
@@ -601,8 +601,7 @@
 
   .logo-container {
     width: 100%;
-    padding: 10px 1.5rem 10px 3.5rem;
-    /* Increased left padding for sidebar button on mobile */
+    padding: 10px 1.5rem 10px 65px;
     height: 70px;
     background: #fff;
     border-bottom: 1px solid #f1f5f9;

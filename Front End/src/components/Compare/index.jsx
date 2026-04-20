@@ -50,7 +50,11 @@ export const Compare = () => {
     }
 
     const features = [
-        { label: 'Price', key: 'price', render: (p) => <span className="pc-price">₹{p.price?.toLocaleString()}</span> },
+        { label: 'Price', key: 'price', render: (p) => {
+            const firstFlavorPrice = p.productFlavors?.[0]?.price;
+            const displayPrice = firstFlavorPrice || p.price || 0;
+            return <span className="pc-price">₹{displayPrice.toLocaleString()}</span>;
+        }},
         { label: 'Category', key: 'categories', render: (p) => <span className="pc-badge pc-badge-primary">{p.categories?.[0]?.title || p.Category?.title || 'Premium'}</span> },
         { label: 'Brand', key: 'brand', render: (p) => <span className="font-bold text-slate-700">{p.brand || 'Elite Selection'}</span> },
         { label: 'Rating', key: 'rating', render: (p) => (
