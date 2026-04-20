@@ -11,6 +11,9 @@ class SolrClient {
 		this.onChange = onChange;
 		delete settings.onChange;
 
+		if (!settings.pageStrategy) { settings.pageStrategy = "paginate"; }
+		if (!settings.rows) { settings.rows = 20; }
+
 		this.state = {
 			query: settings,
 			results: {
@@ -20,9 +23,6 @@ class SolrClient {
 			}
 		};
 		this.settings = {...settings};
-
-		if (!this.state.query.pageStrategy) { this.state.query.pageStrategy = "paginate"; }
-		if (!this.state.query.rows) { this.state.query.rows = 20; }
 
 		if (this.state.query.pageStrategy === "cursor" && !this.state.query.idField) {
 			throw new Error("Pagination strategy 'cursor' requires a unique 'idField' to be passed.");

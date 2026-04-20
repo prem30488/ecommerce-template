@@ -1,7 +1,7 @@
 const initialState = {
 	searchFields: [],
 	sortFields: [],
-	rows: 0,
+	rows: 20,
 	url: null,
 	pageStrategy: null,
 	start: null,

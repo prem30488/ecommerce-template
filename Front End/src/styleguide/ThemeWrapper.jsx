@@ -32,24 +32,24 @@ export const themeColors = {
   secondaryShadowMd: 'rgba(13, 148, 136, 0.32)',
   secondaryShadowLg: 'rgba(13, 148, 136, 0.45)',
   secondaryBorder: 'rgba(13, 148, 136, 0.25)',
-  secondaryUltraLight: '#eff6ff',                    // feature card image bg
+  secondaryUltraLight: '#f0fdf4',                    // feature card image bg
 
   // ── Navigation / Sky-600  (sky-600) ─── navbar links, back buttons ─────────
-  nav: '#0284c7',
-  navHover: '#0369a1',
-  navShadow: 'rgba(2, 132, 199, 0.35)',
-  navShadowLg: 'rgba(2, 132, 199, 0.45)',
-  navFocusRing: 'rgba(2, 132, 199, 0.12)',
+  nav: '#0d9488',
+  navHover: '#25d4c6ff',
+  navShadow: 'rgba(13, 148, 136, 0.28)',
+  navShadowLg: 'rgba(13, 148, 136, 0.45)',
+  navFocusRing: 'rgba(13, 148, 136, 0.25)',
 
   // ── Sky/Info  (sky-400) ─── frequent-buy cards, swiper pagination ──────────
-  sky: '#0ea5e9',
-  skyShadow: 'rgba(14, 165, 233, 0.40)',
-  skyUltraLight: 'rgba(14, 165, 233, 0.05)',
+  sky: '#0d9488',
+  skyShadow: 'rgba(13, 148, 136, 0.28)',
+  skyUltraLight: 'rgba(13, 148, 136, 0.10)',
 
   // ── Sale badge ──────────────────────────────────────────────────────────────
-  badgeSale: '#ff4757',
-  badgeSaleLight: '#fda4af',
-  badgeSaleUltraLight: '#fff1f2',
+  badgeSale: '#0d9488',
+  badgeSaleLight: '#8BC53F',
+  badgeSaleUltraLight: '#f0fdf4',
   badgeSaleShadow: 'rgba(255, 71, 87, 0.30)',
   badgeSaleShadowLg: 'rgba(255, 71, 87, 0.60)',
 

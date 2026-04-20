@@ -118,11 +118,11 @@ const solrQuery = (query, format = {wt: "json"}) => {
 		`${facetsEnabled && facetFieldParam.length > 0 ? `&${facetFieldParam}` : ""}` +
 		`${facetsEnabled && facetSortParams.length > 0 ? `&${facetSortParams}` : ""}` +
 		`${groupParam.length > 0 ? `&${groupParam}` : ""}` +
-		`&rows=${rows}` +
+		`&rows=${rows || 20}` +
 		`&${facetLimitParam}` +
 		`&${facetSortParam}` +
 		`${cursorMarkParam.length > 0 ? `&${cursorMarkParam}` : ""}` +
-		(start === null ? "" : `&start=${start}`) +
+		(start === null || start === undefined ? "" : `&start=${start}`) +
 		`&${buildFormat(fullFormat)}`;
 };
 
