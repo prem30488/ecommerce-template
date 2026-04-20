@@ -24,7 +24,7 @@
 }
 
 .navbar a:hover {
-  color: #0284c7;
+  color: var(--color-nav);
 }
 
 .navbar a::after {
@@ -34,7 +34,7 @@
   left: 50%;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #0284c7, #0369a1);
+  background: linear-gradient(90deg, var(--color-nav), var(--color-nav-hover));
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateX(-50%);
 }
@@ -44,7 +44,7 @@
 }
 
 .active-link {
-  color: #0284c7 !important;
+  color: var(--color-nav) !important;
   font-weight: 600;
 }
 
@@ -117,8 +117,7 @@
   font-size: 16px;
   border: none;
   outline: none;
-  color: #0284c7;
-  /* Sky 600 */
+  color: var(--color-nav);
   /* padding: 14px 16px; */
   background-color: inherit;
   font-weight: 500;
@@ -217,7 +216,7 @@
 }
 
 .menucolumn a:hover {
-  color: #0284c7 !important;
+  color: var(--color-nav) !important;
   background-color: transparent !important;
   padding-left: 0.4rem !important;
 }
@@ -294,7 +293,7 @@
 
 
 .new-badge {
-  background: #2563eb;
+  background: var(--color-badge-new);
   color: white;
   font-size: 8px;
   padding: 2px 4px;
@@ -375,9 +374,9 @@
 
 .mega-link.active,
 .mega-link:hover {
-  color: #0284c7 !important;
+  color: var(--color-nav) !important;
   padding-left: 10px !important;
-  border-bottom-color: #0284c7;
+  border-bottom-color: var(--color-nav);
 }
 
 .mega-link::after {
@@ -431,8 +430,8 @@
 }
 
 .coming-soon-category {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--color-chip-category-bg);
+  color: var(--color-chip-category);
   border-radius: 999px;
   padding: 0.15rem 0.5rem;
   font-weight: 700;
@@ -441,8 +440,8 @@
 }
 
 .coming-soon-form {
-  background: #ede9fe;
-  color: #5b21b6;
+  background: var(--color-chip-form-bg);
+  color: var(--color-chip-form);
   border-radius: 999px;
   padding: 0.15rem 0.5rem;
   font-weight: 700;
@@ -551,7 +550,7 @@
 .coming-soon-final-price {
   font-size: 18px;
   font-weight: 800;
-  color: #0d9488;
+  color: var(--color-primary);
 }
 
 .coming-soon-original-price {
@@ -579,7 +578,7 @@
   background: white !important;
   border-radius: 50%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  color: #0284c7 !important;
+  color: var(--color-nav) !important;
 }
 
 .coming-soon-swiper .swiper-button-next::after,
@@ -763,8 +762,8 @@
 
   .cat-badge {
     font-size: 0.75rem;
-    background: #f0fdfa;
-    color: #0d9488;
+    background: var(--color-primary-ultra-light);
+    color: var(--color-primary);
     padding: 2px 8px;
     border-radius: 10px;
     font-weight: 600;

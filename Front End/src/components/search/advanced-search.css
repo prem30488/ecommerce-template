@@ -10,17 +10,17 @@
   --search-card: rgba(255,255,255,0.04);
   --search-card-hover: rgba(255,255,255,0.07);
   --search-border: rgba(255,255,255,0.08);
-  --search-border-glow: rgba(32, 211, 145, 0.35);
-  --search-accent: #20d391;
-  --search-accent-2: #0ea5e9;
+  --search-border-glow: var(--color-primary-shadow);
+  --search-accent: var(--color-primary);
+  --search-accent-2: var(--color-sky);
   --search-text: #f0f4f8;
   --search-muted: #7b8fa1;
   --search-label: #a8bbc9;
   --search-shadow: 0 8px 32px rgba(0,0,0,0.55);
   --search-radius: 14px;
   --search-radius-sm: 8px;
-  --gradient-pill: linear-gradient(135deg, #20d391 0%, #0ea5e9 100%);
-  --gradient-header: linear-gradient(135deg, rgba(32,211,145,0.08) 0%, rgba(14,165,233,0.06) 100%);
+  --gradient-pill: linear-gradient(135deg, var(--color-primary) 0%, var(--color-sky) 100%);
+  --gradient-header: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-sky-ultra-light) 100%);
 }
 
 /* ── Page shell ── */

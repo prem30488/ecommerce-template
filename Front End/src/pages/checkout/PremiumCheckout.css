@@ -1,11 +1,11 @@
 :root {
-  --primary-color: #005bd3;
-  --primary-hover: #004bb1;
+  --primary-color: var(--color-primary);
+  --primary-hover: var(--color-primary-hover);
   --border-color: #e1e1e1;
   --text-main: #333333;
   --text-secondary: #707070;
   --bg-light: #f9f9f9;
-  --error-color: #d93025;
+  --error-color: var(--color-out-of-stock);
 }
 
 .premium-checkout-container {
@@ -302,7 +302,7 @@
 }
 
 .total-row.discount {
-  color: #10b981;
+  color: var(--color-in-stock);
   font-weight: 500;
 }
 

@@ -27,7 +27,7 @@
 }
 
 .frequent-card:hover {
-  border-color: #0ea5e9;
+  border-color: var(--color-sky);
   transform: translateY(-4px);
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.05);
 }
@@ -90,10 +90,10 @@
 }
 
 .fbc-add-btn:hover {
-  background: #0ea5e9;
+  background: var(--color-sky);
   color: white;
-  border-color: #0ea5e9;
-  box-shadow: 0 6px 16px -4px rgba(14, 165, 233, 0.4);
+  border-color: var(--color-sky);
+  box-shadow: 0 6px 16px -4px var(--color-sky-shadow);
   transform: scale(1.08);
 }
 
@@ -105,16 +105,16 @@
 }
 
 .fbc-action-btn.active {
-  background: #0ea5e9;
+  background: var(--color-sky);
   color: white;
-  border-color: #0ea5e9;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+  border-color: var(--color-sky);
+  box-shadow: 0 4px 12px var(--color-sky-shadow);
 }
 
 .fbc-cart-count {
   font-size: 10px;
   font-weight: 900;
-  color: #0ea5e9;
+  color: var(--color-sky);
 }
 
 .frequent-card-content {
@@ -149,7 +149,7 @@
 }
 
 .frequent-card:hover .frequent-card-title {
-  color: #0ea5e9;
+  color: var(--color-sky);
 }
 
 .fbc-rating {
@@ -160,7 +160,7 @@
 }
 
 .fbc-rating .stars {
-  color: #f59e0b;
+  color: var(--color-badge-bestseller);
   font-size: 10px;
   letter-spacing: 1px;
 }
@@ -191,8 +191,8 @@
   font-size: 8px;
   font-weight: 900;
   padding: 4px 8px;
-  background: #f0fdf4;
-  color: #10b981;
+  background: var(--color-in-stock-bg);
+  color: var(--color-in-stock);
   border-radius: 100px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -294,15 +294,15 @@
 }
 
 .fbc-size.active {
-  background: #0ea5e9;
+  background: var(--color-sky);
   color: white;
-  border-color: #0ea5e9;
-  box-shadow: 0 4px 10px -2px rgba(14, 165, 233, 0.4);
+  border-color: var(--color-sky);
+  box-shadow: 0 4px 10px -2px var(--color-sky-shadow);
 }
 
 .fbc-size:hover:not(.active):not(.disabled) {
-  border-color: #0ea5e9;
-  color: #0ea5e9;
+  border-color: var(--color-sky);
+  color: var(--color-sky);
 }
 
 .fbc-size.disabled {
@@ -317,7 +317,7 @@
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  background: #0ea5e9;
+  background: var(--color-sky);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -326,7 +326,7 @@
   font-size: 14px;
   font-weight: 950;
   z-index: 5;
-  box-shadow: 0 4px 10px rgba(14, 165, 233, 0.4);
+  box-shadow: 0 4px 10px var(--color-sky-shadow);
 }
 
 .fbc-label-badge {

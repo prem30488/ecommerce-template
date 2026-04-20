@@ -71,7 +71,7 @@
     display: block;
     width: 24px;
     height: 4px;
-    background: #0ea5e9;
+    background: var(--color-sky);
     border-radius: 2px;
 }
 
@@ -93,7 +93,7 @@
 
 .tos-body li::before {
     content: "•";
-    color: #0ea5e9;
+    color: var(--color-sky);
     font-weight: bold;
     display: inline-block;
     width: 1em;
@@ -123,7 +123,7 @@
 }
 
 .link-highlight {
-    color: #0ea5e9;
+    color: var(--color-sky);
     text-decoration: underline;
     font-weight: 600;
 }

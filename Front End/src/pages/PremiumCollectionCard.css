@@ -177,12 +177,12 @@
 }
 
 .card-status-badge.featured {
-  background: #4f46e5;
+  background: var(--color-badge-featured);
   /* Indigo for Featured */
 }
 
 .card-status-badge.bestseller {
-  background: #f59e0b;
+  background: var(--color-badge-bestseller);
   /* Amber/Gold for Bestseller */
 }
 
@@ -193,7 +193,7 @@
   top: 12px;
   right: 12px;
   /* Reset position */
-  background: var(--premium-accent);
+  background: var(--color-primary);
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -323,7 +323,7 @@
 
 .overlay-btn-wishlist.active {
   background: white;
-  color: #ef4444;
+  color: var(--color-badge-sale);
   border: none;
 }
 
@@ -351,7 +351,7 @@
 
 .card-category {
   font-size: 11px;
-  color: var(--premium-accent);
+  color: var(--color-chip-category);
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -441,12 +441,12 @@
 }
 
 .in-stock {
-  color: #16a34a;
+  color: var(--color-in-stock);
   /* Green for in-stock */
 }
 
 .out-of-stock {
-  color: #dc2626;
+  color: var(--color-out-of-stock);
   /* Red for out-of-stock */
 }
 

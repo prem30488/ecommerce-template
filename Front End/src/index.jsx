@@ -7,6 +7,7 @@ import {
   applyPolyfills,
   defineCustomElements,
 } from "@goapptiv-code/bluedart-tracking-web-component/loader";
+import ThemeWrapper from './styleguide/ThemeWrapper';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -22,8 +23,11 @@ console.error = (...args) => {
 applyPolyfills().then(() => {
   defineCustomElements();
 });
+
 root.render(
     <Router>
-      <App />
+      <ThemeWrapper>
+        <App />
+      </ThemeWrapper>
     </Router>
 );

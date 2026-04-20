@@ -34,7 +34,7 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle at center, rgba(14, 165, 233, 0.03) 0%, transparent 50%);
+    background: radial-gradient(circle at center, var(--color-sky-ultra-light), transparent 50%);
     pointer-events: none;
 }
 
@@ -65,8 +65,8 @@
 
 .premium-input-wrapper:focus-within {
     transform: translateY(-2px);
-    box-shadow: 0 20px 40px rgba(14, 165, 233, 0.1);
-    border-color: #0ea5e9;
+    box-shadow: 0 20px 40px var(--color-sky-shadow);
+    border-color: var(--color-sky);
 }
 
 .search-icon-fixed {
@@ -98,7 +98,7 @@
 }
 
 .premium-search-btn:hover {
-    background: #0ea5e9;
+    background: var(--color-sky);
     transform: scale(1.02);
 }
 
@@ -128,12 +128,12 @@
 }
 
 .query-highlight {
-    color: #0ea5e9;
+    color: var(--color-sky);
     position: relative;
 }
 
 .query-highlight-err {
-    color: #ef4444;
+    color: var(--color-out-of-stock);
 }
 
 /* Grid */
@@ -177,7 +177,7 @@
 }
 
 .search-breadcrumbs .active {
-    color: #0ea5e9;
+    color: var(--color-sky);
 }
 
 /* Animations */

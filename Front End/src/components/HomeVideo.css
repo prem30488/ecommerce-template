@@ -1,4 +1,3 @@
-
 .hVideo video {
     width: 100%;
     max-height: 75%;
@@ -19,7 +18,9 @@
     letter-spacing: .1rem;
 }
 
-.hVideo *, ::after, ::before {
+.hVideo *,
+::after,
+::before {
     box-sizing: inherit;
 }
 
@@ -33,7 +34,7 @@
 }
 
 .hVideo .has-text-centered {
-    text-align: center!important;
+    text-align: center !important;
 }
 
 .hVideo #pages-home-home-content .hero .container {
@@ -50,8 +51,9 @@
     padding-left: 1.4285714286rem;
     padding-right: 1.4285714286rem;
 }
+
 .hVideo .has-text-centered {
-    text-align: center!important;
+    text-align: center !important;
 }
 
 
@@ -60,11 +62,13 @@
     position: absolute;
     height: 100%;
     width: 65%;
-    background: rgba(0,0,0,.4);
+    background: rgba(0, 0, 0, .4);
     z-index: 1;
 }
-.hVideo .is-marginless, .two-column-layout>.container>.columns {
-    margin: 0!important;
+
+.hVideo .is-marginless,
+.two-column-layout>.container>.columns {
+    margin: 0 !important;
 }
 
 .hVideo #pages-home-home-content .hero video {
@@ -82,7 +86,9 @@
     letter-spacing: .1rem;
 }
 
-.hVideo *, ::after, ::before {
+.hVideo *,
+::after,
+::before {
     box-sizing: inherit;
 }
 
@@ -96,7 +102,7 @@
 }
 
 .hVideo .has-text-centered {
-    text-align: center!important;
+    text-align: center !important;
 }
 
 .hVideo #pages-home-home-content .hero .container {
@@ -112,9 +118,11 @@
 .hVideo .container {
     padding-left: 1.4285714286rem;
     padding-right: 1.4285714286rem;
+    padding-bottom: 3rem;
 }
+
 .hVideo .has-text-centered {
-    text-align: center!important;
+    text-align: center !important;
 }
 
 .hVideo #pages-home-home-content .hero:before {
@@ -122,11 +130,13 @@
     position: absolute;
     height: 75%;
     width: 100%;
-    background: rgba(0,0,0,.4);
+    background: rgba(0, 0, 0, .4);
     z-index: 1;
 }
-.hVideo .is-marginless, .two-column-layout>.container>.columns {
-    margin: 0!important;
+
+.hVideo .is-marginless,
+.two-column-layout>.container>.columns {
+    margin: 0 !important;
 }
 
 .hVideo #pages-home-home-content .hero video {
@@ -136,6 +146,7 @@
     -o-object-fit: cover;
     object-fit: cover;
 }
+
 .hVideo #pages-home-home-content .hero .container .brand-intro .wade-title {
     font-size: 4.57rem;
     font-weight: 400
@@ -173,7 +184,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .hero .container .brand-intro .title {
-         font-size:2.8571428571rem!important
+        font-size: 2.8571428571rem !important
     }
 }
 
@@ -191,12 +202,19 @@
     text-align: center
 }
 
-.hVideo #pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter {
+.hVideo #pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter {
     padding: 1.7857142857rem;
     text-decoration: none
 }
 
-.hVideo #pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge:focus,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge:hover,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button:focus,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button:hover,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter:focus,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter:hover {
+.hVideo #pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge:focus,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge:hover,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button:focus,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button:hover,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter:focus,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter:hover {
     background-color: #4c4c4c
 }
 
@@ -246,7 +264,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .hero .hero-footer .orange {
-        float:none;
+        float: none;
         margin-bottom: 1rem;
         margin-left: 0
     }
@@ -258,7 +276,7 @@
 }
 
 .hVideo #pages-home-home-content .hero .hero-footer a {
-    color: #fff!important
+    color: #fff !important
 }
 
 .hVideo #pages-home-home-content section:not(.is-marginless) {
@@ -280,7 +298,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .health-needs ul {
-        -moz-columns:2;
+        -moz-columns: 2;
         columns: 2
     }
 }
@@ -291,7 +309,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .affiliate-videos {
-        padding:.5rem
+        padding: .5rem
     }
 }
 
@@ -302,7 +320,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .affiliate-videos #video-cards {
-        display:block
+        display: block
     }
 }
 
@@ -358,7 +376,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .hero .container .brand-intro .title {
-        font-size:2.8571428571rem!important
+        font-size: 2.8571428571rem !important
     }
 }
 
@@ -376,12 +394,19 @@
     text-align: center
 }
 
-.hVideo #pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter {
+.hVideo #pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter {
     padding: 1.7857142857rem;
     text-decoration: none
 }
 
-.hVideo #pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge:focus,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge:hover,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button:focus,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button:hover,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter:focus,#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter:hover {
+.hVideo #pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge:focus,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.badge:hover,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button:focus,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.button:hover,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter:focus,
+#pages-home-home-content .hero .container .brand-intro .is-buttons .column a.filter:hover {
     background-color: #4c4c4c
 }
 
@@ -431,7 +456,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .hero .hero-footer .orange {
-        float:none;
+        float: none;
         margin-bottom: 1rem;
         margin-left: 0
     }
@@ -443,7 +468,7 @@
 }
 
 .hVideo #pages-home-home-content .hero .hero-footer a {
-    color: #fff!important
+    color: #fff !important
 }
 
 .hVideo #pages-home-home-content section:not(.is-marginless) {
@@ -465,7 +490,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .health-needs ul {
-        -moz-columns:2;
+        -moz-columns: 2;
         columns: 2
     }
 }
@@ -476,7 +501,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .affiliate-videos {
-        padding:.5rem
+        padding: .5rem
     }
 }
 
@@ -487,7 +512,7 @@
 
 @media screen and (max-width: 768px) {
     .hVideo #pages-home-home-content .affiliate-videos #video-cards {
-        display:block
+        display: block
     }
 }
 
@@ -505,5 +530,3 @@
     color: #000;
     margin-bottom: 4rem;
 }
-
-

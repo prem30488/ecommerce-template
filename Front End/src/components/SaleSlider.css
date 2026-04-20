@@ -90,11 +90,11 @@
 
 .discount-badge {
     display: inline-block;
-    background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+    background: var(--color-badge-sale);
     padding: 8px 16px;
     border-radius: 50px;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    box-shadow: 0 4px 15px var(--color-badge-sale-shadow);
 }
 
 .discount-percent {
@@ -140,7 +140,7 @@
 }
 
 .sale-cta-button {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+    background: var(--color-badge-sale);
     color: white;
     border: none;
     padding: 14px 32px;
@@ -149,7 +149,7 @@
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    box-shadow: 0 4px 15px var(--color-badge-sale-shadow);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -159,12 +159,12 @@
 
 .sale-cta-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(255, 71, 87, 0.4);
+    box-shadow: 0 8px 25px var(--color-badge-sale-shadow-lg);
 }
 
 .sale-cta-button:active {
     transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    box-shadow: 0 4px 15px var(--color-badge-sale-shadow);
 }
 
 .arrow {
@@ -232,13 +232,13 @@
 }
 
 .indicator:hover {
-    border-color: #ff4757;
+    border-color: var(--color-badge-sale);
     transform: scale(1.2);
 }
 
 .indicator.active {
-    background: #ff4757;
-    border-color: #ff4757;
+    background: var(--color-badge-sale);
+    border-color: var(--color-badge-sale);
     transform: scale(1.3);
 }
 

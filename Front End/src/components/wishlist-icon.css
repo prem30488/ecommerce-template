@@ -28,7 +28,7 @@
 }
 
 .wishlist-icon {
-  color: #ff4757;
+  color: var(--color-badge-sale);
   transition: color 0.3s ease, transform 0.3s ease;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .wishlist-icon-btn:hover .wishlist-icon {
-  color: #ff4757;
+  color: var(--color-badge-sale);
 }
 
 @keyframes heartBeat {

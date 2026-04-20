@@ -1,8 +1,8 @@
 /* Advanced Design System for About Page */
 :root {
   --primary: #0f172a;
-  --accent: #10b981;
-  --accent-light: #d1fae5;
+  --accent: var(--color-in-stock);
+  --accent-light: var(--color-in-stock-bg);
   --text-muted: #64748b;
   --glass: rgba(255, 255, 255, 0.7);
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);

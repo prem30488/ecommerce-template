@@ -23,7 +23,7 @@
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.2em;
-  color: #0d9488;
+  color: var(--color-primary);
   text-transform: uppercase;
   margin-bottom: 0.5rem;
 }
@@ -57,7 +57,7 @@
 .testi-card:hover {
   transform: translateY(-12px);
   box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-  border-color: rgba(13, 148, 136, 0.4);
+  border-color: var(--color-primary-border);
 }
 
 /* Avatar fixed width & height */
@@ -73,7 +73,7 @@
 }
 
 .testi-card:hover .testi-avatar-wrap {
-  border-color: #0d9488;
+  border-color: var(--color-primary);
 }
 
 .testi-avatar {
@@ -138,7 +138,7 @@
 }
 
 .testi-quote-mark {
-  color: #0d9488;
+  color: var(--color-primary);
   font-size: 1.75rem;
   opacity: 0.15;
   margin-bottom: 0.75rem;

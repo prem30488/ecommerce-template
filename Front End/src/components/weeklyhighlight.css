@@ -41,9 +41,9 @@
   font-weight: 800;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #0d9488;
-  background: linear-gradient(135deg, rgba(13, 148, 136, 0.1), rgba(20, 184, 166, 0.08));
-  border: 1px solid rgba(13, 148, 136, 0.25);
+  color: var(--color-primary);
+  background: var(--color-primary-glow);
+  border: 1px solid var(--color-primary-border);
   padding: 0.35rem 1.1rem;
   border-radius: 100px;
 }
@@ -101,7 +101,7 @@
 .wh-glow {
   position: absolute;
   inset: 10% 5% 0;
-  background: radial-gradient(ellipse at center, rgba(13, 148, 136, 0.2) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, var(--color-primary-glow) 0%, transparent 70%);
   border-radius: 50%;
   z-index: 1;
   filter: blur(24px);
@@ -120,7 +120,7 @@
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.18em;
-  color: #0d9488;
+  color: var(--color-primary);
   text-transform: uppercase;
 }
 
@@ -194,15 +194,15 @@
 }
 
 .wh-stock-badge--in {
-  background: rgba(16, 185, 129, 0.1);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: var(--color-in-stock-bg);
+  color: var(--color-in-stock);
+  border: 1px solid var(--color-in-stock-border);
 }
 
 .wh-stock-badge--out {
-  background: rgba(239, 68, 68, 0.1);
-  color: #dc2626;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: var(--color-out-of-stock-bg);
+  color: var(--color-out-of-stock);
+  border: 1px solid var(--color-out-of-stock-border);
 }
 
 /* ── CTA row ── */
@@ -239,32 +239,32 @@
   cursor: not-allowed;
 }
 
-/* Add to Cart — matches project's sky-400 button style but teal-branded */
+/* Add to Cart — primary-branded */
 .wh-btn--cart {
-  background: #0d9488;
+  background: var(--color-primary);
   color: #fff;
   width: 100%;
   justify-content: center;
-  border-color: #0d9488;
-  box-shadow: 0 4px 16px rgba(13, 148, 136, 0.3);
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 16px var(--color-primary-shadow);
 }
 
 .wh-btn--cart:hover:not(:disabled) {
   background: #fff;
-  color: #0d9488;
-  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.18);
+  color: var(--color-primary);
+  box-shadow: 0 8px 24px var(--color-primary-light);
 }
 
-/* More Info — outline style matching project's sky border button */
+/* More Info — primary outline */
 .wh-btn--info {
   background: transparent;
-  color: #0d9488;
-  border-color: #0d9488;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .wh-btn--info:hover {
-  background: rgba(13, 148, 136, 0.06);
-  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.1);
+  background: var(--color-primary-glow);
+  box-shadow: 0 4px 12px var(--color-primary-light);
 }
 
 /* Button icon */
@@ -286,7 +286,7 @@
 }
 
 .wh-social-proof strong {
-  color: #0d9488;
+  color: var(--color-primary);
 }
 
 /* ── Skeleton ── */

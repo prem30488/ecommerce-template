@@ -28,7 +28,7 @@
 }
 
 .ppp-breadcrumb a:hover {
-  color: #0ea5e9;
+  color: var(--color-sky);
 }
 
 .ppp-breadcrumb span {
@@ -148,7 +148,7 @@
 }
 
 .ppp-overlay-close:hover {
-  background: #ef4444;
+  background: var(--color-out-of-stock);
   transform: rotate(90deg);
 }
 
@@ -201,7 +201,7 @@
 }
 
 .ppp-overlay-content .thumb.selected {
-  border-color: #0ea5e9 !important;
+  border-color: var(--color-sky) !important;
   opacity: 1;
   transform: scale(1.1);
 }
@@ -259,7 +259,7 @@
   font-weight: 900;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #0ea5e9;
+  color: var(--color-sky);
   margin-bottom: 8px;
 }
 
@@ -283,9 +283,9 @@
 }
 
 .ppp-chip-category {
-  background: rgba(14, 165, 233, 0.08);
-  color: #0ea5e9;
-  border-color: rgba(14, 165, 233, 0.2);
+  background: var(--color-sky-shadow);
+  color: var(--color-sky);
+  border-color: var(--color-sky-shadow);
 }
 
 .ppp-chip-form {
@@ -378,7 +378,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 8px;
-  color: #a7f3d0;
+  color: var(--color-in-stock);
   font-size: 12px;
   font-weight: 700;
 }
@@ -390,8 +390,8 @@
   width: 24px;
   height: 24px;
   border-radius: 9999px;
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  background: var(--color-in-stock-bg);
+  color: var(--color-in-stock);
 }
 
 .ppp-price-tax {
@@ -427,7 +427,7 @@
 }
 
 .ppp-price-badge {
-  background: #10b981;
+  background: var(--color-in-stock);
   color: #fff;
   font-size: 11px;
   font-weight: 900;
@@ -481,10 +481,10 @@
 }
 
 .ppp-flavor-btn.active {
-  border-color: #0ea5e9;
+  border-color: var(--color-sky);
   background: #f0f9ff;
-  color: #0369a1;
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+  color: var(--color-nav-hover);
+  box-shadow: 0 0 0 3px var(--color-sky-shadow);
 }
 
 .ppp-flavor-img {
@@ -533,7 +533,7 @@
 }
 
 .ppp-size-option.active {
-  border-color: #0ea5e9;
+  border-color: var(--color-sky);
   background: #f0f9ff;
 }
 
@@ -556,8 +556,8 @@
 }
 
 .ppp-size-option.active .ppp-size-radio {
-  border-color: #0ea5e9;
-  background: #0ea5e9;
+  border-color: var(--color-sky);
+  background: var(--color-sky);
 }
 
 .ppp-size-radio-dot {
@@ -593,7 +593,7 @@
 .ppp-size-popular {
   font-size: 9px;
   font-weight: 900;
-  color: #10b981;
+  color: var(--color-in-stock);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-top: 3px;
@@ -626,9 +626,9 @@
 }
 
 .ppp-add-btn:hover {
-  background: #0ea5e9;
+  background: var(--color-sky);
   transform: translateY(-1px);
-  box-shadow: 0 12px 30px rgba(14, 165, 233, 0.25);
+  box-shadow: 0 12px 30px var(--color-sky-shadow);
 }
 
 .ppp-add-btn:active {
@@ -652,15 +652,15 @@
 }
 
 .ppp-wishlist-btn:hover {
-  border-color: #fda4af;
-  color: #f43f5e;
-  background: #fff1f2;
+  border-color: var(--color-badge-sale-light, #fda4af);
+  color: var(--color-badge-sale);
+  background: var(--color-badge-sale-ultra-light, #fff1f2);
 }
 
 .ppp-wishlist-btn.active {
-  border-color: #f43f5e;
-  color: #f43f5e;
-  background: #fff1f2;
+  border-color: var(--color-badge-sale);
+  color: var(--color-badge-sale);
+  background: var(--color-badge-sale-ultra-light, #fff1f2);
 }
 
 /* Secondary actions: Ask & Share */
@@ -815,8 +815,8 @@
 .ppp-form-group input:focus,
 .ppp-form-group textarea:focus {
   outline: none;
-  border-color: #0ea5e9;
-  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+  border-color: var(--color-sky);
+  box-shadow: 0 0 0 4px var(--color-sky-shadow);
 }
 
 .ppp-submit-btn {
@@ -835,7 +835,7 @@
 }
 
 .ppp-submit-btn:hover {
-  background: #0369a1;
+  background: var(--color-nav-hover);
   transform: translateY(-1px);
 }
 
@@ -980,7 +980,7 @@
 .ppp-stat-num {
   font-size: 32px;
   font-weight: 900;
-  color: #0ea5e9;
+  color: var(--color-sky);
   letter-spacing: -0.05em;
 }
 
@@ -1149,7 +1149,7 @@
 
 .ppp-bar-fill {
   height: 100%;
-  background: #0ea5e9;
+  background: var(--color-sky);
   border-radius: 100px;
   transition: width 1s ease-out;
 }
@@ -1369,10 +1369,10 @@
 }
 
 .ppp-gallery-main .thumb.selected {
-  border-color: #0ea5e9 !important;
+  border-color: var(--color-sky) !important;
   opacity: 1 !important;
   transform: scale(1.05) !important;
-  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.2) !important;
+  box-shadow: 0 8px 20px var(--color-sky-shadow) !important;
 }
 
 .ppp-gallery-main .thumb:hover {
@@ -1424,7 +1424,7 @@
 }
 
 .ppp-bundle-buy-btn {
-  background: #0d9488;
+  background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: 16px;
@@ -1439,7 +1439,7 @@
 }
 
 .ppp-bundle-buy-btn:hover {
-  background: #0f766e;
+  background: var(--color-primary-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(13, 148, 136, 0.4);
 }

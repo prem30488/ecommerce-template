@@ -6,8 +6,8 @@
 
 /* ── CSS Vars (mirrors PremiumAllProducts) ────────────────── */
 .cw-page {
-  --cw-accent: #0284c7;
-  --cw-accent-dark: #0369a1;
+  --cw-accent: var(--color-nav);          /* ← ThemeWrapper */
+  --cw-accent-dark: var(--color-nav-hover); /* ← ThemeWrapper */
   --cw-text: #0f172a;
   --cw-muted: #64748b;
   --cw-border: #e2e8f0;
@@ -24,7 +24,7 @@
 
 /* ── Hero Banner ─────────────────────────────────────────── */
 .cw-hero {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0284c7 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, var(--color-nav) 100%);
   padding: 130px 60px 60px;
   position: relative;
   overflow: hidden;
@@ -204,8 +204,8 @@
 }
 
 .cw-search:focus {
-  border-color: var(--cw-accent);
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+  border-color: var(--color-nav);
+  box-shadow: 0 0 0 3px var(--color-nav-focus-ring);
 }
 
 .cw-clear-search {
@@ -358,7 +358,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--cw-accent);
+  background: var(--color-nav);
   color: white;
   font-size: 14px;
   font-weight: 700;
@@ -366,13 +366,13 @@
   border-radius: 50px;
   text-decoration: none;
   transition: var(--cw-transition);
-  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 4px 16px var(--color-nav-shadow);
 }
 
 .cw-back-btn:hover {
-  background: var(--cw-accent-dark);
+  background: var(--color-nav-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(2, 132, 199, 0.45);
+  box-shadow: 0 6px 24px var(--color-nav-shadow-lg);
 }
 
 .cw-error-state {

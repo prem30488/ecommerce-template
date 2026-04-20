@@ -64,7 +64,7 @@
 }
 
 .footer-links a:hover {
-  color: #0d9488;
+  color: var(--color-primary);
 }
 
 /* Newsletter section */
@@ -92,11 +92,11 @@
 }
 
 .newsletter-input:focus {
-  border-color: #0d9488;
+  border-color: var(--color-primary);
 }
 
 .newsletter-btn {
-  background-color: #115e59;
+  background-color: var(--color-primary-hover);
   color: #fff;
   border: none;
   border-radius: 2rem;
@@ -109,7 +109,7 @@
 }
 
 .newsletter-btn:hover {
-  background-color: #0f4c47;
+  background-color: var(--color-primary);
 }
 
 /* Socials */
@@ -135,8 +135,8 @@
 }
 
 .footer-socials a:hover {
-  border-color: #0d9488;
-  color: #0d9488;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 /* Bottom line */

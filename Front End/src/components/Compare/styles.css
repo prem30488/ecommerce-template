@@ -34,7 +34,7 @@
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background: #f59e0b;
+    background: var(--color-badge-bestseller);
     color: white;
     font-weight: 800;
     font-size: 13px;
@@ -42,20 +42,20 @@
     border: none;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 4px 12px var(--color-badge-bestseller-shadow, rgba(245, 158, 11, 0.2));
 }
 
 .compare-clear-btn:hover {
-    background: #d97706;
+    background: var(--color-badge-bestseller-hover, #d97706);
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 8px 16px var(--color-badge-bestseller-shadow, rgba(245, 158, 11, 0.3));
 }
 
 .compare-grid-wrapper {
     overflow-x: auto;
     padding: 20px 0;
     scrollbar-width: thin;
-    scrollbar-color: #0ea5e9 #f1f5f9;
+    scrollbar-color: var(--color-sky) #f1f5f9;
 }
 
 .compare-grid-wrapper::-webkit-scrollbar {
@@ -68,7 +68,7 @@
 }
 
 .compare-grid-wrapper::-webkit-scrollbar-thumb {
-    background: #0ea5e9;
+    background: var(--color-sky);
     border-radius: 10px;
 }
 
@@ -133,7 +133,7 @@
 
 .pc-remove-btn:hover {
     background: #fee2e2;
-    color: #ef4444;
+    color: var(--color-out-of-stock);
     transform: rotate(90deg);
 }
 
@@ -224,13 +224,13 @@
 }
 
 .pc-badge-primary {
-    background: #f0f9ff;
-    color: #0ea5e9;
+    background: var(--color-sky-ultra-light, #f0f9ff);
+    color: var(--color-sky);
 }
 
 .pc-badge-success {
-    background: #ecfdf5;
-    color: #10b981;
+    background: var(--color-in-stock-bg);
+    color: var(--color-in-stock);
 }
 
 .pc-rating-wrap {
@@ -264,20 +264,20 @@
     width: 100%;
     padding: 14px;
     border-radius: 12px;
-    background: #0ea5e9;
+    background: var(--color-sky);
     color: white;
     font-weight: 800;
     font-size: 14px;
     border: none;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.2);
+    box-shadow: 0 10px 15px -3px var(--color-sky-shadow);
 }
 
 .pc-add-cart:hover {
-    background: #0284c7;
+    background: var(--color-nav);
     transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.3);
+    box-shadow: 0 20px 25px -5px var(--color-nav-shadow);
 }
 
 .pc-view-details {
@@ -291,7 +291,7 @@
 }
 
 .pc-view-details:hover {
-    color: #0ea5e9;
+    color: var(--color-sky);
 }
 
 /* ─── Empty State ─── */
@@ -316,7 +316,7 @@
 .compare-empty-icon-wrap {
     width: 96px;
     height: 96px;
-    background: #f0f9ff;
+    background: var(--color-sky-ultra-light, #f0f9ff);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -327,7 +327,7 @@
 .compare-empty-icon {
     width: 48px;
     height: 48px;
-    color: #0ea5e9;
+    color: var(--color-sky);
 }
 
 .compare-empty-title {
@@ -351,7 +351,7 @@
     justify-content: center;
     gap: 10px;
     padding: 16px 32px;
-    background: #0ea5e9;
+    background: var(--color-sky);
     color: white;
     border-radius: 16px;
     font-weight: 800;
@@ -359,14 +359,14 @@
     border: none;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.2);
+    box-shadow: 0 10px 15px -3px var(--color-sky-shadow);
     margin: 0 auto;
 }
 
 .compare-empty-btn:hover {
-    background: #0284c7;
+    background: var(--color-nav);
     transform: translateY(-3px);
-    box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.3);
+    box-shadow: 0 20px 25px -5px var(--color-nav-shadow);
 }
 
 /* ─── Utilities ─── */

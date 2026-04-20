@@ -4,8 +4,8 @@
   --premium-bg: #ffffff;
   --premium-text: #1a1a1a;
   --premium-text-muted: #666666;
-  --premium-accent: #0d9488;
-  --premium-accent-hover: #0b7a6f;
+  --premium-accent: var(--color-primary);          /* ← ThemeWrapper */
+  --premium-accent-hover: var(--color-primary-hover); /* ← ThemeWrapper */
   --premium-border: #eeeeee;
   --premium-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
   --premium-shadow-md: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -109,8 +109,8 @@
 }
 
 .premium-search-input:focus {
-  border-color: var(--premium-accent);
-  box-shadow: 0 10px 25px rgba(13, 148, 136, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 10px 25px var(--color-primary-light);
   background: white;
 }
 
