@@ -151,7 +151,7 @@ const PremiumCard = ({ product }) => {
                                     position: 'relative',
                                     overflow: 'hidden',
                                     backgroundColor: 'black',
-                                    border: '1px solid #0ea5e9',
+                                    border: '1px solid var(--color-secondary)',
                                     borderRadius: '4px',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -276,7 +276,7 @@ const PremiumCard = ({ product }) => {
                             <button
                                 className="group rounded-[0.6rem] box-border bg-transparent transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
                                 style={{
-                                    border: "2px solid #0d9488", color: "#0d9488", hover: "#0d9488",
+                                    border: "2px solid var(--color-primary)", color: "var(--color-primary)",
                                     maxWidth: "200px", paddingLeft: "40px", paddingRight: "40px", marginRight: "20px"
                                 }}
                                 onClick={(e) => { e.stopPropagation(); navigate(`/productDetails/${product.id}`); }}
@@ -296,7 +296,7 @@ const PremiumCard = ({ product }) => {
                             <button
                                 className="group rounded-[0.6rem] box-border transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
                                 style={{
-                                    backgroundColor: "#0d9488", color: "white", border: "2px solid #0d9488", boxShadow: "0 4px 12px rgba(13, 148, 136, 0.2)",
+                                    backgroundColor: "var(--color-primary)", color: "white", border: "2px solid var(--color-primary)", boxShadow: "0 4px 12px var(--color-primary-shadow)",
                                     maxWidth: "200px", paddingLeft: "40px", paddingRight: "40px", marginRight: "20px"
                                 }}
                                 onClick={handleAddToCart}
@@ -477,7 +477,7 @@ const PremiumCard = ({ product }) => {
                                     <span style={{ fontSize: "14px" }}>❓</span>
                                     <span style={{ fontSize: "9px", fontWeight: "900", color: "#0c4a6e", textTransform: "uppercase", letterSpacing: "0.1em" }}>Expert FAQs</span>
                                 </div>
-                                <p style={{ fontSize: "9px", fontWeight: "800", color: "#0ea5e9", display: "flex", alignItems: "center", gap: "4px" }}>
+                                <p style={{ fontSize: "9px", fontWeight: "800", color: "var(--color-secondary)", display: "flex", alignItems: "center", gap: "4px" }}>
                                     {product.faqs?.length || 0} Professional Answers
                                 </p>
                             </div>

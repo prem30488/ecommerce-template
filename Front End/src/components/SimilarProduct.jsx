@@ -64,8 +64,8 @@ const SimilarProduct = ({ product }) => {
             onClick={handleCompare}
             title={isCompared ? "Remove from Compare" : "Add to Compare"}
             style={{
-              color: isCompared ? '#0ea5e9' : 'inherit',
-              background: isCompared ? '#f0f9ff' : ''
+              color: isCompared ? 'var(--color-primary)' : 'inherit',
+              background: isCompared ? 'var(--color-primary-glow)' : ''
             }}
           >
             <FaExchangeAlt size={12} />

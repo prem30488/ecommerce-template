@@ -39,6 +39,7 @@
   font-size: 0.95rem;
   color: #64748b;
   max-width: 480px;
+  padding-bottom: 15px;
   margin: 0 auto;
   line-height: 1.6;
 }
@@ -285,6 +286,23 @@
   .ivc-carousel-wrapper {
     perspective: none;
     min-height: 600px;
+  }
+
+  .ivc-desc {
+    font-size: 0.95rem;
+    color: #64748b;
+    max-width: 580px;
+    margin: 0 auto;
+    padding-bottom: 50px;
+    line-height: 1.6;
+  }
+
+  .ivc-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    margin-top: 7rem;
   }
 
   .ivc-slide {

@@ -12,7 +12,7 @@ const FeaturedPage = () => {
       {/* Hero Banner specific for Featured Products */}
       <div
         style={{
-          background: "linear-gradient(135deg, #0d9488 0%, #0f766e 100%)",
+          background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%)",
           color: "white",
           padding: "4rem 2rem",
           textAlign: "center"

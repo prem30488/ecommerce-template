@@ -72,8 +72,8 @@ export const Testimonials = () => {
 
           <Swiper
             style={{
-              '--swiper-navigation-color': '#0d9488',
-              '--swiper-pagination-color': '#0d9488',
+              '--swiper-navigation-color': 'var(--color-primary)',
+              '--swiper-pagination-color': 'var(--color-primary)',
               'height': '550px',
             }}
             loop={chunks.length > 1}

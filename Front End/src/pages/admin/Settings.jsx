@@ -3,6 +3,7 @@ import { MdSettings, MdSecurity, MdNotifications, MdPalette, MdLanguage, MdHelp,
 import { COMPANY_INFO } from '../../constants/companyInfo';
 import { getCurrentUser, updateUserProfile, changePassword } from '../../util/APIUtils';
 import { getRegionalSettings, saveRegionalSettings } from '../../util/regionalSettings';
+import { THEMES } from '../../styleguide/ThemeWrapper';
 import './Settings.css';
 
 // --- SUB-COMPONENTS (Defined before main component to avoid ReferenceErrors) ---
@@ -340,13 +341,42 @@ const Settings = () => {
             case 'security': return <SecurityPanel />;
             case 'notifications': return <NotificationPreferences />;
             case 'appearance':
+                const currentTheme = localStorage.getItem('app_theme') || 'Default';
+                const handleThemeSelect = (name) => {
+                    localStorage.setItem('app_theme', name);
+                    window.dispatchEvent(new Event('themeChanged'));
+                    // Force re-render of this section
+                    setActiveSection('appearance_reload');
+                    setTimeout(() => setActiveSection('appearance'), 0);
+                };
+
                 return (
                     <div className="settings-pane">
                         <div className="pane-header">
-                            <div><h3>Appearance</h3><p>Customize the look of your dashboard.</p></div>
+                            <div><h3>Appearance & Themes</h3><p>Select a color palette for your entire storefront.</p></div>
                         </div>
-                        <div className="appearance-info">
-                            <p>Use the <strong>🌙 Moon / ☀️ Sun</strong> toggle in the top header to instantly switch between modes.</p>
+                        <div className="theme-grid">
+                            {Object.keys(THEMES).map(name => (
+                                <div 
+                                    key={name} 
+                                    className={`theme-card ${currentTheme === name ? 'active' : ''}`}
+                                    onClick={() => handleThemeSelect(name)}
+                                >
+                                    <div className="theme-preview" style={{ background: THEMES[name].background }}>
+                                        <div className="color-bar primary" style={{ background: THEMES[name].primary }}></div>
+                                        <div className="color-bar secondary" style={{ background: THEMES[name].secondary }}></div>
+                                        <div className="color-dots">
+                                            <span style={{ background: THEMES[name].nav }}></span>
+                                            <span style={{ background: THEMES[name].badgeSale }}></span>
+                                            <span style={{ background: THEMES[name].inStock }}></span>
+                                        </div>
+                                    </div>
+                                    <div className="theme-meta">
+                                        <p className="theme-name">{name}</p>
+                                        {currentTheme === name && <span className="active-tag">Active</span>}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 );

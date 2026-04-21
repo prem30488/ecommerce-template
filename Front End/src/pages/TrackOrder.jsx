@@ -113,14 +113,15 @@ const TrackOrder = () => {
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+            background: 'var(--color-bg)',
             paddingTop: '120px',
-            paddingBottom: '50px'
+            paddingBottom: '50px',
+            borderTop: '1px solid var(--color-primary-glow)'
         }}>
             <SEO title="Track Your Order" description="Easily track your order status in real-time." />
             <Container maxWidth="md">
-                <Paper elevation={6} sx={{ borderRadius: '15px', overflow: 'hidden' }}>
-                    <Box sx={{ p: 4, bgcolor: '#54C440', color: 'white', textAlign: 'center' }}>
+                <Paper elevation={6} sx={{ borderRadius: '15px', overflow: 'hidden', border: '1px solid var(--color-primary-border)' }}>
+                    <Box sx={{ p: 4, bgcolor: 'var(--color-primary)', color: 'white', textAlign: 'center' }}>
                         <Typography variant="h4" fontWeight="bold" gutterBottom>
                             Track Your Order
                         </Typography>
@@ -140,7 +141,10 @@ const TrackOrder = () => {
                                     onChange={(e) => setOrderId(e.target.value)}
                                     sx={{
                                         '& .MuiOutlinedInput-root': {
-                                            borderRadius: '10px'
+                                            borderRadius: '10px',
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: 'var(--color-primary)',
+                                            }
                                         }
                                     }}
                                 />
@@ -151,8 +155,8 @@ const TrackOrder = () => {
                                     sx={{
                                         borderRadius: '10px',
                                         px: 4,
-                                        bgcolor: '#54C440',
-                                        '&:hover': { bgcolor: '#0D9286' }
+                                        bgcolor: 'var(--color-primary)',
+                                        '&:hover': { bgcolor: 'var(--color-primary-hover)' }
                                     }}
                                 >
                                     {loading ? <CircularProgress size={24} color="inherit" /> : <FaSearch />}
@@ -176,7 +180,7 @@ const TrackOrder = () => {
                                         <Typography variant="body2" color="text.secondary">
                                             Current Status: <span style={{
                                                 fontWeight: 'bold',
-                                                color: trackingData.status?.toLowerCase() === 'cancelled' ? '#f44336' : '#4318ff',
+                                                color: trackingData.status?.toLowerCase() === 'cancelled' ? '#f44336' : 'var(--color-primary)',
                                                 textTransform: 'uppercase'
                                             }}>
                                                 {trackingData.status}
@@ -193,7 +197,7 @@ const TrackOrder = () => {
                                             <StepLabel
                                                 StepIconComponent={() => (
                                                     <Box sx={{
-                                                        color: index <= activeStep ? '#4318ff' : '#ccc',
+                                                        color: index <= activeStep ? 'var(--color-primary)' : '#ccc',
                                                         fontSize: '20px',
                                                         display: 'flex',
                                                         alignItems: 'center',
@@ -213,7 +217,7 @@ const TrackOrder = () => {
                                                     {step.description}
                                                 </Typography>
                                                 {step.date && (
-                                                    <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#4318ff', fontWeight: 'bold' }}>
+                                                    <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'var(--color-primary)', fontWeight: 'bold' }}>
                                                         {formatDate(step.date)}
                                                     </Typography>
                                                 )}

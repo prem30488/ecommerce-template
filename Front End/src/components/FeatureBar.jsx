@@ -4,7 +4,7 @@ import "./featurebar.css";
 
 const FeatureBar = () => {
     return (
-        <div className="feature-bar-container">
+        <div className="feature-bar-container" style={{ position: "relative", zIndex: "100" }}>
             <div className="feature-bar-content">
                 <div className="feature-item">
                     <ChartBar size={28} color="#334155" weight="regular" />

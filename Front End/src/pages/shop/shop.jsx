@@ -17,7 +17,7 @@ export const Shop = () => {
 
     return (
         <React.Fragment>
-            <div style={{ paddingTop: "100px" }}></div>
+            <div style={{ paddingTop: "30px" }}></div>
             <div className="shop">
                 <HomeVideo />
                 <FeatureBar />

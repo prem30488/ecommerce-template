@@ -311,6 +311,31 @@
 }
 
 /* ── Responsive ── */
+@media (max-width: 1100px) {
+
+
+  .wh-image-col {
+    padding: 2rem 2rem 1rem;
+  }
+
+  .wh-product-image {
+    width: 100%;
+    height: auto;
+    /* 🔥 prevents overflow */
+    max-height: 260px;
+  }
+
+  .wh-content-col {
+    padding: 1.5rem 2rem 2.5rem;
+  }
+
+  .wh-price {
+    font-size: 1.4rem;
+  }
+}
+
+
+/* ── Responsive ── */
 @media (max-width: 768px) {
   .wh-card {
     grid-template-columns: 1fr;

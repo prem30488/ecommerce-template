@@ -316,14 +316,110 @@
     left: 23px;
 }
 
-/* Appearance info */
-.appearance-info {
-    background: #f4f7fe;
-    border-radius: 12px;
-    padding: 20px;
-    font-size: 15px;
+/* Theme Selection Grid */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.theme-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.theme-card:hover {
+    transform: translateY(-4px);
+    border-color: #4318ff;
+    box-shadow: 0 10px 20px rgba(67, 24, 255, 0.1);
+}
+
+.theme-card.active {
+    border-color: #4318ff;
+    background: #fff;
+    box-shadow: 0 8px 16px rgba(67, 24, 255, 0.12);
+}
+
+.theme-preview {
+    height: 100px;
+    position: relative;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.color-bar {
+    height: 12px;
+    border-radius: 6px;
+    width: 80%;
+}
+
+.color-bar.secondary {
+    width: 50%;
+}
+
+.color-dots {
+    display: flex;
+    gap: 6px;
+    margin-top: auto;
+}
+
+.color-dots span {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.8);
+}
+
+.theme-meta {
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.theme-name {
+    font-size: 13px;
+    font-weight: 700;
     color: #1b2559;
-    line-height: 1.7;
+    margin: 0;
+}
+
+.active-tag {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #4318ff;
+    background: rgba(67, 24, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Dark Mode Theme Selection Override */
+.dark-theme .theme-card {
+    background: #0b1437;
+    border-color: rgba(255,255,255,0.05);
+}
+
+.dark-theme .theme-card:hover,
+.dark-theme .theme-card.active {
+    border-color: #4318ff;
+}
+
+.dark-theme .theme-preview {
+    border-bottom-color: rgba(255,255,255,0.05);
+}
+
+.dark-theme .theme-name {
+    color: #fff;
 }
 
 /* Help links & Content */
