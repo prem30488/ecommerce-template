@@ -141,7 +141,7 @@ export const NavbarMain = () => {
         <div className="logo-container">
           <div className="logo">
             <Link to="/" id="NavTitle">
-              <img src={COMPANY_INFO.logoUrl} style={{ height: "60px", width: "auto", maxWidth: "150px" }} alt={COMPANY_INFO.name} title={COMPANY_INFO.name} />
+              <img src={COMPANY_INFO.logoUrl} style={{ height: "50px", width: "auto", maxWidth: "150px" }} alt={COMPANY_INFO.name} title={COMPANY_INFO.name} />
             </Link>
 
             <div className={`menudropdown${isHealthMenuOpen ? ' open' : ''}`}>
@@ -152,7 +152,7 @@ export const NavbarMain = () => {
                 style={{ cursor: 'pointer', userSelect: 'none' }}
                 title="Double-click to browse categories"
               >
-                Health & Beauty Essentials{' '}
+                Health & Beauty{' '}
                 <i className={`fa fa-caret-down${isHealthMenuOpen ? ' rotated' : ''}`}></i>
               </button>
               <MegaMenu isOpen={isHealthMenuOpen} onClose={() => setIsHealthMenuOpen(false)} />
