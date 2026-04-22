@@ -42,44 +42,76 @@ class Pagination extends React.Component {
     };
 
     const btnIdle = { ...btnBase, background: 'rgba(255,255,255,0.04)', color: 'var(--search-muted)' };
-    const btnActive = { ...btnBase, background: 'linear-gradient(135deg,#20d391,#0ea5e9)', border: 'none', color: '#fff', boxShadow: '0 2px 14px rgba(32,211,145,0.4)' };
+    const btnActive = { 
+      ...btnBase, 
+      background: 'var(--gradient-pill)', 
+      border: 'none', 
+      color: '#fff', 
+      boxShadow: '0 2px 14px var(--color-primary-shadow)' 
+    };
     const btnDisabled = { ...btnBase, background: 'transparent', color: 'rgba(255,255,255,0.2)', cursor: 'not-allowed', border: '1px solid rgba(255,255,255,0.04)' };
 
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '4px 0' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '4px 0', flexWrap: 'wrap' }}>
         <button
-          style={currentPage === 0 ? btnDisabled : btnIdle}
+          style={currentPage === 0 ? btnDisabled : {}}
+          className={currentPage === 0 ? "" : "as-cyber-btn"}
           onClick={() => this.onPageChange(0, pageAmt)}
           disabled={currentPage === 0}
-        >«</button>
+          style={currentPage === 0 ? btnDisabled : { '--content': "'«'", minWidth: 40, height: 40, padding: 0 }}
+        >
+          {currentPage !== 0 && <div className="left"></div>}
+          «
+          {currentPage !== 0 && <div className="right"></div>}
+        </button>
 
         <button
-          style={currentPage === 0 ? btnDisabled : btnIdle}
+          className={currentPage === 0 ? "" : "as-cyber-btn"}
           onClick={() => this.onPageChange(currentPage - 1, pageAmt)}
           disabled={currentPage === 0}
-        >‹</button>
+          style={currentPage === 0 ? btnDisabled : { '--content': "'‹'", minWidth: 40, height: 40, padding: 0 }}
+        >
+          {currentPage !== 0 && <div className="left"></div>}
+          ‹
+          {currentPage !== 0 && <div className="right"></div>}
+        </button>
 
         {pages.map(page => (
           <button
             key={page}
-            style={page === currentPage ? btnActive : btnIdle}
+            className="as-cyber-btn"
+            style={page === currentPage 
+              ? { '--content': `'${page + 1}'`, minWidth: 40, height: 40, padding: 0, border: '2px solid #fff' } 
+              : { '--content': `'${page + 1}'`, minWidth: 40, height: 40, padding: 0, opacity: 0.8 }}
             onClick={() => this.onPageChange(page, pageAmt)}
           >
+            <div className="left"></div>
             {page + 1}
+            <div className="right"></div>
           </button>
         ))}
 
         <button
-          style={currentPage + 1 >= pageAmt ? btnDisabled : btnIdle}
+          className={currentPage + 1 >= pageAmt ? "" : "as-cyber-btn"}
           onClick={() => this.onPageChange(currentPage + 1, pageAmt)}
           disabled={currentPage + 1 >= pageAmt}
-        >›</button>
+          style={currentPage + 1 >= pageAmt ? btnDisabled : { '--content': "'›'", minWidth: 40, height: 40, padding: 0 }}
+        >
+          {currentPage + 1 < pageAmt && <div className="left"></div>}
+          ›
+          {currentPage + 1 < pageAmt && <div className="right"></div>}
+        </button>
 
         <button
-          style={currentPage === pageAmt - 1 ? btnDisabled : btnIdle}
+          className={currentPage === pageAmt - 1 ? "" : "as-cyber-btn"}
           onClick={() => this.onPageChange(pageAmt - 1, pageAmt)}
           disabled={currentPage === pageAmt - 1}
-        >»</button>
+          style={currentPage === pageAmt - 1 ? btnDisabled : { '--content': "'»'", minWidth: 40, height: 40, padding: 0 }}
+        >
+          {currentPage !== pageAmt - 1 && <div className="left"></div>}
+          »
+          {currentPage !== pageAmt - 1 && <div className="right"></div>}
+        </button>
 
         <span style={{
           fontSize: '0.72rem',

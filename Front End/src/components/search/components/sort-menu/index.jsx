@@ -55,7 +55,7 @@ class SortMenu extends React.Component {
                 onClick={() => this.props.onChange(active.field, dir)}
                 style={{
                   background: active.value === dir
-                    ? 'linear-gradient(135deg,#20d391,#0ea5e9)'
+                    ? 'var(--gradient-pill)'
                     : 'rgba(255,255,255,0.05)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: 6,

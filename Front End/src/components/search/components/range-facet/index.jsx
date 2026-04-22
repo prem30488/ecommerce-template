@@ -128,7 +128,7 @@ class RangeFacet extends React.Component {
               marginTop: 8,
             }}>
               <span style={{
-                background: 'rgba(32,211,145,0.1)',
+                background: 'var(--color-primary-glow)',
                 color: 'var(--search-accent)',
                 borderRadius: 6,
                 padding: '2px 8px',
@@ -136,7 +136,7 @@ class RangeFacet extends React.Component {
                 fontWeight: 700,
               }}>₹{filterRange[0].toLocaleString('en-IN')}</span>
               <span style={{
-                background: 'rgba(32,211,145,0.1)',
+                background: 'var(--color-primary-glow)',
                 color: 'var(--search-accent)',
                 borderRadius: 6,
                 padding: '2px 8px',

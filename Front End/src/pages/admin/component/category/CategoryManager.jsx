@@ -11,9 +11,10 @@ import {
   Typography,
 } from '@mui/material';
 import { Clear as ClearIcon } from '@mui/icons-material';
-import { getCategories, addCategory, fetchCategoryById, updateCategory, deleteCategory } from '../../../../util/APIUtils';
+import { getCategories, addCategory, fetchCategoryById, updateCategory, deleteCategory, uploadCategoryImage } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
 import { getCurrentDate } from '../../../../util/util';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 function CategoryManager() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -25,9 +26,36 @@ function CategoryManager() {
 
   const [title, setTitle] = useState('');
   const [type, setType] = useState(1);
+  const [imageUrl, setImageUrl] = useState('');
   const [editCategoryId, setEditCategoryId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [editType, setEditType] = useState(1);
+  const [editImageUrl, setEditImageUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageChange = async (e, isEdit = false) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const url = await uploadCategoryImage(formData);
+      if (isEdit) {
+        setEditImageUrl(url);
+      } else {
+        setImageUrl(url);
+      }
+      Alert.success('Image uploaded successfully');
+    } catch (err) {
+      console.error('Upload error:', err);
+      Alert.error('Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const fetchCategoriesList = async (page = 0, search = '') => {
     setLoading(true);
@@ -73,11 +101,12 @@ function CategoryManager() {
   };
 
   const handleAddCategory = () => {
-    const categoryObj = { title: title, type: type, description: ' ', createdAt: getCurrentDate('-') };
+    const categoryObj = { title: title, type: type, imageUrl: imageUrl, description: ' ', createdAt: getCurrentDate('-') };
     addCategory(categoryObj).then(res => {
       Alert.success("Success!");
       setTitle('');
       setType(1);
+      setImageUrl('');
       fetchCategoriesList(currentPage, searchQuery);
     }).catch(error => {
       Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
@@ -90,6 +119,7 @@ function CategoryManager() {
       setEditCategoryId(id);
       setEditTitle(categoryToEdit.title);
       setEditType(categoryToEdit.type);
+      setEditImageUrl(categoryToEdit.imageUrl || '');
     }
   };
 
@@ -99,12 +129,14 @@ function CategoryManager() {
       if (cat) {
         cat.title = editTitle;
         cat.type = editType;
+        cat.imageUrl = editImageUrl;
         cat.updatedAt = getCurrentDate('-');
         updateCategory(cat).then(res => {
           Alert.success("Success!");
           setEditCategoryId(null);
           setEditTitle('');
           setEditType(1);
+          setEditImageUrl('');
           fetchCategoriesList(currentPage, searchQuery);
         }).catch(error => {
           Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
@@ -201,6 +233,35 @@ function CategoryManager() {
           params.row.type
         ),
     },
+    {
+      field: 'imageUrl',
+      headerName: 'Image',
+      width: 150,
+      renderCell: (params) => (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {params.row.imageUrl ? (
+            <img src={params.row.imageUrl} alt="Icon" style={{ width: 30, height: 30, borderRadius: 4, objectFit: 'cover' }} />
+          ) : (
+            <Typography variant="caption" color="textSecondary">No Image</Typography>
+          )}
+          {editCategoryId === params.row.id && (
+            <Button
+              component="label"
+              size="small"
+              sx={{ minWidth: 0, p: 0.5 }}
+            >
+              <CloudUploadIcon fontSize="small" />
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={(e) => handleImageChange(e, true)}
+              />
+            </Button>
+          )}
+        </Box>
+      ),
+    },
     { field: 'order', headerName: 'Display Order', width: 100 },
     {
       field: 'actions',
@@ -295,9 +356,25 @@ function CategoryManager() {
           </Select>
         </FormControl>
         <Button
+          component="label"
+          variant="outlined"
+          size="small"
+          startIcon={<CloudUploadIcon />}
+          disabled={uploading}
+        >
+          {uploading ? 'Uploading...' : (imageUrl ? 'Image Selected' : 'Upload Icon')}
+          <input
+            type="file"
+            hidden
+            accept="image/*"
+            onChange={(e) => handleImageChange(e, false)}
+          />
+        </Button>
+        <Button
           variant="contained"
           color="primary"
           onClick={handleAddCategory}
+          disabled={uploading}
         >
           Add Category
         </Button>

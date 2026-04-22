@@ -161,6 +161,18 @@ const uploadTempImage = (file, flavorId = 'default') => {
     return uploadToBlob(file.buffer, 'temp', filename, file.mimetype, [String(flavorId)]);
 };
 
+/** @param {{ buffer: Buffer, originalname: string, mimetype: string }} file */
+const uploadCMSImage = (file) => {
+    const filename = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
+    return uploadToBlob(file.buffer, 'cms', filename, file.mimetype);
+};
+
+/** @param {{ buffer: Buffer, originalname: string, mimetype: string }} file */
+const uploadCategoryImage = (file) => {
+    const filename = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
+    return uploadToBlob(file.buffer, 'category', filename, file.mimetype);
+};
+
 module.exports = {
     uploadToBlob,
     uploadTestimonialImage,
@@ -170,5 +182,7 @@ module.exports = {
     uploadProductFlavorImage,
     uploadSaleImage,
     uploadTempImage,
+    uploadCMSImage,
+    uploadCategoryImage,
     IS_VERCEL,
 };

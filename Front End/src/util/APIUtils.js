@@ -810,6 +810,26 @@ export function saveAppSettings(settings) {
     return api.post("/api/settings", { settings });
 }
 
+export function uploadCMSImage(file) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post("/api/cms/upload", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+}
+
+export function uploadCategoryImage(formData) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/category/upload", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+}
+
 export function updateDashboardGoals(goalData) {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");

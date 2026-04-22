@@ -69,21 +69,12 @@ class TextSearch extends React.Component {
             />
             <button
               onClick={this.handleSubmit}
-              style={{
-                background: 'linear-gradient(135deg,#20d391,#0ea5e9)',
-                border: 'none',
-                borderRadius: 8,
-                color: '#fff',
-                padding: '7px 12px',
-                fontSize: '0.8rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                fontWeight: 700,
-                boxShadow: '0 2px 10px rgba(32,211,145,0.25)',
-              }}
+              className="as-cyber-btn"
+              style={{ '--content': "'🔍'", padding: '7px 18px' }}
             >
+              <div className="left"></div>
               🔍
+              <div className="right"></div>
             </button>
           </div>
         </div>

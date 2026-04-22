@@ -1,6 +1,8 @@
 import React from "react";
 import FeatureProductsCarousel from "../../components/FeatureProductsCarousel";
 import HomeVideo from "../../components/HomeVideo";
+import WelcomeSection from "../../components/WelcomeSection";
+import OurServices from "../../components/OurServices";
 import Slider from "../../components/Slider";
 import SaleSlider from "../../components/SaleSlider";
 import Testimonials from "../../components/Testimonials";
@@ -21,6 +23,8 @@ export const Shop = () => {
             <div className="shop">
                 <HomeVideo />
                 <FeatureBar />
+                <WelcomeSection />
+                <OurServices />
                 <InstagramVideoCarousel />
                 <SaleSlider />
                 <WeeklyHighlight />

@@ -1590,6 +1590,8 @@ const {
     uploadFlavorImage,
     uploadProductFlavorImage,
     uploadTempImage,
+    uploadCMSImage,
+    uploadCategoryImage
 } = require('./utils/blobUpload');
 
 // ── Shared multer instance using memory storage ──────────────────────────────
@@ -1697,6 +1699,28 @@ app.post('/api/slider/upload', authenticateToken, memUpload.single('file'), asyn
         res.send(fileUrl);
     } catch (err) {
         console.error('Slider upload error:', err);
+        res.status(500).json({ error: 'Upload failed', message: err.message });
+    }
+});
+
+app.post('/api/cms/upload', authenticateToken, memUpload.single('file'), async (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    try {
+        const fileUrl = await uploadCMSImage(req.file);
+        res.send(fileUrl);
+    } catch (err) {
+        console.error('CMS upload error:', err);
+        res.status(500).json({ error: 'Upload failed', message: err.message });
+    }
+});
+
+app.post('/api/category/upload', authenticateToken, memUpload.single('file'), async (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    try {
+        const fileUrl = await uploadCategoryImage(req.file);
+        res.send(fileUrl);
+    } catch (err) {
+        console.error('Category upload error:', err);
         res.status(500).json({ error: 'Upload failed', message: err.message });
     }
 });
@@ -3425,6 +3449,14 @@ const startServer = async () => {
                     console.log('✅ Offers schema updated with saleEventId');
                 } catch (offerErr) {
                     console.log('⚠️ Offers schema update note:', offerErr.message);
+                }
+
+                // Ensure 'imageUrl' exists on Categories
+                try {
+                    await db.sequelize.query('ALTER TABLE "Categories" ADD COLUMN IF NOT EXISTS "imageUrl" VARCHAR(255)');
+                    console.log('✅ Categories schema updated with imageUrl');
+                } catch (catErr) {
+                    console.log('⚠️ Categories schema update note:', catErr.message);
                 }
             } catch (syncError) {
                 console.error('⚠️ Database sync error details:', syncError);

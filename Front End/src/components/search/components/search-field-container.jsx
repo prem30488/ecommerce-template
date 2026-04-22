@@ -20,7 +20,7 @@ class SearchFieldContainer extends React.Component {
             justifyContent: 'space-between',
             padding: '16px 18px',
             borderBottom: '1px solid var(--search-border)',
-            background: 'linear-gradient(135deg,rgba(32,211,145,0.07),rgba(14,165,233,0.05))'
+            background: 'var(--color-primary-light)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: '0.9rem' }}>🎛️</span>
@@ -34,21 +34,12 @@ class SearchFieldContainer extends React.Component {
             </div>
             <button
               onClick={onNewSearch}
-              style={{
-                background: 'linear-gradient(135deg,#20d391,#0ea5e9)',
-                border: 'none',
-                borderRadius: 20,
-                color: '#fff',
-                padding: '5px 13px',
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                letterSpacing: '0.5px',
-                boxShadow: '0 2px 12px rgba(32,211,145,0.3)',
-                transition: 'opacity 0.15s'
-              }}
+              className="as-cyber-btn"
+              style={{ '--content': "'Reset'" }}
             >
+              <div className="left"></div>
               Reset
+              <div className="right"></div>
             </button>
           </div>
 

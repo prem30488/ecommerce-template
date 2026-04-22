@@ -26,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: true
         },
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        imageUrl: DataTypes.STRING
     }, {
         sequelize,
         modelName: 'Category',

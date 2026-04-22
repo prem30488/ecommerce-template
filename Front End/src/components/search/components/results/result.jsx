@@ -112,21 +112,21 @@ function ResultCard({ bootstrapCss, doc, fields, onSelect }) {
         }}>
           {bestseller === "Yes" && (
             <span style={{
-              background: 'linear-gradient(135deg,#f59e0b,#ef4444)',
+              background: 'var(--color-badge-bestseller)',
               color: '#fff', borderRadius: 20, padding: '2px 9px',
               fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.5px'
             }}>🏆 Bestseller</span>
           )}
           {featured === "Yes" && (
             <span style={{
-              background: 'linear-gradient(135deg,#8b5cf6,#0ea5e9)',
+              background: 'var(--color-badge-featured)',
               color: '#fff', borderRadius: 20, padding: '2px 9px',
               fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.5px'
             }}>✨ Featured</span>
           )}
           {discount && discount !== "0%" && discount !== "0" && (
             <span style={{
-              background: 'linear-gradient(135deg,#ec4899,#db2777)',
+              background: 'var(--color-badge-sale)',
               color: '#fff', borderRadius: 20, padding: '2px 9px',
               fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.5px'
             }}>🔥 {discount}</span>
@@ -148,7 +148,7 @@ function ResultCard({ bootstrapCss, doc, fields, onSelect }) {
           <div style={{ marginBottom: 10 }}>
             <span style={{
               fontSize: '1.15rem', fontWeight: 800,
-              background: 'linear-gradient(135deg,#20d391,#0ea5e9)',
+              background: 'var(--gradient-pill)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
             }}>
@@ -161,7 +161,8 @@ function ResultCard({ bootstrapCss, doc, fields, onSelect }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
           {categoriesList.map((cat, idx) => (
             <span key={`cat-${idx}`} style={{
-              background: 'rgba(14,165,233,0.1)', color: '#38bdf8',
+              background: 'var(--color-chip-category-bg)', 
+              color: 'var(--color-chip-category)',
               borderRadius: 20, padding: '2px 10px', fontSize: '0.7rem', fontWeight: 600
             }}>{cat}</span>
           ))}
@@ -173,7 +174,8 @@ function ResultCard({ bootstrapCss, doc, fields, onSelect }) {
           )}
           {form && (
             <span style={{
-              background: 'rgba(234,179,8,0.1)', color: '#facc15',
+              background: 'var(--color-chip-form-bg)', 
+              color: 'var(--color-chip-form)',
               borderRadius: 20, padding: '2px 10px', fontSize: '0.7rem', fontWeight: 600
             }}>{form}</span>
           )}

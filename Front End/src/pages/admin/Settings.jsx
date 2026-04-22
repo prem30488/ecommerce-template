@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { MdSettings, MdSecurity, MdNotifications, MdPalette, MdLanguage, MdHelp, MdPerson, MdEdit, MdSave, MdClose } from 'react-icons/md';
+import { MdSettings, MdSecurity, MdNotifications, MdPalette, MdLanguage, MdHelp, MdPerson, MdEdit, MdSave, MdClose, MdWeb } from 'react-icons/md';
 import { COMPANY_INFO } from '../../constants/companyInfo';
-import { getCurrentUser, updateUserProfile, changePassword, saveAppSettings } from '../../util/APIUtils';
+import { getCurrentUser, updateUserProfile, changePassword, saveAppSettings, getAppSettings, uploadCMSImage } from '../../util/APIUtils';
 import { getRegionalSettings, saveRegionalSettings } from '../../util/regionalSettings';
 import { THEMES } from '../../styleguide/ThemeWrapper';
 import './Settings.css';
@@ -148,6 +148,121 @@ const RegionalPanel = () => {
                     <strong>Preview:</strong> {new Intl.NumberFormat(settings.language, { style: 'currency', currency: settings.currency }).format(1250.50)}
                 </div>
                 <button className="save-btn" onClick={handleSave}><MdSave /> Save Preferences</button>
+            </div>
+        </div>
+    );
+};
+
+const PagesContentPanel = () => {
+    const [welcomeContent, setWelcomeContent] = useState({
+        welcome_header: '',
+        welcome_title: '',
+        welcome_desc: '',
+        welcome_cta_text: '',
+        welcome_cta_phone: '',
+        welcome_image1: '',
+        welcome_image2: '',
+        welcome_image3: ''
+    });
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [status, setStatus] = useState(null);
+
+    useEffect(() => {
+        getAppSettings().then(res => {
+            const content = { ...welcomeContent };
+            let hasData = false;
+            Object.keys(content).forEach(key => {
+                if (res && res[key]) {
+                    content[key] = res[key];
+                    hasData = true;
+                }
+            });
+            if (hasData) setWelcomeContent(content);
+            setLoading(false);
+        }).catch(() => setLoading(false));
+    }, []);
+
+    const handleSave = async () => {
+        setSaving(true);
+        setStatus(null);
+        try {
+            await saveAppSettings(welcomeContent);
+            setStatus({ type: 'success', msg: '✅ Welcome section updated successfully!' });
+        } catch (err) {
+            setStatus({ type: 'error', msg: '❌ Failed to update content.' });
+        } finally {
+            setSaving(false);
+            setTimeout(() => setStatus(null), 5000);
+        }
+    };
+
+    const handleImageUpload = async (key, file) => {
+        if (!file) return;
+        try {
+            const url = await uploadCMSImage(file);
+            setWelcomeContent(prev => ({ ...prev, [key]: url }));
+        } catch (err) {
+            alert("Image upload failed");
+        }
+    };
+
+    if (loading) return <div className="settings-pane">Loading content...</div>;
+
+    return (
+        <div className="settings-pane">
+            <div className="pane-header">
+                <div><h3>Custom Pages & Content</h3><p>Manage the dynamic sections of your storefront.</p></div>
+            </div>
+            
+            <div className="content-section-card">
+                <div className="card-pill">Home Page: Welcome Section</div>
+                {status && <div className={status.type === 'success' ? 'saved-banner' : 'error-banner'} style={{margin: '10px 0'}}>{status.msg}</div>}
+                
+                <div className="form-fields">
+                    <div className="form-group">
+                        <label>Top Label (Mini Header)</label>
+                        <input type="text" value={welcomeContent.welcome_header} onChange={e => setWelcomeContent({ ...welcomeContent, welcome_header: e.target.value })} placeholder="e.g. WELCOME TO OUR STORE" />
+                    </div>
+                    <div className="form-group">
+                        <label>Main Headline</label>
+                        <input type="text" value={welcomeContent.welcome_title} onChange={e => setWelcomeContent({ ...welcomeContent, welcome_title: e.target.value })} placeholder="Enter section title" />
+                    </div>
+                    <div className="form-group">
+                        <label>Description Paragraphs (Use new lines to separate)</label>
+                        <textarea rows="6" value={welcomeContent.welcome_desc} onChange={e => setWelcomeContent({ ...welcomeContent, welcome_desc: e.target.value })} placeholder="Write your content here..." style={{borderRadius: '12px', padding: '12px', border: '1px solid rgba(0,0,0,0.1)', fontFamily: 'inherit'}} />
+                    </div>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <div className="form-group">
+                            <label>Floating Card: CTA Text</label>
+                            <input type="text" value={welcomeContent.welcome_cta_text} onChange={e => setWelcomeContent({ ...welcomeContent, welcome_cta_text: e.target.value })} placeholder="Need Help?" />
+                        </div>
+                        <div className="form-group">
+                            <label>Floating Card: CTA Phone</label>
+                            <input type="text" value={welcomeContent.welcome_cta_phone} onChange={e => setWelcomeContent({ ...welcomeContent, welcome_cta_phone: e.target.value })} placeholder="+x xx xxx xxx" />
+                        </div>
+                    </div>
+
+                    <label style={{marginTop: '10px', display: 'block', fontWeight: 'bold'}}>Section Images</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '20px', marginTop: '10px' }}>
+                        {[1, 2, 3].map(id => (
+                            <div className="admin-img-uploader" key={id}>
+                                <div className="admin-img-preview">
+                                    <img src={welcomeContent[`welcome_image${id}`] || '/images/placeholder.png'} alt="Preview" />
+                                    <label className="upload-overlay">
+                                        <input type="file" hidden onChange={e => handleImageUpload(`welcome_image${id}`, e.target.files[0])} />
+                                        <span>Change {id}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <button className="save-btn" onClick={handleSave} disabled={saving} style={{marginTop: '30px'}}>
+                        <MdSave /> {saving ? 'Saving...' : 'Update Welcome Section'}
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -310,6 +425,7 @@ const Settings = () => {
         { key: 'security', label: 'Security', icon: <MdSecurity /> },
         { key: 'notifications', label: 'Notifications', icon: <MdNotifications /> },
         { key: 'appearance', label: 'Appearance', icon: <MdPalette /> },
+        { key: 'pages', label: 'Pages & Content', icon: <MdWeb /> },
         { key: 'language', label: 'Language & Region', icon: <MdLanguage /> },
         { key: 'help', label: 'Help & Support', icon: <MdHelp /> },
     ];
@@ -339,6 +455,7 @@ const Settings = () => {
                     </div>
                 );
             case 'security': return <SecurityPanel />;
+            case 'pages': return <PagesContentPanel />;
             case 'notifications': return <NotificationPreferences />;
             case 'appearance':
                 const currentTheme = localStorage.getItem('app_theme') || 'Default';

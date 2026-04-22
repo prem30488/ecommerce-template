@@ -75,7 +75,7 @@ class ListFacet extends React.Component {
           </span>
           {hasActive && (
             <span style={{
-              background: 'linear-gradient(135deg,#20d391,#0ea5e9)',
+              background: 'var(--gradient-pill)',
               color: '#fff',
               borderRadius: 20,
               padding: '1px 7px',
@@ -127,7 +127,7 @@ class ListFacet extends React.Component {
                       fontSize: '0.8rem',
                       cursor: 'pointer',
                       color: isActive ? 'var(--search-accent)' : 'var(--search-muted)',
-                      background: isActive ? 'rgba(32,211,145,0.08)' : 'transparent',
+                      background: isActive ? 'var(--color-primary-glow)' : 'transparent',
                       transition: 'all 0.15s',
                       marginBottom: 2,
                     }}
@@ -151,8 +151,8 @@ class ListFacet extends React.Component {
                     </span>
                     <span style={{ flex: 1 }}>{facetValue}</span>
                     <span style={{
-                      background: isActive ? 'rgba(32,211,145,0.2)' : 'rgba(255,255,255,0.06)',
-                      color: isActive ? 'var(--search-accent)' : 'var(--search-muted)',
+                      background: isActive ? 'var(--color-primary-light)' : 'rgba(255,255,255,0.06)',
+                      color: isActive ? 'var(--color-primary)' : 'var(--search-muted)',
                       borderRadius: 20,
                       padding: '1px 7px',
                       fontSize: '0.65rem',

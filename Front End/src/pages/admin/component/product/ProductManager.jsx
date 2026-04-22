@@ -150,17 +150,38 @@ function ProductManager() {
       field: 'categories',
       headerName: 'Categories',
       width: 180,
-      renderCell: (params) => (
-        <div>
-          {categories && categories.length > 0 && params.row.categories && params.row.categories.length > 0 ? params.row.categories.map((categoryId) =>
+      renderCell: (params) => {
+        let displayCats = [];
+        
+        // 1. Check catIds (comma separated string)
+        if (params.row.catIds) {
+          const ids = String(params.row.catIds).split(',').map(id => Number(id.trim()));
+          ids.forEach(id => {
+            const found = categories.find(c => c.id === id);
+            if (found) displayCats.push(found.title);
+          });
+        }
+        
+        // 2. Fallback to Category object or category_id if displayCats is still empty
+        if (displayCats.length === 0) {
+          if (params.row.Category && params.row.Category.title) {
+            displayCats.push(params.row.Category.title);
+          } else if (params.row.category_id) {
+            const found = categories.find(c => c.id === params.row.category_id);
+            if (found) displayCats.push(found.title);
+          }
+        }
 
-            <span key={categoryId.id}>
-              {categories.find((category) => category.id === categoryId.id).title}
-              <br />
-            </span>
-          ) : ""}
-        </div>
-      ),
+        return (
+          <Box sx={{ py: 1 }}>
+            {displayCats.map((title, idx) => (
+              <Typography key={idx} variant="caption" display="block" sx={{ lineHeight: 1.2 }}>
+                {title}
+              </Typography>
+            ))}
+          </Box>
+        );
+      },
     },
     {
       field: 'audience',
@@ -393,7 +414,7 @@ function ProductManager() {
       "size": size,
       "type": type,
       "freeProductid": freeProductid,
-      "freeProducttitle": products.find((product) => product.id === freeProductid).title,
+      "freeProducttitle": (products.find((product) => product.id === freeProductid)?.title) || "N/A",
       "freeProductsize": freeProductsize,
     };
     addOffer(newOffer).then((res) => {

@@ -16,8 +16,8 @@ class Pending extends React.Component {
           display: 'inline-block',
           width: 12,
           height: 12,
-          border: '2px solid rgba(32,211,145,0.25)',
-          borderTopColor: '#20d391',
+          border: '2px solid var(--color-primary-light)',
+          borderTopColor: 'var(--color-primary)',
           borderRadius: '50%',
           animation: 'as-spin 0.7s linear infinite',
         }} />

@@ -19,8 +19,8 @@
   --search-shadow: 0 8px 32px rgba(0,0,0,0.55);
   --search-radius: 14px;
   --search-radius-sm: 8px;
-  --gradient-pill: linear-gradient(135deg, var(--color-primary) 0%, var(--color-sky) 100%);
-  --gradient-header: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-sky-ultra-light) 100%);
+   --gradient-pill: var(--color-primary);
+  --gradient-header: var(--color-primary-light);
 }
 
 /* ── Page shell ── */
@@ -408,6 +408,26 @@ li.facet-item-type-discount {
     margin-left: 0 !important;
     justify-content: space-between;
   }
+}
+
+/* ── Export Buttons ── */
+.solr-search-header-bar .btn-default {
+  background: var(--gradient-pill) !important;
+  border: none !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  padding: 6px 14px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px var(--color-primary-shadow) !important;
+  transition: transform 0.2s, opacity 0.2s !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.solr-search-header-bar .btn-default:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
 }
 
 /* Pagination container */
@@ -840,4 +860,113 @@ select.form-control {
   .as-page h1 {
      word-break: break-word;
   }
+}
+/* ─────────────────────────────────────────
+   CYBER BUTTON ANIMATION 
+   ───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200,900');
+
+.as-cyber-btn {
+  position: relative !important;
+  padding: 8px 24px !important;  
+  border: none !important;
+  background: none !important;
+  cursor: pointer !important;
+  
+  font-family: "Source Code Pro", monospace !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  font-size: 14px !important;  
+  color: transparent !important; /* Hide original text to prevent double vision */
+  
+  background-color: var(--color-primary) !important;
+  box-shadow: var(--color-primary-shadow) 2px 2px 22px !important;
+  border-radius: 4px !important; 
+  z-index: 0 !important;  
+  overflow: hidden !important;   
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 40px;
+}
+
+.as-cyber-btn:focus {
+  outline: none !important;
+  box-shadow: var(--color-primary) 2px 2px 22px !important;
+}
+
+.as-cyber-btn .left, 
+.as-cyber-btn .right {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  z-index: 1;
+}
+
+.as-cyber-btn .right { left: 66%; }
+.as-cyber-btn .left { right: 66%; }
+
+.as-cyber-btn::after,
+.as-cyber-btn .right::after {
+  content: var(--content);
+  display: block;
+  position: absolute;
+  white-space: nowrap;
+  padding: 0 !important;
+  pointer-events: none;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.as-cyber-btn::after {
+  font-weight: 200;
+  color: #fff !important;
+  opacity: 0.8;
+  z-index: 0;
+} 
+
+.as-cyber-btn .right::after {
+  background-color: var(--search-bg);
+  color: transparent;
+  transition: transform .4s ease-out;
+  transform: translate(-50%, -160%) rotate(0deg) !important; /* Move mask above by default */
+  padding: 40px 100px !important; /* Extraterrestrial padding for the reveal mask */
+  z-index: 2;
+}
+
+.as-cyber-btn:hover .right::after {
+  transform: translate(-50%, -48%) rotate(0deg) !important;
+}
+
+.as-cyber-btn .right:hover::after {
+  transform: translate(-50%, -50%) rotate(-7deg) !important;
+}
+
+.as-cyber-btn .left:hover ~ .right::after {
+  transform: translate(-50%, -50%) rotate(7deg) !important;
+}
+
+/* bubbles */
+.as-cyber-btn::before {
+  content: '';
+  pointer-events: none;
+  opacity: .4;
+  background:
+    radial-gradient(circle at 20% 35%,  transparent 0,  transparent 2px, #fff 3px, #fff 4px, transparent 4px),
+    radial-gradient(circle at 75% 44%, transparent 0,  transparent 2px, #fff 3px, #fff 4px, transparent 4px),
+    radial-gradient(circle at 46% 52%, transparent 0, transparent 4px, #fff 5px, #fff 6px, transparent 6px);
+  width: 100%;
+  height: 300%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  animation: as-bubbles 5s linear infinite both;
+  z-index: 0;
+}
+
+@keyframes as-bubbles {
+  from { transform: translate(0, 0); }
+  to { transform: translate(0, -66.666%); }
 }

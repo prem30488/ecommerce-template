@@ -20,7 +20,7 @@ class ResultCount extends React.Component {
         </span>
         {numFound > 0 && (
           <span style={{
-            background: 'linear-gradient(135deg,#20d391,#0ea5e9)',
+            background: 'var(--gradient-pill)',
             color: '#fff',
             borderRadius: 20,
             padding: '2px 10px',

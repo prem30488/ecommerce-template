@@ -8,7 +8,10 @@
     align-items: stretch;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    position: relative;
+    min-height: 75vh;
+    overflow: hidden;
 }
 
 .hVideo #pages-home-home-content .hero .container .brand-intro .wade-sub-title {
@@ -141,10 +144,12 @@
 
 .hVideo #pages-home-home-content .hero video {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 75%;
-    -o-object-fit: cover;
+    height: 100%;
     object-fit: cover;
+    z-index: 0;
 }
 
 .hVideo #pages-home-home-content .hero .container .brand-intro .wade-title {
