@@ -8,10 +8,10 @@
 .cw-page {
   --cw-accent: var(--color-nav);          /* ← ThemeWrapper */
   --cw-accent-dark: var(--color-nav-hover); /* ← ThemeWrapper */
-  --cw-text: #0f172a;
+  --cw-text: var(--color-text);
   --cw-muted: #64748b;
   --cw-border: #e2e8f0;
-  --cw-bg: #f8fafc;
+  --cw-bg: var(--color-bg);
   --cw-radius: 20px;
   --cw-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
   --cw-shadow-md: 0 12px 40px rgba(0, 0, 0, 0.12);
@@ -24,10 +24,21 @@
 
 /* ── Hero Banner ─────────────────────────────────────────── */
 .cw-hero {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, var(--color-nav) 100%);
+  background: linear-gradient(135deg, #0f172a 0%, var(--color-nav) 60%, var(--color-primary) 100%);
   padding: 130px 60px 60px;
   position: relative;
   overflow: hidden;
+}
+
+.cw-hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.4);
+  opacity: 0.6;
+  transform: scale(1.1);
+  pointer-events: none;
 }
 
 .cw-hero::before {
@@ -35,8 +46,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 600px 400px at 80% 50%, rgba(2, 132, 199, 0.18) 0%, transparent 70%),
-    radial-gradient(ellipse 300px 300px at 10% 80%, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+    radial-gradient(ellipse 600px 400px at 80% 50%, var(--color-primary-glow) 0%, transparent 70%),
+    radial-gradient(ellipse 300px 300px at 10% 80%, var(--color-secondary-light) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -51,10 +62,67 @@
   clip-path: ellipse(55% 100% at 50% 100%);
 }
 
-.cw-hero-content {
+.cw-hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
   position: relative;
   z-index: 1;
-  max-width: 900px;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.cw-hero-content {
+  flex: 1;
+  max-width: 800px;
+}
+
+.cw-hero-image-wrap {
+  flex: 0 0 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+  animation: cw-image-float 6s ease-in-out infinite;
+}
+
+.cw-hero-image-inner {
+  position: relative;
+  width: 280px;
+  height: 280px;
+}
+
+.cw-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 2;
+  transform: rotateY(-10deg) rotateX(10deg);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cw-hero-image:hover {
+  transform: rotateY(0deg) rotateX(0deg) scale(1.05);
+}
+
+.cw-hero-image-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, var(--color-nav) 0%, transparent 70%);
+  opacity: 0.4;
+  filter: blur(20px);
+  z-index: 1;
+}
+
+@keyframes cw-image-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
 }
 
 /* Breadcrumb */
@@ -84,9 +152,12 @@
 }
 
 .cw-current {
-  color: #7dd3fc;
+  color: var(--color-primary-light);
   font-size: 13px;
   font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
 .cw-hero-title {
@@ -434,6 +505,33 @@
 
   .cw-toolbar-right {
     justify-content: space-between;
+  }
+
+  .cw-hero-container {
+    flex-direction: column-reverse;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .cw-hero-content {
+    max-width: 100%;
+  }
+
+  .cw-hero-image-wrap {
+    flex: 0 0 auto;
+  }
+
+  .cw-hero-image-inner {
+    width: 200px;
+    height: 200px;
+  }
+
+  .cw-hero-desc {
+    margin: 0 auto 28px;
+  }
+
+  .cw-stats-row {
+    justify-content: center;
   }
 
   .cw-stat {

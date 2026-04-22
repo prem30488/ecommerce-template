@@ -119,53 +119,70 @@ const Categorywise = () => {
     <div className="cw-page">
       {/* ── Hero Banner ── */}
       <div className="cw-hero">
-        <div className="cw-hero-content">
-          {/* Breadcrumb */}
-          <nav className="cw-breadcrumb">
-            <Link to="/">Home</Link>
-            <span className="cw-sep">/</span>
-            <Link to="/products">Shop</Link>
-            <span className="cw-sep">/</span>
-            <span className="cw-current">{category?.title || "Collection"}</span>
-          </nav>
+        {category?.imageUrl && (
+          <div 
+            className="cw-hero-bg-overlay" 
+            style={{ backgroundImage: `url(${category.imageUrl})` }}
+          />
+        )}
+        <div className="cw-hero-container">
+          <div className="cw-hero-content">
+            {/* Breadcrumb */}
+            <nav className="cw-breadcrumb">
+              <Link to="/">Home</Link>
+              <span className="cw-sep">/</span>
+              <Link to="/products">Shop</Link>
+              <span className="cw-sep">/</span>
+              <span className="cw-current">{category?.title || "Collection"}</span>
+            </nav>
 
-          <h1 className="cw-hero-title">
-            {category?.title || "Product Collection"}
-          </h1>
-          {category?.description && (
-            <p className="cw-hero-desc">{category.description}</p>
-          )}
+            <h1 className="cw-hero-title">
+              {category?.title || "Product Collection"}
+            </h1>
+            {category?.description && (
+              <p className="cw-hero-desc">{category.description}</p>
+            )}
 
-          {/* Stats row */}
-          {!isLoading && (
-            <div className="cw-stats-row">
-              <div className="cw-stat">
-                <span className="cw-stat-num">{activeProducts.length}</span>
-                <span className="cw-stat-lbl">Products</span>
+            {/* Stats row */}
+            {!isLoading && (
+              <div className="cw-stats-row">
+                <div className="cw-stat">
+                  <span className="cw-stat-num">{activeProducts.length}</span>
+                  <span className="cw-stat-lbl">Products</span>
+                </div>
+                <div className="cw-stat-divider" />
+                <div className="cw-stat">
+                  <span className="cw-stat-num">{inStockCount}</span>
+                  <span className="cw-stat-lbl">In Stock</span>
+                </div>
+                {featuredCount > 0 && (
+                  <>
+                    <div className="cw-stat-divider" />
+                    <div className="cw-stat">
+                      <span className="cw-stat-num">{featuredCount}</span>
+                      <span className="cw-stat-lbl">Featured</span>
+                    </div>
+                  </>
+                )}
+                {bestsellerCount > 0 && (
+                  <>
+                    <div className="cw-stat-divider" />
+                    <div className="cw-stat">
+                      <span className="cw-stat-num">{bestsellerCount}</span>
+                      <span className="cw-stat-lbl">Bestsellers</span>
+                    </div>
+                  </>
+                )}
               </div>
-              <div className="cw-stat-divider" />
-              <div className="cw-stat">
-                <span className="cw-stat-num">{inStockCount}</span>
-                <span className="cw-stat-lbl">In Stock</span>
+            )}
+          </div>
+
+          {category?.imageUrl && (
+            <div className="cw-hero-image-wrap">
+              <div className="cw-hero-image-inner">
+                <img src={category.imageUrl} alt={category.title} className="cw-hero-image" />
+                <div className="cw-hero-image-glow" />
               </div>
-              {featuredCount > 0 && (
-                <>
-                  <div className="cw-stat-divider" />
-                  <div className="cw-stat">
-                    <span className="cw-stat-num">{featuredCount}</span>
-                    <span className="cw-stat-lbl">Featured</span>
-                  </div>
-                </>
-              )}
-              {bestsellerCount > 0 && (
-                <>
-                  <div className="cw-stat-divider" />
-                  <div className="cw-stat">
-                    <span className="cw-stat-num">{bestsellerCount}</span>
-                    <span className="cw-stat-lbl">Bestsellers</span>
-                  </div>
-                </>
-              )}
             </div>
           )}
         </div>
