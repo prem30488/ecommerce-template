@@ -5,6 +5,7 @@ import "react-datetime/css/react-datetime.css";
 import 'react-s-alert/dist/s-alert-default.css';
 import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 import '../App.css';
+import { getAppSettings } from '../util/APIUtils';
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  GLOBAL DESIGN TOKEN SYSTEM
@@ -1005,6 +1006,9 @@ const injectCSSVars = (themeColors) => {
   // Text / Background
   r.setProperty('--color-text', themeColors.text);
   r.setProperty('--color-bg', themeColors.background);
+
+  // Sync data attribute for secondary CSS targeting
+  document.documentElement.setAttribute('data-theme', themeColors.name || 'custom');
 };
 
 const ThemeWrapper = ({ children }) => {
@@ -1013,11 +1017,43 @@ const ThemeWrapper = ({ children }) => {
   });
 
   React.useEffect(() => {
-    const handleThemeChange = () => {
-      setActiveThemeName(localStorage.getItem('app_theme') || 'Default');
+    // Sync with database on mount
+    const syncWithDB = async () => {
+      try {
+        const settings = await getAppSettings();
+        if (settings && settings.app_theme && settings.app_theme !== activeThemeName) {
+          localStorage.setItem('app_theme', settings.app_theme);
+          setActiveThemeName(settings.app_theme);
+        }
+      } catch (error) {
+        console.warn('Backend settings unavailable or not yet initialized.');
+      }
     };
+    syncWithDB();
+
+    // 1. Local window update (for the same tab)
+    // 1. Local window update (for the same tab)
+    const handleThemeChange = () => {
+      const newTheme = localStorage.getItem('app_theme') || 'Default';
+      setActiveThemeName(newTheme);
+    };
+
     window.addEventListener('themeChanged', handleThemeChange);
-    return () => window.removeEventListener('themeChanged', handleThemeChange);
+
+    // 2. Cross-tab/window update (standard storage event)
+    // Edge and Chrome handle storage events across all tabs of the same origin.
+    const handleStorageChange = (e) => {
+      if (e.key === 'app_theme') {
+        handleThemeChange();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('themeChanged', handleThemeChange);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const themeColors = THEMES[activeThemeName] || defaultTheme;

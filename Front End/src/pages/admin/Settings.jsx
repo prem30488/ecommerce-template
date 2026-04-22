@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MdSettings, MdSecurity, MdNotifications, MdPalette, MdLanguage, MdHelp, MdPerson, MdEdit, MdSave, MdClose } from 'react-icons/md';
 import { COMPANY_INFO } from '../../constants/companyInfo';
-import { getCurrentUser, updateUserProfile, changePassword } from '../../util/APIUtils';
+import { getCurrentUser, updateUserProfile, changePassword, saveAppSettings } from '../../util/APIUtils';
 import { getRegionalSettings, saveRegionalSettings } from '../../util/regionalSettings';
 import { THEMES } from '../../styleguide/ThemeWrapper';
 import './Settings.css';
@@ -342,9 +342,17 @@ const Settings = () => {
             case 'notifications': return <NotificationPreferences />;
             case 'appearance':
                 const currentTheme = localStorage.getItem('app_theme') || 'Default';
-                const handleThemeSelect = (name) => {
+                const handleThemeSelect = async (name) => {
                     localStorage.setItem('app_theme', name);
                     window.dispatchEvent(new Event('themeChanged'));
+
+                    // Persist to Database
+                    try {
+                        await saveAppSettings({ app_theme: name });
+                    } catch (err) {
+                        console.error('Failed to sync theme with database:', err);
+                    }
+
                     // Force re-render of this section
                     setActiveSection('appearance_reload');
                     setTimeout(() => setActiveSection('appearance'), 0);

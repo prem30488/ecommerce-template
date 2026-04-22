@@ -799,6 +799,17 @@ export function fetchDashboardGoals() {
     return api.get("/api/admin/dashboard-goals");
 }
 
+export function getAppSettings() {
+    return api.get("/api/settings");
+}
+
+export function saveAppSettings(settings) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/settings", { settings });
+}
+
 export function updateDashboardGoals(goalData) {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");

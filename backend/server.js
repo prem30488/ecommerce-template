@@ -2000,18 +2000,59 @@ app.post('/api/wishlist', optionalAuth, async (req, res) => {
             return res.status(400).json({ error: 'Item already in wishlist' });
         }
 
-        const wishlistItem = await db.Wishlist.create({
+        const item = await db.Wishlist.create({
             user_id: userId,
             product_id: product_id,
-            session_id: session_id || 'mock-session'
+            session_id: session_id
         });
-
-        res.json(wishlistItem);
+        res.status(201).json(item);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to add to wishlist' });
     }
 });
+
+// ==================== SETTINGS ENDPOINTS ====================
+
+// Get all settings
+app.get('/api/settings', async (req, res) => {
+    try {
+        const settings = await db.AppSetting.findAll();
+        const settingsMap = {};
+        settings.forEach(s => {
+            settingsMap[s.setting_key] = s.setting_value;
+        });
+        res.json(settingsMap);
+    } catch (error) {
+        console.error('Error fetching settings:', error);
+        res.status(500).json({ error: 'Failed to fetch settings' });
+    }
+});
+
+// Update settings
+app.post('/api/settings', authenticateToken, async (req, res) => {
+    try {
+        const { settings } = req.body; // Expects { key: value, ... }
+        if (!settings || typeof settings !== 'object') {
+            return res.status(400).json({ error: 'Invalid settings format' });
+        }
+
+        for (const [key, value] of Object.entries(settings)) {
+            // Use findOrCreate + update or upsert depending on Sequelize version
+            // For Postgres, upsert works well if there's a unique constraint
+            await db.AppSetting.upsert({
+                setting_key: key,
+                setting_value: String(value)
+            });
+        }
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error saving settings:', error);
+        res.status(500).json({ error: 'Failed to save settings' });
+    }
+});
+
+
 
 // Remove item from wishlist
 app.delete('/api/wishlist/:product_id', optionalAuth, async (req, res) => {
