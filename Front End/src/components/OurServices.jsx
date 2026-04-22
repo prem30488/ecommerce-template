@@ -8,7 +8,7 @@ const OurServices = () => {
     const { categories } = useContext(ShopContext);
 
     // Filter for active/meaningful categories and limit to top ones if needed
-    const activeCategories = (categories || []).filter(cat => cat.enabled !== false).slice(0, 11);
+    const activeCategories = (categories || []).filter(cat => cat.enabled !== false);//.slice(0, 11);
 
     if (!activeCategories || activeCategories.length === 0) return null;
 

@@ -42,19 +42,18 @@ class Pagination extends React.Component {
     };
 
     const btnIdle = { ...btnBase, background: 'rgba(255,255,255,0.04)', color: 'var(--search-muted)' };
-    const btnActive = { 
-      ...btnBase, 
-      background: 'var(--gradient-pill)', 
-      border: 'none', 
-      color: '#fff', 
-      boxShadow: '0 2px 14px var(--color-primary-shadow)' 
+    const btnActive = {
+      ...btnBase,
+      background: 'var(--gradient-pill)',
+      border: 'none',
+      color: '#fff',
+      boxShadow: '0 2px 14px var(--color-primary-shadow)'
     };
     const btnDisabled = { ...btnBase, background: 'transparent', color: 'rgba(255,255,255,0.2)', cursor: 'not-allowed', border: '1px solid rgba(255,255,255,0.04)' };
 
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '4px 0', flexWrap: 'wrap' }}>
         <button
-          style={currentPage === 0 ? btnDisabled : {}}
           className={currentPage === 0 ? "" : "as-cyber-btn"}
           onClick={() => this.onPageChange(0, pageAmt)}
           disabled={currentPage === 0}
@@ -80,8 +79,8 @@ class Pagination extends React.Component {
           <button
             key={page}
             className="as-cyber-btn"
-            style={page === currentPage 
-              ? { '--content': `'${page + 1}'`, minWidth: 40, height: 40, padding: 0, border: '2px solid #fff' } 
+            style={page === currentPage
+              ? { '--content': `'${page + 1}'`, minWidth: 40, height: 40, padding: 0, border: '2px solid #fff' }
               : { '--content': `'${page + 1}'`, minWidth: 40, height: 40, padding: 0, opacity: 0.8 }}
             onClick={() => this.onPageChange(page, pageAmt)}
           >

@@ -7,19 +7,19 @@
 
 :root {
   --search-bg: #0d0f14;
-  --search-card: rgba(255,255,255,0.04);
-  --search-card-hover: rgba(255,255,255,0.07);
-  --search-border: rgba(255,255,255,0.08);
+  --search-card: rgba(255, 255, 255, 0.04);
+  --search-card-hover: rgba(255, 255, 255, 0.07);
+  --search-border: rgba(255, 255, 255, 0.08);
   --search-border-glow: var(--color-primary-shadow);
   --search-accent: var(--color-primary);
   --search-accent-2: var(--color-sky);
   --search-text: #f0f4f8;
   --search-muted: #7b8fa1;
   --search-label: #a8bbc9;
-  --search-shadow: 0 8px 32px rgba(0,0,0,0.55);
+  --search-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
   --search-radius: 14px;
   --search-radius-sm: 8px;
-   --gradient-pill: var(--color-primary);
+  --gradient-pill: var(--color-primary);
   --gradient-header: var(--color-primary-light);
 }
 
@@ -88,14 +88,27 @@
 }
 
 @media (max-width: 900px) {
-  .as-page { padding-top: 100px; padding-left: 12px; padding-right: 12px; overflow-x: hidden; }
+  .as-page {
+    padding-top: 100px;
+    padding-left: 12px;
+    padding-right: 12px;
+    overflow-x: hidden;
+  }
 }
 
 @media (max-width: 768px) {
-  .as-main-container { padding: 12px; }
-  .as-hero { margin-bottom: 24px; }
-  .as-hero h1 { font-size: 1.8rem; }
-  
+  .as-main-container {
+    padding: 12px;
+  }
+
+  .as-hero {
+    margin-bottom: 24px;
+  }
+
+  .as-hero h1 {
+    font-size: 1.8rem;
+  }
+
   /* Ensure floating icons are visible as requested */
   #floating-socials,
   .whatsapp-float-btn-global {
@@ -153,7 +166,7 @@
 
 /* Override bootstrap col */
 .as-sidebar .col-md-3,
-.as-sidebar > div > div {
+.as-sidebar>div>div {
   width: 100% !important;
   max-width: 100% !important;
   padding: 0 !important;
@@ -253,7 +266,7 @@
   gap: 2px;
 }
 
-.list-facet .list-group > li,
+.list-facet .list-group>li,
 li.facet-item-type-categories,
 li.facet-item-type-audience,
 li.facet-item-type-bestseller,
@@ -272,8 +285,8 @@ li.facet-item-type-discount {
   transition: background 0.15s, color 0.15s;
 }
 
-.list-facet .list-group > li:hover {
-  background: rgba(32,211,145,0.08) !important;
+.list-facet .list-group>li:hover {
+  background: rgba(32, 211, 145, 0.08) !important;
   color: var(--search-text) !important;
 }
 
@@ -281,7 +294,7 @@ li.facet-item-type-discount {
 .facet-item-amount {
   margin-left: auto;
   font-size: 0.7rem;
-  background: rgba(32,211,145,0.12);
+  background: rgba(32, 211, 145, 0.12);
   color: var(--search-accent);
   border-radius: 20px;
   padding: 1px 7px;
@@ -291,7 +304,7 @@ li.facet-item-type-discount {
 /* filter input inside facets */
 .list-facet input[type="text"] {
   width: 100%;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--search-border);
   border-radius: 6px;
   color: var(--search-text);
@@ -304,7 +317,7 @@ li.facet-item-type-discount {
 
 .list-facet input[type="text"]:focus {
   border-color: var(--search-accent);
-  box-shadow: 0 0 0 3px rgba(32,211,145,0.12);
+  box-shadow: 0 0 0 3px rgba(32, 211, 145, 0.12);
 }
 
 /* text-search inside sidebar */
@@ -328,7 +341,7 @@ li.facet-item-type-discount {
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: opacity 0.2s, transform 0.15s;
-  box-shadow: 0 2px 12px rgba(32,211,145,0.3);
+  box-shadow: 0 2px 12px rgba(32, 211, 145, 0.3);
 }
 
 .panel-heading .btn.btn-default.btn-xs:hover {
@@ -383,7 +396,7 @@ li.facet-item-type-discount {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--search-border);
   border-radius: 12px;
   padding: 12px 18px;
@@ -403,7 +416,8 @@ li.facet-item-type-discount {
     align-items: flex-start;
     padding: 16px;
   }
-  .solr-search-header-bar > div:last-child {
+
+  .solr-search-header-bar>div:last-child {
     width: 100%;
     margin-left: 0 !important;
     justify-content: space-between;
@@ -449,7 +463,7 @@ li.facet-item-type-discount {
   align-items: center;
 }
 
-.pagination > li > a {
+.pagination>li>a {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -467,21 +481,21 @@ li.facet-item-type-discount {
   text-decoration: none;
 }
 
-.pagination > li > a:hover {
-  background: rgba(32,211,145,0.12);
+.pagination>li>a:hover {
+  background: rgba(32, 211, 145, 0.12);
   border-color: var(--search-accent);
   color: var(--search-accent);
 }
 
-.pagination > li.active > a,
-.pagination > li.active > a:hover {
+.pagination>li.active>a,
+.pagination>li.active>a:hover {
   background: var(--gradient-pill);
   border-color: transparent;
   color: #fff;
-  box-shadow: 0 2px 14px rgba(32,211,145,0.4);
+  box-shadow: 0 2px 14px rgba(32, 211, 145, 0.4);
 }
 
-.pagination > li.disabled > a {
+.pagination>li.disabled>a {
   opacity: 0.3;
   cursor: not-allowed;
   pointer-events: none;
@@ -540,7 +554,7 @@ li.facet-item-type-discount {
 .solr-result-card:hover {
   transform: translateY(-4px);
   border-color: var(--search-border-glow);
-  box-shadow: 0 12px 40px rgba(32,211,145,0.15);
+  box-shadow: 0 12px 40px rgba(32, 211, 145, 0.15);
 }
 
 /* Product image */
@@ -548,7 +562,7 @@ li.facet-item-type-discount {
   position: relative;
   height: 200px;
   overflow: hidden;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -612,7 +626,7 @@ li.facet-item-type-discount {
 /* Boolean badges */
 .badge-yes {
   display: inline-block;
-  background: rgba(32,211,145,0.12);
+  background: rgba(32, 211, 145, 0.12);
   color: var(--search-accent);
   border-radius: 20px;
   padding: 2px 10px;
@@ -622,7 +636,7 @@ li.facet-item-type-discount {
 
 .badge-no {
   display: inline-block;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--search-muted);
   border-radius: 20px;
   padding: 2px 10px;
@@ -632,7 +646,8 @@ li.facet-item-type-discount {
 
 /* id field — tiny */
 .solr-result-card .field-id {
-  display: none; /* hide raw id row; image uses it */
+  display: none;
+  /* hide raw id row; image uses it */
 }
 
 /* ─────────────────────────────────────────
@@ -641,7 +656,7 @@ li.facet-item-type-discount {
 .solr-search-fields .list-group-item input[type="text"],
 .solr-search-fields .list-group-item input[type="search"] {
   width: 100%;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--search-border);
   border-radius: 8px;
   color: var(--search-text);
@@ -655,7 +670,7 @@ li.facet-item-type-discount {
 .solr-search-fields .list-group-item input[type="text"]:focus,
 .solr-search-fields .list-group-item input[type="search"]:focus {
   border-color: var(--search-accent);
-  box-shadow: 0 0 0 3px rgba(32,211,145,0.12);
+  box-shadow: 0 0 0 3px rgba(32, 211, 145, 0.12);
 }
 
 /* text search submit button */
@@ -671,7 +686,7 @@ li.facet-item-type-discount {
   cursor: pointer !important;
   margin-top: 6px !important;
   transition: opacity 0.15s, transform 0.15s;
-  box-shadow: 0 2px 12px rgba(32,211,145,0.25);
+  box-shadow: 0 2px 12px rgba(32, 211, 145, 0.25);
 }
 
 .solr-search-fields .list-group-item button[type="submit"]:hover {
@@ -681,7 +696,7 @@ li.facet-item-type-discount {
 
 /* facet sort buttons inside list-facets */
 .btn-group .btn.btn-default.btn-xs {
-  background: rgba(255,255,255,0.05) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
   border: 1px solid var(--search-border) !important;
   color: var(--search-muted) !important;
   border-radius: 6px !important;
@@ -693,20 +708,20 @@ li.facet-item-type-discount {
 
 .btn-group .btn.btn-default.btn-xs.active,
 .btn-group .btn.btn-default.btn-xs:hover {
-  background: rgba(32,211,145,0.12) !important;
+  background: rgba(32, 211, 145, 0.12) !important;
   border-color: var(--search-accent) !important;
   color: var(--search-accent) !important;
 }
 
 /* clear button */
 .btn-group.pull-right .btn.btn-default.btn-xs {
-  background: rgba(239,68,68,0.08) !important;
-  border-color: rgba(239,68,68,0.2) !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
   color: #f87171 !important;
 }
 
 .btn-group.pull-right .btn.btn-default.btn-xs:hover {
-  background: rgba(239,68,68,0.2) !important;
+  background: rgba(239, 68, 68, 0.2) !important;
 }
 
 /* "show all" link */
@@ -723,8 +738,8 @@ li.facet-item-type-discount {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(32,211,145,0.1);
-  border: 1px solid rgba(32,211,145,0.25);
+  background: rgba(32, 211, 145, 0.1);
+  border: 1px solid rgba(32, 211, 145, 0.25);
   color: var(--search-accent);
   border-radius: 20px;
   padding: 3px 12px;
@@ -736,7 +751,7 @@ li.facet-item-type-discount {
 /* ── Sort menu select ── */
 .sort-menu select,
 select.form-control {
-  background: rgba(255,255,255,0.04) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
   border: 1px solid var(--search-border) !important;
   color: var(--search-text) !important;
   border-radius: 8px !important;
@@ -752,7 +767,7 @@ select.form-control {
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(32,211,145,0.3);
+  border: 2px solid rgba(32, 211, 145, 0.3);
   border-top-color: var(--search-accent);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -761,12 +776,16 @@ select.form-control {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* as-spin for Pending inline spinner */
 @keyframes as-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Range facets ── */
@@ -789,33 +808,39 @@ select.form-control {
   width: 20px;
   border-radius: 50%;
   background: var(--search-accent);
-  box-shadow: 0 0 6px rgba(32,211,145,0.5);
+  box-shadow: 0 0 6px rgba(32, 211, 145, 0.5);
   pointer-events: auto;
   cursor: pointer;
   z-index: 10;
   position: relative;
   border: 2px solid #fff;
 }
+
 [class*="range-slider"] input[type="range"]::-webkit-slider-runnable-track {
-  background: transparent; /* track is rendered via absolute div in jsx */
+  background: transparent;
+  /* track is rendered via absolute div in jsx */
   height: 6px;
   width: 100%;
 }
+
 [class*="range-slider"] input[type="range"]:focus {
   outline: none;
 }
 
 /* ── Responsive: stack at small screens ── */
 @media (max-width: 768px) {
+
   /* Force flex column on small screens — sidebar above results */
-  .solr-faceted-search > div {
+  .solr-faceted-search>div {
     flex-direction: column !important;
   }
+
   /* Full width sidebar */
-  .solr-faceted-search > div > div:first-child {
+  .solr-faceted-search>div>div:first-child {
     width: 100% !important;
     position: static !important;
   }
+
   /* Smaller grid */
   .solr-result-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -823,10 +848,22 @@ select.form-control {
 }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(32,211,145,0.4); }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(32, 211, 145, 0.4);
+}
 
 /* ── Body background while on search page ── */
 .as-page * {
@@ -841,6 +878,7 @@ select.form-control {
 }
 
 @media (max-width: 768px) {
+
   .solr-faceted-search .col-md-3,
   .solr-faceted-search .col-md-9 {
     width: 100% !important;
@@ -848,42 +886,47 @@ select.form-control {
     flex: none !important;
     padding: 0 !important;
   }
+
   .as-sidebar {
     position: static;
     margin-bottom: 24px;
     width: 100% !important;
   }
+
   .solr-result-grid {
     grid-template-columns: 1fr;
   }
+
   /* Ensure text doesn't overflow */
   .as-page h1 {
-     word-break: break-word;
+    word-break: break-word;
   }
 }
+
 /* ─────────────────────────────────────────
    CYBER BUTTON ANIMATION 
    ───────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css?family=Source+Code+Pro:200,900');
+
 
 .as-cyber-btn {
   position: relative !important;
-  padding: 8px 24px !important;  
+  padding: 8px 24px !important;
   border: none !important;
   background: none !important;
   cursor: pointer !important;
-  
+
   font-family: "Source Code Pro", monospace !important;
   font-weight: 900 !important;
   text-transform: uppercase !important;
-  font-size: 14px !important;  
-  color: transparent !important; /* Hide original text to prevent double vision */
-  
+  font-size: 14px !important;
+  color: transparent !important;
+  /* Hide original text to prevent double vision */
+
   background-color: var(--color-primary) !important;
   box-shadow: var(--color-primary-shadow) 2px 2px 22px !important;
-  border-radius: 4px !important; 
-  z-index: 0 !important;  
-  overflow: hidden !important;   
+  border-radius: 4px !important;
+  z-index: 0 !important;
+  overflow: hidden !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -895,7 +938,7 @@ select.form-control {
   box-shadow: var(--color-primary) 2px 2px 22px !important;
 }
 
-.as-cyber-btn .left, 
+.as-cyber-btn .left,
 .as-cyber-btn .right {
   position: absolute;
   width: 100%;
@@ -904,8 +947,13 @@ select.form-control {
   z-index: 1;
 }
 
-.as-cyber-btn .right { left: 66%; }
-.as-cyber-btn .left { right: 66%; }
+.as-cyber-btn .right {
+  left: 66%;
+}
+
+.as-cyber-btn .left {
+  right: 66%;
+}
 
 .as-cyber-btn::after,
 .as-cyber-btn .right::after {
@@ -925,14 +973,16 @@ select.form-control {
   color: #fff !important;
   opacity: 0.8;
   z-index: 0;
-} 
+}
 
 .as-cyber-btn .right::after {
   background-color: var(--search-bg);
   color: transparent;
   transition: transform .4s ease-out;
-  transform: translate(-50%, -160%) rotate(0deg) !important; /* Move mask above by default */
-  padding: 40px 100px !important; /* Extraterrestrial padding for the reveal mask */
+  transform: translate(-50%, -160%) rotate(0deg) !important;
+  /* Move mask above by default */
+  padding: 40px 100px !important;
+  /* Extraterrestrial padding for the reveal mask */
   z-index: 2;
 }
 
@@ -944,7 +994,7 @@ select.form-control {
   transform: translate(-50%, -50%) rotate(-7deg) !important;
 }
 
-.as-cyber-btn .left:hover ~ .right::after {
+.as-cyber-btn .left:hover~.right::after {
   transform: translate(-50%, -50%) rotate(7deg) !important;
 }
 
@@ -954,8 +1004,8 @@ select.form-control {
   pointer-events: none;
   opacity: .4;
   background:
-    radial-gradient(circle at 20% 35%,  transparent 0,  transparent 2px, #fff 3px, #fff 4px, transparent 4px),
-    radial-gradient(circle at 75% 44%, transparent 0,  transparent 2px, #fff 3px, #fff 4px, transparent 4px),
+    radial-gradient(circle at 20% 35%, transparent 0, transparent 2px, #fff 3px, #fff 4px, transparent 4px),
+    radial-gradient(circle at 75% 44%, transparent 0, transparent 2px, #fff 3px, #fff 4px, transparent 4px),
     radial-gradient(circle at 46% 52%, transparent 0, transparent 4px, #fff 5px, #fff 6px, transparent 6px);
   width: 100%;
   height: 300%;
@@ -967,6 +1017,11 @@ select.form-control {
 }
 
 @keyframes as-bubbles {
-  from { transform: translate(0, 0); }
-  to { transform: translate(0, -66.666%); }
+  from {
+    transform: translate(0, 0);
+  }
+
+  to {
+    transform: translate(0, -66.666%);
+  }
 }
