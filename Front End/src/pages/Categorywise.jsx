@@ -120,8 +120,8 @@ const Categorywise = () => {
       {/* ── Hero Banner ── */}
       <div className="cw-hero">
         {category?.imageUrl && (
-          <div 
-            className="cw-hero-bg-overlay" 
+          <div
+            className="cw-hero-bg-overlay"
             style={{ backgroundImage: `url(${category.imageUrl})` }}
           />
         )}

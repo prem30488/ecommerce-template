@@ -6,7 +6,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --search-bg: #0d0f14;
+  --search-bg: var(--color-nav);
   --search-card: rgba(255, 255, 255, 0.04);
   --search-card-hover: rgba(255, 255, 255, 0.07);
   --search-border: rgba(255, 255, 255, 0.08);
@@ -345,8 +345,9 @@ li.facet-item-type-discount {
 }
 
 .panel-heading .btn.btn-default.btn-xs:hover {
-  opacity: 0.88;
+  opacity: 0.5;
   transform: translateY(-1px);
+  color: #fff !important;
 }
 
 .panel-heading label {
@@ -441,7 +442,8 @@ li.facet-item-type-discount {
 
 .solr-search-header-bar .btn-default:hover {
   transform: translateY(-1px);
-  opacity: 0.9;
+  opacity: 0.5;
+  color: #fff !important;
 }
 
 /* Pagination container */
@@ -484,7 +486,7 @@ li.facet-item-type-discount {
 .pagination>li>a:hover {
   background: rgba(32, 211, 145, 0.12);
   border-color: var(--search-accent);
-  color: var(--search-accent);
+  color: #fff;
 }
 
 .pagination>li.active>a,
@@ -689,9 +691,11 @@ li.facet-item-type-discount {
   box-shadow: 0 2px 12px rgba(32, 211, 145, 0.25);
 }
 
-.solr-search-fields .list-group-item button[type="submit"]:hover {
-  opacity: 0.88;
+.solr-search-fields .list-group-item button[type="submit"]:hover,
+.solr-search-fields .list-group-item .btn-primary:hover {
+  opacity: 0.5;
   transform: translateY(-1px);
+  color: #fff !important;
 }
 
 /* facet sort buttons inside list-facets */
@@ -710,7 +714,7 @@ li.facet-item-type-discount {
 .btn-group .btn.btn-default.btn-xs:hover {
   background: rgba(32, 211, 145, 0.12) !important;
   border-color: var(--search-accent) !important;
-  color: var(--search-accent) !important;
+  color: #fff !important;
 }
 
 /* clear button */
@@ -903,6 +907,14 @@ select.form-control {
   }
 }
 
+/* ── Generic Button Hover Fix ── */
+.as-page .btn:hover,
+.as-page button:hover,
+.solr-faceted-search .btn:hover,
+.solr-faceted-search button:hover {
+  color: #fff !important;
+}
+
 /* ─────────────────────────────────────────
    CYBER BUTTON ANIMATION 
    ───────────────────────────────────────── */
@@ -977,13 +989,14 @@ select.form-control {
 
 .as-cyber-btn .right::after {
   background-color: var(--search-bg);
-  color: transparent;
+  color: #fff !important;
   transition: transform .4s ease-out;
   transform: translate(-50%, -160%) rotate(0deg) !important;
   /* Move mask above by default */
   padding: 40px 100px !important;
   /* Extraterrestrial padding for the reveal mask */
   z-index: 2;
+  left: -16% !important;
 }
 
 .as-cyber-btn:hover .right::after {

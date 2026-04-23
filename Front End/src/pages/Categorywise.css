@@ -6,8 +6,10 @@
 
 /* ── CSS Vars (mirrors PremiumAllProducts) ────────────────── */
 .cw-page {
-  --cw-accent: var(--color-nav);          /* ← ThemeWrapper */
-  --cw-accent-dark: var(--color-nav-hover); /* ← ThemeWrapper */
+  --cw-accent: var(--color-nav);
+  /* ← ThemeWrapper */
+  --cw-accent-dark: var(--color-nav-hover);
+  /* ← ThemeWrapper */
   --cw-text: var(--color-text);
   --cw-muted: #64748b;
   --cw-border: #e2e8f0;
@@ -45,9 +47,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  background:
+  /* background:
     radial-gradient(ellipse 600px 400px at 80% 50%, var(--color-primary-glow) 0%, transparent 70%),
-    radial-gradient(ellipse 300px 300px at 10% 80%, var(--color-secondary-light) 0%, transparent 70%);
+    radial-gradient(ellipse 300px 300px at 10% 80%, var(--color-secondary-light) 0%, transparent 70%); */
   pointer-events: none;
 }
 
@@ -115,14 +117,21 @@
   position: absolute;
   inset: -20px;
   background: radial-gradient(circle, var(--color-nav) 0%, transparent 70%);
-  opacity: 0.4;
+  opacity: 0;
   filter: blur(20px);
   z-index: 1;
 }
 
 @keyframes cw-image-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
 }
 
 /* Breadcrumb */
@@ -152,7 +161,7 @@
 }
 
 .cw-current {
-  color: var(--color-primary-light);
+  color: #fff;
   font-size: 13px;
   font-weight: 600;
   background: rgba(255, 255, 255, 0.1);
@@ -388,8 +397,15 @@
 }
 
 @keyframes cw-skeleton-pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.55; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
 }
 
 /* ── Empty / Error States ────────────────────────────────── */
@@ -452,6 +468,7 @@
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1200px) {
+
   .cw-grid,
   .cw-skeleton-grid {
     grid-template-columns: repeat(3, 1fr);
