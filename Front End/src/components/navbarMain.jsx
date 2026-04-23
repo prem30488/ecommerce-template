@@ -136,7 +136,7 @@ export const NavbarMain = () => {
   return (
     <>
       <Sidebar />
-      <div className="navbar" id="navbar" style={{ position: "fixed", width: "100%", paddingLeft: "60px" }}>
+      <div className="navbar" id="navbar" style={{ position: "fixed", width: "100%" }}>
         {!isMobile ? <FloatingSocials /> : null}
         <div className="logo-container">
           <div className="logo">

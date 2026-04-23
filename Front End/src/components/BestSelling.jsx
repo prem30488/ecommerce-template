@@ -34,11 +34,10 @@ const BestSelling = () => {
 
   return (
     <div className="container mx-auto pb-20">
-      <div style={{ position: "relative", paddingTop: "100px" }}></div>
+      <div style={{ position: "relative", paddingTop: "20px" }}></div>
       {/* <h2 className="text-center text-3xl py-10">Bestselling Products</h2> */}
 
       <div className="flex justify-between gap-10">
-
         <div>
           <p className="text-gray-500 pb-4">
             {<Link to="/">Home </Link>}/

@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 15px 0 65px;
+  padding: 0 15px 0 10px !important;
   flex-wrap: nowrap !important;
   height: 70px;
 }
@@ -602,7 +602,8 @@
 
   .logo-container {
     width: 100%;
-    padding: 10px 1.5rem 10px 65px;
+    padding: 10px 1rem 10px 45px;
+    /* Reduced padding from 65px/1.5rem */
     height: 70px;
     background: #fff;
     border-bottom: 1px solid #f1f5f9;
@@ -780,5 +781,39 @@
   .logo .menudropbtn {
     display: none;
     /* Hide "Health & Beauty" button on very small screens to save space */
+  }
+}
+
+@media (max-width: 375px) {
+  .logo-container {
+    padding-left: 40px !important;
+    /* Minimum space for sidebar trigger */
+    padding-right: 0.5rem !important;
+  }
+
+  .logo img {
+    width: 60px !important;
+    /* Even smaller logo for 375px */
+    height: auto !important;
+  }
+
+  .mobile-actions {
+    gap: 0.35rem !important;
+  }
+
+  .wishlist-mobile-trigger {
+    margin-right: 5px !important;
+  }
+
+  .mobile-menu-toggle {
+    font-size: 20px !important;
+    padding: 4px !important;
+  }
+}
+
+@media (min-width: 1400px) {
+  .navbar {
+    padding: 0 15px 0 50px !important;
+
   }
 }

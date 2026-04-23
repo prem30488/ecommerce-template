@@ -208,7 +208,7 @@ const PremiumCard = ({ product }) => {
                                 No immediate offers
                             </div>
                         )}
-                        <div className="frequent-card-image" style={{ height: '100%', width: '100%', display: 'flex', margin: '0 auto', position: "relative", maxHeight: "100%", maxWidth: "100%" }}>
+                        <div className="frequent-card-image" style={{ minHeight: '100%', height: '100%', width: '100%', display: 'flex', margin: '0 auto', position: "relative", maxHeight: "100%", maxWidth: "100%" }}>
                             {(product.cardCarouselImages?.length || product.image || product.img || product.ProductImages?.length) ? (
                                 <div style={{ height: '100%', width: '100%' }}>
                                     <ImageCarousel
@@ -268,49 +268,61 @@ const PremiumCard = ({ product }) => {
                             </div>
                         </div>
                         {/* CTA Row */}
-                        <div
+                        <div className="parth">
+                            {/* Images first */}
+                            <img
+                                src="/images/iso.png"
+                                alt="ISO"
+                                title={COMPANY_INFO.name}
+                                className="pc-badge-img"
+                                style={{ height: '55px', width: 'auto', marginLeft: "10px" }}
+                            />
+                            <img
+                                src="/images/time.png"
+                                alt="Delivery time"
+                                title={COMPANY_INFO.name}
+                                className="pc-badge-img"
+                                style={{ height: '55px', width: 'auto', marginLeft: "10px" }}
+                            />
 
-                            className="flex w-full items-center justify-start gap-[10px] mt-4 mb-2 z-10 overflow-x-auto pb-2 custom-scrollbar">
-
-                            {/* View Details */}
+                            {/* Then View Details Button */}
                             <button
-                                className="group rounded-[0.6rem] box-border bg-transparent transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
+                                className="prem group rounded-[0.6rem] box-border bg-transparent transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
                                 style={{
-                                    border: "2px solid var(--color-primary)", color: "var(--color-primary)",
-                                    maxWidth: "200px", paddingLeft: "40px", paddingRight: "40px", marginRight: "20px"
+                                    border: "2px solid var(--color-primary)",
+                                    color: "var(--color-primary)",
+                                    padding: "10px 20px"
                                 }}
                                 onClick={(e) => { e.stopPropagation(); navigate(`/productDetails/${product.id}`); }}
-
                             >
-                                <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>View details
-                                    <svg className="w-[18px] h-[18px]"
-                                        style={{ "paddingLeft": "150px" }}
-                                        viewBox="0 0 60 60" fill="none" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <polyline points="9 18 15 12 9 6"></polyline>
-                                    </svg>
-                                </span>
-
+                                <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>View details</span>
+                                <svg className="w-[16px] h-[16px]"
+                                    viewBox="0 0 60 60" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
                             </button>
 
-                            {/* Add to Cart */}
+                            {/* Then Add to Cart Button */}
                             <button
-                                className="group rounded-[0.6rem] box-border transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
+                                className="prem group rounded-[0.6rem] box-border transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
                                 style={{
-                                    backgroundColor: "var(--color-primary)", color: "white", border: "2px solid var(--color-primary)", boxShadow: "0 4px 12px var(--color-primary-shadow)",
-                                    maxWidth: "200px", paddingLeft: "40px", paddingRight: "40px", marginRight: "20px"
+                                    backgroundColor: "var(--color-primary)",
+                                    color: "white",
+                                    border: "2px solid var(--color-primary)",
+                                    boxShadow: "0 4px 12px var(--color-primary-shadow)",
+                                    padding: "10px 20px"
                                 }}
                                 onClick={handleAddToCart}
                             >
-                                <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>{cartCount > 0 ? `In Cart (${cartCount})` : "Add To Cart"}
-
+                                <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>
+                                    {cartCount > 0 ? `In Cart (${cartCount})` : "Add To Cart"}
                                 </span>
                                 <svg
-                                    className="w-[30px] h-[30px]"
-                                    style={{ "paddingLeft": "150px" }}
+                                    className="w-[20px] h-[20px]"
                                     viewBox="0 0 30 30"
                                     fill="none"
                                     stroke="currentColor"
-                                    strokeWidth="0.5"
+                                    strokeWidth="2"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 >
@@ -319,9 +331,9 @@ const PremiumCard = ({ product }) => {
                                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                                 </svg>
                             </button>
-
                             <img src="/images/iso.png" alt="ISO" title={COMPANY_INFO.name} style={{ height: '70px', width: '200px', float: "center", marginLeft: "40px", verticalAlign: "top" }} />
                             <img src="/images/time.png" alt="Delievry time" title={COMPANY_INFO.name} style={{ height: '70px', width: '350px', float: "center", marginLeft: "20px", verticalAlign: "top" }} />
+
                         </div>
 
                         {/* Flavor and Metas (side by side) */}

@@ -32,7 +32,7 @@ const BestSingleProduct = ({ product }) => {
                 <span className="frequent-card-meta-item frequent-card-form">{formLabel}</span>
               </div>
             </div>
-            
+
             {/* Wishlist Integration */}
             <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <WishlistIcon productId={id} size="small" showText={false} />
@@ -54,7 +54,7 @@ const BestSingleProduct = ({ product }) => {
                 imageList={imageURLs}
               />
             ) : (
-               <div className="w-full h-48 flex items-center justify-center text-slate-300">No Image</div>
+              <div className="w-full h-48 flex items-center justify-center text-slate-300">No Image</div>
             )}
           </div>
 
@@ -73,20 +73,20 @@ const BestSingleProduct = ({ product }) => {
 
           {/* Expert Trust Snapshot */}
           <div className="flex gap-2 mb-6">
-             <div className="fbc-trust-snapshot fbc-trust-faq flex-1 scale-90">
-                <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-[12px]">❓</span>
-                    <span className="text-[8px] font-black text-sky-900 uppercase">Expert FAQ</span>
-                </div>
-                <p className="text-[7px] font-bold text-sky-600 uppercase tracking-tighter">Verified Science</p>
-             </div>
-             <div className="fbc-trust-snapshot fbc-trust-reviews flex-1 scale-90">
-                <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-[12px]">✨</span>
-                    <span className="text-[8px] font-black text-amber-900 uppercase">Verified</span>
-                </div>
-                <p className="text-[7px] font-bold text-amber-600 uppercase tracking-tighter">Purity Tested</p>
-             </div>
+            <div className="fbc-trust-snapshot fbc-trust-faq flex-1 scale-90">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-[12px]">❓</span>
+                <span className="text-[8px] font-black text-sky-900 uppercase">Expert FAQ</span>
+              </div>
+              <p className="text-[7px] font-bold text-sky-600 uppercase tracking-tighter">Verified Science</p>
+            </div>
+            <div className="fbc-trust-snapshot fbc-trust-reviews flex-1 scale-90">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-[12px]">✨</span>
+                <span className="text-[8px] font-black text-amber-900 uppercase">Verified</span>
+              </div>
+              <p className="text-[7px] font-bold text-amber-600 uppercase tracking-tighter">Purity Tested</p>
+            </div>
           </div>
         </div>
 
@@ -98,13 +98,13 @@ const BestSingleProduct = ({ product }) => {
           </div>
 
           <div className="flex gap-2">
-            <button 
+            <button
               className="px-4 py-2 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
               onClick={() => navigate("/productDetails/" + product.id)}
             >
               Details
             </button>
-            <button 
+            <button
               className="px-4 py-2 bg-rose-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-rose-500 transition-colors shadow-lg shadow-rose-200"
               onClick={() => {
                 addToCart(id, "S", firstFlavorId);

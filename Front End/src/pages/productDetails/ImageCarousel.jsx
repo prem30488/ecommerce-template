@@ -84,31 +84,39 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
       )}
 
       {/* Main Image */}
-      <div style={{ flex: 1, minWidth: 0, height: '100%', minHeight: '150px' }}>
+      <div style={{ flex: 1, minWidth: 0, width: '100%', height: '100%', minHeight: '180px' }}>
         <Swiper
           style={{
             '--swiper-navigation-color': '#000',
             borderRadius: '8px',
             overflow: 'hidden',
+            width: '100%',
             height: '100%',
           }}
           loop={false}
           spaceBetween={10}
           navigation={true}
           modules={[Navigation]}
-          className="main-swiper mb-2"
+          className="main-swiper"
           onSwiper={(swiper) => { mainSwiperRef.current = swiper; }}
           onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
           key={`${uId}-main`}
         >
           {images.map((imageUrl, index) => (
-            <SwiperSlide key={`${uId}-slide-${index}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <SwiperSlide
+              key={`${uId}-slide-${index}`}
+              style={{ width: '100%', height: '100%' }}
+            >
               <img
                 src={imageUrl.includes('/images/') ? '/images/' + imageUrl.split('/images/')[1] : imageUrl}
                 alt={`${title || 'Product'} - view ${index + 1}`}
                 title={COMPANY_INFO.name}
-                className="h-full object-cover rounded-md shadow-sm"
-                style={{ height: '100%' }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'fill',   /* stretch to fill — no crop, no letterbox */
+                  display: 'block',
+                }}
                 loading="lazy"
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
