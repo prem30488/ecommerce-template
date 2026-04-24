@@ -117,7 +117,7 @@ class AdvancedSearch extends Component {
 
     const handlePdfExport = async (state) => {
       const { query } = state;
-      const params = solrQuery({ ...query, rows: 1000 }, { wt: "json", facet: "off" }); 
+      const params = solrQuery({ ...query, rows: 1000 }, { wt: "json", facet: "off" });
       const separator = query.url.includes("?") ? "&" : "?";
       const exportUrl = `${query.url.replace(/\/$/, '')}${separator}${params}`;
 
@@ -132,13 +132,13 @@ class AdvancedSearch extends Component {
         doc.setFontSize(18);
         doc.setTextColor(44, 62, 80);
         doc.text(COMPANY_INFO.name, 40, 45);
-        
+
         doc.setFontSize(10);
         doc.setTextColor(100);
         doc.text(`${COMPANY_INFO.address1}, ${COMPANY_INFO.address2}`, 40, 60);
         doc.text(`${COMPANY_INFO.city}, ${COMPANY_INFO.state} - ${COMPANY_INFO.pinCode}`, 40, 72);
         doc.text(`Email: ${COMPANY_INFO.email} | Phone: ${COMPANY_INFO.phone1}`, 40, 84);
-        
+
         doc.setLineWidth(1);
         doc.setDrawColor(200);
         doc.line(40, 95, 800, 95);
@@ -164,11 +164,11 @@ class AdvancedSearch extends Component {
         });
 
         const pageCount = doc.internal.getNumberOfPages();
-        for(let i = 1; i <= pageCount; i++) {
-            doc.setPage(i);
-            doc.setFontSize(8);
-            doc.setTextColor(150);
-            doc.text(`Page ${i} of ${pageCount} | Generated on ${new Date().toLocaleString()}`, 40, doc.internal.pageSize.height - 20);
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          doc.setFontSize(8);
+          doc.setTextColor(150);
+          doc.text(`Page ${i} of ${pageCount} | Generated on ${new Date().toLocaleString()}`, 40, doc.internal.pageSize.height - 20);
         }
 
         doc.save(`search_results_${new Date().getTime()}.pdf`);

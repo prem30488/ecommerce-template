@@ -436,6 +436,7 @@ const PremiumCard = ({ product }) => {
                     {/* Elite Trust Metrics: FAQs & Reviews Side-by-Side */}
                     {(product.faqs?.length > 0 || product.reviews?.length > 0) && (
                         <div className="mt-6 pt-4 border-t border-slate-100 flex gap-3">
+
                             {/* Reviews Snapshot */}
                             <div className="fbc-trust-snapshot fbc-trust-reviews">
                                 <div className="flex items-center gap-2 mb-1.5">

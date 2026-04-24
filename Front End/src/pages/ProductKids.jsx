@@ -71,13 +71,18 @@ const ProductKids = () => {
 
       <div className="container mx-auto px-4 pb-20 translate-y-[-2rem] relative z-20">
         {/* Breadcrumb - Glassmorphism Style */}
-        <div className="mb-3">
-          <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-xl px-6 py-2.5 rounded-2xl shadow-xl shadow-orange-100/50">
-            <Link to="/" className="text-orange-600 hover:text-orange-500 font-bold text-sm transition-colors uppercase tracking-widest">Home </Link>
-            <span className="text-orange-200">/</span>
-            <span className="text-orange-600 font-black text-sm uppercase tracking-widest"> Junior Suite</span>
-          </div>
-        </div>
+        <nav className="premium-breadcrumbs" style={{ 
+          background: "white", 
+          padding: "10px 20px", 
+          borderRadius: "12px", 
+          width: "fit-content",
+          boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
+        }}>
+          <Link to="/">Home</Link>
+          <span className="premium-breadcrumb-separator">›</span>
+          <span className="premium-breadcrumb-current">Kids' Collection</span>
+        </nav>
+
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 pt-10">
           {kidsProducts.map((product, index) => (

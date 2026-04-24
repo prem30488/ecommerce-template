@@ -71,13 +71,18 @@ const ProductWomen = () => {
 
       <div className="container mx-auto px-4 pb-20 translate-y-[-2rem] relative z-20">
         {/* Breadcrumb - Glassmorphism Style */}
-        <div className="mb-3">
-          <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-xl px-6 py-2.5 rounded-2xl shadow-xl shadow-pink-100/50">
-            <Link to="/" className="text-pink-400 hover:text-pink-600 font-bold text-sm transition-colors uppercase tracking-widest">Home </Link>
-            <span className="text-pink-200">/</span>
-            <span className="text-pink-600 font-black text-sm uppercase tracking-widest"> Women's Collection</span>
-          </div>
-        </div>
+        <nav className="premium-breadcrumbs" style={{ 
+          background: "white", 
+          padding: "10px 20px", 
+          borderRadius: "12px", 
+          width: "fit-content",
+          boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
+        }}>
+          <Link to="/">Home</Link>
+          <span className="premium-breadcrumb-separator">›</span>
+          <span className="premium-breadcrumb-current">Women's Collection</span>
+        </nav>
+
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 pt-10">
           {womenProducts.map((product, index) => (

@@ -1,10 +1,19 @@
 .contactPage {
-  padding: 150px 20px 80px;
+  padding: 100px 0px 100px;
   max-width: 1200px;
   margin: 0 auto;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: #1a1a1a;
+  color: var(--color-text);
   text-align: left;
+}
+
+.contactPage>h1 {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--color-primary) !important;
+  margin-bottom: 15px;
+  text-align: left !important;
+  margin-left: 0;
 }
 
 
@@ -16,10 +25,11 @@
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 25px;
-  color: #000;
+  color: var(--color-primary) !important;
   text-align: left !important;
   margin-left: 0;
 }
+
 
 
 .contactInfo {
@@ -56,8 +66,9 @@
 }
 
 .inputField:focus {
-  border-color: #1a3a3a;
+  border-color: var(--color-primary);
 }
+
 
 .textareaField {
   width: 100%;
@@ -107,12 +118,13 @@
 .submitBtn {
   margin-top: 30px;
   padding: 15px 40px;
-  background-color: #114b43;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 30px;
   font-size: 13px;
   font-weight: 700;
+
   letter-spacing: 1px;
   cursor: pointer;
   width: fit-content;
@@ -135,6 +147,7 @@
   .formContainer {
     grid-template-columns: 1fr;
   }
+
   .fullWidth {
     grid-column: span 1;
   }

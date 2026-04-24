@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { resolveImageUrl } from "../util/imageUrl";
 import styles from "./About.module.css";
-import { 
-  Person, 
-  Atom, 
-  Leaf, 
-  TrendUp, 
-  Users, 
-  ShieldCheck, 
-  Flask, 
-  Trophy, 
+import {
+  Person,
+  Atom,
+  Leaf,
+  TrendUp,
+  Users,
+  ShieldCheck,
+  Flask,
+  Trophy,
   Briefcase,
   Monitor,
   Heart
@@ -18,12 +18,13 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCoverflow, Pagination } from 'swiper/modules';
 import { COMPANY_INFO } from '../constants/companyInfo';
 
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
+import SEO from "../components/SEO";
 
 const About = () => {
+
   const [counts, setCounts] = useState({ happy: 0, products: 0, cities: 0, years: 0 });
   const [team, setTeam] = useState([]);
 
@@ -49,22 +50,28 @@ const About = () => {
   }, []);
 
   return (
-    <div className={styles.aboutPageContainer} style={{ paddingTop: "120px" }}>
-      
+    <div className={styles.aboutPageContainer}>
+      <SEO
+        title={`About Us | ${COMPANY_INFO.name}`}
+        description={`Learn more about ${COMPANY_INFO.name}, our mission, our scientific approach to wellness, and our world-class leadership team.`}
+        keywords="about us, wellness mission, organic supplements history, team"
+      />
+
       {/* 🚀 Hero Section - Enhanced */}
+
       <section className={styles.hero}>
         <div className={styles.animateFadeIn}>
           <span className={styles.heroSub}>Pioneering Natural Wellness</span>
-          <h1 className={styles.heroTitle}>Nourishing You, <br /> <span style={{ color: "var(--accent)" }}>Naturally.</span></h1>
+          <h1 className={styles.heroTitle}>Nourishing You, <br /> <span style={{ color: "var(--color-secondary)" }}>Naturally.</span></h1>
           <p className={styles.heroDesc}>
             At {COMPANY_INFO.name}, we don't just create supplements; we craft scientifically-backed botanical formulas that empower you to reclaim your vitality and live every moment to its fullest.
           </p>
         </div>
 
         <div className={styles.heroImageWrapper} style={{ maxWidth: '1200px', margin: '0 auto', borderRadius: '32px', overflow: 'hidden' }}>
-          <img 
-            src="/images/about/about_1.jpg" 
-            alt="Nature Hero" 
+          <img
+            src="/images/about/about_1.jpg"
+            alt="Nature Hero"
             title={COMPANY_INFO.name}
             style={{ width: '100%', height: 'auto', display: 'block' }}
           />
@@ -97,7 +104,7 @@ const About = () => {
           <h2 className={styles.sectionTitle}>The {COMPANY_INFO.name.split(' ')[0]} Standard</h2>
           <p style={{ color: 'var(--text-muted)' }}>Precision in science. Purity in nature. Power in results.</p>
         </div>
-        
+
         <div className={styles.gridContent}>
           <div className={styles.glassCard}>
             <div className={styles.iconWrapper}><Trophy size={32} weight="duotone" /></div>
@@ -123,7 +130,7 @@ const About = () => {
           <h2 className={styles.sectionTitle} style={{ color: 'white' }}>Our World-Class Operations</h2>
           <p style={{ opacity: 0.7 }}>From seed testing to robotic packaging, transparency is our foundation.</p>
         </div>
-        
+
         <Swiper
           effect={'coverflow'}
           grabCursor={true}
@@ -164,19 +171,19 @@ const About = () => {
         <div className={styles.textContent}>
           <h2>Why We're Different</h2>
           <p style={{ color: 'var(--text-muted)' }}>Most companies follow trends. We follow biology. Our "Active Bio-Sync" technology ensures supplements work with your body's natural rhythm.</p>
-          
+
           <div className={styles.featureList}>
             <div className={styles.featureItem}>
-              <Atom size={24} color="var(--accent)" weight="fill" />
+              <Atom size={24} color="var(--color-secondary)" weight="fill" />
               <div>
-                <h4>Zero Artificial Additives</h4>
+                <h4 className={styles.sectionSubTitle}>Zero Artificial Additives</h4>
                 <p>No fillers, no dyes, no compromises. Ever.</p>
               </div>
             </div>
             <div className={styles.featureItem}>
-              <Flask size={24} color="var(--accent)" weight="fill" />
+              <Flask size={24} color="var(--color-secondary)" weight="fill" />
               <div>
-                <h4>Clinical Grade Potency</h4>
+                <h4 className={styles.sectionSubTitle}>Clinical Grade Potency</h4>
                 <p>Concentrations designed to show visible results in 30 days.</p>
               </div>
             </div>
@@ -200,14 +207,14 @@ const About = () => {
         <div className={styles.sectionTitleBlock}>
           <h2 className={styles.sectionTitle}>Our Evolution</h2>
         </div>
-        
+
         <div className={styles.timelineContainer}>
           <div className={styles.timelineLine}></div>
-          
+
           <div className={styles.timelineNode}>
             <div className={styles.timelineContent}>
               <span className={styles.timelineYear}>2012</span>
-              <h4>The Foundation</h4>
+              <h4 className={styles.sectionSubTitle}>The Foundation</h4>
               <p>Our founder starts the first research lab focused on molecular botanical syncing.</p>
             </div>
           </div>
@@ -215,7 +222,7 @@ const About = () => {
           <div className={styles.timelineNode} style={{ justifyContent: 'flex-end' }}>
             <div className={styles.timelineContent}>
               <span className={styles.timelineYear}>2018</span>
-              <h4>Global Sourcing</h4>
+              <h4 className={styles.sectionSubTitle}>Global Sourcing</h4>
               <p>Expansion to 15 countries to source ingredients in their most potent natural habitats.</p>
             </div>
           </div>
@@ -223,13 +230,13 @@ const About = () => {
           <div className={styles.timelineNode}>
             <div className={styles.timelineContent}>
               <span className={styles.timelineYear}>2024</span>
-              <h4>Direct-to-You</h4>
+              <h4 className={styles.sectionSubTitle}>Direct-to-You</h4>
               <p>Launching the digital wellness platform to provide personalized healthcare worldwide.</p>
             </div>
           </div>
         </div>
       </section>
-      
+
       {/* 👥 Leadership Team Section */}
       {team && team.length > 0 && (
         <section className={styles.leadershipSection}>
@@ -237,7 +244,7 @@ const About = () => {
             <h2 className={styles.sectionTitle}>The Visionary Team</h2>
             <p style={{ color: 'var(--text-muted)' }}>Meet the minds behind {COMPANY_INFO.name}'s healthcare revolution.</p>
           </div>
-          
+
           <div className={styles.leadershipGrid}>
             {team.map((member) => (
               <div key={member.id} className={styles.leaderCard}>
@@ -256,24 +263,24 @@ const About = () => {
         <p style={{ opacity: 0.7, maxWidth: '600px', margin: '0 auto 40px' }}>
           Subscribe to our journey and get exclusive access to research insights and botanical breakthroughs.
         </p>
-        <button style={{ 
-          background: 'var(--accent)', 
-          color: 'white', 
-          padding: '18px 45px', 
-          borderRadius: '50px', 
+        <button style={{
+          background: 'var(--color-secondary)',
+          color: 'white',
+          padding: '18px 45px',
+          borderRadius: '50px',
           fontWeight: 700,
           border: 'none',
           fontSize: '18px',
           cursor: 'pointer',
           transition: 'transform 0.3s'
         }}
-        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+          onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+          onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
         >
           Explore Our Story
         </button>
       </section>
-      
+
     </div>
   );
 };

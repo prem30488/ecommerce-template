@@ -17,6 +17,7 @@
 
 .frequent-card {
   background: #ffffff;
+  margin: 8px;
   border-radius: 20px;
   border: 1px solid #f1f5f9;
   overflow: visible;
@@ -31,6 +32,7 @@
 .frequent-card:hover {
   border-color: var(--color-sky);
   transform: translateY(-4px);
+  margin: 8px;
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.05);
 }
 
@@ -147,6 +149,8 @@
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between;
+  border: var(--color-primary) 2px solid;
+  border-radius: 20px;
 }
 
 .frequent-card-brand {
@@ -455,6 +459,7 @@
   background: #f8fafc;
   border-radius: 14px;
   padding: 10px;
+  margin: 5px;
   border: 1px solid #f1f5f9;
   transition: all 0.3s ease;
 }
@@ -511,6 +516,7 @@
   background: #fff;
   transform: scale(1.02);
 }
+
 
 .fbc-faq-question {
   font-size: 9px;

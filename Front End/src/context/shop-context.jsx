@@ -8,20 +8,38 @@ const getDefaultCart = () => {
   return {};
 };
 
+const CART_STORAGE_KEY = "premium_cart_persistent_data";
+
+const loadCartFromStorage = () => {
+  try {
+    const savedData = localStorage.getItem(CART_STORAGE_KEY);
+    if (savedData) {
+      return JSON.parse(savedData);
+    }
+  } catch (error) {
+    console.error("Failed to load cart from storage:", error);
+  }
+  return null;
+};
+
+
 export const ShopContextProvider = (props) => {
+  const initialData = loadCartFromStorage();
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [cartItems, setCartItems] = useState(getDefaultCart());
-  const [martItems, setMartItems] = useState(getDefaultCart());
-  const [lartItems, setLartItems] = useState(getDefaultCart());
-  const [freeCartItems, setFreeCartItems] = useState(getDefaultCart());
-  const [freeMartItems, setFreeMartItems] = useState(getDefaultCart());
-  const [freeLartItems, setFreeLartItems] = useState(getDefaultCart());
+  const [cartItems, setCartItems] = useState(initialData?.cartItems || getDefaultCart());
+  const [martItems, setMartItems] = useState(initialData?.martItems || getDefaultCart());
+  const [lartItems, setLartItems] = useState(initialData?.lartItems || getDefaultCart());
+  const [freeCartItems, setFreeCartItems] = useState(initialData?.freeCartItems || getDefaultCart());
+  const [freeMartItems, setFreeMartItems] = useState(initialData?.freeMartItems || getDefaultCart());
+  const [freeLartItems, setFreeLartItems] = useState(initialData?.freeLartItems || getDefaultCart());
 
   const [selectedItems, setSelectedItems] = useState([]);
   const [customerData, setCustomerData] = useState([]);
   const [totalAfterCoupon, setTotalAfterCoupon] = useState(0);
-  const [flavorCart, setFlavorCart] = useState({}); // Still used for legacy lookups if needed, but primary storage is now in keys
+  const [flavorCart, setFlavorCart] = useState(initialData?.flavorCart || {});
+
 
   useEffect(() => {
     const getData = async () => {
@@ -43,6 +61,21 @@ export const ShopContextProvider = (props) => {
     };
     getData();
   }, []);
+
+  // Save cart to localStorage whenever any item changes
+  useEffect(() => {
+    const dataToSave = {
+      cartItems,
+      martItems,
+      lartItems,
+      freeCartItems,
+      freeMartItems,
+      freeLartItems,
+      flavorCart
+    };
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(dataToSave));
+  }, [cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, flavorCart]);
+
 
   const getProductFlavorPrice = (product, size, flavorId = null) => {
     if (!product) return 0;
@@ -414,7 +447,11 @@ export const ShopContextProvider = (props) => {
     setMartItems(getDefaultCart());
     setLartItems(getDefaultCart());
     setFreeCartItems(getDefaultCart());
+    setFreeMartItems(getDefaultCart());
+    setFreeLartItems(getDefaultCart());
+    setFlavorCart({});
   };
+
 
   const contextValue = {
     cartItems,

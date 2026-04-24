@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+
 import { ShopContext } from '../../context/shop-context';
 import { getCoupons, createOrder, verifyPayment, getCurrentUser } from '../../util/APIUtils';
 import Alert from 'react-s-alert';
@@ -474,10 +475,18 @@ const PremiumCheckout = () => {
             {/* Mobile Summary Toggle */}
             <div className="mobile-summary-toggle" onClick={toggleSummary}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ color: 'var(--primary-color)' }}>
-                        {isSummaryOpen ? 'Hide order summary ↑' : 'Show order summary ↓'}
+                    <span style={{ color: 'var(--primary-color)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        {isSummaryOpen ? 'Hide order summary' : 'Show order summary'}
+                        <span style={{
+                            display: 'inline-block',
+                            transition: 'transform 0.3s ease',
+                            transform: isSummaryOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                        }}>
+                            ↓
+                        </span>
                     </span>
                 </div>
+
                 <span style={{ fontWeight: 600, fontSize: '18px' }}>₹{finalTotal.toLocaleString()}</span>
             </div>
 
@@ -485,14 +494,21 @@ const PremiumCheckout = () => {
             <div className="checkout-main">
                 <div className="checkout-header">
                     <h1>{COMPANY_INFO.name}</h1>
+                    <nav className="checkout-breadcrumbs">
+                        <Link to="/your-cart">Cart</Link>
+                        <span className="breadcrumb-separator">›</span>
+                        <span className="breadcrumb-current">Information</span>
+                        <span className="breadcrumb-separator">›</span>
+                        <span className="breadcrumb-disabled">Payment</span>
+                    </nav>
                 </div>
+
 
                 <form onSubmit={formik.handleSubmit}>
                     {/* Contact Section */}
                     <div className="checkout-section">
                         <div className="section-title">
-                            <h2>Contact</h2>
-                            <span className="section-link">Log in</span>
+                            <h2 className='tit'>Contact</h2>
                         </div>
                         <div className="form-group">
                             <input
@@ -514,7 +530,7 @@ const PremiumCheckout = () => {
                     {/* Delivery Section */}
                     <div className="checkout-section">
                         <div className="section-title">
-                            <h2>Delivery</h2>
+                            <h2 className='tit'>Delivery</h2>
                         </div>
 
                         <div className="form-group">
@@ -624,7 +640,7 @@ const PremiumCheckout = () => {
                     {/* Payment Section */}
                     <div className="checkout-section">
                         <div className="section-title">
-                            <h2>Payment</h2>
+                            <h2 className='tit'>Payment</h2>
                         </div>
                         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '10px' }}>
                             All transactions are secure and encrypted.
@@ -633,7 +649,7 @@ const PremiumCheckout = () => {
                             <div className="payment-header">
                                 <span className="payment-title">Razorpay Secure (UPI, Cards, Wallets)</span>
                                 <div className="payment-icons">
-                                    <img src="https://img.icons8.com/color/48/000000/upi.png" alt="UPI" />
+                                    <img src="data:image/png;base64,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" alt="UPI" />
                                     <img src="https://img.icons8.com/color/48/000000/visa.png" alt="Visa" />
                                     <img src="https://img.icons8.com/color/48/000000/mastercard.png" alt="Mastercard" />
                                 </div>
@@ -647,7 +663,7 @@ const PremiumCheckout = () => {
                     {/* Billing Address Section */}
                     <div className="checkout-section">
                         <div className="section-title">
-                            <h2>Billing address</h2>
+                            <h2 className='tit'>Billing address</h2>
                         </div>
                         <div className="payment-box">
                             <div className="payment-header" style={{ background: '#fff' }}>

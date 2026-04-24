@@ -1,39 +1,42 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { COMPANY_INFO } from '../constants/companyInfo';
 
-const SEO = ({ title, description, keywords }) => {
-  useEffect(() => {
-    // Update Title
-    document.title = title ? `${title} | ${COMPANY_INFO.name}` : `${COMPANY_INFO.name} - Premium Fashion & Elegance`;
+const SEO = ({ title, description, keywords, image, canonical }) => {
+  const siteTitle = title ? `${title} | ${COMPANY_INFO.name}` : `${COMPANY_INFO.name} - Premium Fashion & Elegance`;
+  const siteDescription = description || COMPANY_INFO.seoDescription;
+  const siteKeywords = keywords || COMPANY_INFO.seoKeywords;
+  const siteImage = image || COMPANY_INFO.logoUrl;
+  
+  // Dynamic Canonical URL
+  const canonicalUrl = canonical || (typeof window !== 'undefined' ? window.location.origin + window.location.pathname : '');
 
-    // Update Meta Description
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.name = "description";
-      document.head.appendChild(metaDescription);
-    }
-    metaDescription.setAttribute('content', description || COMPANY_INFO.seoDescription);
+  return (
+    <Helmet>
+      {/* Standard Metadata */}
+      <title>{siteTitle}</title>
+      <meta name="description" content={siteDescription} />
+      <meta name="keywords" content={siteKeywords} />
+      <link rel="canonical" href={canonicalUrl} />
 
-    // Update Meta Keywords
-    let metaKeywords = document.querySelector('meta[name="keywords"]');
-    if (!metaKeywords) {
-      metaKeywords = document.createElement('meta');
-      metaKeywords.name = "keywords";
-      document.head.appendChild(metaKeywords);
-    }
-    metaKeywords.setAttribute('content', keywords || COMPANY_INFO.seoKeywords);
+      {/* Verification Tags */}
 
-    // Update Open Graph tags
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute('content', title || COMPANY_INFO.name);
+      <meta name="google-site-verification" content="sV_b5l1QoV0qB3QvJ8Q7yQ68gC8096H0r927q39zT3E" />
 
-    const ogImage = document.querySelector('meta[property="og:image"]');
-    if (ogImage) ogImage.setAttribute('content', COMPANY_INFO.logoUrl);
+      {/* Open Graph / Facebook */}
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content={siteTitle} />
+      <meta property="og:description" content={siteDescription} />
+      <meta property="og:image" content={siteImage} />
 
-  }, [title, description, keywords]);
-
-  return null; // This component doesn't render anything
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={siteTitle} />
+      <meta name="twitter:description" content={siteDescription} />
+      <meta name="twitter:image" content={siteImage} />
+    </Helmet>
+  );
 };
 
 export default SEO;
+

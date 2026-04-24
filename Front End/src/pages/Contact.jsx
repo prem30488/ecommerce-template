@@ -62,7 +62,7 @@ export const Contact = () => {
     <div className={styles.contactPage}>
       <SEO title="Contact Us" description={`Contact ${COMPANY_INFO.name} for any inquiries regarding our premium fashion products.`} />
       <div className={styles.contactHeader}>
-        <h1>{COMPANY_INFO.name}</h1>
+        <h1 className={styles.sectionTitle}>{COMPANY_INFO.name}</h1>
         <div className={styles.contactInfo}>
           <p>{COMPANY_INFO.address1}, {COMPANY_INFO.address2}</p>
           <p>{COMPANY_INFO.city}, {COMPANY_INFO.state} - {COMPANY_INFO.pinCode}</p>
@@ -176,8 +176,9 @@ export const Contact = () => {
               checked={formik.values.agreePolicy}
             />
             <span style={{ lineHeight: '1.4' }}>
-              By Submitting the form, I agree to the <Link to="/policies/privacy-policy" target="_blank" style={{ color: '#114b43', fontWeight: 'bold', textDecoration: 'underline' }}>Privacy Policy</Link> and Website <Link to="/policies/terms-of-use" target="_blank" style={{ color: '#114b43', fontWeight: 'bold', textDecoration: 'underline' }}>Terms of Use</Link>
+              By Submitting the form, I agree to the <Link to="/policies/privacy-policy" target="_blank" style={{ color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'underline' }}>Privacy Policy</Link> and Website <Link to="/policies/terms-of-use" target="_blank" style={{ color: 'var(--color-primary)', fontWeight: 'bold', textDecoration: 'underline' }}>Terms of Use</Link>
             </span>
+
 
           </label>
           {formik.touched.agreePolicy && formik.errors.agreePolicy ? (

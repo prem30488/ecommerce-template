@@ -8,6 +8,7 @@ import {
   defineCustomElements,
 } from "@goapptiv-code/bluedart-tracking-web-component/loader";
 import ThemeWrapper from './styleguide/ThemeWrapper';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -24,10 +25,15 @@ applyPolyfills().then(() => {
   defineCustomElements();
 });
 
+const helmetContext = {};
+
 root.render(
-    <Router>
-      <ThemeWrapper>
+  <Router>
+    <ThemeWrapper>
+      <HelmetProvider context={helmetContext}>
         <App />
-      </ThemeWrapper>
-    </Router>
+      </HelmetProvider>
+    </ThemeWrapper>
+  </Router>
 );
+

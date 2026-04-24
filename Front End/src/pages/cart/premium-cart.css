@@ -71,9 +71,11 @@
 .premium-cart-body::-webkit-scrollbar {
   width: 6px;
 }
+
 .premium-cart-body::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .premium-cart-body::-webkit-scrollbar-thumb {
   background: #e2e8f0;
   border-radius: 10px;
@@ -92,13 +94,20 @@
 }
 
 @keyframes slideInUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .p-cart-item:hover {
   border-color: var(--cart-accent);
-  box-shadow: 0 10px 25px -10px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.05);
 }
 
 /* Horizontal Photo Carousel */
@@ -121,7 +130,9 @@
   scroll-behavior: smooth;
 }
 
-.pc-carousel::-webkit-scrollbar { display: none; }
+.pc-carousel::-webkit-scrollbar {
+  display: none;
+}
 
 .pc-carousel-item {
   width: 100%;
@@ -151,7 +162,7 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .pc-dot.active {
@@ -197,14 +208,16 @@
 .pc-price-discounted {
   font-size: 16px;
   font-weight: 950;
-  color: #D4AF37; /* Elite Gold */
+  color: #D4AF37;
+  /* Elite Gold */
   letter-spacing: -0.01em;
 }
 
 .pc-price-free {
   font-size: 11px;
   font-weight: 900;
-  color: var(--color-in-stock); /* Emerald */
+  color: var(--color-in-stock);
+  /* Emerald */
   background: var(--color-in-stock-bg);
   padding: 4px 10px;
   border-radius: 8px;
@@ -237,7 +250,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .pc-btn:hover {
@@ -289,19 +302,26 @@
   position: relative;
 }
 
-.p-progress-fill.full { background: var(--color-in-stock); }
+.p-progress-fill.full {
+  background: var(--color-in-stock);
+}
 
 .p-progress-fill::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   animation: shine 2s linear infinite;
 }
 
 @keyframes shine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* Footer / Summary */
@@ -309,7 +329,7 @@
   padding: 20px 24px;
   background: white;
   border-top: 1px solid var(--cart-border);
-  box-shadow: 0 -15px 40px rgba(0,0,0,0.03);
+  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.03);
   z-index: 50;
 }
 
@@ -386,12 +406,13 @@
 }
 
 .p-coupon-btn:hover {
-  background: var(--cart-accent);
+  background: var(--color-primary);
   transform: translateY(-2px);
 }
 
 /* Checkout Button */
-.p-checkout-btn, .p-checkout-button {
+.p-checkout-btn,
+.p-checkout-button {
   width: 100%;
   padding: 4px;
   border-radius: 10px;
@@ -442,14 +463,15 @@
   border-color: var(--cart-text-main);
 }
 
-.p-checkout-btn svg, .p-checkout-button svg {
+.p-checkout-btn svg,
+.p-checkout-button svg {
   height: 10px;
   width: auto;
   stroke-width: 4px;
 }
 
 .p-checkout-btn:hover {
-  background: var(--cart-accent);
+  background: var(--color-primary);
   transform: scale(1.02);
   box-shadow: 0 20px 40px -10px var(--color-sky-shadow);
 }
@@ -461,15 +483,23 @@
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transform: skewX(-25deg);
   animation: shine-btn 4s infinite;
 }
 
 @keyframes shine-btn {
-  0% { left: -100%; }
-  30% { left: 150%; }
-  100% { left: 150%; }
+  0% {
+    left: -100%;
+  }
+
+  30% {
+    left: 150%;
+  }
+
+  100% {
+    left: 150%;
+  }
 }
 
 /* Empty State */
@@ -497,8 +527,15 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
 }
 
 .MuiDrawer-paper {
@@ -553,7 +590,7 @@
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   transform: skewX(-25deg);
   transition: 0.5s;
 }
@@ -603,7 +640,7 @@
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   transform: skewX(-25deg);
   transition: 0.5s;
 }

@@ -6,7 +6,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --search-bg: var(--color-nav);
+  /* --search-bg: var(--color-nav); */
+  --search-bg: white;
   --search-card: rgba(255, 255, 255, 0.04);
   --search-card-hover: rgba(255, 255, 255, 0.07);
   --search-border: rgba(255, 255, 255, 0.08);

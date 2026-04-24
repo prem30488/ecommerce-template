@@ -170,20 +170,21 @@ const Wishlist = () => {
           <div className="wishlist-sharing-info">
             <h3>Share Your Wishlist</h3>
             <p>Click the buttons below to share your entire wishlist with friends and family!</p>
-            <div className="share-buttons" style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-              <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getWishlistShareLink() || window.location.href)}`} target="_blank" rel="noopener noreferrer" className="btn-share facebook" style={{ padding: '8px 12px', background: '#3b5998', color: 'white', borderRadius: '4px', textDecoration: 'none' }}>
+            <div className="share-buttons">
+              <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getWishlistShareLink() || window.location.href)}`} target="_blank" rel="noopener noreferrer" className="btn-share-social facebook">
                 Facebook
               </a>
-              <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(getWishlistShareLink() || window.location.href)}&text=Check%20out%20my%20wishlist!`} target="_blank" rel="noopener noreferrer" className="btn-share twitter" style={{ padding: '8px 12px', background: '#1da1f2', color: 'white', borderRadius: '4px', textDecoration: 'none' }}>
+              <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(getWishlistShareLink() || window.location.href)}&text=Check%20out%20my%20wishlist!`} target="_blank" rel="noopener noreferrer" className="btn-share-social twitter">
                 Twitter
               </a>
-              <a href={`https://api.whatsapp.com/send?text=Check%20out%20my%20wishlist!%20${encodeURIComponent(getWishlistShareLink() || window.location.href)}`} target="_blank" rel="noopener noreferrer" className="btn-share whatsapp" style={{ padding: '8px 12px', background: '#25d366', color: 'white', borderRadius: '4px', textDecoration: 'none' }}>
+              <a href={`https://api.whatsapp.com/send?text=Check%20out%20my%20wishlist!%20${encodeURIComponent(getWishlistShareLink() || window.location.href)}`} target="_blank" rel="noopener noreferrer" className="btn-share-social whatsapp">
                 WhatsApp
               </a>
-              <a href={`mailto:?subject=Check%20out%20my%20wishlist!&body=Here%20is%20my%20wishlist:%20${encodeURIComponent(getWishlistShareLink() || window.location.href)}`} className="btn-share email" style={{ padding: '8px 12px', background: '#888', color: 'white', borderRadius: '4px', textDecoration: 'none' }}>
+              <a href={`mailto:?subject=Check%20out%20my%20wishlist!&body=Here%20is%20my%20wishlist:%20${encodeURIComponent(getWishlistShareLink() || window.location.href)}`} className="btn-share-social email">
                 Email
               </a>
             </div>
+
           </div>
         </div>
       </div>

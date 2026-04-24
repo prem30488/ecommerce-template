@@ -39,10 +39,12 @@ const FeatureProducts = () => {
 
       <div className="flex justify-between gap-10">
         <div>
-          <p className="text-gray-500 pb-4">
-            {<Link to="/">Home </Link>}/
-            <span className="text-sky-400 px-1">Featured Products</span>
-          </p>
+          <nav className="premium-breadcrumbs">
+            <Link to="/">Home</Link>
+            <span className="premium-breadcrumb-separator">›</span>
+            <span className="premium-breadcrumb-current">Featured Products</span>
+          </nav>
+
           <FeatureProductsCarousel />
           <div className="grid grid-cols-4 gap-lg-5 ">
             {products &&

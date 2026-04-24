@@ -15,10 +15,19 @@ import WeeklyHighlight from "../../components/WeeklyHighlight";
 import BestSellingCarousel from "../../components/BestSellingCarousel";
 import OnlineSupport from "../../components/OnlineSupport";
 import PromoSlider from "../../components/PromoSlider";
+import SEO from "../../components/SEO";
+import { COMPANY_INFO } from "../../constants/companyInfo";
+
 export const Shop = () => {
 
     return (
         <React.Fragment>
+            <SEO
+                title={`Home | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+                description={COMPANY_INFO.seoDescription}
+                keywords={COMPANY_INFO.seoKeywords}
+            />
+
             <div style={{ paddingTop: "30px" }}></div>
             <div className="shop">
                 <HomeVideo />

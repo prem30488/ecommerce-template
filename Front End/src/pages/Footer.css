@@ -4,7 +4,8 @@
 
 .hanley-footer {
   background-color: #ffffff !important;
-  height: auto !important; /* Overrides App.css 60px restriction */
+  height: auto !important;
+  /* Overrides App.css 60px restriction */
   padding: 4rem 2rem 2rem;
   border-top: 1px solid #e2e8f0;
   color: #334155;
@@ -19,7 +20,7 @@
 /* Middle Top Section: 4 columns */
 .footer-top {
   display: grid;
-  grid-template-columns: 2fr 1fr 1.5fr 2fr;
+  grid-template-columns: 2fr 1fr 1.5fr 2fr 2fr;
   gap: 3rem;
   margin-bottom: 4rem;
 }
@@ -76,13 +77,13 @@
 }
 
 .newsletter-form {
-  display: flex;
+  display: block;
   gap: 0.5rem;
   align-items: center;
 }
 
 .newsletter-input {
-  flex: 1;
+  margin-bottom: 0.5rem;
   padding: 0.75rem 1rem;
   border: 1px solid #cbd5e1;
   border-radius: 2rem;
@@ -162,10 +163,12 @@
     grid-template-columns: 1fr;
     gap: 2.5rem;
   }
+
   .newsletter-form {
     flex-direction: column;
     align-items: stretch;
   }
+
   .footer-bottom {
     flex-direction: column;
     gap: 1rem;

@@ -5,6 +5,9 @@ import { ShopContext } from "../context/shop-context";
 import { useContext } from "react";
 import PremiumCollectionCard from "./PremiumCollectionCard";
 import "./Categorywise.css";
+import SEO from "../components/SEO";
+import { COMPANY_INFO } from "../constants/companyInfo";
+
 
 const Categorywise = () => {
   const { id } = useParams();
@@ -115,8 +118,22 @@ const Categorywise = () => {
       </div>
     );
 
+  const productTitles = useMemo(
+    () => filteredProducts.map((p) => p.title).join(", "),
+    [filteredProducts]
+  );
+
   return (
     <div className="cw-page">
+      {category?.title && (
+        <SEO
+          title={category?.title + ` | ${COMPANY_INFO.name} | Category wise search`}
+          description={category?.description || `Explore our premium selection of ${category?.title} products.`}
+          keywords={`${category?.title}, ${productTitles}, ${COMPANY_INFO.name}, shopping`}
+          imageUrl={category?.imageUrl || ""}
+        />
+      )}
+
       {/* ── Hero Banner ── */}
       <div className="cw-hero">
         {category?.imageUrl && (
@@ -135,7 +152,6 @@ const Categorywise = () => {
               <span className="cw-sep">/</span>
               <span className="cw-current">{category?.title || "Collection"}</span>
             </nav>
-
             <h1 className="cw-hero-title">
               {category?.title || "Product Collection"}
             </h1>

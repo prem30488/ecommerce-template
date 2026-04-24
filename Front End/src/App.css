@@ -196,3 +196,38 @@ footer p {
     border-radius: 12px;
   }
 }
+
+/* Premium Breadcrumbs Design System */
+.premium-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  color: var(--color-text-muted, #707070);
+  font-family: 'Inter', sans-serif;
+}
+
+.premium-breadcrumbs a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.premium-breadcrumbs a:hover {
+  text-decoration: underline;
+  color: var(--color-primary-hover);
+}
+
+.premium-breadcrumb-separator {
+  color: #a0a0a0;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 300;
+}
+
+.premium-breadcrumb-current {
+  color: var(--color-text, #333);
+  font-weight: 600;
+}

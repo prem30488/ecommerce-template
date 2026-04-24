@@ -3,10 +3,13 @@ import PremiumCard from "../components/PremiumCard";
 import BestSellingCarousel from "../components/BestSellingCarousel";
 import { Link } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
-import { API_BASE_URL } from "../constants";
+import React from "react";
+import SEO from "../components/SEO";
+import { COMPANY_INFO } from "../constants/companyInfo";
 const BestSelling = () => {
 
-  const { products } = useContext(ShopContext);
+  const { products, categories } = useContext(ShopContext);
+
   const [isLoading, setIsLoading] = useState(true);
   const [err, setErr] = useState(null);
 
@@ -39,25 +42,42 @@ const BestSelling = () => {
 
       <div className="flex justify-between gap-10">
         <div>
-          <p className="text-gray-500 pb-4">
-            {<Link to="/">Home </Link>}/
-            <span className="text-sky-400 px-1">Best Seller Products</span>
-          </p>
+          <nav className="premium-breadcrumbs">
+            <Link to="/">Home</Link>
+            <span className="premium-breadcrumb-separator">›</span>
+            <span className="premium-breadcrumb-current">Best Sellers</span>
+          </nav>
 
-          <BestSellingCarousel />
-          <div className="grid grid-cols-4 gap-lg-5 ">
 
-            {products &&
-              products
-                .filter((product) => product.bestseller === true && product.active === true)
+          {products && (() => {
+            const bestSellers = products.filter(p => p.bestseller && p.active);
+            const allTitles = bestSellers.map(p => p.title).join(", ");
+            const allCategories = [...new Set(categories
+              ?.filter(cat => bestSellers.some(p =>
+                String(p.catIds).split(',').map(Number).includes(cat.id) || p.category_id === cat.id
+              ))
+              .map(cat => cat.title)
+            )].join(", ");
 
-                .map((product, index) => {
-                  if (index > 7) { return "" }
-                  return <PremiumCard key={product.id} product={product} />;
-                })}
-          </div>
+            return (
+              <>
+                <SEO
+                  title="Bestselling Products"
+                  description={`Discover our top-rated collection featuring: ${allTitles.substring(0, 150)}...`}
+                  keywords={`${allTitles}, ${allCategories}, ${COMPANY_INFO.name}, bestsellers`}
+                />
+                <BestSellingCarousel />
+                <div className="grid grid-cols-4 gap-lg-5 ">
+                  {bestSellers.slice(0, 8).map((product) => (
+                    <PremiumCard key={product.id} product={product} />
+                  ))}
+                </div>
+              </>
+            );
+          })()}
         </div>
       </div>
+
     </div>
   );
 };

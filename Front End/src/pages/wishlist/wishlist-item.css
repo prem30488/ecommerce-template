@@ -14,8 +14,9 @@
 
 .wishlist-item:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  border-color: #ff4757;
+  border-color: var(--color-primary);
 }
+
 
 .wishlist-item-image {
   width: 150px;
@@ -45,7 +46,8 @@
   margin: 0 0 8px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-text);
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -80,7 +82,8 @@
 .price-s,
 .price-m,
 .price-l {
-  color: #ff4757;
+  color: var(--color-primary);
+
   font-weight: 600;
   margin: 0 4px;
 }
@@ -111,7 +114,8 @@
 }
 
 .btn-add-cart {
-  background-color: #ff4757;
+  background-color: var(--color-primary);
+
   color: white;
   width: 100%;
   justify-content: center;
@@ -136,7 +140,8 @@
 
 .btn-remove {
   background-color: #f5f5f5;
-  color: #ff4757;
+  color: var(--color-primary);
+
   width: auto;
   justify-content: center;
 }
@@ -184,7 +189,11 @@
 
   .wishlist-item-title {
     font-size: 16px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
   }
+
 
   .btn {
     padding: 6px 10px;
