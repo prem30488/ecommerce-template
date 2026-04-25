@@ -9,11 +9,15 @@ async function resetDatabase() {
         process.exit(1);
     }
 
-    const parsedUrl = new URL(dbUrl);
-    const dbName = parsedUrl.pathname.substring(1);
-    const postgresUrl = dbUrl.replace(`/${dbName}`, '/postgres');
+    const postgresUrlObj = new URL(dbUrl);
+    postgresUrlObj.pathname = '/postgres';
+    postgresUrlObj.search = ''; 
+    const postgresUrl = postgresUrlObj.toString();
 
-    const client = new Client({ connectionString: postgresUrl });
+    const client = new Client({ 
+        connectionString: postgresUrl,
+        ssl: { rejectUnauthorized: false }
+    });
 
     try {
         await client.connect();

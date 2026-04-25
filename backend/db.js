@@ -23,8 +23,10 @@ if (dbUrl) {
                 },
                 dialect: 'postgres',
                 dialectOptions: {
-                    ssl: true,
-                    rejectUnauthorized: false,
+                    ssl: {
+                        require: true,
+                        rejectUnauthorized: false
+                    },
                     connectTimeout: 120000,
                 },
                 logging: false,
@@ -34,10 +36,14 @@ if (dbUrl) {
     } catch (e) {
         console.error('Error parsing DATABASE_URL in db.js, using connection string directly.');
         sequelize = new Sequelize(dbUrl, {
-            dialect: 'postgres', dialectOptions: {
-                ssl: true,
-                rejectUnauthorized: false,
-            }, logging: false
+            dialect: 'postgres',
+            dialectOptions: {
+                ssl: {
+                    require: true,
+                    rejectUnauthorized: false
+                }
+            },
+            logging: false
         });
     }
 }

@@ -29,8 +29,10 @@ if (config.use_env_variable && process.env[config.use_env_variable]) {
         port: parsedUrl.port,
         dialect: config.dialect || 'postgres',
         dialectOptions: {
-          ssl: true,
-          rejectUnauthorized: false,
+          ssl: {
+            require: true,
+            rejectUnauthorized: false
+          }
         },
         logging: false,
         ...config

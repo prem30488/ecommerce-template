@@ -176,11 +176,13 @@ async function ensureDatabaseExists() {
         // Connect to 'postgres' database to check if target DB exists
         const postgresUrlObj = new URL(dbUrl);
         postgresUrlObj.pathname = '/postgres';
-        postgresUrlObj.search = parsedUrl.search; // Keep SSL params
+        postgresUrlObj.search = ''; // Clear search params to avoid conflicting SSL settings
         const postgresUrl = postgresUrlObj.toString();
         const client = new Client({
             connectionString: postgresUrl,
-            ssl: { rejectUnauthorized: false }
+            ssl: { 
+                rejectUnauthorized: false 
+            }
         });
 
         await client.connect();
