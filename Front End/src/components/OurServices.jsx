@@ -11,11 +11,13 @@ const OurServices = () => {
     const activeCategories = (categories || []).filter(cat => cat.enabled !== false);
 
     const [current, setCurrent] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
     const timerRef = useRef(null);
 
     const total = activeCategories.length;
 
     const goTo = useCallback((idx) => {
+        if (total === 0) return;
         setCurrent(((idx % total) + total) % total);
     }, [total]);
 
@@ -23,13 +25,19 @@ const OurServices = () => {
     const prev = useCallback(() => goTo(current - 1), [current, goTo]);
 
     const resetTimer = useCallback(() => {
-        clearInterval(timerRef.current);
-        timerRef.current = setInterval(() => setCurrent(c => ((c + 1) % total)), AUTO_PLAY_MS);
-    }, [total]);
+        if (timerRef.current) clearInterval(timerRef.current);
+        if (total > 0 && !isPaused) {
+            timerRef.current = setInterval(() => {
+                setCurrent(c => (c + 1) % total);
+            }, AUTO_PLAY_MS);
+        }
+    }, [total, isPaused]);
 
     useEffect(() => {
         resetTimer();
-        return () => clearInterval(timerRef.current);
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
     }, [resetTimer]);
 
     if (!activeCategories || total === 0) return null;
@@ -48,7 +56,11 @@ const OurServices = () => {
                 </div>
 
                 {/* ── Single-card Carousel ── */}
-                <div className="sc-carousel">
+                <div 
+                    className="sc-carousel"
+                    onMouseEnter={() => setIsPaused(true)}
+                    onMouseLeave={() => setIsPaused(false)}
+                >
 
                     {/* Prev */}
                     <button

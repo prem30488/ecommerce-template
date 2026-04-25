@@ -306,17 +306,17 @@ app.get('/api/product/getProducts', async (req, res) => {
                 },
                 { model: db.Category, required: false },
                 { model: db.Form, as: 'Form', required: false },
-                {
-                    model: db.FAQ,
-                    as: 'faqs',
-                    where: { isActive: true },
-                    required: false
+                { 
+                    model: db.FAQ, as: 'faqs', required: false,
+                    attributes: ['id', 'question', 'answer'],
+                    separate: true,
+                    limit: 5
                 },
-                {
-                    model: db.Review,
-                    as: 'reviews',
-                    where: { status: 'approved', isDeleted: false },
-                    required: false
+                { 
+                    model: db.Review, as: 'reviews', required: false,
+                    attributes: ['id', 'name', 'rating', 'comment'],
+                    separate: true,
+                    limit: 5
                 }
             ]
         });
@@ -343,8 +343,9 @@ app.get('/api/product/getProducts', async (req, res) => {
 
 app.get('/api/category/getCategories', async (req, res) => {
     const page = parseInt(req.query.page) || 0;
-    const size = parseInt(req.query.size) || 10;
+    let size = parseInt(req.query.size) || 10;
     try {
+        if (size > 200) size = 200; // Cap to prevent overload
         const search = req.query.search || '';
         const { Op } = db.Sequelize;
 

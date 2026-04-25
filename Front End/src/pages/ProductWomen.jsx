@@ -7,6 +7,7 @@ import { ShopContext } from '../context/shop-context';
 import { useContext } from 'react';
 import OnlineSupport from "../components/OnlineSupport";
 import { COMPANY_INFO } from '../constants/companyInfo';
+import Pagination from '../components/Pagination';
 
 const ProductWomen = () => {
   const { products } = useContext(ShopContext);
@@ -26,6 +27,43 @@ const ProductWomen = () => {
       prod.active !== false
     );
   }, [products]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState('newest');
+  const itemsPerPage = 5;
+
+  const sortedProducts = useMemo(() => {
+    let result = [...womenProducts];
+    const getEffectivePrice = (product) => {
+      if (product.price && product.price > 0) return product.price;
+      if (product.productFlavors && product.productFlavors.length > 0) {
+        const firstFlavor = product.productFlavors[0];
+        return firstFlavor.price || firstFlavor.priceMedium || firstFlavor.priceLarge || 0;
+      }
+      return 0;
+    };
+    switch (sortBy) {
+      case 'price-low': result.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b)); break;
+      case 'price-high': result.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a)); break;
+      case 'featured-first': result.sort((a, b) => (b.featured === true ? 1 : 0) - (a.featured === true ? 1 : 0)); break;
+      case 'bestseller-first': result.sort((a, b) => (b.bestseller === true ? 1 : 0) - (a.bestseller === true ? 1 : 0)); break;
+      case 'oldest': result.sort((a, b) => a.id - b.id); break;
+      case 'alpha-a': result.sort((a, b) => (a.title || "").localeCompare(b.title || "")); break;
+      case 'alpha-z': result.sort((a, b) => (b.title || "").localeCompare(a.title || "")); break;
+      case 'newest': default: result.sort((a, b) => b.id - a.id); break;
+    }
+    return result;
+  }, [womenProducts, sortBy]);
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return sortedProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedProducts, currentPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (isLoading)
     return (
@@ -71,10 +109,10 @@ const ProductWomen = () => {
 
       <div className="container mx-auto px-4 pb-20 translate-y-[-2rem] relative z-20">
         {/* Breadcrumb - Glassmorphism Style */}
-        <nav className="premium-breadcrumbs" style={{ 
-          background: "white", 
-          padding: "10px 20px", 
-          borderRadius: "12px", 
+        <nav className="premium-breadcrumbs" style={{
+          background: "white",
+          padding: "10px 20px",
+          borderRadius: "12px",
           width: "fit-content",
           boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
         }}>
@@ -83,9 +121,57 @@ const ProductWomen = () => {
           <span className="premium-breadcrumb-current">Women's Collection</span>
         </nav>
 
+        {/* Premium Toolbar with Theme Colors */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '16px', marginTop: '32px', marginBottom: '24px', paddingBottom: '24px', borderBottom: '1px solid #f1f5f9' }}>
+          <div style={{ width: 'fit-content' }}>
+            <Pagination
+              totalItems={womenProducts.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: 'fit-content' }}>
+            <span style={{ fontSize: '14px', color: '#666', fontWeight: 600 }}>Sort By:</span>
+            <select
+              style={{
+                padding: '10px 40px 10px 16px',
+                border: '1px solid #eee',
+                borderRadius: '8px',
+                fontSize: '14px',
+                color: '#1a1a1a',
+                appearance: 'none',
+                backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'%3E%3C/polyline%3E%3C/svg%3E")',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'right 12px center',
+                backgroundColor: 'white',
+                cursor: 'pointer',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+              }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--color-primary)'}
+              onBlur={(e) => e.target.style.borderColor = '#eee'}
+              value={sortBy}
+              onChange={(e) => {
+                setSortBy(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="newest">Newest Arrivals</option>
+              <option value="oldest">Oldest Arrivals</option>
+              <option value="alpha-a">Alphabetically: A-Z</option>
+              <option value="alpha-z">Alphabetically: Z-A</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="featured-first">Featured First</option>
+              <option value="bestseller-first">Bestsellers First</option>
+            </select>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12 pt-10">
-          {womenProducts.map((product, index) => (
+          {paginatedProducts.map((product, index) => (
             <div
               key={product.id}
               className="reveal-stagger"
@@ -98,8 +184,17 @@ const ProductWomen = () => {
           ))}
         </div>
 
+        <div style={{ marginTop: '48px', paddingTop: '24px', paddingBottom: '24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'center' }}>
+          <Pagination
+            totalItems={womenProducts.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
+
         {/* Global Partnership Strip */}
-        <img src="/images/certifications.png" alt={`Certifications - ${COMPANY_INFO.name}`} title={COMPANY_INFO.name} className="certifications-banner" />
+        <img src="/images/certifications.png" alt={`Certifications - ${COMPANY_INFO.name}`} title={COMPANY_INFO.name} className="certifications-banner mt-12" />
       </div>
       <OnlineSupport />
     </div>

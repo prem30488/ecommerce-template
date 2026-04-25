@@ -134,7 +134,6 @@ export const Contact = () => {
             onBlur={formik.handleBlur}
             value={formik.values.phoneNumber}
             className={styles.inputField}
-            style={{ maxWidth: '50%' }}
           />
         </div>
 
