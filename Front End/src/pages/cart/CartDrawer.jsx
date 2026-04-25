@@ -50,7 +50,7 @@ export default function CartDrawer() {
           PaperProps={{
             sx: {
               width: { xs: '100%', sm: '550px' },
-              height: '100vh',
+              height: '100dvh',
               display: 'flex',
               flexDirection: 'column',
               boxShadow: '-20px 0 60px rgba(0,0,0,0.1)',

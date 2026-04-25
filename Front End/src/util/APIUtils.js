@@ -736,6 +736,10 @@ export function trackOrder(orderId) {
     return api.get("/api/order/track/" + orderId);
 }
 
+export function fetchOrderById(orderId) {
+    return api.get("/api/order/fetchById/" + orderId);
+}
+
 export function fetchDashboardKPIs() {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");

@@ -10,8 +10,8 @@
 
 .premium-cart-container {
   font-family: 'Outfit', 'Inter', system-ui, sans-serif;
-  height: 100vh !important;
-  max-height: 100vh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
   display: flex !important;
   flex-direction: column !important;
   background: var(--cart-bg);
@@ -327,6 +327,7 @@
 /* Footer / Summary */
 .premium-cart-footer {
   padding: 20px 24px;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
   background: white;
   border-top: 1px solid var(--cart-border);
   box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.03);

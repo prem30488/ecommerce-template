@@ -1,45 +1,35 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { API_BASE_URL } from '../../constants/index.jsx';
+import React, { useEffect, useState } from 'react';
+import { useParams } from "react-router-dom";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import 'jspdf-autotable';
-import { ShopContext } from '../../context/shop-context';
+import { fetchOrderById } from '../../util/APIUtils';
 import "./taxInvoice.css";
 import { getCurrentDateDDMMYYYY } from '../../util/util';
-import { useRef } from "react";
-import { useParams } from "react-router-dom";
 import { COMPANY_INFO } from '../../constants/companyInfo';
-const TaxInvoice = ({ status }) => {
+
+const TaxInvoice = () => {
 	const { orderId } = useParams();
-	const para = useRef(null);
-	const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, getTotalAfterDiscount, resetCart, getCustomerData, flavorCart, products } = useContext(ShopContext);
-	const totalAmount = getTotalCartAmount();
-	const formData = getCustomerData();
-	const totalAfterDiscount = getTotalAfterDiscount();
-	const total = totalAfterDiscount ? totalAfterDiscount : totalAmount;
-
-	const getPriceForSize = (product, size) => {
-		const flavorId = flavorCart[`${product.id}_${size}`] || (product.productFlavors && product.productFlavors[0]?.flavor_id) || 1;
-		const activeFlavorData = product.productFlavors?.find(pf => String(pf.flavor_id) === String(flavorId));
-		if (!activeFlavorData) return 0;
-		if (size === "S") return activeFlavorData.price;
-		if (size === "M") return activeFlavorData.priceMedium;
-		if (size === "L") return activeFlavorData.priceLarge;
-		return 0;
-	};
-	const { cleanCustomerData } = useContext(ShopContext);
-
-
+	const [orderData, setOrderData] = useState(null);
+	const [loading, setLoading] = useState(true);
 	const [isGenerating, setIsGenerating] = useState(false);
 	const [isPDFDownloaded, setIsPDFDownloaded] = useState(false);
 
 	useEffect(() => {
-		// Clear cart when invoice page is loaded (indicates successful order completion)
-		if (isPDFDownloaded == true) {
-			resetCart();
-		}
-		//resetCart();
-	}, [isPDFDownloaded]);
+		const loadOrder = async () => {
+			try {
+				const response = await fetchOrderById(orderId);
+				if (response && response.success) {
+					setOrderData(response.order);
+				}
+			} catch (err) {
+				console.error("Failed to fetch order", err);
+			} finally {
+				setLoading(false);
+			}
+		};
+		loadOrder();
+	}, [orderId]);
 
 	function generatePDF() {
 		const element = document.querySelector('#html-template');
@@ -47,10 +37,7 @@ const TaxInvoice = ({ status }) => {
 
 		setIsGenerating(true);
 
-		// A4 dimensions: 210mm x 297mm
 		const pdf = new jsPDF('p', 'mm', 'a4');
-
-		// PDF page width minus some margin
 		const pdfWidth = pdf.internal.pageSize.getWidth();
 		const margin = 10;
 		const innerWidth = pdfWidth - (margin * 2);
@@ -64,16 +51,38 @@ const TaxInvoice = ({ status }) => {
 			x: margin,
 			y: margin,
 			width: innerWidth,
-			windowWidth: 750, // Fixed width for consistent calculation
-			autoPaging: 'text', // Better handling of multi-page
+			windowWidth: 750,
+			autoPaging: 'text',
 			html2canvas: {
-				scale: 0.25, // Adjust quality vs speed
-				useCORS: true, // For images from other domains
+				scale: 0.25,
+				useCORS: true,
 				logging: false,
 				letterRendering: true
 			}
 		});
 	}
+
+	if (loading) {
+		return <div className="invoice-preview-container" style={{ textAlign: 'center', paddingTop: '100px' }}>Loading invoice data...</div>;
+	}
+
+	if (!orderData) {
+		return <div className="invoice-preview-container" style={{ textAlign: 'center', paddingTop: '100px' }}>Order not found.</div>;
+	}
+
+	const formData = orderData.customer || {};
+	formData.billingAddress = typeof orderData.billingAddress === 'string' ? JSON.parse(orderData.billingAddress) : (orderData.billingAddress || {});
+	formData.shippingAddress = typeof orderData.delieveryAddress === 'string' ? JSON.parse(orderData.delieveryAddress) : (orderData.delieveryAddress || {});
+	formData.paymentType = orderData.paymentType;
+
+	const totalAmount = parseFloat(orderData.subTotal || orderData.total || 0);
+	const discountAmount = parseFloat(orderData.discountAmount || 0);
+	const total = parseFloat(orderData.total || 0);
+	const status = orderData.status || "Pending";
+	
+	const paidItems = orderData.lineItems?.filter(item => item.price > 0) || [];
+	const freeItems = orderData.lineItems?.filter(item => item.price === 0) || [];
+
 	return (
 		<div className="invoice-preview-container">
 			<div className="invoice-actions">
@@ -94,7 +103,7 @@ const TaxInvoice = ({ status }) => {
 				</button>
 			</div>
 
-			<div id="html-template" style={{ padding: "60px", width: "100%" }}>
+			<div id="html-template">
 				<div className="invoice-header">
 					<div className="brand-section">
 						<h1>{COMPANY_INFO.name.split(' ')[0]}</h1>
@@ -111,7 +120,7 @@ const TaxInvoice = ({ status }) => {
 					<div className="invoice-title-section">
 						<h2>Tax Invoice</h2>
 						<div className="status-badge" style={{ marginTop: '10px' }}>
-							Status: <span className={status === "Paid" ? "status-paid" : "status-pending"}>{status || "Pending"}</span>
+							Status: <span className={status === "Paid" ? "status-paid" : "status-pending"}>{status}</span>
 						</div>
 					</div>
 				</div>
@@ -142,7 +151,7 @@ const TaxInvoice = ({ status }) => {
 							{formData.billingAddress?.city}, {formData.billingAddress?.state}<br />
 							{formData.billingAddress?.country} - {formData.billingAddress?.zipcode}
 						</p>
-						<p>{formData.mobileNumber}</p>
+						<p>{formData.mobileNumber || formData.mobile}</p>
 					</div>
 					<div className="address-block">
 						<h3>Ship To</h3>
@@ -154,7 +163,7 @@ const TaxInvoice = ({ status }) => {
 							{formData.shippingAddress?.city}, {formData.shippingAddress?.state}<br />
 							{formData.shippingAddress?.country} - {formData.shippingAddress?.zipcode}
 						</p>
-						<p>{formData.mobileNumber}</p>
+						<p>{formData.mobileNumber || formData.mobile}</p>
 					</div>
 				</div>
 
@@ -169,82 +178,46 @@ const TaxInvoice = ({ status }) => {
 						</tr>
 					</thead>
 					<tbody>
-						{products.filter(p => p.active).map(product => {
-							const sizes = [
-								{ key: 'cartItems', label: 'S', name: 'Small Pack' },
-								{ key: 'martItems', label: 'M', name: 'Medium Pack' },
-								{ key: 'lartItems', label: 'L', name: 'Large Pack' }
-							];
-
-							return sizes.map(sizeInfo => {
-								const cartMap = sizeInfo.key === 'cartItems' ? cartItems : (sizeInfo.key === 'martItems' ? martItems : lartItems);
-
-								// Handle the key format: productId_flavorId
-								const matchingKeys = Object.keys(cartMap).filter(k => k.startsWith(`${product.id}_`));
-
-								return matchingKeys.map(key => {
-									const qty = cartMap[key];
-									if (qty <= 0) return null;
-
-									const flavorId = key.split('_')[1];
-									const rate = getPriceForSize(product, sizeInfo.label);
-
-									// Simple offer calculation for display
-									const offer = product.offers?.[0];
-									const discountedRate = offer ? rate * (1 - offer.discount / 100) : rate;
-									const amount = discountedRate * qty;
-
-									return (
-										<tr key={`${key}_${sizeInfo.label}`}>
-											<td>
-												<span className="item-desc">{product.title}</span>
-												<span className="item-size">{sizeInfo.name} • {product.productFlavors?.find(pf => String(pf.flavor_id) === String(key.split('_')[1]))?.Flavor?.name || "Original"}</span>
-											</td>
-											<td>{product.hmscode || "3004"}</td>
-											<td>₹{rate.toFixed(2)}</td>
-											<td>{qty}</td>
-											<td>₹{amount.toFixed(2)}</td>
-										</tr>
-									);
-								});
-							});
+						{paidItems.map((item, index) => {
+							const amount = item.price * item.quantity;
+							const sizeName = item.size === 'small' ? 'Small Pack' : (item.size === 'medium' ? 'Medium Pack' : (item.size === 'large' ? 'Large Pack' : item.size));
+							return (
+								<tr key={`paid_${index}`}>
+									<td>
+										<span className="item-desc">{item.product?.title || 'Unknown Product'}</span>
+										<span className="item-size">{sizeName} • {item.flavor}</span>
+									</td>
+									<td>{item.product?.hmscode || "3004"}</td>
+									<td>₹{item.price.toFixed(2)}</td>
+									<td>{item.quantity}</td>
+									<td>₹{amount.toFixed(2)}</td>
+								</tr>
+							);
 						})}
 					</tbody>
 				</table>
 
-				{(Object.keys(freeCartItems).length > 0 || Object.keys(freeMartItems).length > 0 || Object.keys(freeLartItems).length > 0) && (
+				{freeItems.length > 0 && (
 					<>
 						<div className="free-items-banner" style={{ marginTop: '30px', background: '#F8FAFC', padding: '8px 15px', fontWeight: '800', borderLeft: '4px solid #C2410C', fontSize: '0.9rem' }}>
 							COMPLIMENTARY GIFTS / BONUS ITEMS
 						</div>
 						<table className="invoice-items-table">
 							<tbody>
-								{products.map(product => {
-									const freeSizes = [
-										{ key: 'freeCartItems', label: 'S', name: 'Small Pack' },
-										{ key: 'freeMartItems', label: 'M', name: 'Medium Pack' },
-										{ key: 'freeLartItems', label: 'L', name: 'Large Pack' }
-									];
-
-									return freeSizes.map(sizeInfo => {
-										const freeCartMap = sizeInfo.key === 'freeCartItems' ? freeCartItems : (sizeInfo.key === 'freeMartItems' ? freeMartItems : freeLartItems);
-										const qty = freeCartMap[product.id];
-										if (qty > 0) {
-											return (
-												<tr key={`free_${product.id}_${sizeInfo.label}`}>
-													<td style={{ width: '40%' }}>
-														<span className="item-desc">{product.productName || product.title} (Free Gift)</span>
-														<span className="item-size">{sizeInfo.name}</span>
-													</td>
-													<td style={{ width: '15%' }}>{product.hmscode || "3004"}</td>
-													<td style={{ width: '15%' }}>₹0.00</td>
-													<td style={{ width: '15%' }}>{qty}</td>
-													<td style={{ width: '15%' }}>₹0.00</td>
-												</tr>
-											);
-										}
-										return null;
-									});
+								{freeItems.map((item, index) => {
+									const sizeName = item.size === 'small' ? 'Small Pack' : (item.size === 'medium' ? 'Medium Pack' : (item.size === 'large' ? 'Large Pack' : item.size));
+									return (
+										<tr key={`free_${index}`}>
+											<td style={{ width: '40%' }}>
+												<span className="item-desc">{item.product?.productName || item.product?.title || 'Free Gift'} (Free Gift)</span>
+												<span className="item-size">{sizeName}</span>
+											</td>
+											<td style={{ width: '15%' }}>{item.product?.hmscode || "3004"}</td>
+											<td style={{ width: '15%' }}>₹0.00</td>
+											<td style={{ width: '15%' }}>{item.quantity}</td>
+											<td style={{ width: '15%' }}>₹0.00</td>
+										</tr>
+									);
 								})}
 							</tbody>
 						</table>
@@ -259,7 +232,7 @@ const TaxInvoice = ({ status }) => {
 						</div>
 						<div className="summary-row">
 							<label>Discount</label>
-							<span>-₹{(totalAmount - total).toFixed(2)}</span>
+							<span>-₹{discountAmount.toFixed(2)}</span>
 						</div>
 						<div className="summary-row">
 							<label>Estimated Tax (GST 18%)</label>
@@ -275,7 +248,7 @@ const TaxInvoice = ({ status }) => {
 				<div className="invoice-footer">
 					<div className="notes-section">
 						<h4>Notes & Terms</h4>
-						<p>• A finance charge of 1.5%will be made on unpaid balances after 30 days.</p>
+						<p>• A finance charge of 1.5% will be made on unpaid balances after 30 days.</p>
 						<p>• Goods once sold will not be taken back or exchanged.</p>
 						<p>• This is a computer-generated invoice and does not require a signature.</p>
 						<p>• For any queries regarding your order, please contact {COMPANY_INFO.email}</p>

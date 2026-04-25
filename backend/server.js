@@ -457,6 +457,38 @@ app.put('/api/order/updateStatus/:id', authenticateToken, async (req, res) => {
     }
 });
 
+app.get('/api/order/fetchById/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const order = await db.Order.findByPk(id, {
+            include: [{
+                model: db.OrderItem,
+                include: [db.Product, db.Flavor]
+            }]
+        });
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        const json = order.toJSON();
+        json.lineItems = json.OrderItems?.map(item => ({
+            id: item.id,
+            quantity: item.quantity,
+            product: item.Product,
+            size: item.size || 'small',
+            flavor: item.Flavor ? item.Flavor.name : (item.flavor_id ? 'Flavor ID: ' + item.flavor_id : 'Standard'),
+            price: item.price,
+            createdAt: item.createdAt
+        })) || [];
+        
+        res.json({ success: true, order: json });
+    } catch (error) {
+        console.error('Fetch order error:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch order details' });
+    }
+});
+
 app.get('/api/order/track/:id', async (req, res) => {
     try {
         const { id } = req.params;

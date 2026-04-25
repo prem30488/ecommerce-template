@@ -10,7 +10,7 @@ import { FaEye } from "react-icons/fa";
 import QuickViewModal from "./QuickViewModal";
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
-const CARD_WIDTH = 200;   // px
+const CARD_WIDTH = 250;   // px
 const GAP = 16;    // px between cards
 const VISIBLE = 5;     // cards shown at once
 const SLIDE_STEP = CARD_WIDTH + GAP;
