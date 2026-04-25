@@ -161,8 +161,10 @@ export const NavbarMain = () => {
 
           <div className="mobile-actions">
             <Link to="/your-wishlist" className="wishlist-mobile-trigger">
-              <FaHeart style={{ color: '#ff4757' }} />
-              <span className='badge badge-warning'>{wishlistItems ? Object.keys(wishlistItems).length : 0}</span>
+              <FaHeart style={{ color: '#c0392b' }} />
+              <span className='badge' style={{ background: '#c0392b', color: 'white' }}>
+                {wishlistItems ? Object.keys(wishlistItems).length : 0}
+              </span>
             </Link>
             <CartDrawer />
             <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
@@ -313,7 +315,7 @@ export const NavbarMain = () => {
 
             <Link to="/your-wishlist" className="wishlist-header-trigger desktop-only" title="View Wishlist" style={{ fontSize: "20px", marginRight: "10px", display: 'inline-flex', alignItems: 'center' }}>
               <FaHeart style={{ color: '#ff4757' }} />
-              <span className='badge badge-warning' id='lblWishlistCount' style={{ marginLeft: 6 }}>
+              <span className='badge' id='lblWishlistCount' style={{ marginLeft: 6, background: '#ff4757', color: 'white' }}>
                 {wishlistItems ? Object.keys(wishlistItems).length : 0}
               </span>
             </Link>

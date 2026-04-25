@@ -248,6 +248,9 @@ export const OrderTable = ({ }) => {
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Delivery Address</th>
+                    <th>Razorpay Order ID</th>
+                    <th>Razorpay Payment ID</th>
+                    <th>Razorpay Signature</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -284,6 +287,9 @@ export const OrderTable = ({ }) => {
                         `${order.delieveryAddress.street || ''}${order.delieveryAddress.addressLine2 ? ', ' + order.delieveryAddress.addressLine2 : ''}, ${order.delieveryAddress.city || ''}, ${order.delieveryAddress.zipcode || ''}`
                         : '-'}
                     </td>
+                    <td style={{ fontFamily: 'monospace', fontSize: '11px', color: '#6366f1' }}>{order.razorpay_order_id || '-'}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: '11px', color: '#0ea5e9' }}>{order.razorpay_payment_id || '-'}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: '10px', color: '#64748b', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={order.razorpay_signature || ''}>{order.razorpay_signature || '-'}</td>
                   </tr>
                 </tbody>
               </table>

@@ -39,7 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         processing_at: DataTypes.DATE,
         shipped_at: DataTypes.DATE,
         delivered_at: DataTypes.DATE,
-        cancelled_at: DataTypes.DATE
+        cancelled_at: DataTypes.DATE,
+        razorpay_order_id: DataTypes.STRING,
+        razorpay_payment_id: DataTypes.STRING,
+        razorpay_signature: DataTypes.STRING
     }, {
         sequelize,
         modelName: 'Order',

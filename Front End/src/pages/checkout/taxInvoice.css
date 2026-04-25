@@ -237,7 +237,7 @@
 }
 
 .btn-generate {
-    background: var(--invoice-primary);
+    background: var(--color-primary, #1a1a1a);
     color: white;
     border: none;
     padding: 12px 30px;
@@ -246,10 +246,13 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.05em;
 }
 
 .btn-generate:hover {
-    background: var(--invoice-accent);
+    background: var(--color-secondary, #c5a059);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }

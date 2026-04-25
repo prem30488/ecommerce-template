@@ -13,6 +13,7 @@ const { initRedis } = require('./config/redis');
 const saleRoutes = require('./routes/saleRoutes');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const emailService = require('./utils/emailService');
 
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -180,8 +181,8 @@ async function ensureDatabaseExists() {
         const postgresUrl = postgresUrlObj.toString();
         const client = new Client({
             connectionString: postgresUrl,
-            ssl: { 
-                rejectUnauthorized: false 
+            ssl: {
+                rejectUnauthorized: false
             }
         });
 
@@ -306,13 +307,13 @@ app.get('/api/product/getProducts', async (req, res) => {
                 },
                 { model: db.Category, required: false },
                 { model: db.Form, as: 'Form', required: false },
-                { 
+                {
                     model: db.FAQ, as: 'faqs', required: false,
                     attributes: ['id', 'question', 'answer'],
                     separate: true,
                     limit: 5
                 },
-                { 
+                {
                     model: db.Review, as: 'reviews', required: false,
                     attributes: ['id', 'name', 'rating', 'comment'],
                     separate: true,
@@ -481,7 +482,7 @@ app.get('/api/order/fetchById/:id', async (req, res) => {
             price: item.price,
             createdAt: item.createdAt
         })) || [];
-        
+
         res.json({ success: true, order: json });
     } catch (error) {
         console.error('Fetch order error:', error);
@@ -507,24 +508,58 @@ app.get('/api/order/track/:id', async (req, res) => {
     }
 });
 app.post('/api/order/createOrder', async (req, res) => {
+    // --- Early validation BEFORE starting DB transaction ---
+    const {
+        firstName, lastName, email, mobileNumber, billingAddress, shippingAddress, paymentType,
+        sameAddress, subTotal, total, cartItems, martItems, lartItems,
+        couponCode, discountAmount, detailedItems
+    } = req.body;
+
+    // Validate total amount
+    const parsedTotal = parseFloat(total);
+    if (!parsedTotal || parsedTotal <= 0 || isNaN(parsedTotal)) {
+        return res.status(400).json({
+            success: false,
+            error: 'Invalid Order',
+            message: 'Order total must be greater than zero. Please add items to your cart before checking out.'
+        });
+    }
+
+    // Validate that the cart has items
+    const hasCartItems = Object.values(cartItems || {}).some(q => q > 0);
+    const hasMartItems = Object.values(martItems || {}).some(q => q > 0);
+    const hasLartItems = Object.values(lartItems || {}).some(q => q > 0);
+    const hasDetailedItems = Array.isArray(detailedItems) && detailedItems.length > 0;
+
+    if (!hasCartItems && !hasMartItems && !hasLartItems && !hasDetailedItems) {
+        return res.status(400).json({
+            success: false,
+            error: 'Empty Cart',
+            message: 'Your cart is empty. Please add items before placing an order.'
+        });
+    }
+
+    // Validate required customer fields
+    if (!email || !mobileNumber || !firstName) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Information',
+            message: 'Customer name, email and mobile number are required.'
+        });
+    }
+
     const t = await db.sequelize.transaction();
     try {
-        const {
-            firstName, lastName, email, mobileNumber, billingAddress, shippingAddress, paymentType,
-            sameAddress, subTotal, total, cartItems, martItems, lartItems,
-            couponCode, discountAmount
-        } = req.body;
-
         console.log('--- CREATE ORDER REQUEST ---');
-        console.log('Total:', total);
+        console.log('Total:', parsedTotal);
         console.log('Items Count:', Object.keys(cartItems || {}).length + Object.keys(martItems || {}).length + Object.keys(lartItems || {}).length);
 
         const customerInfo = { firstName, lastName, email, mobile: mobileNumber, name: `${firstName} ${lastName}`.trim() };
 
         // 1. Create order in our database
         const order = await db.Order.create({
-            total: total,
-            subTotal: subTotal || total,
+            total: parsedTotal,
+            subTotal: parseFloat(subTotal) || parsedTotal,
             paymentType: paymentType || 'Razorpay',
             customer: customerInfo,
             billingAddress: billingAddress,
@@ -532,14 +567,14 @@ app.post('/api/order/createOrder', async (req, res) => {
             status: 'Pending',
             created_at: new Date(),
             couponCode: couponCode || null,
-            discountAmount: discountAmount || 0
+            discountAmount: parseFloat(discountAmount) || 0
         }, { transaction: t });
-        
+
         // --- Stock Management Logic ---
         // Aggregate all items (including free ones) to check total demand per product
         const stockDemand = {};
-        const itemsToProcess = req.body.detailedItems || [];
-        
+        const itemsToProcess = detailedItems || [];
+
         const collectFromMap = (map) => {
             if (!map) return;
             Object.entries(map).forEach(([key, qty]) => {
@@ -549,7 +584,7 @@ app.post('/api/order/createOrder', async (req, res) => {
                 }
             });
         };
-        
+
         if (itemsToProcess.length === 0) {
             collectFromMap(cartItems);
             collectFromMap(martItems);
@@ -562,11 +597,11 @@ app.post('/api/order/createOrder', async (req, res) => {
 
         // Validate and Decrement Stock atomically
         for (const [pid, qty] of Object.entries(stockDemand)) {
-            const product = await db.Product.findByPk(pid, { 
-                transaction: t, 
+            const product = await db.Product.findByPk(pid, {
+                transaction: t,
                 lock: true // FOR UPDATE lock to prevent race conditions during transaction
             });
-            
+
             if (!product) {
                 throw new Error(`Product with ID ${pid} not found.`);
             }
@@ -577,8 +612,8 @@ app.post('/api/order/createOrder', async (req, res) => {
             }
 
             // Decrement stock
-            await product.update({ 
-                stock: Math.max(0, product.stock - qty) 
+            await product.update({
+                stock: Math.max(0, product.stock - qty)
             }, { transaction: t });
         }
         // --- End Stock Management Logic ---
@@ -640,10 +675,14 @@ app.post('/api/order/createOrder', async (req, res) => {
         }
 
         // 2. Create Razorpay Order
+        const razorpayAmount = Math.round(parsedTotal * 100);
+        if (razorpayAmount <= 0) {
+            throw new Error('Calculated Razorpay amount is zero or negative. Please check the order total.');
+        }
         const options = {
-            amount: Math.round(total * 100),
+            amount: razorpayAmount,
             currency: "INR",
-            receipt: `order_rcptid_${order.id}`
+            receipt: `rcpt_${order.id}`
         };
 
         const razorpayOrder = await razorpay.orders.create(options);
@@ -663,18 +702,24 @@ app.post('/api/order/createOrder', async (req, res) => {
         if (t) await t.rollback();
         console.error('CRITICAL: Error in createOrder:', error);
 
-        // Handle Razorpay specific errors specifically
-        const isRazorpayError = error.code || error.statusCode || error.description;
-        const statusCode = error.statusCode || 500;
+        // Detect Razorpay-specific errors (they have statusCode / description)
+        const isRazorpayError = !!(error.statusCode || error.description);
+        const statusCode = isRazorpayError ? (error.statusCode || 400) : 500;
 
-        // If it's a 401 from Razorpay, it's likely an API Key issue
-        const errorMessage = statusCode === 401 && isRazorpayError
-            ? 'Razorpay Authentication Failed (check API keys)'
-            : (error.description || error.message || 'Unknown error occurred');
+        let errorMessage;
+        if (isRazorpayError && error.statusCode === 401) {
+            errorMessage = 'Razorpay authentication failed. Please check API keys.';
+        } else if (isRazorpayError) {
+            errorMessage = error.description || error.message || 'Payment gateway error.';
+        } else if (error.message?.includes('stock') || error.message?.includes('Stock')) {
+            errorMessage = error.message; // surface stock errors as-is
+        } else {
+            errorMessage = 'Failed to create order. Please try again.';
+        }
 
         res.status(statusCode).json({
             success: false,
-            error: isRazorpayError ? 'Razorpay Error' : 'Internal Server Error',
+            error: isRazorpayError ? 'Razorpay Error' : 'Order Error',
             message: errorMessage,
             detail: error.metadata || null
         });
@@ -693,9 +738,42 @@ app.post('/api/payment/verify', async (req, res) => {
 
         if (expectedSignature === razorpay_signature) {
             await db.Order.update(
-                { status: 'Processing' },
+                {
+                    status: 'Processing',
+                    razorpay_order_id: razorpay_order_id,
+                    razorpay_payment_id: razorpay_payment_id,
+                    razorpay_signature: razorpay_signature
+                },
                 { where: { id: order_id } }
             );
+
+            // ── Send Tax Invoice Email (async, non-blocking) ───────────────────
+            (async () => {
+                try {
+                    const orderForEmail = await db.Order.findByPk(order_id, {
+                        include: [{
+                            model: db.OrderItem,
+                            include: [db.Product, db.Flavor]
+                        }]
+                    });
+                    if (orderForEmail) {
+                        const orderJson = orderForEmail.toJSON();
+                        orderJson.lineItems = (orderJson.OrderItems || []).map(item => ({
+                            id: item.id,
+                            quantity: item.quantity,
+                            product: item.Product,
+                            size: item.size || 'small',
+                            flavor: item.Flavor ? item.Flavor.name : (item.flavor_id ? 'Flavor #' + item.flavor_id : 'Standard'),
+                            price: item.price,
+                        }));
+                        await emailService.sendTaxInvoiceEmail(orderJson, order_id);
+                    }
+                } catch (emailErr) {
+                    console.error('[Email] Error preparing invoice email:', emailErr.message);
+                }
+            })();
+            // ─────────────────────────────────────────────────────────────────
+
             res.json({ success: true, message: "Payment verified successfully" });
         } else {
             res.status(400).json({ success: false, message: "Invalid signature" });
@@ -1978,11 +2056,11 @@ app.get('/api/order/fetchMonthlySalesSum', authenticateToken, (req, res) => res.
 app.get('/api/order/fetchWeeklySalesSum', authenticateToken, (req, res) => res.json(35000));
 
 // ==================== WISHLIST ENDPOINTS ====================
-let emailService;
+let emailWishlistService;
 try {
-    emailService = require('./utils/emailService');
+    emailWishlistService = require('./utils/emailService');
 } catch (e) {
-    emailService = {
+    emailWishlistService = {
         sendWishlistNotification: async () => { console.log("Mock email sent (wishlist)"); },
         sendEmail: async (options) => {
             console.log("Mock email sent (general):", options);
@@ -3492,6 +3570,16 @@ const startServer = async () => {
                     console.log('✅ Categories schema updated with imageUrl');
                 } catch (catErr) {
                     console.log('⚠️ Categories schema update note:', catErr.message);
+                }
+
+                // Ensure Razorpay payment columns exist on Orders
+                try {
+                    await db.sequelize.query('ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS "razorpay_order_id" VARCHAR(255)');
+                    await db.sequelize.query('ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS "razorpay_payment_id" VARCHAR(255)');
+                    await db.sequelize.query('ALTER TABLE "Orders" ADD COLUMN IF NOT EXISTS "razorpay_signature" VARCHAR(512)');
+                    console.log('✅ Orders schema updated with Razorpay payment columns');
+                } catch (rzpErr) {
+                    console.log('⚠️ Orders Razorpay columns update note:', rzpErr.message);
                 }
             } catch (syncError) {
                 console.error('⚠️ Database sync error details:', syncError);

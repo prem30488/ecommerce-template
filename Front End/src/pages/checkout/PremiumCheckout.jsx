@@ -34,7 +34,8 @@ const PremiumCheckout = () => {
         products,
         addToCustomerData,
         addTotalAfterDiscount,
-        cleanTotalAfterDiscount
+        cleanTotalAfterDiscount,
+        resetCart
     } = useContext(ShopContext);
 
     const [isSummaryOpen, setIsSummaryOpen] = useState(false);
@@ -157,38 +158,59 @@ const PremiumCheckout = () => {
             sameAddress: true,
         },
         validationSchema: Yup.object({
-            firstName: Yup.string().required('First Name is required'),
-            lastName: Yup.string().required('Last Name is required'),
-            email: Yup.string().email('Invalid email address').required('Email is required'),
+            firstName: Yup.string()
+                .trim()
+                .min(2, 'First Name must be at least 2 characters')
+                .required('First Name is required'),
+            lastName: Yup.string()
+                .trim()
+                .min(2, 'Last Name must be at least 2 characters')
+                .required('Last Name is required'),
+            email: Yup.string()
+                .trim()
+                .email('Please enter a valid email address')
+                .required('Email is required'),
             mobileNumber: Yup.string()
-                .matches(/^\d+$/, 'Mobile Number must only contain digits')
+                .matches(/^[6-9]\d{9}$/, 'Enter a valid 10-digit Indian mobile number')
                 .required('Mobile Number is required'),
-            billingAddress: Yup.object().shape({
-                street: Yup.string().required('Address is required'),
-                city: Yup.string().required('City is required'),
+            shippingAddress: Yup.object().shape({
+                street: Yup.string()
+                    .trim()
+                    .min(5, 'Address must be at least 5 characters')
+                    .required('Address is required'),
+                city: Yup.string()
+                    .trim()
+                    .min(2, 'City must be at least 2 characters')
+                    .required('City is required'),
                 state: Yup.string().required('State is required'),
                 country: Yup.string().required('Country is required'),
                 zipcode: Yup.string()
-                    .matches(/^\d+$/, 'PIN Code must only contain digits')
+                    .matches(/^[1-9][0-9]{5}$/, 'Enter a valid 6-digit PIN code')
                     .required('PIN Code is required'),
             }),
-            shippingAddress: Yup.object().when('sameAddress', {
+            billingAddress: Yup.object().when('sameAddress', {
                 is: false,
                 then: () => Yup.object().shape({
-                    street: Yup.string().required('Address is required'),
-                    city: Yup.string().required('City is required'),
+                    street: Yup.string()
+                        .trim()
+                        .min(5, 'Address must be at least 5 characters')
+                        .required('Address is required'),
+                    city: Yup.string()
+                        .trim()
+                        .min(2, 'City must be at least 2 characters')
+                        .required('City is required'),
                     state: Yup.string().required('State is required'),
                     country: Yup.string().required('Country is required'),
                     zipcode: Yup.string()
-                        .matches(/^\d+$/, 'PIN Code must only contain digits')
+                        .matches(/^[1-9][0-9]{5}$/, 'Enter a valid 6-digit PIN code')
                         .required('PIN Code is required'),
                 }),
+                otherwise: () => Yup.object(),
             }),
         }),
         onSubmit: async (values) => {
             // Check if user is blocked (by email or mobile from the order history)
             try {
-                debugger;
                 const blockCheck = await fetch(`${API_BASE_URL}/api/public/checkBlockStatus?email=${values.email}&mobile=${values.mobileNumber}`);
                 const blockData = await blockCheck.json();
                 if (blockData.is_blocked) {
@@ -265,7 +287,13 @@ const PremiumCheckout = () => {
             }
 
             if (values.sameAddress) {
-                submissionData.shippingAddress = { ...values.billingAddress, type: 'shipping' };
+                submissionData.billingAddress = { ...values.shippingAddress, type: 'billing' };
+            }
+
+            // Guard: block submission if cart is empty or total is zero
+            if (!totalAmount || totalAmount <= 0) {
+                Alert.error('Your cart is empty. Please add items before checking out.');
+                return;
             }
 
             addToCustomerData(submissionData);
@@ -303,6 +331,7 @@ const PremiumCheckout = () => {
 
                             if (verifyRes.success) {
                                 Alert.success("Payment Successful!");
+                                resetCart();
                                 navigate("/previewInvoice/" + localOrderId);
                             } else {
                                 Alert.error("Payment verification failed.");
@@ -326,8 +355,13 @@ const PremiumCheckout = () => {
                 paymentObject.open();
 
             } catch (error) {
-                console.error('Error:', error);
-                const msg = error.response?.data?.message || error.message || 'Oops! Some error occurred!';
+                console.error('Order/Payment Error:', error);
+                // Extract the clearest message from Axios response or error object
+                const msg =
+                    error.response?.data?.message ||
+                    error.response?.data?.error ||
+                    error.message ||
+                    'Oops! Something went wrong. Please try again.';
                 Alert.error(msg);
             }
         },
@@ -514,7 +548,7 @@ const PremiumCheckout = () => {
                             <input
                                 type="text"
                                 className={`input-field ${formik.touched.email && formik.errors.email ? 'error' : ''}`}
-                                placeholder="Email or mobile phone number"
+                                placeholder="Enter your email"
                                 {...formik.getFieldProps('email')}
                             />
                             {formik.touched.email && formik.errors.email && (
@@ -536,7 +570,7 @@ const PremiumCheckout = () => {
                         <div className="form-group">
                             <select
                                 className="input-field"
-                                {...formik.getFieldProps('billingAddress.country')}
+                                {...formik.getFieldProps('shippingAddress.country')}
                             >
                                 <option value="India">India</option>
                             </select>
@@ -570,12 +604,12 @@ const PremiumCheckout = () => {
                         <div className="form-group">
                             <input
                                 type="text"
-                                className={`input-field ${formik.touched.billingAddress?.street && formik.errors.billingAddress?.street ? 'error' : ''}`}
+                                className={`input-field ${formik.touched.shippingAddress?.street && formik.errors.shippingAddress?.street ? 'error' : ''}`}
                                 placeholder="Address"
-                                {...formik.getFieldProps('billingAddress.street')}
+                                {...formik.getFieldProps('shippingAddress.street')}
                             />
-                            {formik.touched.billingAddress?.street && formik.errors.billingAddress?.street && (
-                                <div className="error-msg">{formik.errors.billingAddress?.street}</div>
+                            {formik.touched.shippingAddress?.street && formik.errors.shippingAddress?.street && (
+                                <div className="error-msg">{formik.errors.shippingAddress?.street}</div>
                             )}
                         </div>
 
@@ -584,7 +618,7 @@ const PremiumCheckout = () => {
                                 type="text"
                                 className="input-field"
                                 placeholder="Apartment, suite, etc. (optional)"
-                                {...formik.getFieldProps('billingAddress.addressLine2')}
+                                {...formik.getFieldProps('shippingAddress.addressLine2')}
                             />
                         </div>
 
@@ -592,18 +626,18 @@ const PremiumCheckout = () => {
                             <div className="form-group">
                                 <input
                                     type="text"
-                                    className={`input-field ${formik.touched.billingAddress?.city && formik.errors.billingAddress?.city ? 'error' : ''}`}
+                                    className={`input-field ${formik.touched.shippingAddress?.city && formik.errors.shippingAddress?.city ? 'error' : ''}`}
                                     placeholder="City"
-                                    {...formik.getFieldProps('billingAddress.city')}
+                                    {...formik.getFieldProps('shippingAddress.city')}
                                 />
-                                {formik.touched.billingAddress?.city && formik.errors.billingAddress?.city && (
-                                    <div className="error-msg">{formik.errors.billingAddress?.city}</div>
+                                {formik.touched.shippingAddress?.city && formik.errors.shippingAddress?.city && (
+                                    <div className="error-msg">{formik.errors.shippingAddress?.city}</div>
                                 )}
                             </div>
                             <div className="form-group">
                                 <select
                                     className="input-field"
-                                    {...formik.getFieldProps('billingAddress.state')}
+                                    {...formik.getFieldProps('shippingAddress.state')}
                                 >
                                     <option value="Gujarat">Gujarat</option>
                                     <option value="Maharashtra">Maharashtra</option>
@@ -614,12 +648,12 @@ const PremiumCheckout = () => {
                             <div className="form-group">
                                 <input
                                     type="text"
-                                    className={`input-field ${formik.touched.billingAddress?.zipcode && formik.errors.billingAddress?.zipcode ? 'error' : ''}`}
+                                    className={`input-field ${formik.touched.shippingAddress?.zipcode && formik.errors.shippingAddress?.zipcode ? 'error' : ''}`}
                                     placeholder="PIN code"
-                                    {...formik.getFieldProps('billingAddress.zipcode')}
+                                    {...formik.getFieldProps('shippingAddress.zipcode')}
                                 />
-                                {formik.touched.billingAddress?.zipcode && formik.errors.billingAddress?.zipcode && (
-                                    <div className="error-msg">{formik.errors.billingAddress?.zipcode}</div>
+                                {formik.touched.shippingAddress?.zipcode && formik.errors.shippingAddress?.zipcode && (
+                                    <div className="error-msg">{formik.errors.shippingAddress?.zipcode}</div>
                                 )}
                             </div>
                         </div>
@@ -704,20 +738,24 @@ const PremiumCheckout = () => {
                                         <div className="form-group">
                                             <input
                                                 type="text"
-                                                className={`input-field ${formik.touched.billingAddress?.name && formik.errors.billingAddress?.name ? 'error' : ''}`}
+                                                className={`input-field ${formik.touched.firstName && formik.errors.firstName ? 'error' : ''}`}
                                                 placeholder="First name"
-                                                {...formik.getFieldProps('billingAddress.name')}
+                                                {...formik.getFieldProps('firstName')}
                                             />
-                                            {formik.touched.billingAddress?.name && formik.errors.billingAddress?.name && (
-                                                <div className="error-msg">{formik.errors.billingAddress?.name}</div>
+                                            {formik.touched.firstName && formik.errors.firstName && (
+                                                <div className="error-msg">{formik.errors.firstName}</div>
                                             )}
                                         </div>
                                         <div className="form-group">
                                             <input
                                                 type="text"
-                                                className="input-field"
+                                                className={`input-field ${formik.touched.lastName && formik.errors.lastName ? 'error' : ''}`}
                                                 placeholder="Last name"
+                                                {...formik.getFieldProps('lastName')}
                                             />
+                                            {formik.touched.lastName && formik.errors.lastName && (
+                                                <div className="error-msg">{formik.errors.lastName}</div>
+                                            )}
                                         </div>
                                     </div>
 
