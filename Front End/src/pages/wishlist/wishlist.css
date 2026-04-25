@@ -21,9 +21,9 @@
 
 .wishlist-title {
   margin: 0 0 10px 0;
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-text);
+  font-size: 30px;
+  font-weight: bold;
+  color: var(--color-primary);
 
   display: flex;
   align-items: center;
@@ -136,12 +136,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.wishlist-summary h3,
+.wishlist-summary h2,
 .wishlist-sharing-info h3 {
   margin: 0 0 15px 0;
-  font-size: 16px;
+  font-size: 30px;
   font-weight: 600;
-  color: #333;
+  color: var(--color-primary);
   padding-bottom: 12px;
   border-bottom: 2px solid #f0f0f0;
 }
@@ -151,8 +151,9 @@
   justify-content: space-between;
   padding: 12px 0;
   border-bottom: 1px solid #f5f5f5;
-  font-size: 14px;
-  color: #666;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-secondary);
 }
 
 .summary-item:last-child {
@@ -203,10 +204,21 @@
   opacity: 0.9;
 }
 
-.btn-share-social.facebook { background: #3b5998; }
-.btn-share-social.twitter { background: #1da1f2; }
-.btn-share-social.whatsapp { background: #25d366; }
-.btn-share-social.email { background: #888; }
+.btn-share-social.facebook {
+  background: #3b5998;
+}
+
+.btn-share-social.twitter {
+  background: #1da1f2;
+}
+
+.btn-share-social.whatsapp {
+  background: #25d366;
+}
+
+.btn-share-social.email {
+  background: #888;
+}
 
 
 .share-benefits ul {

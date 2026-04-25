@@ -55,6 +55,7 @@ import TaxInvoice from "./pages/checkout/TaxInvoice";
 import Settings from "./pages/admin/Settings";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminLayout from './pages/admin/component/AdminLayout';
+import HomeManagementPage from './pages/admin/component/home/HomeManagementPage';
 
 
 import RefundPolicy from './pages/RefundPolicy';
@@ -68,6 +69,7 @@ import YourCart from './pages/cart/YourCart';
 import TrackOrder from './pages/TrackOrder';
 import SockJsClient from 'react-stomp';
 import SEO from './components/SEO';
+import ScrollToTop from './components/ScrollToTop';
 
 import Input from './chat/components/Input/Input';
 import LoginForm from './chat/components/LoginForm';
@@ -128,12 +130,10 @@ class App extends Component {
 	}
 
 	onConnected = () => {
-		console.log("Connected!!")
+		// Connected
 	}
 
 	onMessageReceived = (msg) => {
-		console.log('New Message Received!!', msg);
-
 		this.setState({
 			messages: this.state.messages + msg,
 		});
@@ -141,14 +141,12 @@ class App extends Component {
 
 	onSendMessage = (msgText) => {
 		chatAPI.sendMessage(this.state.user.username, msgText).then(res => {
-			console.log('Sent', res);
 		}).catch(err => {
-			console.log('Error Occured while sending message to api');
 		})
 	}
 
 	handleLoginSubmit = (username) => {
-		console.log(username, " Logged in..");
+		// Logged in
 
 		this.setState(
 			{
@@ -165,6 +163,7 @@ class App extends Component {
 			<div className="App">
 				<ShopContextProvider>
 					<WishlistContextProvider>
+						<ScrollToTop />
 						<SEO />
 						{(!this.state.authenticated && !window.location.pathname.includes('Management') && window.location.pathname !== '/dashboard') && <NavbarMain />}
 						<Routes>
@@ -226,6 +225,7 @@ class App extends Component {
 							<Route exact path="/saleManagement" element={<AdminLayout><SaleManagementPage /></AdminLayout>} />
 							<Route exact path="/settings" element={<AdminLayout><Settings /></AdminLayout>} />
 							<Route exact path="/adminNotifications" element={<AdminLayout><AdminNotifications /></AdminLayout>} />
+							<Route exact path="/homeManagement" element={<AdminLayout><HomeManagementPage /></AdminLayout>} />
 
 							{/* Wishlist Routes */}
 							<Route path="/wishlist" element={<Wishlist />} />

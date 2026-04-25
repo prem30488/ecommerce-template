@@ -370,6 +370,53 @@ app.get('/api/category/getCategories', async (req, res) => {
     }
 });
 
+// Home Sections Routes
+app.get('/api/home-sections', async (req, res) => {
+    try {
+        const sections = await db.HomeSection.findAll({
+            order: [['order', 'ASC']]
+        });
+        res.json(sections);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch home sections' });
+    }
+});
+
+app.put('/api/home-sections/updateOrder', authenticateToken, async (req, res) => {
+    const t = await db.sequelize.transaction();
+    try {
+        const { sections } = req.body; // Array of {id, order}
+        for (const item of sections) {
+            await db.HomeSection.update(
+                { order: item.order },
+                { where: { id: item.id }, transaction: t }
+            );
+        }
+        await t.commit();
+        res.json({ success: true });
+    } catch (error) {
+        if (t) await t.rollback();
+        console.error(error);
+        res.status(500).json({ error: 'Failed to update order' });
+    }
+});
+
+app.put('/api/home-sections/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { active, displayName } = req.body;
+        await db.HomeSection.update(
+            { active, displayName },
+            { where: { id } }
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to update section' });
+    }
+});
+
 app.get('/api/coupon/getCoupon', async (req, res) => {
     const page = parseInt(req.query.page) || 0;
     const size = parseInt(req.query.size) || 10;

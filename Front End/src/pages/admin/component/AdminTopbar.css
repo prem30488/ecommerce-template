@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px 30px;
-    background: rgba(255, 255, 255, 0.5);
+    background: var(--color-bg-transparent, rgba(255, 255, 255, 0.5));
     backdrop-filter: blur(10px);
     position: sticky;
     top: 15px;
@@ -11,7 +11,7 @@
     border-radius: 20px;
     z-index: 900;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--color-divider, rgba(255, 255, 255, 0.3));
 }
 
 .topbar-left {
@@ -28,22 +28,22 @@
 }
 
 .breadcrumb-path {
-    color: #707ebe;
+    color: var(--color-text-secondary, #707ebe);
 }
 
 .breadcrumb-sep {
-    color: #707ebe;
+    color: var(--color-text-secondary, #707ebe);
 }
 
 .breadcrumb-current {
-    color: #1b2559;
+    color: var(--color-text, #1b2559);
     font-weight: 500;
 }
 
 .topbar-title {
     font-size: 24px;
     font-weight: 700;
-    color: #1b2559;
+    color: var(--color-text, #1b2559);
     margin: 0;
 }
 
@@ -403,15 +403,65 @@
 .dark-theme .notification-item {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #1b2559;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark-theme .mobile-menu-toggle {
+    color: #ffffff;
+}
+
+@media (max-width: 991px) {
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .topbar-left {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .breadcrumb, .topbar-title {
+        display: none; /* Hide breadcrumbs/title on very small screens to save space, or show only title */
+    }
+    
+    .topbar-left::after {
+        content: attr(data-title);
+        font-size: 18px;
+        font-weight: 700;
+        color: #1b2559;
+    }
+    
+    .dark-theme .topbar-left::after {
+        color: #ffffff;
+    }
+}
+
 @media (max-width: 768px) {
     .admin-topbar {
-        flex-direction: column;
-        gap: 15px;
-        align-items: stretch;
-        margin: 10px;
-        padding: 15px;
-    }
-    .topbar-right {
+        flex-direction: row;
         justify-content: space-between;
+        align-items: center;
+        margin: 10px;
+        padding: 10px 15px;
+    }
+    
+    .topbar-left {
+        flex: 1;
+    }
+    
+    .topbar-right {
+        background: none;
+        box-shadow: none;
+        padding: 0;
     }
 }

@@ -8,26 +8,46 @@ const WishlistShareModal = ({ item, onClose }) => {
   const [copied, setCopied] = useState(false);
   const shareLink = getWishlistShareLink();
 
-  const parsePrice = (productItem) => {
-    if (!productItem) return 0;
+  const getPriceData = (productItem) => {
+    if (!productItem) return { originalPrice: 0, finalPrice: 0, discountInfo: null };
     const product = productItem.Product || productItem;
+
+    // Default to size 'S' for simplicity in modal, or use item size if available
     const flavor = product?.productFlavors?.[0];
+    const sizeKey = 'price'; // Default
+    let basePrice = 0;
+
     if (flavor) {
-      const v = flavor.price ?? flavor.priceMedium ?? flavor.priceLarge;
-      if (v !== undefined && v !== null && !Number.isNaN(Number(v))) return Number(v);
+      basePrice = flavor[sizeKey] || flavor.price || product.price || 0;
+    } else {
+      basePrice = product.price || 0;
     }
-    const fallback = product.price ?? product.priceMedium ?? product.priceLarge;
-    if (fallback !== undefined && fallback !== null && !Number.isNaN(Number(fallback))) return Number(fallback);
-    return 0;
+
+    const activeOffer = product.offers?.find(o => o.active && o.discount > 0 && (!o.size || o.size === 'S'));
+
+    let finalPrice = basePrice;
+    let discountInfo = null;
+
+    if (activeOffer) {
+      if (activeOffer.type === 2) {
+        finalPrice = Math.max(0, basePrice - activeOffer.discount);
+        discountInfo = `₹${activeOffer.discount} OFF`;
+      } else {
+        finalPrice = basePrice * (1 - activeOffer.discount / 100);
+        discountInfo = `${activeOffer.discount}% OFF`;
+      }
+    }
+
+    return { originalPrice: basePrice, finalPrice, discountInfo };
   };
 
   const formatINR = (value) => {
     const n = Number(value);
     if (Number.isNaN(n)) return '₹0.00';
-    return `₹${n.toFixed(2)}`;
+    return `₹${Math.round(n).toLocaleString()}`;
   };
 
-  const displayPrice = formatINR(parsePrice(item));
+  const { originalPrice, finalPrice, discountInfo } = getPriceData(item);
 
   const handleCopyLink = () => {
     const itemLink = `${shareLink}&product=${item.id}`;
@@ -40,14 +60,11 @@ const WishlistShareModal = ({ item, onClose }) => {
   const handleShareSocial = (platform) => {
     const itemLink = `${shareLink}&product=${item.id}`;
     const title = encodeURIComponent(item.title);
-    const description = encodeURIComponent(`Check out this amazing product: ${item.title}`);
-    const imageUrl = encodeURIComponent(item.img);
 
     const shareUrls = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(itemLink)}`,
       twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(itemLink)}&text=${title}`,
       whatsapp: `https://wa.me/?text=${title}%20${encodeURIComponent(itemLink)}`,
-      instagram: itemLink // Instagram doesn't have a direct share URL, open in new tab
     };
 
     if (shareUrls[platform]) {
@@ -59,70 +76,105 @@ const WishlistShareModal = ({ item, onClose }) => {
     <div className="wishlist-share-modal-overlay" onClick={onClose}>
       <div className="wishlist-share-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3>Share "{item.title}"</h3>
+          <h3>Share This Item</h3>
           <button className="close-btn" onClick={onClose}>
             <FaTimes />
           </button>
         </div>
 
         <div className="modal-body">
-          <div className="share-image">
-            <img src={item.img} alt={item.title} />
-          </div>
+          <div className="product-preview-card">
+            <div className="share-image">
+              <img src={item.img} alt={item.title} />
+            </div>
 
-          <div className="share-info">
-            <p className="share-price">Price: <strong>{displayPrice}</strong></p>
-            <p className="share-description">{item.description?.substring(0, 80)}...</p>
+            <div className="share-info">
+              <div className="share-price">
+                <span style={{ color: 'var(--color-secondary)' }}>Current Price</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <strong>{formatINR(finalPrice)}</strong>
+                  {discountInfo && (
+                    <span style={{
+                      fontSize: '10px',
+                      background: 'var(--color-badge-sale-ultra-light)',
+                      color: 'var(--color-badge-sale)',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontWeight: '900',
+                      border: '1px solid var(--color-badge-sale-light)'
+                    }}>
+                      {discountInfo}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <h4 style={{ margin: '10px 0 0 0', fontSize: '1.1rem', fontWeight: '800', color: 'var(--color-text)' }}>
+                {item.title}
+              </h4>
+              {item.description && (
+                <p className="share-description">{item.description}</p>
+              )}
+            </div>
           </div>
 
           <div className="social-share-section">
-            <h4>Share on Social Media</h4>
+            <div className="section-title">
+              <h4>Share via Socials</h4>
+              <div className="line"></div>
+            </div>
             <div className="social-buttons">
               <button
                 className="social-btn facebook"
                 onClick={() => handleShareSocial('facebook')}
                 title="Share on Facebook"
               >
-                <FaFacebook /> Facebook
+                <FaFacebook />
+                <span>Facebook</span>
               </button>
               <button
                 className="social-btn twitter"
                 onClick={() => handleShareSocial('twitter')}
                 title="Share on Twitter"
               >
-                <FaTwitter /> Twitter
+                <FaTwitter />
+                <span>Twitter</span>
               </button>
               <button
                 className="social-btn whatsapp"
                 onClick={() => handleShareSocial('whatsapp')}
                 title="Share on WhatsApp"
               >
-                <FaWhatsapp /> WhatsApp
+                <FaWhatsapp />
+                <span>WhatsApp</span>
               </button>
             </div>
           </div>
 
           <div className="link-share-section">
-            <h4>Copy Link</h4>
+            <div className="section-title">
+              <h4>Direct Link</h4>
+              <div className="line"></div>
+            </div>
             <div className="link-copy-group">
-              <input
-                type="text"
-                className="link-input"
-                value={`${shareLink}&product=${item.id}`}
-                readOnly
-              />
+              <div className="link-input-wrapper">
+                <input
+                  type="text"
+                  className="link-input"
+                  value={`${shareLink}&product=${item.id}`}
+                  readOnly
+                />
+              </div>
               <button
-                className="copy-btn"
+                className={`copy-btn ${copied ? 'copied' : ''}`}
                 onClick={handleCopyLink}
-                style={{ backgroundColor: copied ? '#4caf50' : '#2196F3' }}
               >
-                <FaLink /> {copied ? 'Copied!' : 'Copy'}
+                <FaLink /> {copied ? 'Copied!' : 'Copy Link'}
               </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

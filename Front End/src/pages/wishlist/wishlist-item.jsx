@@ -8,22 +8,26 @@ import './wishlist-item.css';
 import WishlistShareModal from './WishlistShareModal';
 import { useNavigate } from 'react-router-dom';
 import Alert from 'react-s-alert';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 const WishlistItem = ({ item }) => {
   const { removeFromWishlist } = useContext(WishlistContext);
   const { addToCart } = useContext(ShopContext);
   const navigate = useNavigate();
   const [showShareModal, setShowShareModal] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   if (!item) {
     return null;
   }
 
-  const handleRemove = async () => {
-    if (window.confirm('Remove this item from wishlist?')) {
-      await removeFromWishlist(item.id);
-      Alert.success('Removed from wishlist');
-    }
+  const handleRemove = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmRemove = async () => {
+    await removeFromWishlist(item.id);
+    Alert.success('Removed from wishlist');
   };
 
   const handleAddToCart = () => {
@@ -62,6 +66,13 @@ const WishlistItem = ({ item }) => {
 
   return (
     <>
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmRemove}
+        title="Remove Item"
+        message={`Are you sure you want to remove "${item.title}" from your wishlist?`}
+      />
       <div className="wishlist-item">
         <div className="wishlist-item-image">
           <img

@@ -6,7 +6,13 @@ export const WishlistContext = createContext(null);
 
 
 const getDefaultWishlist = () => {
-  return {};
+  const storedWishlist = localStorage.getItem("wishlistItems");
+  try {
+    return storedWishlist ? JSON.parse(storedWishlist) : {};
+  } catch (err) {
+    console.error("Failed to parse wishlist from localStorage:", err);
+    return {};
+  }
 };
 
 export const WishlistContextProvider = (props) => {
@@ -40,6 +46,11 @@ export const WishlistContextProvider = (props) => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
+  // Sync wishlist to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("wishlistItems", JSON.stringify(wishlistItems));
+  }, [wishlistItems]);
+
   // Load wishlist from backend
   const loadWishlist = async (userIdParam) => {
     try {
@@ -52,15 +63,17 @@ export const WishlistContextProvider = (props) => {
 
       if (response.ok) {
         const data = await response.json();
-        const wishlistMap = {};
-        data.forEach(item => {
-          wishlistMap[item.product_id] = {
-            id: item.id,
-            productId: item.product_id,
-            addedAt: item.createdAt
-          };
+        setWishlistItems(prev => {
+          const merged = { ...prev };
+          data.forEach(item => {
+            merged[item.product_id] = {
+              id: item.id,
+              productId: item.product_id,
+              addedAt: item.createdAt
+            };
+          });
+          return merged;
         });
-        setWishlistItems(wishlistMap);
       }
     } catch (err) {
       console.error('Failed to load wishlist:', err);
@@ -70,10 +83,8 @@ export const WishlistContextProvider = (props) => {
   // Add item to wishlist
   const addToWishlist = async (productId) => {
     const idStr = String(productId);
-    console.log('addToWishlist called for product:', idStr);
 
     if (wishlistItems[idStr]) {
-      console.log('Item already in wishlist');
       return;
     }
 
@@ -118,7 +129,6 @@ export const WishlistContextProvider = (props) => {
       } else {
         const errorData = await response.json().catch(() => ({}));
         if (response.status === 400 && errorData.error === 'Item already in wishlist') {
-          console.log('Item already in wishlist on server, keeping local state.');
           // Remove optimistic flag if you use one, or just keep as is
           return;
         }
@@ -147,11 +157,9 @@ export const WishlistContextProvider = (props) => {
   // Remove item from wishlist
   const removeFromWishlist = async (productId) => {
     const idStr = String(productId);
-    console.log('removeFromWishlist called for product:', idStr);
 
     const wishlistItem = wishlistItems[idStr];
     if (!wishlistItem) {
-      console.log('Item not in wishlist');
       return;
     }
 
@@ -241,7 +249,7 @@ export const WishlistContextProvider = (props) => {
           Authorization: `Bearer ${token}`
         }
       });
-      setWishlistItems(getDefaultWishlist());
+      setWishlistItems({});
     } catch (err) {
       console.error('Failed to clear wishlist:', err);
     }
@@ -272,8 +280,8 @@ export const WishlistContextProvider = (props) => {
 
   // Get shareable wishlist link
   const getWishlistShareLink = () => {
-    if (!userId) return null;
-    return `${window.location.origin}/wishlist/shared?userId=${userId}&sessionId=${sessionId}`;
+    //if (!userId) return null;
+    return `${window.location.origin}/wishlist/shared?sessionId=${sessionId}`;
   };
 
   const value = {

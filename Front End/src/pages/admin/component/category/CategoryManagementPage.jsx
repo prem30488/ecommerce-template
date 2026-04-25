@@ -1,8 +1,6 @@
 // src/components/CategoryManagement.js
 import React, { useState, useEffect } from 'react';
-import { Paper, Typography } from '@mui/material';
-import CategoryManagement from './CategoryManagement';
-import { CssBaseline, Container } from '@mui/material';
+import { Paper, Box } from '@mui/material';
 import CategoryManager from './CategoryManager';
 import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
 import { API_BASE_URL } from '../../../../constants';
@@ -45,13 +43,20 @@ const CategoryManagementPage = () => {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      <CssBaseline />
-      <Paper elevation={3} style={{ padding: '20px' }}>
-        {/* Category management content */}
+    <Box sx={{ py: { xs: 2, md: 4 }, px: { xs: 1, md: 4 } }}>
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          p: { xs: 1, sm: 2, md: 3 }, 
+          borderRadius: '16px', 
+          border: '1px solid', 
+          borderColor: 'divider',
+          minHeight: '80vh'
+        }}
+      >
         <CategoryManager />
       </Paper>
-    </Container>
+    </Box>
   );
 };
 

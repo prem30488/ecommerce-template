@@ -1,45 +1,59 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import UserManagement from './UserManagement';
-import { Container, CssBaseline, Paper, Typography } from '@mui/material';
-import {getCurrentUser} from '../../../../util/APIUtils';
-import axios from 'axios';
-import { API_BASE_URL } from '../../../../constants';
+import { Paper, Typography, Box } from '@mui/material';
+import { getCurrentUser } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
+
 function UserManagementPage() {
-  const [privileges, setPrivileges] = useState({});  
-  const [currentUser,setCurrentUser] = useState();
+  const [currentUser, setCurrentUser] = useState();
 
   useEffect(() => {
     const getPrivileges = async () => {
-
-       await getCurrentUser()
-      .then(response => {
+      try {
+        const response = await getCurrentUser();
         setCurrentUser(response);
-        console.log(JSON.stringify(currentUser));
-        // Fetch user privileges from the backend when the component mounts
-      }).catch(error => {
+      } catch (error) {
         Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
-      });  
+      }
     };
     getPrivileges();
   }, []);
 
-  if(currentUser && currentUser.roles[0].name === 'ROLE_SUPERADMIN'){
+  if (currentUser && currentUser.roles[0].name === 'ROLE_SUPERADMIN') {
 
-  }else{
+  } else if (currentUser) {
     return "You are not authorized to view this page. Please contact to Admin to grant you privileges.";
+  } else {
+    return null;
   }
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      <CssBaseline />
-      <Paper elevation={3} style={{ padding: '20px', margin: '20px 0' }}>
-        <Typography variant="h5" align="center">User Management</Typography>
-        <br/><br/>
+    <Box sx={{ py: { xs: 2, md: 4 }, px: { xs: 1, md: 4 } }}>
+      <Paper 
+        elevation={0} 
+        sx={{ 
+          p: { xs: 1, sm: 2, md: 3 }, 
+          borderRadius: '16px', 
+          border: '1px solid', 
+          borderColor: 'divider',
+          minHeight: '80vh'
+        }}
+      >
+        <Typography 
+          variant="h5" 
+          align="center" 
+          sx={{ 
+            fontWeight: 700, 
+            color: 'text.primary', 
+            mb: 4,
+            fontSize: { xs: '1.25rem', sm: '1.5rem' }
+          }}
+        >
+          User Management
+        </Typography>
         <UserManagement />
       </Paper>
-      
-    </Container>
+    </Box>
   );
 }
 

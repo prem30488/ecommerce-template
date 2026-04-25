@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Box } from '@mui/material';
-import ProductManager from './ProductManager';
+import HomeManager from './HomeManager';
 import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
 
-const ProductManagementPage = () => {
+const HomeManagementPage = () => {
   const [privileges, setPrivileges] = useState({});
   const [currentUser, setCurrentUser] = useState();
+  const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPrivileges = async () => {
@@ -15,28 +17,25 @@ const ProductManagementPage = () => {
         setCurrentUser(user);
 
         const privilegesData = await getPrivileges(user.id);
-        setPrivileges({
-          id: privilegesData.id,
-          userId: privilegesData.user_id,
-          categories: privilegesData.categories,
-          forms: privilegesData.forms,
-          products: privilegesData.products,
-          orders: privilegesData.orders,
-          coupons: privilegesData.coupons,
-          testimonials: privilegesData.testimonials,
-          deleteFlag: privilegesData.deleteFlag
-        });
+        setPrivileges(privilegesData);
+        
+        // Logic for authorization - superadmin or has categories privilege (using categories as a proxy for site-wide settings)
+        if (user.roles[0].name === "ROLE_SUPERADMIN" || privilegesData.categories === true) {
+          setAuthorized(true);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
-        Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+        Alert.error('Authorization check failed');
+      } finally {
+        setLoading(false);
       }
     };
     fetchPrivileges();
   }, []);
 
-  if (privileges && privileges.products === true || currentUser && currentUser.roles[0].name === "ROLE_SUPERADMIN") {
+  if (loading) return null;
 
-  } else {
+  if (!authorized) {
     return "You are not authorized to view this page. Please contact to Admin to grant you privileges.";
   }
 
@@ -52,10 +51,10 @@ const ProductManagementPage = () => {
           minHeight: '80vh'
         }}
       >
-        <ProductManager />
+        <HomeManager />
       </Paper>
     </Box>
   );
 };
 
-export default ProductManagementPage;
+export default HomeManagementPage;

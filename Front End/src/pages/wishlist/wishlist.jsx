@@ -4,6 +4,7 @@ import WishlistItem from './wishlist-item';
 import './wishlist.css';
 import { FaHeart, FaArrowLeft } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 const Wishlist = () => {
   const navigate = useNavigate();
@@ -11,14 +12,13 @@ const Wishlist = () => {
   const [items, setItems] = useState([]);
   const [isEmpty, setIsEmpty] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   useEffect(() => {
     const loadWishlistItems = async () => {
       try {
         setIsLoading(true);
-        console.log('Current wishlistItems:', wishlistItems);
         const wishlistProducts = await getWishlistItemsWithDetails();
-        console.log('Loaded wishlist items:', wishlistProducts);
         setItems(wishlistProducts || []);
         setIsEmpty((wishlistProducts || []).length === 0);
       } catch (err) {
@@ -33,11 +33,13 @@ const Wishlist = () => {
   }, [wishlistItems, getWishlistItemsWithDetails]);
 
   const handleClearWishlist = () => {
-    if (window.confirm('Are you sure you want to clear your entire wishlist?')) {
-      clearWishlist();
-      setItems([]);
-      setIsEmpty(true);
-    }
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmClearWishlist = () => {
+    clearWishlist();
+    setItems([]);
+    setIsEmpty(true);
   };
 
   const handleContinueShopping = () => {
@@ -112,10 +114,17 @@ const Wishlist = () => {
 
   return (
     <div className="wishlist-container">
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmClearWishlist}
+        title="Clear Wishlist"
+        message="Are you sure you want to remove all items from your wishlist? This action cannot be undone."
+      />
       <div className="wishlist-header">
         <div>
           <h1 className="wishlist-title">
-            <FaHeart /> My Wishlist
+            <FaHeart style={{ color: '#FF4757' }} /> My Wishlist
           </h1>
           <p className="wishlist-count">{items.length} item{items.length !== 1 ? 's' : ''} in your wishlist</p>
         </div>
@@ -136,7 +145,7 @@ const Wishlist = () => {
 
         <div className="wishlist-sidebar">
           <div className="wishlist-summary">
-            <h3>Wishlist Summary</h3>
+            <h2>Wishlist Summary</h2>
             <div className="summary-item">
               <span>Total Items:</span>
               <span className="summary-value">{items.length}</span>

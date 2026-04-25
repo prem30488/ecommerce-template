@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MdNotificationsNone, MdDarkMode, MdLightMode, MdSettings, MdLogout, MdPersonOutline } from 'react-icons/md';
+import { MdNotificationsNone, MdDarkMode, MdLightMode, MdSettings, MdLogout, MdPersonOutline, MdMenu } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchDashboardNotifications, getCurrentUser } from '../../../util/APIUtils';
 import { formatDate } from '../../../util/regionalSettings';
@@ -7,7 +7,7 @@ import { ACCESS_TOKEN } from '../../../constants';
 import Alert from 'react-s-alert';
 import './AdminTopbar.css';
 
-const AdminTopbar = ({ darkMode, toggleDarkMode }) => {
+const AdminTopbar = ({ darkMode, toggleDarkMode, toggleMobileSidebar }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [notifications, setNotifications] = useState([]);
@@ -99,7 +99,10 @@ const AdminTopbar = ({ darkMode, toggleDarkMode }) => {
     return (
         <div className="admin-topbar">
             {/* ... Breadcrumbs and Title ... */}
-            <div className="topbar-left">
+            <div className="topbar-left" data-title={getPageTitle(location.pathname)}>
+                <button className="mobile-menu-toggle" onClick={toggleMobileSidebar}>
+                    <MdMenu />
+                </button>
                 <nav className="breadcrumb">
                     <span className="breadcrumb-path">Pages</span>
                     <span className="breadcrumb-sep">/</span>

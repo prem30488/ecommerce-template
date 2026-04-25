@@ -355,12 +355,10 @@ export function addCoupon(formRequest) {
 
 
 export function addOffer(offerRequest) {
-    console.log(JSON.stringify(offerRequest));
     return api.post("/api/offer/createOffer", offerRequest);
 }
 
 export function addUser(userRequest) {
-    console.log(JSON.stringify(userRequest));
     return api.post("/api/user/users", userRequest);
 }
 
@@ -867,4 +865,21 @@ export function fetchDashboardNotifications() {
         return Promise.reject("No access token set.");
     }
     return api.get("/api/admin/dashboard-notifications");
+}
+export function getHomeSections() {
+    return api.get("/api/home-sections");
+}
+
+export function updateHomeSectionOrder(sections) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put("/api/home-sections/updateOrder", { sections });
+}
+
+export function updateHomeSection(id, data) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put("/api/home-sections/" + id, data);
 }

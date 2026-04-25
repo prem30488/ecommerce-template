@@ -1005,7 +1005,10 @@ const injectCSSVars = (themeColors) => {
 
   // Text / Background
   r.setProperty('--color-text', themeColors.text);
+  r.setProperty('--color-text-secondary', themeColors.text === '#fff' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)');
   r.setProperty('--color-bg', themeColors.background);
+  r.setProperty('--color-bg-transparent', themeColors.background === '#fff' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)');
+  r.setProperty('--color-divider', themeColors.text === '#fff' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)');
 
   // Sync data attribute for secondary CSS targeting
   document.documentElement.setAttribute('data-theme', themeColors.name || 'custom');

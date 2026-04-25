@@ -50,7 +50,12 @@ const OrderStatusPieChart = () => {
               ))}
             </Pie>
             <Tooltip 
-               contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+               contentStyle={{ 
+                borderRadius: '12px', 
+                background: 'var(--color-bg, #fff)', 
+                border: '1px solid var(--color-divider, rgba(0,0,0,0.1))',
+                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' 
+              }}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -63,8 +68,8 @@ const OrderStatusPieChart = () => {
           transform: 'translate(-50%, -50%)',
           textAlign: 'center'
         }}>
-          <div style={{ fontSize: '20px', fontWeight: '800', color: '#0F172A' }}>{total}</div>
-          <div style={{ fontSize: '10px', color: '#64748B', fontWeight: '600' }}>Orders</div>
+          <div style={{ fontSize: '20px', fontWeight: '800', color: 'var(--color-text, #0F172A)' }}>{total}</div>
+          <div style={{ fontSize: '10px', color: 'var(--color-text-secondary, #64748B)', fontWeight: '600' }}>Orders</div>
         </div>
       </div>
 
@@ -72,11 +77,11 @@ const OrderStatusPieChart = () => {
       <div style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {data.map((item, idx) => (
           <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignHover: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: item.color }}></div>
-              <span style={{ fontSize: '14px', color: '#64748B', fontWeight: '600' }}>{item.name}</span>
+              <span style={{ fontSize: '14px', color: 'var(--color-text-secondary, #64748B)', fontWeight: '600' }}>{item.name}</span>
             </div>
-            <span style={{ fontSize: '14px', fontWeight: '800', color: '#0F172A' }}>{item.value}</span>
+            <span style={{ fontSize: '14px', fontWeight: '800', color: 'var(--color-text, #0F172A)' }}>{item.value}</span>
           </div>
         ))}
       </div>

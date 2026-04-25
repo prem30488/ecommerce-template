@@ -28,10 +28,26 @@
 .admin-main-content {
     padding: 0 30px 30px;
     flex: 1;
+    width: 100%;
+}
+
+.mobile-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 999;
 }
 
 @media (max-width: 991px) {
     .admin-content-wrapper {
-        margin-left: 0;
+        margin-left: 0 !important;
+    }
+    
+    .admin-main-content {
+        padding: 0 15px 15px;
     }
 }

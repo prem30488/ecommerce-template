@@ -161,8 +161,8 @@ export const NavbarMain = () => {
 
           <div className="mobile-actions">
             <Link to="/your-wishlist" className="wishlist-mobile-trigger">
-              <FaHeart style={{ color: '#c0392b' }} />
-              <span className='badge' style={{ background: '#c0392b', color: 'white' }}>
+              <FaHeart style={{ color: '#ff4757' }} />
+              <span className='badge' style={{ background: '#ff4757', color: 'white' }}>
                 {wishlistItems ? Object.keys(wishlistItems).length : 0}
               </span>
             </Link>
@@ -312,14 +312,14 @@ export const NavbarMain = () => {
               </ul>
             </div>
 
-
-            <Link to="/your-wishlist" className="wishlist-header-trigger desktop-only" title="View Wishlist" style={{ fontSize: "20px", marginRight: "10px", display: 'inline-flex', alignItems: 'center' }}>
-              <FaHeart style={{ color: '#ff4757' }} />
-              <span className='badge' id='lblWishlistCount' style={{ marginLeft: 6, background: '#ff4757', color: 'white' }}>
-                {wishlistItems ? Object.keys(wishlistItems).length : 0}
-              </span>
-            </Link>
             <div className="desktop-only">
+              <Link to="/your-wishlist" className="wishlist-header-trigger desktop-only" title="View Wishlist" style={{ fontSize: "20px", marginRight: "10px", display: 'inline-flex', alignItems: 'center' }}>
+                <FaHeart style={{ color: '#ff4757' }} />
+                <span className='badge' id='lblWishlistCount' style={{ marginLeft: 6, background: '#ff4757', color: 'white' }}>
+                  {wishlistItems ? Object.keys(wishlistItems).length : 0}
+                </span>
+              </Link>
+
               <CartDrawer></CartDrawer>
             </div>
             {/* <Link

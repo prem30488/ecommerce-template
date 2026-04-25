@@ -19,7 +19,6 @@ const WishlistIcon = ({ productId, size = 'medium', showText = false, customStyl
         e.preventDefault();
         e.stopPropagation();
 
-        console.log('Toggle wishlist clicked for product:', productId, 'Currently in wishlist:', inWishlist);
 
         try {
             if (inWishlist) {
@@ -27,11 +26,9 @@ const WishlistIcon = ({ productId, size = 'medium', showText = false, customStyl
                 Alert.warning('Removed from wishlist', {
                     customClass: 'wishlist-removed-toast'
                 });
-                console.log('Successfully removed from wishlist');
             } else {
                 await addToWishlist(productId);
                 Alert.success('Added to wishlist');
-                console.log('Successfully added to wishlist');
             }
         } catch (err) {
             console.error('Error toggling wishlist:', err);

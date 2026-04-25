@@ -31,7 +31,7 @@ import { COMPANY_INFO } from '../../../constants/companyInfo';
 import Alert from 'react-s-alert';
 import './Sidebar.css';
 
-const Sidebar = ({ collapsed, toggleCollapse }) => {
+const Sidebar = ({ collapsed, toggleCollapse, mobileOpen, closeMobile }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [privileges, setPrivileges] = useState({});
     const navigate = useNavigate();
@@ -91,23 +91,24 @@ const Sidebar = ({ collapsed, toggleCollapse }) => {
                 { label: "Flavors", path: "/flavorManagement", icon: <MdIcecream />, show: privileges.flavors || isSuperAdmin },
                 { label: "Forms", path: "/formManagement", icon: <MdDescription />, show: privileges.forms || isSuperAdmin },
                 { label: "Sliders", path: "/sliderManagement", icon: <MdViewCarousel />, show: privileges.sliders || isSuperAdmin },
+                { label: "Home Manager", path: "/homeManagement", icon: <MdHome />, show: isSuperAdmin || privileges.categories },
                 { label: "Leadership", path: "/leadershipManagement", icon: <MdPerson />, show: privileges.leadership || isSuperAdmin },
             ]
         }
     ];
 
     return (
-        <div className={`admin-sidebar ${collapsed ? 'collapsed' : ''}`}>
+        <div className={`admin-sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
             <div className="sidebar-logo">
                 <div className="logo-icon">{COMPANY_INFO.name[0]}</div>
-                {!collapsed && (
+                {(!collapsed || mobileOpen) && (
                     <div className="logo-text">
                         <span className="logo-brand">{COMPANY_INFO.name}</span>
                         <span className="logo-sub">DASHBOARD</span>
                     </div>
                 )}
                 <button className="collapse-toggle" onClick={toggleCollapse}>
-                    <MdChevronRight style={{ transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                    <MdChevronRight style={{ transform: (collapsed && !mobileOpen) ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                 </button>
             </div>
 
@@ -118,7 +119,7 @@ const Sidebar = ({ collapsed, toggleCollapse }) => {
 
                     return (
                         <div key={idx} className="sidebar-section">
-                            {!collapsed && (
+                            {(!collapsed || mobileOpen) && (
                                 <div className="section-header">
                                     <span className="section-title">{section.title}</span>
                                     <MdChevronRight className="section-arrow" />
@@ -131,9 +132,12 @@ const Sidebar = ({ collapsed, toggleCollapse }) => {
                                         to={item.path} 
                                         className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}
                                         title={collapsed ? item.label : ''}
+                                        onClick={() => {
+                                            if (window.innerWidth <= 991) closeMobile();
+                                        }}
                                     >
                                         <span className="item-icon">{item.icon}</span>
-                                        {!collapsed && <span className="item-label">{item.label}</span>}
+                                        {(!collapsed || mobileOpen) && <span className="item-label">{item.label}</span>}
                                     </NavLink>
                                 ))}
                             </div>
@@ -147,7 +151,7 @@ const Sidebar = ({ collapsed, toggleCollapse }) => {
                     <div className="user-avatar">
                         {currentUser ? currentUser.username[0].toUpperCase() : 'A'}
                     </div>
-                    {!collapsed && (
+                    {(!collapsed || mobileOpen) && (
                         <div className="user-info">
                             <span className="user-name">{currentUser ? currentUser.username : 'Admin'}</span>
                             <span className="user-role">{isSuperAdmin ? 'Super Admin' : 'Admin'}</span>

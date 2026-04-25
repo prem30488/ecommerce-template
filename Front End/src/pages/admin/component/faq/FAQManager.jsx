@@ -238,23 +238,42 @@ const FAQManager = () => {
 
     return (
         <Box sx={{ p: 3 }}>
-            <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 4 }}>
-                <Typography variant="h5" sx={{ color: '#1e293b' }}>FAQ Management</Typography>
-                <Box sx={{ position: 'absolute', right: 0 }}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<AddIcon />}
-                        onClick={() => handleOpen()}
-                    >
-                        Add New FAQ
-                    </Button>
-                </Box>
+            <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', md: 'row' }, 
+                justifyContent: 'space-between', 
+                alignItems: { xs: 'flex-start', md: 'center' }, 
+                gap: 2,
+                mb: 4 
+            }}>
+                <Typography variant="h5" sx={{ 
+                    color: 'var(--color-text, #1e293b)', 
+                    fontWeight: 'bold',
+                    fontSize: { xs: '1.25rem', md: '1.5rem' } 
+                }}>
+                    FAQ Management
+                </Typography>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={() => handleOpen()}
+                    sx={{ 
+                        width: { xs: '100%', md: 'auto' },
+                        py: 1,
+                        px: 3,
+                        borderRadius: '10px',
+                        textTransform: 'none',
+                        fontWeight: '600'
+                    }}
+                >
+                    Add New FAQ
+                </Button>
             </Box>
 
             {/* Search Bar */}
-            <Box sx={{ mb: 4, p: 2, bgcolor: '#f8fafc', borderRadius: 4, border: '1px solid #f1f5f9' }}>
-                <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ mb: 4, p: 2, bgcolor: 'var(--color-bg-paper, #f8fafc)', borderRadius: 4, border: '1px solid var(--color-divider, #f1f5f9)' }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
                     <TextField
                         fullWidth
                         placeholder="Search FAQs by question or asked by..."
@@ -271,7 +290,10 @@ const FAQManager = () => {
                             variant="outlined"
                             startIcon={<ClearIcon />}
                             onClick={handleClearSearch}
-                            sx={{ whiteSpace: 'nowrap' }}
+                            sx={{ 
+                                whiteSpace: 'nowrap',
+                                width: { xs: '100%', sm: 'auto' }
+                            }}
                         >
                             Clear
                         </Button>

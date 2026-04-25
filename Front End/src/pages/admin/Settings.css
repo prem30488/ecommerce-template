@@ -28,12 +28,12 @@
 .settings-header h2 {
     font-size: 28px;
     font-weight: 700;
-    color: #1b2559;
+    color: var(--color-text, #1b2559);
     margin: 0;
 }
 
 .settings-header p {
-    color: #a3aed0;
+    color: var(--color-text-secondary, #a3aed0);
     margin: 5px 0 0;
 }
 
@@ -48,10 +48,11 @@
 .settings-sidebar {
     width: 220px;
     flex-shrink: 0;
-    background: #fff;
+    background: var(--color-bg, #fff);
     border-radius: 20px;
     padding: 14px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--color-divider, transparent);
 }
 
 .settings-nav-item {
@@ -63,17 +64,17 @@
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
-    color: #1b2559;
+    color: var(--color-text, #1b2559);
     transition: all 0.2s;
     margin-bottom: 4px;
 }
 
 .settings-nav-item:hover {
-    background: #f4f7fe;
+    background: var(--color-bg-transparent, #f4f7fe);
 }
 
 .settings-nav-item.active {
-    background: #4318ff;
+    background: var(--color-primary, #4318ff);
     color: #fff;
 }
 
@@ -87,10 +88,11 @@
 }
 
 .settings-pane {
-    background: #fff;
+    background: var(--color-bg, #fff);
     border-radius: 20px;
     padding: 28px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--color-divider, transparent);
 }
 
 .pane-header {
@@ -99,19 +101,19 @@
     align-items: flex-start;
     margin-bottom: 24px;
     padding-bottom: 18px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--color-divider, #f1f5f9);
 }
 
 .pane-header h3 {
     font-size: 20px;
     font-weight: 700;
-    color: #1b2559;
+    color: var(--color-text, #1b2559);
     margin: 0;
 }
 
 .pane-header p {
     font-size: 13px;
-    color: #a3aed0;
+    color: var(--color-text-secondary, #a3aed0);
     margin: 4px 0 0;
 }
 
@@ -227,29 +229,29 @@
 .form-group label {
     font-size: 13px;
     font-weight: 700;
-    color: #1b2559;
+    color: var(--color-text, #1b2559);
 }
 
 .form-group input,
 .form-group select {
     padding: 11px 16px;
     border-radius: 10px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--color-divider, #e2e8f0);
     font-size: 14px;
-    color: #1b2559;
-    background: #fff;
+    color: var(--color-text, #1b2559);
+    background: var(--color-bg, #fff);
     outline: none;
     transition: border 0.2s;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #4318ff;
+    border-color: var(--color-primary, #4318ff);
 }
 
 .form-group input:disabled {
-    background: #f4f7fe;
-    color: #64748b;
+    background: var(--color-bg-transparent, #f4f7fe);
+    color: var(--color-text-secondary, #64748b);
     cursor: not-allowed;
 }
 
@@ -265,7 +267,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px 0;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--color-divider, #f1f5f9);
 }
 
 .toggle-row:last-child {
@@ -657,3 +659,74 @@
     border-color: rgba(255,255,255,0.1);
 }
 
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+    .settings-layout {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .settings-sidebar {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .settings-nav-item {
+        margin-bottom: 0;
+        justify-content: center;
+        padding: 10px;
+        text-align: center;
+        flex-direction: column;
+        height: 100%;
+    }
+    
+    .settings-nav-item span:last-child {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-settings {
+        padding: 15px;
+    }
+    
+    .settings-header h2 {
+        font-size: 24px;
+    }
+    
+    .settings-pane {
+        padding: 20px;
+    }
+    
+    .pane-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .profile-avatar-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .theme-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-sidebar {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .theme-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pane-header h3 {
+        font-size: 18px;
+    }
+}

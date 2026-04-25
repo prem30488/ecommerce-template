@@ -6,11 +6,11 @@
 
 .premium-dashboard {
   /* Soft, atmospheric gradient background for depth */
-  background: radial-gradient(circle at 15% 10%, #fefefe 0%, #f0f4f8 100%);
+  background: var(--color-bg, radial-gradient(circle at 15% 10%, #fefefe 0%, #f0f4f8 100%));
   min-height: 100vh;
   padding: 2.5rem;
   font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-  color: #1e293b;
+  color: var(--color-text, #1e293b);
   box-sizing: border-box;
 }
 
@@ -57,12 +57,12 @@
 
 .kpi-card {
   /* Premium Glassmorphism */
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--color-bg-transparent, rgba(255, 255, 255, 0.75));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-radius: 24px;
   padding: 1.75rem;
-  border: 1px solid rgba(255, 255, 255, 1);
+  border: 1px solid var(--color-divider, rgba(255, 255, 255, 1));
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03), 0 4px 10px rgba(15, 23, 42, 0.02);
   display: flex;
   flex-direction: column;
@@ -225,7 +225,30 @@
   .dashboard-row-secondary { grid-template-columns: 1fr; }
   .product-compare-grid { grid-template-columns: 1fr; }
   .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  .premium-dashboard { padding: 1.25rem; }
+  .premium-dashboard { padding: 1rem; }
+  
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+    gap: 1rem;
+  }
+  
+  .chart-wrapper {
+    min-height: 300px;
+  }
+  
+  .dashboard-title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+    .kpi-value {
+        font-size: 1.75rem;
+    }
+    
+    .kpi-card {
+        padding: 1.25rem;
+    }
 }
 
 /* --- Section Cards (For Charts & Tables) --- */

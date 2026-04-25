@@ -250,8 +250,12 @@
 @media (max-width: 991px) {
     .admin-sidebar {
         transform: translateX(-100%);
+        width: 280px;
     }
     .admin-sidebar.mobile-open {
         transform: translateX(0);
+    }
+    .collapse-toggle {
+        display: none;
     }
 }

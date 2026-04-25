@@ -1,7 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Paper, Typography } from '@mui/material';
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import {fetchMonthlySalesSum} from "../../../util/APIUtils"
 
 import Alert from 'react-s-alert';
@@ -41,19 +40,41 @@ const SalesValueChart = () => {
 
 
   return (
-    <Paper elevation={3} style={{ padding: '20px' }}>
-      <Typography variant="h5" align="center">Sales Value Chart - Monthly</Typography>
-      <ResponsiveContainer width="100%" height={300}>
+    <div style={{ width: '100%', height: '300px', padding: '20px' }}>
+      <h3 style={{ 
+        textAlign: 'center', 
+        marginBottom: '20px', 
+        fontSize: '1.25rem', 
+        fontWeight: 800, 
+        color: 'var(--color-text, #0f172a)' 
+      }}>
+        Sales Value - Monthly
+      </h3>
+      <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-divider, rgba(0,0,0,0.1))" />
+          <XAxis 
+            dataKey="name" 
+            tick={{ fill: 'var(--color-text-secondary, #64748b)', fontSize: 12 }} 
+            axisLine={{ stroke: 'var(--color-divider, rgba(0,0,0,0.1))' }}
+          />
+          <YAxis 
+            tick={{ fill: 'var(--color-text-secondary, #64748b)', fontSize: 12 }} 
+            axisLine={{ stroke: 'var(--color-divider, rgba(0,0,0,0.1))' }}
+          />
+          <Tooltip 
+            contentStyle={{ 
+              borderRadius: '12px', 
+              background: 'var(--color-bg, #fff)', 
+              border: '1px solid var(--color-divider, rgba(0,0,0,0.1))',
+              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'
+            }}
+          />
           <Legend />
-          <Line type="monotone" dataKey="sales" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey="sales" stroke="#4f46e5" strokeWidth={3} activeDot={{ r: 8 }} />
         </LineChart>
       </ResponsiveContainer>
-    </Paper>
+    </div>
   );
 };
 

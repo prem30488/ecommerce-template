@@ -144,7 +144,7 @@ const RegionalPanel = () => {
                         <option value="EUR">EUR (€)</option>
                     </select>
                 </div>
-                <div style={{ padding: '15px', background: 'rgba(67, 24, 255, 0.05)', borderRadius: '12px', fontSize: '14px' }}>
+                <div style={{ padding: '15px', background: 'var(--color-bg-transparent, rgba(67, 24, 255, 0.05))', color: 'var(--color-text)', borderRadius: '12px', fontSize: '14px', border: '1px solid var(--color-divider)' }}>
                     <strong>Preview:</strong> {new Intl.NumberFormat(settings.language, { style: 'currency', currency: settings.currency }).format(1250.50)}
                 </div>
                 <button className="save-btn" onClick={handleSave}><MdSave /> Save Preferences</button>
@@ -233,7 +233,7 @@ const PagesContentPanel = () => {
                         <textarea rows="6" value={welcomeContent.welcome_desc} onChange={e => setWelcomeContent({ ...welcomeContent, welcome_desc: e.target.value })} placeholder="Write your content here..." style={{borderRadius: '12px', padding: '12px', border: '1px solid rgba(0,0,0,0.1)', fontFamily: 'inherit'}} />
                     </div>
                     
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
                         <div className="form-group">
                             <label>Floating Card: CTA Text</label>
                             <input type="text" value={welcomeContent.welcome_cta_text} onChange={e => setWelcomeContent({ ...welcomeContent, welcome_cta_text: e.target.value })} placeholder="Need Help?" />
@@ -244,8 +244,8 @@ const PagesContentPanel = () => {
                         </div>
                     </div>
 
-                    <label style={{marginTop: '10px', display: 'block', fontWeight: 'bold'}}>Section Images</label>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '20px', marginTop: '10px' }}>
+                    <label style={{marginTop: '10px', display: 'block', fontWeight: 'bold', color: 'var(--color-text, #1b2559)'}}>Section Images</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '20px', marginTop: '10px' }}>
                         {[1, 2, 3].map(id => (
                             <div className="admin-img-uploader" key={id}>
                                 <div className="admin-img-preview">

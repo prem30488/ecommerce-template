@@ -7,10 +7,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Label,
 } from 'recharts';
-import { Paper, Typography } from '@mui/material';
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import {fetchDailyRevenueSum} from "../../../util/APIUtils"
 
 import Alert from 'react-s-alert';
@@ -44,22 +42,40 @@ const DailyRevenueBarGraph = () => {
     getData();
   }, []);
   return (
-    <Paper elevation={3} style={{ padding: '20px' }}>
-      <Typography variant="h5" align="center">Daily Revenue Bar Graph</Typography>
-      <ResponsiveContainer width="100%" height={300}>
+    <div style={{ width: '100%', height: '300px', padding: '20px' }}>
+      <h3 style={{ 
+        textAlign: 'center', 
+        marginBottom: '20px', 
+        fontSize: '1.25rem', 
+        fontWeight: 800, 
+        color: 'var(--color-text, #0f172a)' 
+      }}>
+        Daily Revenue
+      </h3>
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="day">
-            <Label value="Days of the Week" offset={0} position="insideBottom" />
-          </XAxis>
-          <YAxis>
-            <Label angle={270} value="Revenue" position="insideLeft" style={{ textAnchor: 'middle' }} />
-          </YAxis>
-          <Tooltip />
-          <Bar dataKey="revenue" fill="#8884d8" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-divider, rgba(0,0,0,0.1))" />
+          <XAxis 
+            dataKey="day"
+            tick={{ fill: 'var(--color-text-secondary, #64748b)', fontSize: 12 }} 
+            axisLine={{ stroke: 'var(--color-divider, rgba(0,0,0,0.1))' }}
+          />
+          <YAxis 
+            tick={{ fill: 'var(--color-text-secondary, #64748b)', fontSize: 12 }} 
+            axisLine={{ stroke: 'var(--color-divider, rgba(0,0,0,0.1))' }}
+          />
+          <Tooltip 
+            contentStyle={{ 
+              borderRadius: '12px', 
+              background: 'var(--color-bg, #fff)', 
+              border: '1px solid var(--color-divider, rgba(0,0,0,0.1))',
+              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'
+            }}
+          />
+          <Bar dataKey="revenue" fill="#4f46e5" radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
-    </Paper>
+    </div>
   );
 };
 

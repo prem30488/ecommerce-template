@@ -10,6 +10,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Typography,
+  Paper,
   Box,
   TablePagination,
 } from '@mui/material';
@@ -211,6 +213,8 @@ function ItemManager() {
       field: 'title', headerName: 'Title', width: 200, renderCell: (params) =>
         editItemId === params.row.id ? (
           <TextField
+            size="small"
+            variant="standard"
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
           />
@@ -222,6 +226,8 @@ function ItemManager() {
       field: 'description', headerName: 'Description', width: 400, renderCell: (params) =>
         editItemId === params.row.id ? (
           <TextField
+            size="small"
+            variant="standard"
             value={editDescription}
             onChange={(e) => setEditDescription(e.target.value)}
           />
@@ -296,46 +302,100 @@ function ItemManager() {
   ];
 
   return (
-    <div>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h5" sx={{ 
+        color: 'var(--color-text, #1e293b)', 
+        fontWeight: 'bold', 
+        mb: 4,
+        textAlign: { xs: 'center', md: 'left' }
+      }}>
+        Form Management
+      </Typography>
 
-      <div>
-        <TextField
-          label="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <TextareaAutosize
-          minRows={3}
-          maxRows={6}
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <FormControl>
-          <InputLabel>Delete Flag</InputLabel>
-          <Select
-            value={deleteFlag}
-            onChange={(e) => setDeleteFlag(e.target.value)}
-          >
-            <MenuItem value={false}>Active</MenuItem>
-            <MenuItem value={true}>Deleted</MenuItem>
-          </Select>
-        </FormControl>
-        <Button variant="contained" color="primary" onClick={handleAddItem}>
-          Add Item
-        </Button>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={showDeleted}
-              onChange={(e) => setShowDeleted(e.target.checked)}
-            />
-          }
-          label="Show Deleted Items"
-        />
-      </div>
+      {/* Add New Item Form */}
+      <Paper sx={{ 
+        p: 3, 
+        mb: 4, 
+        borderRadius: '16px', 
+        bgcolor: 'var(--color-bg-paper, #fff)',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+        border: '1px solid var(--color-divider, #f1f5f9)'
+      }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: '600', mb: 2, color: 'var(--color-text-secondary, #64748b)' }}>
+          Add New Form Detail
+        </Typography>
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, 
+          gap: 2, 
+          alignItems: 'start' 
+        }}>
+          <TextField
+            fullWidth
+            label="Title"
+            variant="outlined"
+            size="small"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <TextField
+            fullWidth
+            label="Description"
+            variant="outlined"
+            size="small"
+            multiline
+            rows={1}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={deleteFlag}
+                onChange={(e) => setDeleteFlag(e.target.value)}
+                label="Status"
+              >
+                <MenuItem value={false}>Active</MenuItem>
+                <MenuItem value={true}>Deleted</MenuItem>
+              </Select>
+            </FormControl>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={handleAddItem}
+              sx={{ minWidth: '100px', borderRadius: '8px', textTransform: 'none' }}
+            >
+              Add
+            </Button>
+          </Box>
+        </Box>
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <FormControlLabel
+            control={
+              <Switch
+                size="small"
+                checked={showDeleted}
+                onChange={(e) => setShowDeleted(e.target.checked)}
+              />
+            }
+            label={<Typography variant="caption">Show Deleted Items</Typography>}
+          />
+        </Box>
+      </Paper>
 
-      <Box sx={{ mt: 2, mb: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
+      {/* Search Bar */}
+      <Box sx={{ 
+        mb: 4, 
+        p: 2, 
+        bgcolor: 'var(--color-bg-paper, #f8fafc)', 
+        borderRadius: 4, 
+        border: '1px solid var(--color-divider, #f1f5f9)',
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' },
+        gap: 2, 
+        alignItems: 'center' 
+      }}>
         <TextField
           fullWidth
           label="Search"
@@ -347,15 +407,26 @@ function ItemManager() {
         />
         <Button
           variant="outlined"
-          size="small"
+          size="medium"
           onClick={handleClearSearch}
           startIcon={<ClearIcon />}
+          sx={{ width: { xs: '100%', sm: 'auto' }, whiteSpace: 'nowrap', borderRadius: '8px' }}
         >
           Clear
         </Button>
       </Box>
 
-      <div style={{ height: 400, width: '100%' }}>
+      {/* Data Table */}
+      <Box sx={{ 
+        height: { xs: 400, md: 600 }, 
+        width: '100%',
+        '& .MuiDataGrid-root': {
+          border: 'none',
+          backgroundColor: 'var(--color-bg-paper, #fff)',
+          borderRadius: '16px',
+          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+        }
+      }}>
         <DataGrid
           rows={items}
           columns={columns}
@@ -376,8 +447,8 @@ function ItemManager() {
           pageSizeOptions={[5, 10, 25, 50]}
           pagination
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

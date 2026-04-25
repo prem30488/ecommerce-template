@@ -20,6 +20,11 @@ import axios from 'axios';
 function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
   const [formData, setFormData] = useState({
     ...product,
+    hmsCode: product?.hmsCode || product?.hmscode || '',
+    unitSmall: product?.unitSmall || product?.unitsmall || 0,
+    unitMedium: product?.unitMedium || product?.unitmedium || 0,
+    unitLarge: product?.unitLarge || product?.unitlarge || 0,
+    unit: product?.unit || 'days',
     catIds: product?.catIds 
       ? (Array.isArray(product.catIds) ? product.catIds.map(id => Number(id)) : String(product.catIds).split(',').map(id => Number(id.trim())).filter(id => !isNaN(id)))
       : [],
@@ -30,6 +35,29 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
       ? product.productFlavors 
       : [{ flavor_id: '', price: '', priceMedium: '', priceLarge: '' }]
   });
+
+  // Sync formData when product prop changes (important for re-opening dialog)
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        ...product,
+        hmsCode: product.hmsCode || product.hmscode || '',
+        unitSmall: product.unitSmall || product.unitsmall || 0,
+        unitMedium: product.unitMedium || product.unitmedium || 0,
+        unitLarge: product.unitLarge || product.unitlarge || 0,
+        unit: product.unit || 'days',
+        catIds: product.catIds 
+          ? (Array.isArray(product.catIds) ? product.catIds.map(id => Number(id)) : String(product.catIds).split(',').map(id => Number(id.trim())).filter(id => !isNaN(id)))
+          : [],
+        form: (product.formId || product.form) ? Number(product.formId || product.form) : '',
+        ProductImages: product.images || product.ProductImages || [],
+        audience: product.audience || '',
+        productFlavors: product.productFlavors && product.productFlavors.length > 0 
+          ? product.productFlavors 
+          : [{ flavor_id: '', price: '', priceMedium: '', priceLarge: '' }]
+      });
+    }
+  }, [product]);
   const [flavors, setFlavors] = useState([]);
   const [currentFlavorId, setCurrentFlavorId] = useState('');
   const [folderImages, setFolderImages] = useState([]);
@@ -85,13 +113,29 @@ function AddOrEditProduct({ product, categories, forms, onSave, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Clean up data before sending to parent
     const submissionData = { 
       ...formData, 
+      hmsCode: formData.hmsCode,
+      unit: formData.unit,
+      unitSmall: Number(formData.unitSmall) || 0,
+      unitMedium: Number(formData.unitMedium) || 0,
+      unitLarge: Number(formData.unitLarge) || 0,
       formId: formData.formId || formData.form,
       id: (product && product.id) ? product.id : 0 
     };
+
+    // Remove lowercase aliases to prevent backend mapping confusion
+    delete submissionData.hmscode;
+    delete submissionData.unitsmall;
+    delete submissionData.unitmedium;
+    delete submissionData.unitlarge;
+
     onSave(submissionData);
   };
+
+
 
   const handleCategoryChange = (event) => {
     const val = event.target.value;

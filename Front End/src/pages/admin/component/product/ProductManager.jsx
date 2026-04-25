@@ -493,13 +493,47 @@ function ProductManager() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h5" sx={{ color: '#1e293b' }}>Product Management</Typography>
-        <Box sx={{ position: 'absolute', right: 0 }}>
-          <Button variant="contained" color="primary" onClick={handleAddProduct}>Add New Product</Button>
-        </Box>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', md: 'row' }, 
+        justifyContent: 'space-between', 
+        alignItems: { xs: 'flex-start', md: 'center' }, 
+        gap: 2,
+        mb: 4 
+      }}>
+        <Typography variant="h5" sx={{ 
+          color: 'var(--color-text, #1e293b)', 
+          fontWeight: 'bold',
+          fontSize: { xs: '1.25rem', md: '1.5rem' } 
+        }}>
+          Product Management
+        </Typography>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={handleAddProduct}
+          sx={{ 
+            width: { xs: '100%', md: 'auto' },
+            py: 1,
+            px: 3,
+            borderRadius: '10px',
+            textTransform: 'none',
+            fontWeight: '600'
+          }}
+        >
+          Add New Product
+        </Button>
       </Box>
-      <div style={{ height: 500, width: '100%' }}>
+      <Box sx={{ 
+        height: { xs: 400, md: 600 }, 
+        width: '100%',
+        '& .MuiDataGrid-root': {
+          border: 'none',
+          backgroundColor: 'var(--color-bg-paper, #fff)',
+          borderRadius: '16px',
+          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+        }
+      }}>
         <DataGrid
           rows={products}
           columns={columns}
@@ -517,21 +551,23 @@ function ProductManager() {
           rowCount={totalElements}
           paginationMode="server"
         />
-      </div>
+      </Box>
       <Dialog open={isPDialogOpen} onClose={handleCloseEditForm}>
         <DialogTitle>{editingProduct ? 'Edit Product' : 'Add Product'}</DialogTitle>
         <DialogContent>
-          <AddOrEditProduct
-            product={editingProduct}
-            categories={categories}
-            forms={forms}
-            onSave={(editedProduct) => {
-              // Update the product in your state with the editedProduct data
-              // You can handle product updates here
-              handleSaveEditForm(editedProduct); // Close the dialog
-            }}
-            onCancel={handleCloseEditForm}
-          />
+          {isPDialogOpen && (
+            <AddOrEditProduct
+              product={editingProduct}
+              categories={categories}
+              forms={forms}
+              onSave={(editedProduct) => {
+                // Update the product in your state with the editedProduct data
+                // You can handle product updates here
+                handleSaveEditForm(editedProduct); // Close the dialog
+              }}
+              onCancel={handleCloseEditForm}
+            />
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditForm} color="primary">

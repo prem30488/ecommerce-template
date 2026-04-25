@@ -5,13 +5,32 @@ import './AdminLayout.css';
 
 const AdminLayout = ({ children }) => {
     const [collapsed, setCollapsed] = React.useState(false);
+    const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
     const [darkMode, setDarkMode] = React.useState(false);
 
     return (
         <div className={`admin-layout ${collapsed ? 'sidebar-collapsed' : ''} ${darkMode ? 'dark-theme' : ''}`}>
-            <Sidebar collapsed={collapsed} toggleCollapse={() => setCollapsed(!collapsed)} />
+            {/* Mobile Overlay */}
+            {mobileSidebarOpen && (
+                <div 
+                    className="mobile-sidebar-overlay" 
+                    onClick={() => setMobileSidebarOpen(false)}
+                ></div>
+            )}
+
+            <Sidebar 
+                collapsed={collapsed} 
+                toggleCollapse={() => setCollapsed(!collapsed)} 
+                mobileOpen={mobileSidebarOpen}
+                closeMobile={() => setMobileSidebarOpen(false)}
+            />
+            
             <div className="admin-content-wrapper">
-                <AdminTopbar darkMode={darkMode} toggleDarkMode={() => setDarkMode(!darkMode)} />
+                <AdminTopbar 
+                    darkMode={darkMode} 
+                    toggleDarkMode={() => setDarkMode(!darkMode)} 
+                    toggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+                />
                 <main className="admin-main-content">
                     {children}
                 </main>
