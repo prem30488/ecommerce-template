@@ -210,30 +210,42 @@ const MenuManager = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        justifyContent: 'space-between',
+        alignItems: { xs: 'flex-start', md: 'center' },
+        gap: 2,
+        mb: 4
+      }}>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary' }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: 'var(--color-text, #1e293b)' }}>
             Menu Manager
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             Drag and drop to reorder menu items or nest them as submenus.
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, width: { xs: '100%', md: 'auto' } }}>
           <Button 
             variant="outlined" 
             startIcon={<MdAdd />} 
             onClick={() => handleOpenDialog()}
             disabled={loading}
+            sx={{ flex: { xs: 1, md: 'none' } }}
           >
-            Add Menu Item
+            Add Item
           </Button>
           <Button 
             variant="contained" 
             startIcon={<MdSave />} 
             onClick={() => handleSave(data)}
             disabled={loading}
-            sx={{ bgcolor: '#4f46e5', '&:hover': { bgcolor: '#4338ca' } }}
+            sx={{ 
+              bgcolor: 'var(--color-primary, #4f46e5)', 
+              '&:hover': { bgcolor: 'var(--color-primary-hover, #4338ca)' },
+              flex: { xs: 1, md: 'none' }
+            }}
           >
             Save Changes
           </Button>
@@ -246,7 +258,7 @@ const MenuManager = () => {
           border: '1px solid', 
           borderColor: 'divider', 
           borderRadius: '12px',
-          bgcolor: '#f8fafc',
+          bgcolor: 'var(--color-primary-ultra-light, #f8fafc)',
           p: 2,
           minHeight: '400px'
         }}
@@ -291,7 +303,7 @@ const MenuManager = () => {
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2 }}>
           <Button onClick={handleCloseDialog} color="inherit">Cancel</Button>
-          <Button onClick={handleFormSubmit} variant="contained" sx={{ bgcolor: '#4f46e5' }}>
+          <Button onClick={handleFormSubmit} variant="contained" sx={{ bgcolor: 'var(--color-primary, #4f46e5)', '&:hover': { bgcolor: 'var(--color-primary-hover, #4338ca)' } }}>
             {editItem ? 'Update' : 'Add'}
           </Button>
         </DialogActions>

@@ -157,6 +157,62 @@ export const NavbarMain = () => {
   };
   const isMobile = window.innerWidth < 1100;
 
+  const renderRecursiveLinks = (items, depth = 0) => {
+    return items.map(item => {
+      const hasChildren = item.children && item.children.length > 0;
+      const isOpen = openDropdowns[item.id];
+
+      return (
+        <div key={item.id} className={`mega-link-wrapper ${hasChildren ? 'has-children' : ''} ${isOpen ? 'open' : ''} depth-${depth}`}>
+          <div className="mega-link-row">
+            <Link
+              to={item.url}
+              className={`mega-link ${location.pathname === item.url ? 'active' : ''}`}
+              onClick={(e) => {
+                if (hasChildren) {
+                  e.preventDefault();
+                  setOpenDropdowns(prev => ({ ...prev, [item.id]: !prev[item.id] }));
+                } else {
+                  setOpenDropdowns({});
+                  setIsMobileMenuOpen(false);
+                }
+              }}
+            >
+              {item.title}
+            </Link>
+            {hasChildren && (
+              <i 
+                className={`fa fa-chevron-right sub-caret ${isOpen ? 'rotated' : ''}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setOpenDropdowns(prev => ({ ...prev, [item.id]: !prev[item.id] }));
+                }}
+              ></i>
+            )}
+          </div>
+          {hasChildren && (
+            <div className={`nested-mega-links ${isOpen ? 'show' : ''}`}>
+              <div className="mega-link-wrapper depth-all">
+                <div className="mega-link-row">
+                  <Link 
+                    to={item.url} 
+                    className="mega-link all-link" 
+                    style={{ fontStyle: 'italic', opacity: 0.8 }}
+                    onClick={() => { setOpenDropdowns({}); setIsMobileMenuOpen(false); }}
+                  >
+                    View All {item.title}
+                  </Link>
+                </div>
+              </div>
+              {renderRecursiveLinks(item.children, depth + 1)}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
+
   return (
     <>
       <Sidebar />
@@ -217,11 +273,7 @@ export const NavbarMain = () => {
                       <div className={`shop-mega-menu ${openDropdowns[item.id] ? 'show' : ''}`}>
                         <div className="mega-menu-container">
                           <div className="mega-menu-links">
-                            {item.children.map(child => (
-                              <Link key={child.id} to={child.url} className="mega-link" onClick={() => { setOpenDropdowns({}); setIsMobileMenuOpen(false); }}>
-                                {child.title}
-                              </Link>
-                            ))}
+                            {renderRecursiveLinks(item.children)}
                           </div>
                           <div className="mega-menu-carousel">
                             {comingSoonProducts.length > 0 ? (
@@ -282,13 +334,9 @@ export const NavbarMain = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className={`shop-mega-menu ${openDropdowns[item.id] ? 'show' : ''}`} style={{ width: 'auto', minWidth: '200px', padding: '20px', left: 'auto', right: 'auto' }}>
+                      <div className={`shop-mega-menu ${openDropdowns[item.id] ? 'show' : ''}`} style={{ width: 'auto', minWidth: '240px', padding: '20px', left: 'auto', right: 'auto' }}>
                           <div className="mega-menu-links" style={{ width: '100%', padding: 0 }}>
-                            {item.children.map(child => (
-                              <Link key={child.id} to={child.url} className="mega-link" onClick={() => { setOpenDropdowns({}); setIsMobileMenuOpen(false); }}>
-                                {child.title}
-                              </Link>
-                            ))}
+                            {renderRecursiveLinks(item.children)}
                           </div>
                       </div>
                     )}

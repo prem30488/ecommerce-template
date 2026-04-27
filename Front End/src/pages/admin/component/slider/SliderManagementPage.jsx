@@ -56,9 +56,7 @@ const SliderManagementPage = () => {
         <Container>
             <CssBaseline />
             <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
-                <Typography variant="h5" align="center" gutterBottom>
-                    Slider Management
-                </Typography>
+
                 <SliderManager />
             </Paper>
         </Container>

@@ -31,6 +31,15 @@ api.interceptors.response.use(response => {
     return Promise.reject(error.response ? error.response.data : error.message);
 });
 
+export const request = (options) => {
+    return api({
+        method: options.method,
+        url: options.url,
+        data: options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : null,
+        params: options.params
+    });
+};
+
 export function getCurrentUser() {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");

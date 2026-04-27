@@ -2,6 +2,7 @@
 
 .frequent-carousel-container {
   padding: 10px 0 !important;
+  position: relative;
 }
 
 .frequent-swiper {

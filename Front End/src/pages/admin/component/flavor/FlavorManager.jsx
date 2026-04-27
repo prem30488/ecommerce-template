@@ -163,19 +163,18 @@ const FlavorManager = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: { xs: 'column', md: 'row' }, 
-        justifyContent: 'space-between', 
-        alignItems: { xs: 'flex-start', md: 'center' }, 
+    <Box>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        justifyContent: 'space-between',
+        alignItems: { xs: 'flex-start', md: 'center' },
         gap: 2,
-        mb: 4 
       }}>
-        <Typography variant="h5" sx={{ 
-          color: 'var(--color-text, #1e293b)', 
+        <Typography variant="h5" sx={{
+          color: 'var(--color-text, #1e293b)',
           fontWeight: 'bold',
-          fontSize: { xs: '1.25rem', md: '1.5rem' } 
+          fontSize: { xs: '1.25rem', md: '1.5rem' }
         }}>
           Flavor Management
         </Typography>
@@ -184,7 +183,7 @@ const FlavorManager = () => {
           color="primary"
           startIcon={<AddIcon />}
           onClick={() => handleOpen()}
-          sx={{ 
+          sx={{
             width: { xs: '100%', md: 'auto' },
             py: 1,
             px: 3,
@@ -198,12 +197,12 @@ const FlavorManager = () => {
       </Box>
 
       {/* Search Bar */}
-      <Box sx={{ 
-        mb: 4, 
-        p: 2, 
-        bgcolor: 'var(--color-bg-paper, #f8fafc)', 
-        borderRadius: 4, 
-        border: '1px solid var(--color-divider, #f1f5f9)' 
+      <Box sx={{
+        mb: 2,
+        p: 2,
+        bgcolor: 'var(--color-bg-paper, #f8fafc)',
+        borderRadius: 4,
+        border: '1px solid var(--color-divider, #f1f5f9)'
       }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
           <TextField
@@ -226,7 +225,7 @@ const FlavorManager = () => {
               variant="outlined"
               startIcon={<ClearIcon />}
               onClick={handleClearSearch}
-              sx={{ 
+              sx={{
                 whiteSpace: 'nowrap',
                 width: { xs: '100%', sm: 'auto' }
               }}

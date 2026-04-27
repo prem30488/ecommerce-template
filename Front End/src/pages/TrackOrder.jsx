@@ -1,45 +1,112 @@
 import React, { useState } from 'react';
-import {
-    Paper,
-    Typography,
-    Container,
-    TextField,
-    Button,
-    Box,
-    Divider,
-    Stepper,
-    Step,
-    StepLabel,
-    StepContent,
-    Alert,
-    CircularProgress
-} from '@mui/material';
 import { trackOrder } from '../util/APIUtils';
 import dayjs from 'dayjs';
-import { FaTruck, FaBox, FaCheckCircle, FaSearch, FaClock } from 'react-icons/fa';
+import {
+    FaTruck, FaBox, FaCheckCircle, FaSearch, FaClock,
+    FaExclamationCircle, FaTimesCircle, FaCalendarAlt,
+    FaHashtag, FaHeadset, FaShieldAlt
+} from 'react-icons/fa';
+import { MdLocalShipping } from 'react-icons/md';
 import SEO from '../components/SEO';
 import LinearProgress from '../common/LinearProgress';
-import { COMPANY_INFO } from "../constants/companyInfo";
+import { COMPANY_INFO } from '../constants/companyInfo';
+import './track-order.css';
+
+/* ── helpers ─────────────────────────────────────────────────────────────── */
+
+const fmt = (dateString) => {
+    if (!dateString) return null;
+    try { return dayjs(dateString).format('MMM D, YYYY · h:mm A'); }
+    catch { return dateString; }
+};
+
+const normaliseStatus = (s = '') => s.toLowerCase().trim();
+
+/* Map status → pill colour class */
+const pillClass = (status) => {
+    const s = normaliseStatus(status);
+    if (s === 'delivered')  return 'delivered';
+    if (s === 'shipped')    return 'shipped';
+    if (s === 'processing') return 'processing';
+    if (s === 'cancelled')  return 'cancelled';
+    return 'pending';
+};
+
+/* ── step definitions ────────────────────────────────────────────────────── */
+const buildSteps = (data) => {
+    const s = normaliseStatus(data.status);
+    const isCancelled = s === 'cancelled' || !!data.cancelled_at;
+
+    const base = [
+        {
+            key: 'placed',
+            label: 'Order\nPlaced',
+            icon: <FaBox />,
+            date: data.created_at || data.createdAt,
+            desc: 'Your order has been successfully placed.',
+            done: true,
+        },
+        {
+            key: 'processing',
+            label: 'Processing',
+            icon: <FaClock />,
+            date: data.processing_at || (s === 'processing' ? data.updatedAt : null),
+            desc: 'We are preparing your items for shipping.',
+            done: !!data.processing_at || ['processing', 'shipped', 'delivered'].includes(s),
+        },
+        {
+            key: 'shipped',
+            label: 'Shipped',
+            icon: <FaTruck />,
+            date: data.shipped_at || (s === 'shipped' ? data.updatedAt : null),
+            desc: 'Your package is on the way to you.',
+            done: !!data.shipped_at || ['shipped', 'delivered'].includes(s),
+        },
+    ];
+
+    if (isCancelled) {
+        base.push({
+            key: 'cancelled',
+            label: 'Cancelled',
+            icon: <FaTimesCircle />,
+            date: data.cancelled_at || data.updatedAt,
+            desc: 'This order has been cancelled.',
+            done: true,
+            isCancelled: true,
+        });
+    } else {
+        base.push({
+            key: 'delivered',
+            label: 'Delivered',
+            icon: <FaCheckCircle />,
+            date: data.delivered_at || (s === 'delivered' ? data.updatedAt : null),
+            desc: 'Your order has been delivered safely.',
+            done: !!data.delivered_at || s === 'delivered',
+        });
+    }
+
+    return base;
+};
+
+/* ── component ───────────────────────────────────────────────────────────── */
 const TrackOrder = () => {
-    const [orderId, setOrderId] = useState('');
+    const [orderId,      setOrderId]      = useState('');
     const [trackingData, setTrackingData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [loading,      setLoading]      = useState(false);
+    const [error,        setError]        = useState(null);
 
     const handleTrack = async (e) => {
         if (e) e.preventDefault();
         if (!orderId.trim()) return;
-
         setLoading(true);
         setError(null);
         setTrackingData(null);
-
         try {
-            const response = await trackOrder(orderId);
-            if (response.success) {
-                setTrackingData(response.order);
+            const res = await trackOrder(orderId);
+            if (res.success) {
+                setTrackingData(res.order);
             } else {
-                setError(response.message || 'Order not found');
+                setError(res.message || 'Order not found. Please check your Order ID.');
             }
         } catch (err) {
             setError(err.message || 'Failed to fetch tracking details. Please check your Order ID.');
@@ -48,203 +115,243 @@ const TrackOrder = () => {
         }
     };
 
-    const formatDate = (dateString, fallbackDate = null) => {
-        const date = dateString || fallbackDate;
-        if (!date) return null;
-        try {
-            return dayjs(date).format('MMMM D, YYYY h:mm A');
-        } catch (e) {
-            return date;
-        }
-    };
+    /* derived */
+    const steps      = trackingData ? buildSteps(trackingData) : [];
+    const doneCount  = steps.filter(s => s.done).length;
+    const activeIdx  = doneCount - 1;                    // index of last done step
+    /* progress bar width = segments between icons */
+    const segTotal   = steps.length - 1;
+    const segDone    = Math.max(0, doneCount - 1);
+    const progressPct = segTotal > 0 ? (segDone / segTotal) * 100 : 0;
 
-    const getSteps = () => {
-        if (!trackingData) return [];
-
-        const status = trackingData.status?.toLowerCase();
-
-        const steps = [
-            {
-                label: 'Order Placed',
-                date: trackingData.created_at || trackingData.createdAt,
-                description: 'Your order has been successfully placed and is awaiting confirmation.',
-                icon: <FaBox />,
-                completed: true
-            },
-            {
-                label: 'Processing',
-                date: trackingData.processing_at || (status === 'processing' ? trackingData.updatedAt : null),
-                description: 'We are preparing your items for shipping.',
-                icon: <FaClock />,
-                completed: !!trackingData.processing_at || status === 'processing' || status === 'shipped' || status === 'delivered'
-            },
-            {
-                label: 'Shipped',
-                date: trackingData.shipped_at || (status === 'shipped' ? trackingData.updatedAt : null),
-                description: 'Your package is on its way to you.',
-                icon: <FaTruck />,
-                completed: !!trackingData.shipped_at || status === 'shipped' || status === 'delivered'
-            }
-        ];
-
-        if (status === 'cancelled' || trackingData.cancelled_at) {
-            steps.push({
-                label: 'Cancelled',
-                date: trackingData.cancelled_at || trackingData.updatedAt,
-                description: 'This order was cancelled.',
-                icon: <FaCheckCircle style={{ color: '#f44336' }} />,
-                completed: true
-            });
-        } else {
-            steps.push({
-                label: 'Delivered',
-                date: trackingData.delivered_at || (status === 'delivered' ? trackingData.updatedAt : null),
-                description: 'Order has been delivered safely.',
-                icon: <FaCheckCircle style={{ color: '#4caf50' }} />,
-                completed: !!trackingData.delivered_at || status === 'delivered'
-            });
-        }
-
-        return steps;
-    };
-
-    const steps = getSteps();
-    const activeStep = steps.filter(s => s.completed).length - 1;
+    const status = trackingData ? normaliseStatus(trackingData.status) : '';
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: 'var(--color-bg)',
-            paddingTop: '120px',
-            paddingBottom: '50px',
-            borderTop: '1px solid var(--color-primary-glow)'
-        }}>
+        <div className="to-page">
             <LinearProgress loading={loading} />
             <SEO
-                title={`Track Your Order | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
-                description={`Easily track your order status in real-time.Enter your Order ID to see the current status and history.`}
-                keywords={`${COMPANY_INFO.seoKeywords}`}
+                title={`Track Your Order | ${COMPANY_INFO.name}`}
+                description="Easily track your order status in real-time. Enter your Order ID to see the current status and history."
+                keywords={COMPANY_INFO.seoKeywords}
             />
-            <Container maxWidth="md">
-                <Paper elevation={6} sx={{ borderRadius: '15px', overflow: 'hidden', border: '1px solid var(--color-primary-border)' }}>
-                    <Box sx={{ p: 4, bgcolor: 'var(--color-primary)', color: 'white', textAlign: 'center' }}>
-                        <Typography variant="h4" fontWeight="bold" gutterBottom>
-                            Track Your Order
-                        </Typography>
-                        <Typography variant="body1">
-                            Enter your Order ID to see the current status and history.
-                        </Typography>
-                    </Box>
 
-                    <Box sx={{ p: 4 }}>
-                        <form onSubmit={handleTrack}>
-                            <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    placeholder="Enter Order ID (e.g. 101)"
+            {/* ── Hero ──────────────────────────────────── */}
+            <section className="to-hero">
+                <div className="to-hero-icon">🚚</div>
+                <h1>Track Your Order</h1>
+                <p>Real-time updates on your delivery status</p>
+            </section>
+
+            {/* ── Search Card ───────────────────────────── */}
+            <div className="to-search-wrap">
+                <div className="to-search-card">
+                    <p className="to-search-label">Enter Order ID</p>
+                    <form onSubmit={handleTrack}>
+                        <div className="to-search-row">
+                            <div className="to-search-input-wrap">
+                                <FaSearch className="to-search-input-icon" />
+                                <input
+                                    id="track-order-id-input"
+                                    className="to-search-input"
+                                    type="text"
+                                    placeholder="e.g. 1023"
                                     value={orderId}
                                     onChange={(e) => setOrderId(e.target.value)}
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            borderRadius: '10px',
-                                            '&.Mui-focused fieldset': {
-                                                borderColor: 'var(--color-primary)',
-                                            }
-                                        }
-                                    }}
+                                    autoComplete="off"
                                 />
-                                <Button
-                                    variant="contained"
-                                    type="submit"
-                                    disabled={loading || !orderId.trim()}
-                                    sx={{
-                                        borderRadius: '10px',
-                                        px: 4,
-                                        bgcolor: 'var(--color-primary)',
-                                        '&:hover': { bgcolor: 'var(--color-primary-hover)' }
-                                    }}
-                                >
-                                    {loading ? <CircularProgress size={24} color="inherit" /> : <FaSearch />}
-                                </Button>
-                            </Box>
-                        </form>
+                            </div>
+                            <button
+                                id="track-order-submit-btn"
+                                className="to-search-btn"
+                                type="submit"
+                                disabled={loading || !orderId.trim()}
+                            >
+                                {loading
+                                    ? <span className="to-spinner-ring" style={{ width: 18, height: 18, borderWidth: 3, margin: 0 }} />
+                                    : <><FaSearch /> Track Order</>
+                                }
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-                        {error && (
-                            <Alert severity="error" sx={{ mb: 4, borderRadius: '10px' }}>
-                                {error}
-                            </Alert>
+            {/* ── Error ─────────────────────────────────── */}
+            {error && (
+                <div className="to-error">
+                    <div className="to-error-box">
+                        <FaExclamationCircle className="to-error-icon" />
+                        <span>{error}</span>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Loading ───────────────────────────────── */}
+            {loading && (
+                <div className="to-result">
+                    <div className="to-spinner">
+                        <div className="to-spinner-ring" />
+                        <p className="to-spinner-text">Fetching your order details…</p>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Empty State ───────────────────────────── */}
+            {!trackingData && !loading && !error && (
+                <div className="to-result">
+                    <div className="to-empty-state">
+                        <MdLocalShipping className="to-empty-icon" />
+                        <p className="to-empty-text">Your tracking details will appear here</p>
+                        <p className="to-empty-sub">Enter your Order ID above and click <strong>Track Order</strong></p>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Result ────────────────────────────────── */}
+            {trackingData && !loading && (
+                <div className="to-result">
+
+                    {/* Order Summary Header */}
+                    <div className="to-summary">
+                        <div className="to-summary-left">
+                            <h2>Order #{trackingData.id}</h2>
+                            <span>
+                                Placed on {fmt(trackingData.created_at || trackingData.createdAt) || '—'}
+                            </span>
+                        </div>
+                        <div className={`to-status-pill ${pillClass(trackingData.status)}`}>
+                            <span className="to-pulse" />
+                            {trackingData.status || 'Unknown'}
+                        </div>
+                    </div>
+
+                    {/* Info Chips */}
+                    <div className="to-info-row">
+                        <div className="to-info-chip">
+                            <div className="to-info-chip-icon primary"><FaHashtag /></div>
+                            <div className="to-info-chip-body">
+                                <small>Order ID</small>
+                                <strong>#{trackingData.id}</strong>
+                            </div>
+                        </div>
+                        <div className="to-info-chip">
+                            <div className="to-info-chip-icon blue"><FaCalendarAlt /></div>
+                            <div className="to-info-chip-body">
+                                <small>Placed On</small>
+                                <strong>{dayjs(trackingData.created_at || trackingData.createdAt).format('MMM D, YYYY') || '—'}</strong>
+                            </div>
+                        </div>
+                        {trackingData.total && (
+                            <div className="to-info-chip">
+                                <div className="to-info-chip-icon green"><FaShieldAlt /></div>
+                                <div className="to-info-chip-body">
+                                    <small>Order Total</small>
+                                    <strong>₹{Number(trackingData.total).toLocaleString('en-IN')}</strong>
+                                </div>
+                            </div>
                         )}
-
-                        {trackingData && (
-                            <Box>
-                                <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-                                    <Box>
-                                        <Typography variant="h6" fontWeight="bold">
-                                            Order #{trackingData.id}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            Current Status: <span style={{
-                                                fontWeight: 'bold',
-                                                color: trackingData.status?.toLowerCase() === 'cancelled' ? '#f44336' : 'var(--color-primary)',
-                                                textTransform: 'uppercase'
-                                            }}>
-                                                {trackingData.status}
-                                            </span>
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                <Divider sx={{ mb: 4 }} />
-
-                                <Stepper activeStep={activeStep} orientation="vertical" sx={{ mb: 2 }}>
-                                    {steps.map((step, index) => (
-                                        <Step key={step.label} active={index <= activeStep}>
-                                            <StepLabel
-                                                StepIconComponent={() => (
-                                                    <Box sx={{
-                                                        color: index <= activeStep ? 'var(--color-primary)' : '#ccc',
-                                                        fontSize: '20px',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        width: '40px'
-                                                    }}>
-                                                        {step.icon}
-                                                    </Box>
-                                                )}
-                                            >
-                                                <Typography variant="subtitle1" fontWeight={index === activeStep ? 'bold' : 'normal'}>
-                                                    {step.label}
-                                                </Typography>
-                                            </StepLabel>
-                                            <StepContent>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    {step.description}
-                                                </Typography>
-                                                {step.date && (
-                                                    <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'var(--color-primary)', fontWeight: 'bold' }}>
-                                                        {formatDate(step.date)}
-                                                    </Typography>
-                                                )}
-                                            </StepContent>
-                                        </Step>
-                                    ))}
-                                </Stepper>
-                            </Box>
+                        {trackingData.shipped_at && (
+                            <div className="to-info-chip">
+                                <div className="to-info-chip-icon orange"><FaTruck /></div>
+                                <div className="to-info-chip-body">
+                                    <small>Shipped On</small>
+                                    <strong>{dayjs(trackingData.shipped_at).format('MMM D, YYYY')}</strong>
+                                </div>
+                            </div>
                         )}
+                    </div>
 
-                        {!trackingData && !loading && !error && (
-                            <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
-                                <FaTruck size={60} style={{ opacity: 0.1, marginBottom: '20px' }} />
-                                <Typography variant="body1">
-                                    Your order details will appear here once you search.
-                                </Typography>
-                            </Box>
-                        )}
-                    </Box>
-                </Paper>
-            </Container>
+                    {/* ── Stepper ──────────────────────────── */}
+                    <div className="to-stepper-card">
+                        <p className="to-stepper-title">Delivery Progress</p>
+
+                        <div className="to-steps" style={{ '--progress-pct': `${progressPct}%` }}>
+                            {/* Animated progress fill */}
+                            <div
+                                className="to-steps-progress"
+                                style={{ width: `calc(${progressPct}% - 44px - (100% / ${steps.length}))` }}
+                            />
+
+                            {steps.map((step, idx) => {
+                                const isDone   = step.done;
+                                const isActive = idx === activeIdx && !step.done;
+                                const iconCls  = step.isCancelled
+                                    ? 'cancelled-step'
+                                    : isDone ? 'done' : isActive ? 'active' : '';
+                                const labelCls = isDone || isActive ? (isDone ? 'done' : 'active') : '';
+
+                                return (
+                                    <div className="to-step" key={step.key}>
+                                        <div className={`to-step-icon-wrap ${iconCls}`}>
+                                            {step.icon}
+                                        </div>
+                                        <div className="to-step-meta">
+                                            <div className={`to-step-label ${labelCls}`}>
+                                                {step.label}
+                                            </div>
+                                            {step.date && (
+                                                <div className="to-step-date">
+                                                    {dayjs(step.date).format('MMM D')}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* ── Timeline ─────────────────────────── */}
+                    <div className="to-timeline-card">
+                        <p className="to-timeline-title">Order History</p>
+                        <div className="to-timeline">
+                            {steps.map((step, idx) => {
+                                const dotCls = step.isCancelled
+                                    ? 'cancelled-dot'
+                                    : step.done ? 'done' : 'pending';
+
+                                return (
+                                    <div
+                                        className="to-tl-item"
+                                        key={step.key}
+                                        style={{ animationDelay: `${idx * 0.07}s` }}
+                                    >
+                                        <div className={`to-tl-dot ${dotCls}`}>
+                                            {step.icon}
+                                        </div>
+                                        <div className="to-tl-content">
+                                            <h4>{step.label.replace('\n', ' ')}</h4>
+                                            <p>{step.desc}</p>
+                                            {step.done && step.date
+                                                ? (
+                                                    <span className="to-tl-date">
+                                                        <FaCalendarAlt />
+                                                        {fmt(step.date)}
+                                                    </span>
+                                                ) : !step.done && (
+                                                    <span className="to-tl-pending-label">Pending…</span>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* ── Help Banner ───────────────────────── */}
+                    <div className="to-help">
+                        <span className="to-help-icon">🎧</span>
+                        <div className="to-help-text">
+                            <h4>Need Help with Your Order?</h4>
+                            <p>
+                                Contact our support team at <strong>{COMPANY_INFO.email || COMPANY_INFO.phone || 'support@' + COMPANY_INFO.name?.toLowerCase().replace(/\s/g, '') + '.com'}</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            )}
         </div>
     );
 };

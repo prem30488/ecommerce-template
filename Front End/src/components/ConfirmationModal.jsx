@@ -2,7 +2,7 @@ import React from 'react';
 import './confirmation-modal.css';
 import { FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 
-const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => {
+const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, confirmText = 'Confirm', cancelText = 'Cancel' }) => {
     if (!isOpen) return null;
 
     return (
@@ -19,11 +19,11 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => {
                     <p>{message || 'Are you sure you want to proceed?'}</p>
                 </div>
                 <div className="conf-footer">
-                    <button className="conf-btn conf-cancel" onClick={onClose}>Cancel</button>
+                    <button className="conf-btn conf-cancel" onClick={onClose}>{cancelText}</button>
                     <button className="conf-btn conf-confirm" onClick={() => {
                         onConfirm();
                         onClose();
-                    }}>Confirm</button>
+                    }}>{confirmText}</button>
                 </div>
             </div>
         </div>

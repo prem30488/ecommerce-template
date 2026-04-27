@@ -14,6 +14,8 @@ const saleRoutes = require('./routes/saleRoutes');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const emailService = require('./utils/emailService');
+const newsletterRoutes = require('./routes/newsletterRoutes');
+
 
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -201,6 +203,8 @@ async function ensureDatabaseExists() {
         console.error('Error ensuring database exists:', err);
     }
 }
+
+app.use('/api/newsletter', newsletterRoutes);
 
 // API Routes
 app.get('/api/products', async (req, res) => {

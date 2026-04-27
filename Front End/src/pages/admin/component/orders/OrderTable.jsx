@@ -6,6 +6,7 @@ import * as XLSX from 'xlsx';
 import { AdminInvoice } from './AdminInvoice';
 import { formatCurrency, formatDate } from '../../../../util/regionalSettings';
 import { API_BASE_URL } from '../../../../constants';
+import ConfirmationModal from '../../../../components/ConfirmationModal';
 import './OrderTable.css';
 export const OrderTable = ({ }) => {
 
@@ -36,6 +37,9 @@ export const OrderTable = ({ }) => {
   const [statusFilter, setStatusFilter] = useState('All');
 
   const statuses = ['All', 'Delivered', 'Shipped', 'Processing', 'Pending', 'Cancelled'];
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [pendingStatusUpdate, setPendingStatusUpdate] = useState({ orderId: null, newStatus: '' });
 
   useEffect(() => {
 
@@ -90,6 +94,12 @@ export const OrderTable = ({ }) => {
   };
 
   const handleStatusChange = (orderId, newStatus) => {
+    setPendingStatusUpdate({ orderId, newStatus });
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmStatusChange = () => {
+    const { orderId, newStatus } = pendingStatusUpdate;
     updateOrderStatus(orderId, newStatus)
       .then(() => {
         setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
@@ -360,6 +370,16 @@ export const OrderTable = ({ }) => {
       </div>
 
       {printingOrder && <AdminInvoice order={printingOrder} onGenerated={handlePdfGenerated} />}
+
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmStatusChange}
+        title="Change Order Status"
+        message={`Are you sure you want to change status of the order to ${pendingStatusUpdate.newStatus}?`}
+        confirmText="Ok"
+        cancelText="Cancel"
+      />
     </div>
   );
 };

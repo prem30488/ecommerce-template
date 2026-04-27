@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate, Link } from 'react-router-dom';
@@ -22,6 +23,7 @@ const loadRazorpay = () => {
 
 const PremiumCheckout = () => {
     const navigate = useNavigate();
+    const theme = useTheme();
     const {
         cartItems,
         martItems,
@@ -347,7 +349,7 @@ const PremiumCheckout = () => {
                         contact: values.mobileNumber,
                     },
                     theme: {
-                        color: "#005bd3",
+                        color: theme.palette.primary.main,
                     },
                 };
 

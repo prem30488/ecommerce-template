@@ -307,7 +307,6 @@
 
 .shop-mega-menu {
   display: none;
-  /* Correctly restored for hover interaction */
   position: absolute;
   background-color: #ffffff;
   width: 100vw;
@@ -318,13 +317,10 @@
   padding: 40px 60px 80px;
   border-top: 1px solid #f1f5f9;
   animation: megaMenuFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  /* border-bottom: 3px solid #0284c7; */
-  overflow-x: hidden;
+  overflow: visible; /* Changed from overflow-x: hidden to allow nested flyouts */
   pointer-events: none;
-  /* Disable interaction when hidden to avoid invisible blocker */
 }
 
-/* New show class for JS-controlled double click */
 .shop-mega-menu.show {
   display: block !important;
   pointer-events: all;
@@ -342,9 +338,21 @@
   }
 }
 
-/* .shop-dropdown:hover .shop-mega-menu {
-  display: block;
-} */
+@media (min-width: 1101px) {
+  .shop-dropdown:hover .shop-mega-menu {
+    display: block;
+    pointer-events: all;
+  }
+  
+  .shop-dropdown:hover .fa-caret-down {
+    transform: rotate(180deg);
+  }
+
+  .menudropdown:hover .menudropdown-content {
+    display: flex !important;
+    pointer-events: all;
+  }
+}
 
 .mega-menu-container {
   max-width: 1300px;
@@ -833,3 +841,165 @@
 
   }
 }
+/* --- Enhanced N-Level Nested Menu (Premium UI/UX) --- */
+
+.mega-link-wrapper {
+  position: relative;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.mega-link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.mega-link-row:hover {
+  background-color: #f8fafc;
+}
+
+.mega-link-row .mega-link {
+  flex-grow: 1;
+  border-bottom: 1px solid transparent !important; /* Remove old border style */
+  margin-bottom: 0;
+  color: #475569 !important;
+  font-weight: 500 !important;
+  font-size: 15px !important;
+  padding: 10px 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.mega-link-row .mega-link:hover,
+.mega-link-row .mega-link.active {
+  color: var(--color-nav) !important;
+  padding-left: 16px !important;
+}
+
+.sub-caret {
+  font-size: 11px;
+  color: #94a3b8;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Desktop Hierarchy Enhancements (Click-to-Expand) */
+@media (min-width: 1101px) {
+  /* Use .show class instead of hover to trigger expansion */
+  .nested-mega-links.show {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto !important;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  .nested-mega-links {
+    display: none;
+    position: static;
+    width: 100%;
+    background: transparent;
+    box-shadow: none;
+    padding: 0 0 0 20px;
+    margin: 0;
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    border-left: 2px solid #f1f5f9;
+    border-radius: 0;
+    transform: none !important;
+    transition: all 0.3s ease;
+  }
+
+  /* Sync caret rotation with the state-controlled .rotated class */
+  .sub-caret.rotated {
+    transform: rotate(90deg) !important;
+    color: var(--color-nav) !important;
+  }
+
+  .mega-link-row .mega-link {
+    font-size: 14px !important;
+    padding: 6px 10px !important;
+    color: #64748b !important;
+  }
+
+  .mega-link-row .mega-link:hover,
+  .mega-link-row .mega-link.active {
+    color: var(--color-nav) !important;
+    background: #f8fafc;
+    border-radius: 4px;
+    padding-left: 12px !important;
+  }
+}
+
+/* Mobile Accordion Enhancements */
+@media (max-width: 1100px) {
+  .mega-link-row {
+    padding-right: 5px;
+  }
+  
+  .nested-mega-links {
+    display: none;
+    padding-left: 1rem;
+    margin-left: 0.5rem;
+    border-left: 2px solid #f1f5f9;
+    width: calc(100% - 0.5rem);
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .nested-mega-links.show {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .sub-caret {
+    background: #f8fafc;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin-right: 5px;
+  }
+
+  .sub-caret.rotated {
+    transform: rotate(90deg);
+    background: var(--color-primary-ultra-light);
+    color: var(--color-primary);
+  }
+
+  .mega-link-row .mega-link {
+    font-size: 14px !important;
+    padding: 14px 10px !important;
+    border-bottom: none !important;
+  }
+
+  /* Distinctive look for deeper levels on mobile */
+  .depth-1 { background-color: rgba(248, 250, 252, 0.4); border-radius: 8px; margin-bottom: 2px; }
+  .depth-2 { background-color: transparent; }
+  
+  .depth-1 .mega-link, .depth-2 .mega-link, .depth-3 .mega-link {
+    font-weight: 400 !important;
+    color: #64748b !important;
+  }
+}
+
+/* Glassmorphism for Mega Menu itself */
+.shop-mega-menu {
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.98);
+}
+}

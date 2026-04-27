@@ -314,7 +314,7 @@ class EmailService {
     try {
       const mailOptions = {
         from: process.env.EMAIL_FROM || 'prem30488@gmail.com',
-        to: 'parthprem30488@gmail.com',
+        to: options.to,
         subject: options.subject,
         text: options.text,
         html: options.html

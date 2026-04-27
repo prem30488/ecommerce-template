@@ -7,6 +7,8 @@ import { COMPANY_INFO } from '../constants/companyInfo';
 import CompanyGmapInfo from '../components/CompanyGMapInfo';
 
 export default function Footer() {
+  const [modal, setModal] = React.useState({ show: false, message: '', isError: false });
+
 
   // When the user scrolls down 20px from the top of the document, show the button
   React.useEffect(() => {
@@ -101,9 +103,40 @@ export default function Footer() {
               <p>
                 Sign up for our newsletter to receive ₹500 off your first order and exclusive updates on new products and sales.
               </p>
-              <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
+              <form className="newsletter-form" onSubmit={async (e) => {
+                e.preventDefault();
+                const email = e.target.email.value;
+                const btn = e.target.querySelector('button');
+                const originalText = btn.innerText;
+
+                try {
+                  btn.innerText = '...';
+                  btn.disabled = true;
+
+                  const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/newsletter/subscribe`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                  });
+
+                  const data = await response.json();
+                  if (data.success) {
+                    setModal({ show: true, message: data.message, isError: false });
+                    e.target.reset();
+                  } else {
+                    setModal({ show: true, message: data.message || 'Something went wrong. Please try again.', isError: true });
+                  }
+                } catch (error) {
+                  console.error('Newsletter error:', error);
+                  setModal({ show: true, message: 'Failed to connect to the server. Please try again later.', isError: true });
+                } finally {
+                  btn.innerText = originalText;
+                  btn.disabled = false;
+                }
+              }}>
                 <input
                   type="email"
+                  name="email"
                   className="newsletter-input"
                   placeholder="Enter your email..."
                   required
@@ -127,6 +160,21 @@ export default function Footer() {
           </div>
         </div>
       </footer>
+
+      {modal.show && (
+        <div className="newsletter-modal-overlay" onClick={() => setModal({ ...modal, show: false })}>
+          <div className="newsletter-modal-content" onClick={e => e.stopPropagation()}>
+            <div className="newsletter-modal-icon" style={modal.isError ? { background: '#fef2f2', color: '#ef4444' } : {}}>
+              {modal.isError ? '!' : '✓'}
+            </div>
+            <h3>{modal.isError ? 'Oops!' : 'Thank You!'}</h3>
+            <p>{modal.message}</p>
+            <button className="newsletter-modal-close-btn" onClick={() => setModal({ ...modal, show: false })}>
+              {modal.isError ? 'Try Again' : 'Awesome!'}
+            </button>
+          </div>
+        </div>
+      )}
     </React.Fragment>
   );
 }

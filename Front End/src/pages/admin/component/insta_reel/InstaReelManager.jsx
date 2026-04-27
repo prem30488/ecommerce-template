@@ -125,16 +125,30 @@ const InstaReelManager = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary' }}>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        justifyContent: 'space-between',
+        alignItems: { xs: 'flex-start', md: 'center' },
+        gap: 2,
+        mb: 4
+      }}>
+        <Typography variant="h5" sx={{
+          fontWeight: 700,
+          color: 'var(--color-text, #1e293b)'
+        }}>
           Insta Reel Manager
         </Typography>
-        <Button 
-          variant="contained" 
-          startIcon={<MdAdd />} 
+        <Button
+          variant="contained"
+          startIcon={<MdAdd />}
           onClick={() => handleOpenDialog()}
           disabled={loading}
-          sx={{ bgcolor: '#4f46e5', '&:hover': { bgcolor: '#4338ca' } }}
+          sx={{
+            bgcolor: 'var(--color-primary, #4f46e5)',
+            '&:hover': { bgcolor: 'var(--color-primary-hover, #4338ca)' },
+            width: { xs: '100%', md: 'auto' }
+          }}
         >
           Add New Reel
         </Button>
@@ -143,7 +157,7 @@ const InstaReelManager = () => {
       <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: '12px', overflow: 'hidden' }}>
         <TableContainer>
           <Table>
-            <TableHead sx={{ bgcolor: '#f8fafc' }}>
+            <TableHead sx={{ bgcolor: 'var(--color-primary-ultra-light, #f8fafc)' }}>
               <TableRow>
                 <TableCell>Order</TableCell>
                 <TableCell>Preview/URL</TableCell>
@@ -167,7 +181,7 @@ const InstaReelManager = () => {
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <a href={reel.url} target="_blank" rel="noreferrer" style={{ color: '#4f46e5', textDecoration: 'none' }}>
+                    <a href={reel.url} target="_blank" rel="noreferrer" style={{ color: 'var(--color-primary, #4f46e5)', textDecoration: 'none' }}>
                       {reel.url.length > 30 ? reel.url.substring(0, 30) + '...' : reel.url}
                     </a>
                   </TableCell>
@@ -250,7 +264,7 @@ const InstaReelManager = () => {
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2 }}>
           <Button onClick={handleCloseDialog} color="inherit">Cancel</Button>
-          <Button onClick={handleFormSubmit} variant="contained" sx={{ bgcolor: '#4f46e5' }} disabled={loading}>
+          <Button onClick={handleFormSubmit} variant="contained" sx={{ bgcolor: 'var(--color-primary, #4f46e5)', '&:hover': { bgcolor: 'var(--color-primary-hover, #4338ca)' } }} disabled={loading}>
             {editItem ? 'Update' : 'Add'}
           </Button>
         </DialogActions>

@@ -96,6 +96,7 @@ const Sidebar = ({ collapsed, toggleCollapse, mobileOpen, closeMobile }) => {
                 { label: "Insta Reels", path: "/instaReelManagement", icon: <MdVideoLibrary />, show: isSuperAdmin },
                 { label: "Home Manager", path: "/homeManagement", icon: <MdHome />, show: isSuperAdmin || privileges.categories },
                 { label: "Menu Manager", path: "/menuManagement", icon: <MdMenu />, show: isSuperAdmin },
+                { label: "Newsletter", path: "/newsletterManagement", icon: <MdEmail />, show: isSuperAdmin },
                 { label: "Leadership", path: "/leadershipManagement", icon: <MdPerson />, show: privileges.leadership || isSuperAdmin },
             ]
         }

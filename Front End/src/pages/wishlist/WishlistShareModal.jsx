@@ -91,7 +91,7 @@ const WishlistShareModal = ({ item, onClose }) => {
             <div className="share-info">
               <div className="share-price">
                 <span style={{ color: 'var(--color-secondary)' }}>Current Price</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <strong>{formatINR(finalPrice)}</strong>
                   {discountInfo && (
                     <span style={{

@@ -55,8 +55,7 @@
 
 /* ── LEFT GALLERY ── */
 .ppp-gallery {
-  position: sticky;
-  top: 80px;
+  /* Removed sticky behavior */
 }
 
 .ppp-gallery-main {
@@ -78,6 +77,7 @@
 .ppp-gallery-main .ppp-main-carousel .slider-wrapper,
 .ppp-gallery-main .ppp-main-carousel .slider {
   height: 100% !important;
+  position: relative !important;
 }
 
 .ppp-gallery-main .ppp-main-carousel .slide {

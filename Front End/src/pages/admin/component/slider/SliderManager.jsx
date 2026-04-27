@@ -188,10 +188,18 @@ const SliderManager = () => {
 
     return (
         <Box sx={{ p: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, position: 'relative' }}>
-                <Box sx={{ width: 150 }} /> {/* Spacer */}
-                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1e293b' }}>Slider Management</Typography>
-                <Button variant="contained" color="primary" onClick={handleAddSlider} sx={{ borderRadius: 2 }}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                justifyContent: 'space-between',
+                alignItems: { xs: 'flex-start', md: 'center' },
+                gap: 2,
+                mb: 4
+            }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1e293b' }}>
+                    Slider Management
+                </Typography>
+                <Button variant="contained" color="primary" onClick={handleAddSlider} sx={{ borderRadius: 2, width: { xs: '100%', md: 'auto' } }}>
                     Add New Slider
                 </Button>
             </Box>
