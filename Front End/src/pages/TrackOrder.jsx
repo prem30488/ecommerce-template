@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 import { FaTruck, FaBox, FaCheckCircle, FaSearch, FaClock } from 'react-icons/fa';
 import SEO from '../components/SEO';
 import LinearProgress from '../common/LinearProgress';
-
+import { COMPANY_INFO } from "../constants/companyInfo";
 const TrackOrder = () => {
     const [orderId, setOrderId] = useState('');
     const [trackingData, setTrackingData] = useState(null);

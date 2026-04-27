@@ -101,10 +101,11 @@
   font-size: 10px;
   min-width: 16px;
   height: 16px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-left: 6px;
+  flex-shrink: 0;
 }
 
 .menudropdown {
@@ -674,6 +675,16 @@
     border-bottom: 1px solid #f8fafc;
   }
 
+  /* Keep wishlist trigger inline so badge stays beside the icon */
+  .navbar a.wishlist-mobile-trigger {
+    display: inline-flex !important;
+    align-items: center !important;
+    width: auto !important;
+    border-bottom: none !important;
+    padding: 0 !important;
+    flex-direction: row !important;
+  }
+
   .navbar a:hover {
     padding-left: 10px;
   }
@@ -804,6 +815,10 @@
 
   .wishlist-mobile-trigger {
     margin-right: 5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    width: auto !important;
+    flex-direction: row !important;
   }
 
   .mobile-menu-toggle {
