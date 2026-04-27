@@ -57,6 +57,7 @@ import Settings from "./pages/admin/Settings";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminLayout from './pages/admin/component/AdminLayout';
 import HomeManagementPage from './pages/admin/component/home/HomeManagementPage';
+import MenuManagerPage from './pages/admin/component/menu/MenuManagerPage';
 
 
 import RefundPolicy from './pages/RefundPolicy';
@@ -228,6 +229,7 @@ class App extends Component {
 							<Route exact path="/settings" element={<AdminLayout><Settings /></AdminLayout>} />
 							<Route exact path="/adminNotifications" element={<AdminLayout><AdminNotifications /></AdminLayout>} />
 							<Route exact path="/homeManagement" element={<AdminLayout><HomeManagementPage /></AdminLayout>} />
+							<Route exact path="/menuManagement" element={<AdminLayout><MenuManagerPage /></AdminLayout>} />
 
 							{/* Wishlist Routes */}
 							<Route path="/wishlist" element={<Wishlist />} />

@@ -801,6 +801,17 @@ export function fetchDashboardGoals() {
     return api.get("/api/admin/dashboard-goals");
 }
 
+export function getMenu() {
+    return api.get("/api/menu");
+}
+
+export function updateMenu(menuData) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/menu", menuData);
+}
+
 export function getAppSettings() {
     return api.get("/api/settings");
 }

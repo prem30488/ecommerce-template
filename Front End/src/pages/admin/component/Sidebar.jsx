@@ -22,7 +22,8 @@ import {
     MdFolder,
     MdCalendarToday,
     MdPerson,
-    MdChevronRight
+    MdChevronRight,
+    MdMenu
 } from 'react-icons/md';
 import { LuLayoutDashboard } from "react-icons/lu";
 import { getCurrentUser, getPrivileges } from '../../../util/APIUtils';
@@ -92,6 +93,7 @@ const Sidebar = ({ collapsed, toggleCollapse, mobileOpen, closeMobile }) => {
                 { label: "Forms", path: "/formManagement", icon: <MdDescription />, show: privileges.forms || isSuperAdmin },
                 { label: "Sliders", path: "/sliderManagement", icon: <MdViewCarousel />, show: privileges.sliders || isSuperAdmin },
                 { label: "Home Manager", path: "/homeManagement", icon: <MdHome />, show: isSuperAdmin || privileges.categories },
+                { label: "Menu Manager", path: "/menuManagement", icon: <MdMenu />, show: isSuperAdmin },
                 { label: "Leadership", path: "/leadershipManagement", icon: <MdPerson />, show: privileges.leadership || isSuperAdmin },
             ]
         }

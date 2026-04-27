@@ -23,18 +23,42 @@ export const NavbarMain = () => {
   const { cartItems, getTotalCartCount, products, categories } = useContext(ShopContext);
   const { wishlistItems } = useContext(WishlistContext);
   const location = useLocation();
-  const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const [isHealthMenuOpen, setIsHealthMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [menuItems, setMenuItems] = useState([
+    { id: '1', title: 'Home', url: '/' },
+    { id: '2', title: 'Shop', url: '/products', children: [
+        { id: '3', title: 'All Products', url: '/products' },
+        { id: '4', title: 'Coming Soon', url: '/products?filter=comingSoon' }
+    ]},
+    { id: '5', title: 'Men', url: '/productMen' },
+    { id: '6', title: 'Women', url: '/productWomen' },
+    { id: '7', title: 'Kids', url: '/productKids' },
+    { id: '8', title: 'BestSellers', url: '/bestsellers' },
+    { id: '9', title: 'Featured', url: '/featured' },
+    { id: '10', title: 'Search', url: '/advancedSearch' },
+    { id: '11', title: 'Track Order', url: '/trackOrder' }
+  ]);
+  const [openDropdowns, setOpenDropdowns] = useState({});
+
+  useEffect(() => {
+    import('../util/APIUtils').then(({ getMenu }) => {
+      getMenu().then(data => {
+        if (data && data.length > 0) {
+          setMenuItems(data);
+        }
+      }).catch(err => console.error('Failed to load menu', err));
+    });
+  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const handleShopClick = (e) => {
+  const handleDropdownClick = (e, id) => {
     if (window.innerWidth <= 1100) {
       e.preventDefault();
-      setIsShopMenuOpen(!isShopMenuOpen);
+      setOpenDropdowns(prev => ({ ...prev, [id]: !prev[id] }));
     }
   };
 
@@ -45,9 +69,9 @@ export const NavbarMain = () => {
     }
   };
 
-  const handleShopDoubleClick = (e) => {
+  const handleDropdownDoubleClick = (e, id) => {
     e.preventDefault();
-    setIsShopMenuOpen(!isShopMenuOpen);
+    setOpenDropdowns(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const handleHealthDoubleClick = (e) => {
@@ -59,7 +83,7 @@ export const NavbarMain = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.shop-dropdown')) {
-        setIsShopMenuOpen(false);
+        setOpenDropdowns({});
       }
       if (!event.target.closest('.menudropdown')) {
         setIsHealthMenuOpen(false);
@@ -176,120 +200,108 @@ export const NavbarMain = () => {
         <div className={`nav-content ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           <SearchMenu onSearch={() => setIsMobileMenuOpen(false)} />
           <div className="links">
-            <Link to="/" className={location.pathname === "/" ? "active-link" : ""} onClick={() => setIsMobileMenuOpen(false)}>
-              Home
-            </Link>
-            <div className={`shop-dropdown ${isShopMenuOpen ? 'open' : ''}`}>
-              <Link
-                to="/products"
-                className={location.pathname === "/products" ? "active-link" : ""}
-                onDoubleClick={handleShopDoubleClick}
-                onClick={handleShopClick}
-                style={{ cursor: 'pointer' }}
-              >
-                Shop <span className="new-badge">NEW</span> <i className="fa fa-caret-down" style={{ fontSize: '10px', marginLeft: '4px' }}></i>
-              </Link>
-              <div className={`shop-mega-menu ${isShopMenuOpen ? 'show' : ''}`}>
-                <div className="mega-menu-container">
-                  <div className="mega-menu-links">
-                    <Link to="/products" className="mega-link active" onClick={() => {
-                      setIsShopMenuOpen(false);
-                      setIsMobileMenuOpen(false);
-                    }}>
-                      All Products
+            {menuItems.map(item => {
+              if (item.children && item.children.length > 0) {
+                return (
+                  <div className={`shop-dropdown ${openDropdowns[item.id] ? 'open' : ''}`} key={item.id}>
+                    <Link
+                      to={item.url}
+                      className={location.pathname === item.url ? "active-link" : ""}
+                      onDoubleClick={(e) => handleDropdownDoubleClick(e, item.id)}
+                      onClick={(e) => handleDropdownClick(e, item.id)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {item.title} {item.title === 'Shop' && <span className="new-badge">NEW</span>} <i className="fa fa-caret-down" style={{ fontSize: '10px', marginLeft: '4px' }}></i>
                     </Link>
-                    <Link to="/products?filter=comingSoon" className="mega-link" onClick={() => {
-                      setIsShopMenuOpen(false);
-                      setIsMobileMenuOpen(false);
-                    }}>
-                      ✨ Coming Soon
-                    </Link>
-                    {/* Additional categories could go here to match screenshot */}
-                    {/* <Link to="/products?category=Gym Supplements" className="mega-link">Gym Supplements</Link> */}
-                  </div>
+                    {item.title === 'Shop' ? (
+                      <div className={`shop-mega-menu ${openDropdowns[item.id] ? 'show' : ''}`}>
+                        <div className="mega-menu-container">
+                          <div className="mega-menu-links">
+                            {item.children.map(child => (
+                              <Link key={child.id} to={child.url} className="mega-link" onClick={() => { setOpenDropdowns({}); setIsMobileMenuOpen(false); }}>
+                                {child.title}
+                              </Link>
+                            ))}
+                          </div>
+                          <div className="mega-menu-carousel">
+                            {comingSoonProducts.length > 0 ? (
+                              <Swiper
+                                modules={[Autoplay, Navigation]}
+                                spaceBetween={20}
+                                slidesPerView={3}
+                                autoplay={{ delay: 3000, disableOnInteraction: false }}
+                                navigation={true}
+                                className="coming-soon-swiper"
+                              >
+                                {comingSoonProducts.map((p) => {
+                                  // Calculate price and discount for the card
+                                  const flavor = p.productFlavors?.[0];
+                                  const price = flavor?.price || p.price || 0;
+                                  const offer = p.offers?.find(o => o.active && o.discount > 0);
+                                  const discount = offer ? offer.discount : 0;
+                                  const finalPrice = discount > 0 ? price * (1 - discount / 100) : price;
 
-                  <div className="mega-menu-carousel">
-                    {comingSoonProducts.length > 0 ? (
-                      <Swiper
-                        modules={[Autoplay, Navigation]}
-                        spaceBetween={20}
-                        slidesPerView={3}
-                        autoplay={{ delay: 3000, disableOnInteraction: false }}
-                        navigation={true}
-                        className="coming-soon-swiper"
-                      >
-                        {comingSoonProducts.map((p) => {
-                          // Calculate price and discount for the card
-                          const flavor = p.productFlavors?.[0];
-                          const price = flavor?.price || p.price || 0;
-                          const offer = p.offers?.find(o => o.active && o.discount > 0);
-                          const discount = offer ? offer.discount : 0;
-                          const finalPrice = discount > 0 ? price * (1 - discount / 100) : price;
-
-                          return (
-                            <SwiperSlide key={`${p.id}-coming-soon`}>
-                              <div className="coming-soon-card" onClick={() => { setIsShopMenuOpen(false); window.location.href = `/productDetails/${p.id}`; }}>
-                                <div className="coming-soon-image-wrapper">
-                                  <img src={p.img} alt={p.title} />
-                                  <div className="coming-soon-overlay">
-
-                                    <div className="coming-soon-track">
-                                      <span>COMING SOON ✨ COMING SOON ✨ COMING SOON ✨ COMING SOON</span>
-                                    </div>
-
-                                  </div>
-                                </div>
-                                <div className="coming-soon-info">
-                                  <h3 className="coming-soon-title">{p.title}</h3>
-                                  <div className="coming-soon-meta">
-                                    {getComingSoonCategories(p) && <span className="coming-soon-category">{getComingSoonCategories(p)}</span>}
-                                    {getComingSoonForm(p) && <span className="coming-soon-form">{getComingSoonForm(p)}</span>}
-                                  </div>
-                                  <div className="coming-soon-rating">
-                                    {"★★★★★".split("").map((s, i) => (
-                                      <span key={i} className="star">★</span>
-                                    ))}
-                                  </div>
-                                  <div className="coming-soon-pricing">
-                                    <span className="coming-soon-final-price">₹{Math.round(finalPrice).toLocaleString()}</span>
-                                    {discount > 0 && price > finalPrice && (
-                                      <span className="coming-soon-original-price">₹{price.toLocaleString()}</span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </SwiperSlide>
-                          );
-                        })}
-                      </Swiper>
+                                  return (
+                                    <SwiperSlide key={`${p.id}-coming-soon`}>
+                                      <div className="coming-soon-card" onClick={() => { setOpenDropdowns({}); window.location.href = `/productDetails/${p.id}`; }}>
+                                        <div className="coming-soon-image-wrapper">
+                                          <img src={p.img} alt={p.title} />
+                                          <div className="coming-soon-overlay">
+                                            <div className="coming-soon-track">
+                                              <span>COMING SOON ✨ COMING SOON ✨ COMING SOON ✨ COMING SOON</span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="coming-soon-info">
+                                          <h3 className="coming-soon-title">{p.title}</h3>
+                                          <div className="coming-soon-meta">
+                                            {getComingSoonCategories(p) && <span className="coming-soon-category">{getComingSoonCategories(p)}</span>}
+                                            {getComingSoonForm(p) && <span className="coming-soon-form">{getComingSoonForm(p)}</span>}
+                                          </div>
+                                          <div className="coming-soon-rating">
+                                            {"★★★★★".split("").map((s, i) => (
+                                              <span key={i} className="star">★</span>
+                                            ))}
+                                          </div>
+                                          <div className="coming-soon-pricing">
+                                            <span className="coming-soon-final-price">₹{Math.round(finalPrice).toLocaleString()}</span>
+                                            {discount > 0 && price > finalPrice && (
+                                              <span className="coming-soon-original-price">₹{price.toLocaleString()}</span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </SwiperSlide>
+                                  );
+                                })}
+                              </Swiper>
+                            ) : (
+                              <div className="no-products-msg">Coming Soon products arriving shortly...</div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     ) : (
-                      <div className="no-products-msg">Coming Soon products arriving shortly...</div>
+                      <div className={`shop-mega-menu ${openDropdowns[item.id] ? 'show' : ''}`} style={{ width: 'auto', minWidth: '200px', padding: '20px', left: 'auto', right: 'auto' }}>
+                          <div className="mega-menu-links" style={{ width: '100%', padding: 0 }}>
+                            {item.children.map(child => (
+                              <Link key={child.id} to={child.url} className="mega-link" onClick={() => { setOpenDropdowns({}); setIsMobileMenuOpen(false); }}>
+                                {child.title}
+                              </Link>
+                            ))}
+                          </div>
+                      </div>
                     )}
                   </div>
-                </div>
-              </div>
-            </div>
-            <Link to="/productMen" className={location.pathname === "/productMen" ? "active-link" : ""} products={products} onClick={() => setIsMobileMenuOpen(false)}>
-              Men
-            </Link>
-            <Link to="/productWomen" className={location.pathname === "/productWomen" ? "active-link" : ""} products={products} onClick={() => setIsMobileMenuOpen(false)}>
-              Women
-            </Link>
-            <Link to="/productKids" className={location.pathname === "/productKids" ? "active-link" : ""} products={products} onClick={() => setIsMobileMenuOpen(false)}>
-              Kids
-            </Link>
-            <Link to="/bestsellers" className={location.pathname === "/bestsellers" ? "active-link" : ""} products={products} onClick={() => setIsMobileMenuOpen(false)}>
-              BestSellers
-            </Link>
-            <Link to="/featured" className={location.pathname === "/featured" ? "active-link" : ""} products={products} onClick={() => setIsMobileMenuOpen(false)}>
-              Featured
-            </Link>
-            <Link to="/advancedSearch" className={location.pathname === "/advancedSearch" ? "active-link" : ""} onClick={() => setIsMobileMenuOpen(false)}>
-              Search
-            </Link>
-            <Link to="/trackOrder" className={location.pathname === "/trackOrder" ? "active-link" : ""} onClick={() => setIsMobileMenuOpen(false)}>
-              Track Order
-            </Link>
+                );
+              }
+              
+              return (
+                <Link key={item.id} to={item.url} className={location.pathname === item.url ? "active-link" : ""} onClick={() => setIsMobileMenuOpen(false)}>
+                  {item.title}
+                </Link>
+              );
+            })}
 
             {/* Categories Section for Mobile */}
             <div className="mobile-categories-section">

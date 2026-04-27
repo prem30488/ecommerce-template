@@ -370,6 +370,52 @@ app.get('/api/category/getCategories', async (req, res) => {
     }
 });
 
+// Menu Routes
+app.get('/api/menu', async (req, res) => {
+    try {
+        let setting = await db.AppSetting.findOne({ where: { setting_key: 'MAIN_MENU' } });
+        if (!setting) {
+            // default menu
+            const defaultMenu = [
+                { id: '1', title: 'Home', url: '/', order: 1, children: [] },
+                { id: '2', title: 'Shop', url: '/products', order: 2, children: [
+                    { id: '3', title: 'All Products', url: '/products', order: 1, children: [] },
+                    { id: '4', title: 'Coming Soon', url: '/products?filter=comingSoon', order: 2, children: [] }
+                ] },
+                { id: '5', title: 'Men', url: '/productMen', order: 3, children: [] },
+                { id: '6', title: 'Women', url: '/productWomen', order: 4, children: [] },
+                { id: '7', title: 'Kids', url: '/productKids', order: 5, children: [] },
+                { id: '8', title: 'BestSellers', url: '/bestsellers', order: 6, children: [] },
+                { id: '9', title: 'Featured', url: '/featured', order: 7, children: [] },
+                { id: '10', title: 'Search', url: '/advancedSearch', order: 8, children: [] },
+                { id: '11', title: 'Track Order', url: '/trackOrder', order: 9, children: [] }
+            ];
+            setting = await db.AppSetting.create({ setting_key: 'MAIN_MENU', setting_value: JSON.stringify(defaultMenu) });
+        }
+        res.json(JSON.parse(setting.setting_value));
+    } catch (error) {
+        console.error('Error fetching menu:', error);
+        res.status(500).json({ error: 'Failed to fetch menu' });
+    }
+});
+
+app.post('/api/menu', authenticateToken, async (req, res) => {
+    try {
+        const menuData = req.body;
+        let setting = await db.AppSetting.findOne({ where: { setting_key: 'MAIN_MENU' } });
+        if (!setting) {
+            await db.AppSetting.create({ setting_key: 'MAIN_MENU', setting_value: JSON.stringify(menuData) });
+        } else {
+            setting.setting_value = JSON.stringify(menuData);
+            await setting.save();
+        }
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error saving menu:', error);
+        res.status(500).json({ error: 'Failed to save menu' });
+    }
+});
+
 // Home Sections Routes
 app.get('/api/home-sections', async (req, res) => {
     try {
