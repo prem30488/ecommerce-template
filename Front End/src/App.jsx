@@ -58,6 +58,7 @@ import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminLayout from './pages/admin/component/AdminLayout';
 import HomeManagementPage from './pages/admin/component/home/HomeManagementPage';
 import MenuManagerPage from './pages/admin/component/menu/MenuManagerPage';
+import InstaReelManager from './pages/admin/component/insta_reel/InstaReelManager';
 
 
 import RefundPolicy from './pages/RefundPolicy';
@@ -230,6 +231,7 @@ class App extends Component {
 							<Route exact path="/adminNotifications" element={<AdminLayout><AdminNotifications /></AdminLayout>} />
 							<Route exact path="/homeManagement" element={<AdminLayout><HomeManagementPage /></AdminLayout>} />
 							<Route exact path="/menuManagement" element={<AdminLayout><MenuManagerPage /></AdminLayout>} />
+							<Route exact path="/instaReelManagement" element={<AdminLayout><InstaReelManager /></AdminLayout>} />
 
 							{/* Wishlist Routes */}
 							<Route path="/wishlist" element={<Wishlist />} />

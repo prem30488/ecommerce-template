@@ -205,7 +205,7 @@ const styles = {
   bg: {
     position: "absolute",
     inset: 0,
-    backgroundSize: "cover",
+    backgroundSize: "100% 100%",
     backgroundPosition: "center",
     transition: "opacity 0.7s ease, transform 0.7s ease",
     transform: "scale(1.03)",

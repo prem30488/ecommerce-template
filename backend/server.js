@@ -3516,6 +3516,78 @@ app.get('/api/admin/checkBlockStatus', async (req, res) => {
     }
 });
 
+// --------------- Insta Reels Routes ---------------
+app.get('/api/insta-reels', async (req, res) => {
+    try {
+        const reels = await db.InstaReel.findAll({
+            order: [['orderIndex', 'ASC']]
+        });
+        res.json(reels);
+    } catch (error) {
+        console.error('Error fetching insta reels:', error);
+        res.status(500).json({ error: 'Failed to fetch insta reels' });
+    }
+});
+
+app.post('/api/insta-reels', authenticateToken, async (req, res) => {
+    try {
+        const { url, caption, tag, active } = req.body;
+        const count = await db.InstaReel.count();
+        const reel = await db.InstaReel.create({
+            url, caption, tag, active: active !== undefined ? active : true, orderIndex: count
+        });
+        res.json(reel);
+    } catch (error) {
+        console.error('Error creating insta reel:', error);
+        res.status(500).json({ error: 'Failed to create insta reel' });
+    }
+});
+
+app.put('/api/insta-reels/updateOrder', authenticateToken, async (req, res) => {
+    const t = await db.sequelize.transaction();
+    try {
+        const { reels } = req.body; // Array of {id, orderIndex}
+        for (const item of reels) {
+            await db.InstaReel.update(
+                { orderIndex: item.orderIndex },
+                { where: { id: item.id }, transaction: t }
+            );
+        }
+        await t.commit();
+        res.json({ success: true });
+    } catch (error) {
+        if (t) await t.rollback();
+        console.error('Error updating reel order:', error);
+        res.status(500).json({ error: 'Failed to update order' });
+    }
+});
+
+app.put('/api/insta-reels/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { url, caption, tag, active } = req.body;
+        await db.InstaReel.update(
+            { url, caption, tag, active },
+            { where: { id } }
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error updating reel:', error);
+        res.status(500).json({ error: 'Failed to update reel' });
+    }
+});
+
+app.delete('/api/insta-reels/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.InstaReel.destroy({ where: { id } });
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting reel:', error);
+        res.status(500).json({ error: 'Failed to delete reel' });
+    }
+});
+
 // --------------- 404 Handler ---------------
 app.use((req, res) => {
     res.status(404).json({ success: false, message: 'Route not found: ' + req.originalUrl });

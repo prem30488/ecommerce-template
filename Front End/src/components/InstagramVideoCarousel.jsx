@@ -1,43 +1,30 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { InstagramEmbed } from "react-social-media-embed";
+import { getInstaReels } from "../util/APIUtils";
 import "./instagramvideocaousel.css";
 
-const reels = [
-  {
-    url: "https://www.instagram.com/p/DRXEgrXk8-E/",
-    caption: "Fuel your grind with our explosive Pre-Workout formula. Every rep counts! 💪🔥",
-    tag: "Pre-Workout",
-  },
-  {
-    url: "https://www.instagram.com/p/DRL1MzWgdY4/?hl=en",
-    caption: "On-the-go nutrition redefined. Our Sachets pack a powerful punch in every sip. ⚡",
-    tag: "Sachet",
-  },
-  {
-    url: "https://www.instagram.com/p/DRENvp8DME0/?hl=en",
-    caption: "Build lean muscle with our premium Whey Protein. Real results, real people. 🏆",
-    tag: "Whey Protein",
-  },
-  {
-    url: "https://www.instagram.com/p/DQwO36rkmDo/?hl=en",
-    caption: "Unlock ancient energy with pure Shilajit. Nature's most powerful adaptogen. 🌿",
-    tag: "Shilajit",
-  },
-  {
-    url: "https://www.instagram.com/p/DPWXXbxjwZt/?hl=en",
-    caption: "Unlock ancient energy with pure Shilajit. Nature's most powerful adaptogen. 🌿",
-    tag: "Hair fall",
-  },
-  {
-    url: "https://www.instagram.com/p/DOz_7moE9md/?hl=en",
-    caption: "Unlock ancient energy with pure Shilajit. Nature's most powerful adaptogen. 🌿",
-    tag: "Post-workout",
-  },
-];
-
 const InstagramVideoCarousel = () => {
+  const [reels, setReels] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const trackRef = useRef(null);
+
+  useEffect(() => {
+    const fetchReels = async () => {
+      try {
+        const res = await getInstaReels();
+        if (res && res.length > 0) {
+          setReels(res.filter(r => r.active));
+        }
+      } catch (err) {
+        console.error("Failed to load Instagram reels", err);
+      }
+    };
+    fetchReels();
+  }, []);
+
+  if (!reels || reels.length === 0) {
+    return null; // or a skeleton loader
+  }
 
   const goTo = (index) => {
     setActiveIndex(index);

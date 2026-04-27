@@ -894,3 +894,36 @@ export function updateHomeSection(id, data) {
     }
     return api.put("/api/home-sections/" + id, data);
 }
+
+// --- Insta Reels API ---
+export function getInstaReels() {
+    return api.get("/api/insta-reels");
+}
+
+export function createInstaReel(data) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.post("/api/insta-reels", data);
+}
+
+export function updateInstaReelOrder(reels) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put("/api/insta-reels/updateOrder", { reels });
+}
+
+export function updateInstaReel(id, data) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.put("/api/insta-reels/" + id, data);
+}
+
+export function deleteInstaReel(id) {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.delete("/api/insta-reels/" + id);
+}
