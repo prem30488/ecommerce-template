@@ -9,7 +9,7 @@ import './styles.css';
 import { Navigation } from 'swiper/modules';
 import { useId } from 'react'
 
-const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thumbs = true, thumbDirection = 'horizontal', style, className }) => {
+const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thumbs = true, thumbDirection = 'horizontal', style, className, allowSlide = true }) => {
   const uId = useId();
   const mainSwiperRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -95,7 +95,8 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
           }}
           loop={false}
           spaceBetween={10}
-          navigation={true}
+          navigation={false}
+          allowTouchMove={false}
           modules={[Navigation]}
           className="main-swiper"
           onSwiper={(swiper) => { mainSwiperRef.current = swiper; }}

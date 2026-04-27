@@ -165,6 +165,116 @@
   top: 100px;
 }
 
+.as-sidebar-wrapper {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px;
+  align-self: flex-start;
+  z-index: 10;
+}
+
+.as-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.as-sidebar-header-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--search-border);
+  background: var(--color-primary-light);
+  cursor: pointer;
+  gap: 16px;
+  user-select: none;
+  transition: background-color 0.2s ease, border-bottom-color 0.2s ease;
+}
+
+.as-sidebar-header-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.as-sidebar-wrapper.is-collapsed .as-sidebar-header-toggle {
+  border-bottom-color: transparent;
+}
+
+.as-sidebar-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.as-sidebar-header-title strong {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--search-accent);
+}
+
+.as-sidebar-chevron {
+  color: var(--search-accent);
+  font-size: 0.6rem;
+  margin-left: 5px;
+  transition: transform 0.2s ease;
+}
+
+.as-sidebar-wrapper.is-collapsed .as-sidebar-chevron {
+  /* optional rotation if you use a single arrow character, but since we switch chars in React it's fine */
+}
+
+.reset-btn {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.as-sidebar-wrapper.is-collapsed .reset-btn {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.as-sidebar-content-wrapper {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.as-sidebar-wrapper.is-collapsed .as-sidebar-content-wrapper {
+  grid-template-rows: 0fr;
+}
+
+.as-sidebar-content-wrapper > .solr-search-fields {
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: padding 0.3s ease, opacity 0.3s ease;
+}
+
+.as-sidebar-wrapper.is-collapsed .as-sidebar-content-wrapper > .solr-search-fields {
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .as-sidebar-wrapper {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    align-self: stretch;
+  }
+}
+
 /* Override bootstrap col */
 .as-sidebar .col-md-3,
 .as-sidebar>div>div {

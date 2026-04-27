@@ -2,39 +2,39 @@ import PropTypes from 'prop-types';
 import React from "react";
 
 class SearchFieldContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      collapsed: true
+    };
+    this.toggleCollapse = this.toggleCollapse.bind(this);
+  }
+
+  toggleCollapse() {
+    this.setState(prevState => ({
+      collapsed: !prevState.collapsed
+    }));
+  }
+
   render() {
     const { onNewSearch } = this.props;
+    const { collapsed } = this.state;
     return (
-      <div style={{
-        width: '280px',
-        flexShrink: 0,
-        position: 'sticky',
-        top: '100px',
-        alignSelf: 'start'
-      }}>
-        <div className="as-glass" style={{ overflow: 'hidden' }}>
+      <div className={`as-sidebar-wrapper ${collapsed ? 'is-collapsed' : ''}`}>
+        <div className="as-glass as-sidebar-inner">
           {/* Sidebar header */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '16px 18px',
-            borderBottom: '1px solid var(--search-border)',
-            background: 'var(--color-primary-light)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: '0.9rem' }}>🎛️</span>
-              <span style={{
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '1.5px',
-                color: 'var(--search-accent)'
-              }}>Filters</span>
+          <div className="as-sidebar-header-toggle" onClick={this.toggleCollapse}>
+            <div className="as-sidebar-header-title">
+              <span>🎛️</span>
+              <strong>Filters</strong>
+              <span className="as-sidebar-chevron">
+                {collapsed ? '▶' : '▼'}
+              </span>
             </div>
+            
             <button
-              onClick={onNewSearch}
-              className="as-cyber-btn"
+              onClick={(e) => { e.stopPropagation(); onNewSearch(); }}
+              className="as-cyber-btn reset-btn"
               style={{ '--content': "'Reset'" }}
             >
               <div className="left"></div>
@@ -44,16 +44,11 @@ class SearchFieldContainer extends React.Component {
           </div>
 
           {/* Filters list */}
-          <ul className="solr-search-fields" style={{
-            listStyle: 'none',
-            margin: 0,
-            padding: '10px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2
-          }}>
-            {this.props.children}
-          </ul>
+          <div className="as-sidebar-content-wrapper">
+            <ul className="solr-search-fields">
+              {this.props.children}
+            </ul>
+          </div>
         </div>
       </div>
     );

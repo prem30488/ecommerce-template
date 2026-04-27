@@ -93,6 +93,7 @@ function ResultCard({ bootstrapCss, doc, fields, onSelect }) {
               mainImage={carouselImages[0]}
               imageList={carouselImages}
               thumbs={false}
+              allowSlide={false}
               style={{ width: "100%", height: "100%" }}
             />
           </div>

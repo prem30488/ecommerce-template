@@ -7,7 +7,8 @@ import { ShopContext } from '../context/shop-context';
 import { useContext } from 'react';
 import OnlineSupport from '../components/OnlineSupport';
 import LinearProgress from '../common/LinearProgress';
-
+import SEO from "../components/SEO";
+import { COMPANY_INFO } from "../constants/companyInfo";
 const PremiumAllProducts = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const urlCategory = searchParams.get('category');
@@ -130,6 +131,10 @@ const PremiumAllProducts = () => {
         return activeProducts.filter(p => (p.Category?.title === cat) || (p.category === cat)).length;
     };
 
+    const productKeywords = useMemo(() => {
+        return products.map(p => p.title).filter(Boolean).join(', ');
+    }, [products]);
+
     if (error) {
         return (
             <div className="premium-loader-container">
@@ -142,6 +147,11 @@ const PremiumAllProducts = () => {
     return (
         <div className="premium-all-products">
             <LinearProgress loading={isLoading} />
+            <SEO
+                title={`All Products | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+                description={COMPANY_INFO.seoDescription}
+                keywords={`${COMPANY_INFO.seoKeywords}, ${productKeywords}`}
+            />
             <div className="premium-container">
                 {/* Breadcrumbs */}
                 <div className="premium-breadcrumbs">

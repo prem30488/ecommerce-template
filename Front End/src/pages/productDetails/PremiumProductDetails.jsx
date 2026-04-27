@@ -14,7 +14,9 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./premium-product.css";
 import Compare from "../../components/Compare";
 import SimilarProducts from "../../components/SimilarProducts";
-
+import LinearProgress from "../../common/LinearProgress";
+import SEO from "../../components/SEO";
+import { COMPANY_INFO } from "../../constants/companyInfo";
 // ─── Small helpers ───────────────────────────────────────────────
 const Star = ({ filled }) => (
   <span className="ppp-star" style={{ color: filled ? "#f59e0b" : "#e2e8f0" }}>★</span>
@@ -352,10 +354,13 @@ export const PremiumProductDetails = () => {
   };
 
   if (loading) return (
-    <div className="h-screen flex flex-col items-center justify-center gap-4">
-      <div className="w-14 h-14 border-4 border-sky-400 border-t-transparent rounded-full animate-spin" />
-      <p className="text-slate-500 font-bold text-sm">Loading product…</p>
-    </div>
+    <>
+      <LinearProgress loading={loading} />
+      <div className="h-screen flex flex-col items-center justify-center gap-4">
+        <div className="w-14 h-14 border-4 border-sky-400 border-t-transparent rounded-full animate-spin" />
+        <p className="text-slate-500 font-bold text-sm">Loading product…</p>
+      </div>
+    </>
   );
   if (err || !product) return (
     <div className="h-screen flex flex-col items-center justify-center gap-6 px-4 text-center">
@@ -372,6 +377,13 @@ export const PremiumProductDetails = () => {
 
   return (
     <div className="ppp-root" style={{ "paddingTop": "100px" }}>
+      <LinearProgress loading={loading} />
+      <SEO
+        title={`Premium Product Details | ${product?.title} | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+        description={`${product?.description}`}
+        keywords={`${product?.title}, ${visibleCategories.join(', ')}, ${COMPANY_INFO.seoKeywords}`}
+        image={`${API_BASE_URL}${product?.img}`}
+      />
       {/* Question Modal */}
       {isModalOpen && (
         <div className="ppp-modal-overlay">

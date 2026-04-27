@@ -6,7 +6,8 @@ import { API_BASE_URL } from "../constants";
 import { ShopContext } from '../context/shop-context';
 import { useContext } from 'react';
 import OnlineSupport from "../components/OnlineSupport";
-import { COMPANY_INFO } from '../constants/companyInfo';
+import SEO from "../components/SEO";
+import { COMPANY_INFO } from "../constants/companyInfo";
 import Pagination from '../components/Pagination';
 import LinearProgress from "../common/LinearProgress";
 
@@ -66,12 +67,19 @@ const ProductWomen = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const productKeywords = useMemo(() => {
+    return womenProducts.map(p => p.title).filter(Boolean).join(', ');
+  }, [womenProducts]);
+
   if (isLoading)
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-[#fffafa]">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-pink-500 mb-6 shadow-xl"></div>
-        <p className="text-2xl font-black text-pink-900 tracking-widest uppercase">Curating Women's Catalog</p>
-      </div>
+      <>
+        <LinearProgress loading={isLoading} />
+        <div className="h-screen flex flex-col justify-center items-center bg-[#fffafa]">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-pink-500 mb-6 shadow-xl"></div>
+          <p className="text-2xl font-black text-pink-900 tracking-widest uppercase">Curating Women's Catalog</p>
+        </div>
+      </>
     );
 
   if (err)
@@ -89,6 +97,12 @@ const ProductWomen = () => {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fff5f5", paddingTop: "80px" }}>
       <LinearProgress loading={isLoading} />
+      <SEO
+        title={`Women's Collection | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+        description={COMPANY_INFO.seoDescription}
+        keywords={`${COMPANY_INFO.seoKeywords}, ${productKeywords}`}
+        image="/images/women.png"
+      />
       {/* Women's Banner */}
       <div style={{ position: "relative", width: "100%", overflow: "hidden", marginBottom: "2rem", boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}>
         <img

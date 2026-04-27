@@ -6,10 +6,10 @@ import { API_BASE_URL } from "../constants";
 import { ShopContext } from '../context/shop-context';
 import { useContext } from 'react';
 import OnlineSupport from "../components/OnlineSupport";
-import { COMPANY_INFO } from '../constants/companyInfo';
 import Pagination from '../components/Pagination';
 import LinearProgress from "../common/LinearProgress";
-
+import SEO from "../components/SEO";
+import { COMPANY_INFO } from "../constants/companyInfo";
 const Product = () => {
   const { products } = useContext(ShopContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,17 +66,24 @@ const Product = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const productKeywords = useMemo(() => {
+    return menProducts.map(p => p.title).filter(Boolean).join(', ');
+  }, [menProducts]);
+
   if (isLoading)
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-slate-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-sky-600 mb-6 shadow-xl"></div>
-        <p className="text-2xl font-black text-slate-800 tracking-widest uppercase">Curating Men's Catalog</p>
-      </div>
+      <>
+        <LinearProgress loading={isLoading} />
+        <div className="h-screen flex flex-col justify-center items-center bg-slate-50" style={{ paddingTop: "200px" }}>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-sky-600 mb-6 shadow-xl"></div>
+          <p className="text-2xl font-black text-slate-800 tracking-widest uppercase">Curating Men's Catalog</p>
+        </div>
+      </>
     );
 
   if (err)
     return (
-      <div className="h-screen flex flex-col justify-center items-center text-center px-4 bg-slate-50">
+      <div className="h-screen flex flex-col justify-center items-center text-center px-4 bg-slate-50" style={{ paddingTop: "200px" }}>
         <div className="text-red-500 text-6xl mb-6 drop-shadow-lg">⚠️</div>
         <h2 className="text-3xl font-black mb-3 text-slate-900 uppercase">System Error</h2>
         <p className="text-slate-500 mb-8 max-w-md mx-auto">{err}</p>
@@ -89,6 +96,12 @@ const Product = () => {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f8fafc", paddingTop: "80px" }}>
       <LinearProgress loading={isLoading} />
+      <SEO
+        title={`Men's Collection | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+        description={COMPANY_INFO.seoDescription}
+        keywords={`${COMPANY_INFO.seoKeywords}, ${productKeywords}`}
+        image="/images/man.png"
+      />
       {/* Men's Banner */}
       <div style={{ position: "relative", width: "100%", overflow: "hidden", marginBottom: "2rem", boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}>
         <img

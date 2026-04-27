@@ -73,9 +73,13 @@ const BestSelling = () => {
 
   if (isLoading)
     return (
-      <p className="h-screen flex flex-col justify-center items-center text-2xl">
-        Loading...
-      </p>
+      <>
+        <LinearProgress loading={isLoading} />
+        <div className="h-screen flex flex-col justify-center items-center bg-[#fffafa]">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-pink-500 mb-6 shadow-xl"></div>
+          <p className="text-2xl font-black text-pink-900 tracking-widest uppercase">Curating Bestsellers</p>
+        </div>
+      </>
     );
   if (err)
     return (
@@ -91,18 +95,19 @@ const BestSelling = () => {
     <div className="container mx-auto pb-20">
       <LinearProgress loading={isLoading} />
       <SEO
-        title="Bestselling Products"
-        description={`Discover our top-rated collection featuring: ${allTitles.substring(0, 150)}...`}
-        keywords={`${allTitles}, ${allCategories}, ${COMPANY_INFO.name}, bestsellers`}
+        title={`Bestselling Products | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+        description={`${COMPANY_INFO.seoDescription}, Discover our top-rated collection featuring: ${allTitles.substring(0, 150)}...`}
+        keywords={`${allTitles}, ${allCategories}, ${COMPANY_INFO.seoKeywords}, bestsellers`}
+        image="/images/logo.png"
       />
       <div style={{ position: "relative", paddingTop: "20px" }}></div>
 
       <div className="flex justify-between gap-10">
         <div className="w-full">
-          <nav className="premium-breadcrumbs" style={{ 
-            background: "white", 
-            padding: "10px 20px", 
-            borderRadius: "12px", 
+          <nav className="premium-breadcrumbs" style={{
+            background: "white",
+            padding: "10px 20px",
+            borderRadius: "12px",
             width: "fit-content",
             boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
             marginBottom: "24px"
@@ -169,12 +174,12 @@ const BestSelling = () => {
           </div>
 
           <div style={{ marginTop: '48px', paddingTop: '24px', paddingBottom: '24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'center' }}>
-              <Pagination
-                totalItems={bestSellers.length}
-                itemsPerPage={itemsPerPage}
-                currentPage={currentPage}
-                onPageChange={handlePageChange}
-              />
+            <Pagination
+              totalItems={bestSellers.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
           </div>
 
         </div>

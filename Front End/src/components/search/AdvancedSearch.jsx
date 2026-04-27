@@ -11,7 +11,7 @@ import './advanced-search.css';
 import { API_BASE_URL } from '../../constants';
 import { COMPANY_INFO } from '../../constants/companyInfo';
 import LinearProgress from '../../common/LinearProgress';
-
+import SEO from "../../components/SEO";
 export { SolrFacetedSearch, defaultComponentPack, SolrClient };
 
 // ── Search fields ──────────────────────────────────────────
@@ -215,6 +215,13 @@ class AdvancedSearch extends Component {
     return (
       <div className="as-page">
         <LinearProgress loading={this.state.loading} />
+        <SEO
+          title={`Search - Advanced Product Search | ${COMPANY_INFO.name}`}
+          description={`Search and filter products with advanced faceting and sorting options.| ${COMPANY_INFO.seoDescription}`}
+          keywords={`search, advanced search, product search, filter products, faceted search| ${COMPANY_INFO.seoKeywords}`}
+          image="/images/logo.png"
+          canonical="/search"
+        />
         {/* Hero ------------------------------------------------ */}
         <div className="as-hero">
           <h1>Advanced Product Search</h1>

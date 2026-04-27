@@ -120,7 +120,11 @@ const TrackOrder = () => {
             borderTop: '1px solid var(--color-primary-glow)'
         }}>
             <LinearProgress loading={loading} />
-            <SEO title="Track Your Order" description="Easily track your order status in real-time." />
+            <SEO
+                title={`Track Your Order | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+                description={`Easily track your order status in real-time.Enter your Order ID to see the current status and history.`}
+                keywords={`${COMPANY_INFO.seoKeywords}`}
+            />
             <Container maxWidth="md">
                 <Paper elevation={6} sx={{ borderRadius: '15px', overflow: 'hidden', border: '1px solid var(--color-primary-border)' }}>
                     <Box sx={{ p: 4, bgcolor: 'var(--color-primary)', color: 'white', textAlign: 'center' }}>

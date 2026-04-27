@@ -6,9 +6,11 @@ import { Link } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import Pagination from "../components/Pagination";
 import LinearProgress from "../common/LinearProgress";
+import SEO from "../components/SEO";
+import { COMPANY_INFO } from "../constants/companyInfo";
 
 const FeatureProducts = () => {
-  const { products } = useContext(ShopContext);
+  const { products, categories } = useContext(ShopContext);
   const [isLoading, setIsLoading] = useState(true);
   const [err, setErr] = useState(null);
 
@@ -58,34 +60,53 @@ const FeatureProducts = () => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
+  const allTitles = useMemo(() => featuredProducts.map(p => p.title).join(", "), [featuredProducts]);
+  const allCategories = useMemo(() => [...new Set(categories
+    ?.filter(cat => featuredProducts.some(p =>
+      String(p.catIds).split(',').map(Number).includes(cat.id) || p.category_id === cat.id
+    ))
+    .map(cat => cat.title)
+  )].join(", "), [categories, featuredProducts]);
   if (isLoading)
     return (
-      <p className="h-screen flex flex-col justify-center items-center text-2xl">
-        Loading...
-      </p>
+      <>
+        <LinearProgress loading={isLoading} />
+        <div className="h-screen flex flex-col justify-center items-center bg-[#fffafa]">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-pink-500 mb-6 shadow-xl"></div>
+          <p className="text-2xl font-black text-pink-900 tracking-widest uppercase">Curating Featured Products</p>
+        </div>
+      </>
     );
   if (err)
     return (
-      <p className="h-screen flex flex-col justify-center items-center text-2xl">
-        <span>{err}</span>
-        <Link to="/featured" className="text-lg text-gray-500 font-semibold">
-          &larr;Refresh page
-        </Link>
-      </p>
+      <>
+        <LinearProgress loading={isLoading} />
+        <p className="h-screen flex flex-col justify-center items-center text-2xl">
+          <span>{err}</span>
+          <Link to="/featured" className="text-lg text-gray-500 font-semibold">
+            &larr;Refresh page
+          </Link>
+        </p>
+      </>
     );
 
   return (
     <div className="container mx-auto pb-20">
       <LinearProgress loading={isLoading} />
+      <SEO
+        title={`Featured Products | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+        description={`${COMPANY_INFO.seoDescription}, Discover our top-rated collection featuring: ${allTitles.substring(0, 150)}...`}
+        keywords={`${allTitles}, ${allCategories}, ${COMPANY_INFO.seoKeywords}, featured-products`}
+        image="/images/logo.png"
+      />
       <div style={{ position: "relative", paddingTop: "20px" }}></div>
 
       <div className="flex justify-between gap-10">
         <div className="w-full">
-          <nav className="premium-breadcrumbs" style={{ 
-            background: "white", 
-            padding: "10px 20px", 
-            borderRadius: "12px", 
+          <nav className="premium-breadcrumbs" style={{
+            background: "white",
+            padding: "10px 20px",
+            borderRadius: "12px",
             width: "fit-content",
             boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
             marginBottom: "24px"
@@ -152,12 +173,12 @@ const FeatureProducts = () => {
           </div>
 
           <div style={{ marginTop: '48px', paddingTop: '24px', paddingBottom: '24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'center' }}>
-              <Pagination
-                totalItems={featuredProducts.length}
-                itemsPerPage={itemsPerPage}
-                currentPage={currentPage}
-                onPageChange={handlePageChange}
-              />
+            <Pagination
+              totalItems={featuredProducts.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
           </div>
 
         </div>

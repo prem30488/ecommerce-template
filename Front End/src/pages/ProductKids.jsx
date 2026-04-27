@@ -6,7 +6,8 @@ import { API_BASE_URL } from "../constants";
 import { ShopContext } from '../context/shop-context';
 import { useContext } from 'react';
 import OnlineSupport from "../components/OnlineSupport";
-import { COMPANY_INFO } from '../constants/companyInfo';
+import SEO from "../components/SEO";
+import { COMPANY_INFO } from "../constants/companyInfo";
 import Pagination from '../components/Pagination';
 import LinearProgress from "../common/LinearProgress";
 
@@ -66,12 +67,19 @@ const ProductKids = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const productKeywords = useMemo(() => {
+    return kidsProducts.map(p => p.title).filter(Boolean).join(', ');
+  }, [kidsProducts]);
+
   if (isLoading)
     return (
-      <div className="h-screen flex flex-col justify-center items-center bg-[#fffcf9]">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-orange-500 mb-6 shadow-xl"></div>
-        <p className="text-2xl font-black text-orange-900 tracking-widest uppercase">Curating Junior Catalog</p>
-      </div>
+      <>
+        <LinearProgress loading={isLoading} />
+        <div className="h-screen flex flex-col justify-center items-center bg-[#fffcf9]">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-orange-500 mb-6 shadow-xl"></div>
+          <p className="text-2xl font-black text-orange-900 tracking-widest uppercase">Curating Junior Catalog</p>
+        </div>
+      </>
     );
 
   if (err)
@@ -89,6 +97,12 @@ const ProductKids = () => {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fffbf5", paddingTop: "80px" }}>
       <LinearProgress loading={isLoading} />
+      <SEO
+        title={`Kids' Collection | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+        description={COMPANY_INFO.seoDescription}
+        keywords={`${COMPANY_INFO.seoKeywords}, ${productKeywords}`}
+        image="/images/banner_kids.png"
+      />
       {/* Kids' Banner */}
       <div style={{ position: "relative", width: "100%", overflow: "hidden", marginBottom: "2rem", boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}>
         <img
@@ -111,10 +125,10 @@ const ProductKids = () => {
 
       <div className="container mx-auto px-4 pb-20 translate-y-[-2rem] relative z-20">
         {/* Breadcrumb - Glassmorphism Style */}
-        <nav className="premium-breadcrumbs" style={{ 
-          background: "white", 
-          padding: "10px 20px", 
-          borderRadius: "12px", 
+        <nav className="premium-breadcrumbs" style={{
+          background: "white",
+          padding: "10px 20px",
+          borderRadius: "12px",
           width: "fit-content",
           boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
         }}>
@@ -188,12 +202,12 @@ const ProductKids = () => {
         </div>
 
         <div style={{ marginTop: '48px', paddingTop: '24px', paddingBottom: '24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'center' }}>
-            <Pagination
-              totalItems={kidsProducts.length}
-              itemsPerPage={itemsPerPage}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
+          <Pagination
+            totalItems={kidsProducts.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
         </div>
 
         {/* Global Partnership Strip */}

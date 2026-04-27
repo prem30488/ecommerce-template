@@ -57,10 +57,10 @@ class TextSearch extends React.Component {
               placeholder={`Search ${label}…`}
               style={{
                 flex: 1,
-                background: 'rgba(255,255,255,0.05)',
+                background: 'var(--color-secondary)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 borderRadius: 8,
-                color: 'var(--search-text)',
+                color: '#fff',
                 padding: '7px 10px',
                 fontSize: '0.8rem',
                 outline: 'none',

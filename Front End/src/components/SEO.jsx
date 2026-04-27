@@ -3,11 +3,11 @@ import { Helmet } from 'react-helmet-async';
 import { COMPANY_INFO } from '../constants/companyInfo';
 
 const SEO = ({ title, description, keywords, image, canonical }) => {
-  const siteTitle = title ? `${title} | ${COMPANY_INFO.name}` : `${COMPANY_INFO.name} - Premium Fashion & Elegance`;
+  const siteTitle = title ? `${title}` : `${COMPANY_INFO.name} - Premium Fashion & Elegance`;
   const siteDescription = description || COMPANY_INFO.seoDescription;
   const siteKeywords = keywords || COMPANY_INFO.seoKeywords;
   const siteImage = image || COMPANY_INFO.logoUrl;
-  
+
   // Dynamic Canonical URL
   const canonicalUrl = canonical || (typeof window !== 'undefined' ? window.location.origin + window.location.pathname : '');
 

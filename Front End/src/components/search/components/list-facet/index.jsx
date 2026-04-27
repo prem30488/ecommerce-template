@@ -138,7 +138,7 @@ class ListFacet extends React.Component {
                       height: 14,
                       borderRadius: 4,
                       border: `1.5px solid ${isActive ? 'var(--search-accent)' : 'rgba(255,255,255,0.2)'}`,
-                      background: isActive ? 'var(--search-accent)' : 'transparent',
+                      background: isActive ? 'var(--search-accent)' : 'var(--color-secondary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
