@@ -5,6 +5,7 @@ import FeatureProductsCarousel from "../components/FeatureProductsCarousel";
 import { Link } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import Pagination from "../components/Pagination";
+import LinearProgress from "../common/LinearProgress";
 
 const FeatureProducts = () => {
   const { products } = useContext(ShopContext);
@@ -76,6 +77,7 @@ const FeatureProducts = () => {
 
   return (
     <div className="container mx-auto pb-20">
+      <LinearProgress loading={isLoading} />
       <div style={{ position: "relative", paddingTop: "20px" }}></div>
 
       <div className="flex justify-between gap-10">

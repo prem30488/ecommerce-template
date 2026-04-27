@@ -3,17 +3,22 @@ import UserManagement from './UserManagement';
 import { Paper, Typography, Box } from '@mui/material';
 import { getCurrentUser } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
+import LinearProgress from '../../../../common/LinearProgress';
 
 function UserManagementPage() {
   const [currentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getPrivileges = async () => {
       try {
+        setLoading(true);
         const response = await getCurrentUser();
         setCurrentUser(response);
       } catch (error) {
         Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      } finally {
+        setLoading(false);
       }
     };
     getPrivileges();
@@ -29,6 +34,7 @@ function UserManagementPage() {
 
   return (
     <Box sx={{ py: { xs: 2, md: 4 }, px: { xs: 1, md: 4 } }}>
+      <LinearProgress loading={loading} />
       <Paper 
         elevation={0} 
         sx={{ 

@@ -32,7 +32,6 @@ const WishlistItem = ({ item }) => {
 
   const handleAddToCart = () => {
     addToCart(item.id, 'S');
-    Alert.success('Added to cart');
   };
 
   // Get image URL - handle both old and new backend formats

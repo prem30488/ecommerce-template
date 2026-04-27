@@ -8,6 +8,7 @@ import { useContext } from 'react';
 import OnlineSupport from "../components/OnlineSupport";
 import { COMPANY_INFO } from '../constants/companyInfo';
 import Pagination from '../components/Pagination';
+import LinearProgress from "../common/LinearProgress";
 
 const Product = () => {
   const { products } = useContext(ShopContext);
@@ -87,6 +88,7 @@ const Product = () => {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f8fafc", paddingTop: "80px" }}>
+      <LinearProgress loading={isLoading} />
       {/* Men's Banner */}
       <div style={{ position: "relative", width: "100%", overflow: "hidden", marginBottom: "2rem", boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}>
         <img
@@ -109,10 +111,10 @@ const Product = () => {
 
       <div className="container mx-auto px-4 pb-20 translate-y-[-2rem] relative z-20">
         {/* Breadcrumb - Glassmorphism Style */}
-        <nav className="premium-breadcrumbs" style={{ 
-          background: "white", 
-          padding: "10px 20px", 
-          borderRadius: "12px", 
+        <nav className="premium-breadcrumbs" style={{
+          background: "white",
+          padding: "10px 20px",
+          borderRadius: "12px",
           width: "fit-content",
           boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
         }}>
@@ -185,12 +187,12 @@ const Product = () => {
         </div>
 
         <div style={{ marginTop: '48px', paddingTop: '24px', paddingBottom: '24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'center' }}>
-            <Pagination
-              totalItems={menProducts.length}
-              itemsPerPage={itemsPerPage}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
+          <Pagination
+            totalItems={menProducts.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
         </div>
 
         {/* Global Partnership Strip */}

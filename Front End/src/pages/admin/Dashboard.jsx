@@ -28,8 +28,10 @@ import { MdOutlineDateRange } from 'react-icons/md';
 import { fetchDashboardKPIs } from '../../util/APIUtils';
 import { formatCurrency, formatDate } from '../../util/regionalSettings';
 import './Dashboard.css';
+import LinearProgress from '../../common/LinearProgress';
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [kpiData, setKpiData] = useState({
     purchaseRevenue: 0,
     ecommercePurchases: 0,
@@ -41,9 +43,11 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
+    setIsLoading(true);
     fetchDashboardKPIs()
       .then(res => setKpiData(res || {}))
-      .catch(err => console.error("Error fetching KPIs:", err));
+      .catch(err => console.error("Error fetching KPIs:", err))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const formatNumber = (num, isCurrency = false) => {
@@ -60,6 +64,7 @@ const Dashboard = () => {
 
   return (
     <div className="premium-dashboard">
+      <LinearProgress loading={isLoading} />
       <div className="dashboard-header">
         <div>
           <h1 className="dashboard-title">Welcome back, Admin</h1>

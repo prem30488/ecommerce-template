@@ -6,6 +6,7 @@ import { API_BASE_URL } from '../constants';
 import { ShopContext } from '../context/shop-context';
 import { useContext } from 'react';
 import OnlineSupport from '../components/OnlineSupport';
+import LinearProgress from '../common/LinearProgress';
 
 const PremiumAllProducts = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -140,6 +141,7 @@ const PremiumAllProducts = () => {
 
     return (
         <div className="premium-all-products">
+            <LinearProgress loading={isLoading} />
             <div className="premium-container">
                 {/* Breadcrumbs */}
                 <div className="premium-breadcrumbs">

@@ -4,6 +4,8 @@ import { PremiumCartItem } from "./PremiumCartItem";
 import { useNavigate, Link } from "react-router-dom";
 import "./your-cart.css";
 import { getCoupons } from "../../util/APIUtils";
+import ConfirmationModal from "../../components/ConfirmationModal";
+
 
 export const YourCart = () => {
   const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, addTotalAfterDiscount, resetCart, products } = useContext(ShopContext);
@@ -15,6 +17,7 @@ export const YourCart = () => {
 
   const [availableCoupons, setAvailableCoupons] = useState([]);
   const [couponError, setCouponError] = useState("");
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,6 +46,15 @@ export const YourCart = () => {
     }
   };
 
+  const handleClearCart = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmClearCart = () => {
+    resetCart();
+    setIsConfirmModalOpen(false);
+  };
+
   const discountAmount = totalAmount * (discountPercent / 100);
   const grandTotal = totalAmount - discountAmount;
   const progressPercent = Math.min((totalAmount / freeShippingThreshold) * 100, 100);
@@ -59,6 +71,13 @@ export const YourCart = () => {
 
   return (
     <div className="your-cart-page">
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmClearCart}
+        title="Clear Bag"
+        message="Are you sure you want to clear your entire bag? This action cannot be undone."
+      />
       <div className="your-cart-container">
         {/* Header Section */}
         <div className="your-cart-header">
@@ -68,7 +87,7 @@ export const YourCart = () => {
           </div>
           <div className="header-actions">
             {hasItems && (
-              <button onClick={resetCart} className="yc-clear-btn">
+              <button onClick={handleClearCart} className="yc-clear-btn">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                 <span>Clear Bag</span>
               </button>

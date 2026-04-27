@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Box } from '@mui/material';
 import HomeManager from './HomeManager';
+import CompanyInfo from './CompanyInfo';
 import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
+import LinearProgress from '../../../../common/LinearProgress';
 
 const HomeManagementPage = () => {
   const [privileges, setPrivileges] = useState({});
@@ -33,7 +35,7 @@ const HomeManagementPage = () => {
     fetchPrivileges();
   }, []);
 
-  if (loading) return null;
+  if (loading) return <LinearProgress loading={true} />;
 
   if (!authorized) {
     return "You are not authorized to view this page. Please contact to Admin to grant you privileges.";
@@ -41,6 +43,7 @@ const HomeManagementPage = () => {
 
   return (
     <Box sx={{ py: { xs: 2, md: 4 }, px: { xs: 1, md: 4 } }}>
+      <LinearProgress loading={loading} />
       <Paper 
         elevation={0} 
         sx={{ 
@@ -52,6 +55,9 @@ const HomeManagementPage = () => {
         }}
       >
         <HomeManager />
+        <Box sx={{ mt: 4, pt: 4, borderTop: '1px dashed', borderColor: 'divider' }}>
+          <CompanyInfo />
+        </Box>
       </Paper>
     </Box>
   );

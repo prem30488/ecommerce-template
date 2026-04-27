@@ -34,12 +34,16 @@ const componentMap = {
     OnlineSupport
 };
 
+import LinearProgress from "../../common/LinearProgress";
+
 export const Shop = () => {
     const [sections, setSections] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchSections = async () => {
             try {
+                setLoading(true);
                 const data = await getHomeSections();
                 // Filter only active sections and sort by order just in case
                 const activeSections = data.filter(s => s.active).sort((a, b) => a.order - b.order);
@@ -48,6 +52,8 @@ export const Shop = () => {
                 console.error('Error fetching home sections:', error);
                 // Fallback to default order if API fails
                 setSections([]);
+            } finally {
+                setLoading(false);
             }
         };
         fetchSections();
@@ -82,6 +88,7 @@ export const Shop = () => {
 
     return (
         <React.Fragment>
+            <LinearProgress loading={loading} />
             <SEO
                 title={`Home | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
                 description={COMPANY_INFO.seoDescription}

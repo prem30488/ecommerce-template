@@ -6,6 +6,7 @@ import axios from 'axios';
 import Alert from 'react-s-alert';
 import { API_BASE_URL } from '../../../../constants';
 import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
+import LinearProgress from '../../../../common/LinearProgress';
 
 const ReviewManager = () => {
     const [reviews, setReviews] = useState([]);
@@ -188,6 +189,7 @@ const ReviewManager = () => {
 
     return (
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+            <LinearProgress loading={loading || authLoading} />
             <Paper sx={{ p: 4, borderRadius: 4, boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
                 <Box display="flex" justifyContent="center" alignItems="center" mb={4}>
                     <Typography variant="h5" fontWeight={400} letterSpacing="-0.02em" color="#0f172a">

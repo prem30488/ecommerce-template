@@ -7,6 +7,7 @@ import PremiumCollectionCard from "./PremiumCollectionCard";
 import "./Categorywise.css";
 import SEO from "../components/SEO";
 import { COMPANY_INFO } from "../constants/companyInfo";
+import LinearProgress from "../common/LinearProgress";
 
 
 const Categorywise = () => {
@@ -125,6 +126,7 @@ const Categorywise = () => {
 
   return (
     <div className="cw-page">
+      <LinearProgress loading={isLoading} />
       {category?.title && (
         <SEO
           title={category?.title + ` | ${COMPANY_INFO.name} | Category wise search`}

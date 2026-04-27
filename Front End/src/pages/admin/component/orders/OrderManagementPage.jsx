@@ -3,14 +3,17 @@ import { Paper, Box, Typography } from '@mui/material';
 import { OrderTable } from './OrderTable';
 import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
 import Alert from 'react-s-alert';
+import LinearProgress from '../../../../common/LinearProgress';
 
 const OrderManagementPage = () => {
   const [privileges, setPrivileges] = useState({});
   const [currentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPrivileges = async () => {
       try {
+        setLoading(true);
         const user = await getCurrentUser();
         setCurrentUser(user);
 
@@ -29,6 +32,8 @@ const OrderManagementPage = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
         Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      } finally {
+        setLoading(false);
       }
     };
     fetchPrivileges();
@@ -42,6 +47,7 @@ const OrderManagementPage = () => {
 
   return (
     <Box sx={{ py: { xs: 2, md: 4 }, px: { xs: 1, md: 4 } }}>
+      <LinearProgress loading={loading} />
       <Paper 
         elevation={0} 
         sx={{ 

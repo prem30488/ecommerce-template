@@ -12,6 +12,7 @@ import Wishlist from "./pages/wishlist/wishlist";
 import SharedWishlist from "./pages/wishlist/shared-wishlist";
 
 import About from "./pages/About";
+import LinearProgress from './common/LinearProgress';
 import Product from "./pages/Product";
 import Notfound from "./pages/404";
 import OurTeam from "./components/OurTeam";
@@ -161,6 +162,7 @@ class App extends Component {
 	render() {
 		return (
 			<div className="App">
+				<LinearProgress loading={this.state.loading} />
 				<ShopContextProvider>
 					<WishlistContextProvider>
 						<ScrollToTop />

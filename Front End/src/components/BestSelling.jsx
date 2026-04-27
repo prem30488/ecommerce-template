@@ -7,6 +7,7 @@ import React from "react";
 import SEO from "../components/SEO";
 import { COMPANY_INFO } from "../constants/companyInfo";
 import Pagination from "../components/Pagination";
+import LinearProgress from "../common/LinearProgress";
 
 const BestSelling = () => {
 
@@ -88,6 +89,7 @@ const BestSelling = () => {
 
   return (
     <div className="container mx-auto pb-20">
+      <LinearProgress loading={isLoading} />
       <SEO
         title="Bestselling Products"
         description={`Discover our top-rated collection featuring: ${allTitles.substring(0, 150)}...`}

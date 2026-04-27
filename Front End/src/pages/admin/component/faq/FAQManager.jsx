@@ -30,6 +30,7 @@ import { API_BASE_URL } from '../../../../constants';
 import Alert from 'react-s-alert';
 import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
 import axios from 'axios';
+import LinearProgress from '../../../../common/LinearProgress';
 const FAQManager = () => {
     const [faqs, setFaqs] = useState([]);
     const [open, setOpen] = useState(false);
@@ -238,6 +239,7 @@ const FAQManager = () => {
 
     return (
         <Box sx={{ p: 3 }}>
+            <LinearProgress loading={loading || authLoading} />
             <Box sx={{ 
                 display: 'flex', 
                 flexDirection: { xs: 'column', md: 'row' }, 

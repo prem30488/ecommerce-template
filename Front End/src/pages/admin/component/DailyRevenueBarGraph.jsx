@@ -31,7 +31,6 @@ const DailyRevenueBarGraph = () => {
 
       fetchDailyRevenueSum()
       .then(response => {
-      console.log("data : :"+ JSON.stringify(response.data));
           setData(response.data);
       })
       .catch(error => {

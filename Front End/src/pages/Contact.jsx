@@ -7,6 +7,8 @@ import { API_BASE_URL } from '../constants/index';
 import styles from './Contact.module.css';
 import { COMPANY_INFO } from '../constants/companyInfo';
 import SEO from '../components/SEO';
+import CompanyGMapInfo from '../components/CompanyGMapInfo';
+import LinearProgress from '../common/LinearProgress';
 
 export const Contact = () => {
   const sendEmail = async (values) => {
@@ -60,6 +62,7 @@ export const Contact = () => {
 
   return (
     <div className={styles.contactPage}>
+      <LinearProgress loading={formik.isSubmitting} />
       <SEO title="Contact Us" description={`Contact ${COMPANY_INFO.name} for any inquiries regarding our premium fashion products.`} />
       <div className={styles.contactHeader}>
         <h1 className={styles.sectionTitle}>{COMPANY_INFO.name}</h1>
@@ -75,18 +78,11 @@ export const Contact = () => {
           <p><strong>Website:</strong> <a href={COMPANY_INFO.websiteUrl} target="_blank" rel="noopener noreferrer">{COMPANY_INFO.websiteUrl}</a></p>
         </div>
       </div>
-      <div className={styles.mapContainer}>
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7382.910864552293!2d72.63761048663011!3d22.97321218415783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e89cb954b6c89%3A0xb01c3551fd30a292!2sHanley%20Healthcare!5e0!3m2!1sen!2sin!4v1774378103451!5m2!1sen!2sin"
-          width="100%"
-          height="400"
-          style={{ border: 0 }}
-          allowFullScreen=""
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          title={`${COMPANY_INFO.name} Location`}
-        ></iframe>
-      </div>
+      {COMPANY_INFO.googleMapLink && (
+        <div className={styles.mapContainer}>
+          <CompanyGMapInfo height="400" />
+        </div>
+      )}
 
 
 

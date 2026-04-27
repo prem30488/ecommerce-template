@@ -3,6 +3,7 @@ import { MdNotifications, MdFilterList, MdDoneAll, MdDeleteOutline, MdShoppingCa
 import { fetchDashboardNotifications } from '../../util/APIUtils';
 import { formatDate } from '../../util/regionalSettings';
 import './AdminNotifications.css';
+import LinearProgress from '../../common/LinearProgress';
 
 const TYPE_TABS = [
     { key: 'all', label: 'All Notifications' },
@@ -60,6 +61,7 @@ const AdminNotifications = () => {
 
     return (
         <div className="admin-notif-page">
+            <LinearProgress loading={loading} />
             <header className="notif-page-header">
                 <div className="header-left">
                     <h2>Notifications</h2>

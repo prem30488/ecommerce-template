@@ -8,6 +8,7 @@ import { useContext } from 'react';
 import OnlineSupport from "../components/OnlineSupport";
 import { COMPANY_INFO } from '../constants/companyInfo';
 import Pagination from '../components/Pagination';
+import LinearProgress from "../common/LinearProgress";
 
 const ProductKids = () => {
   const { products } = useContext(ShopContext);
@@ -87,6 +88,7 @@ const ProductKids = () => {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fffbf5", paddingTop: "80px" }}>
+      <LinearProgress loading={isLoading} />
       {/* Kids' Banner */}
       <div style={{ position: "relative", width: "100%", overflow: "hidden", marginBottom: "2rem", boxShadow: "0 8px 30px rgba(0,0,0,0.15)" }}>
         <img

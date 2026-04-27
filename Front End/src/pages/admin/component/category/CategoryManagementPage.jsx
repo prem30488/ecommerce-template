@@ -5,14 +5,17 @@ import CategoryManager from './CategoryManager';
 import { getCurrentUser, getPrivileges } from '../../../../util/APIUtils';
 import { API_BASE_URL } from '../../../../constants';
 import Alert from 'react-s-alert';
+import LinearProgress from '../../../../common/LinearProgress';
 
 const CategoryManagementPage = () => {
   const [privileges, setPrivileges] = useState({});
   const [currentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPrivileges = async () => {
       try {
+        setLoading(true);
         const user = await getCurrentUser();
         setCurrentUser(user);
 
@@ -31,6 +34,8 @@ const CategoryManagementPage = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
         Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      } finally {
+        setLoading(false);
       }
     };
     fetchPrivileges();
@@ -44,6 +49,7 @@ const CategoryManagementPage = () => {
 
   return (
     <Box sx={{ py: { xs: 2, md: 4 }, px: { xs: 1, md: 4 } }}>
+      <LinearProgress loading={loading} />
       <Paper 
         elevation={0} 
         sx={{ 

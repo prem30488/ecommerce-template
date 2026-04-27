@@ -217,38 +217,73 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 1200px) {
-  .dashboard-row-primary { grid-template-columns: 1fr; }
-  .dashboard-row-secondary { grid-template-columns: 1fr 1fr; }
+@media (max-width: 1440px) {
+  .premium-dashboard { padding: 2rem; }
+  .dashboard-title { font-size: 2rem; }
+  .dashboard-row-primary { grid-template-columns: 1.5fr 1fr; gap: 1.25rem; }
 }
-@media (max-width: 768px) {
-  .dashboard-row-secondary { grid-template-columns: 1fr; }
-  .product-compare-grid { grid-template-columns: 1fr; }
-  .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  .premium-dashboard { padding: 1rem; }
-  
-  .kpi-grid {
-    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
-    gap: 1rem;
+
+@media (max-width: 1280px) {
+  .premium-dashboard { padding: 1.5rem; }
+  .dashboard-row-primary { grid-template-columns: 1fr; gap: 1.5rem; }
+  .dashboard-row-secondary { grid-template-columns: 1fr 1fr; }
+  .dashboard-row-secondary > *:last-child:nth-child(odd) {
+    grid-column: span 2;
   }
-  
-  .chart-wrapper {
-    min-height: 300px;
-  }
-  
-  .dashboard-title {
-    font-size: 1.75rem;
+  .kpi-grid { 
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 1rem; 
   }
 }
 
+@media (max-width: 1024px) {
+  .dashboard-title { font-size: 1.75rem; }
+  .section-divider-title { margin: 2.5rem 0 1.25rem 0; }
+}
+
+@media (max-width: 768px) {
+  .premium-dashboard { padding: 1rem; }
+  .dashboard-header { flex-direction: column; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+  .dashboard-title { font-size: 1.5rem; }
+  .dashboard-subtitle { font-size: 0.9rem; }
+  
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr; /* 2 columns on mobile/small tablet is often better than 1 */
+    gap: 0.75rem;
+  }
+  
+  .dashboard-row-secondary { grid-template-columns: 1fr; }
+  .product-compare-grid { grid-template-columns: 1fr; }
+  
+  .chart-wrapper {
+    min-height: 280px;
+  }
+  
+  .section-card {
+    padding: 1.25rem;
+  }
+  
+  .section-divider-title { margin: 2rem 0 1rem 0; font-size: 1.25rem; }
+}
+
 @media (max-width: 480px) {
-    .kpi-value {
-        font-size: 1.75rem;
-    }
-    
-    .kpi-card {
-        padding: 1.25rem;
-    }
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .kpi-value {
+    font-size: 1.75rem;
+  }
+  
+  .kpi-card {
+    padding: 1.25rem;
+  }
+  
+  .dashboard-date {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
 }
 
 /* --- Section Cards (For Charts & Tables) --- */

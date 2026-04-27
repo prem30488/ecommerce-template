@@ -18,6 +18,7 @@ import { trackOrder } from '../util/APIUtils';
 import dayjs from 'dayjs';
 import { FaTruck, FaBox, FaCheckCircle, FaSearch, FaClock } from 'react-icons/fa';
 import SEO from '../components/SEO';
+import LinearProgress from '../common/LinearProgress';
 
 const TrackOrder = () => {
     const [orderId, setOrderId] = useState('');
@@ -118,6 +119,7 @@ const TrackOrder = () => {
             paddingBottom: '50px',
             borderTop: '1px solid var(--color-primary-glow)'
         }}>
+            <LinearProgress loading={loading} />
             <SEO title="Track Your Order" description="Easily track your order status in real-time." />
             <Container maxWidth="md">
                 <Paper elevation={6} sx={{ borderRadius: '15px', overflow: 'hidden', border: '1px solid var(--color-primary-border)' }}>

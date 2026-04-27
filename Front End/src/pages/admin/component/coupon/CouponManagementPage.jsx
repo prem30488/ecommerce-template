@@ -6,14 +6,17 @@ import { CssBaseline, Container } from '@mui/material';
 import {getCurrentUser, getPrivileges} from '../../../../util/APIUtils';
 import { API_BASE_URL } from '../../../../constants';
 import Alert from 'react-s-alert';
+import LinearProgress from '../../../../common/LinearProgress';
 
 const CouponManagementPage = () => {
   const [privileges, setPrivileges] = useState({});  
   const [currentUser,setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPrivileges = async () => {
       try {
+        setLoading(true);
         const user = await getCurrentUser();
         setCurrentUser(user);
         
@@ -32,6 +35,8 @@ const CouponManagementPage = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
         Alert.error((error && error.message) || 'Oops! Something went wrong. Please try again!');
+      } finally {
+        setLoading(false);
       }
     };
     fetchPrivileges();
@@ -44,7 +49,8 @@ const CouponManagementPage = () => {
   }
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-    <CssBaseline />
+      <LinearProgress loading={loading} />
+      <CssBaseline />
     <Paper elevation={3} style={{ padding: '20px' }}>
       <Typography variant="h5" align="center">Coupon Management</Typography>
       {/* Category management content */}

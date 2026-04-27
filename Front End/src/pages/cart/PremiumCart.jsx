@@ -5,6 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 import "./premium-cart.css";
 import { API_BASE_URL } from "../../constants";
 import { getCoupons } from "../../util/APIUtils";
+import ConfirmationModal from "../../components/ConfirmationModal";
+
 export const PremiumCart = ({ onClose }) => {
   const { cartItems, martItems, lartItems, freeCartItems, freeMartItems, freeLartItems, getTotalCartAmount, addTotalAfterDiscount, resetCart, products } = useContext(ShopContext);
   const totalAmount = getTotalCartAmount();
@@ -15,6 +17,7 @@ export const PremiumCart = ({ onClose }) => {
 
   const [availableCoupons, setAvailableCoupons] = useState([]);
   const [couponError, setCouponError] = useState("");
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCoupons = async () => {
@@ -42,6 +45,15 @@ export const PremiumCart = ({ onClose }) => {
     }
   };
 
+  const handleClearCart = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmClearCart = () => {
+    resetCart();
+    setIsConfirmModalOpen(false);
+  };
+
   const discountAmount = totalAmount * (discountPercent / 100);
   const grandTotal = totalAmount - discountAmount;
   const progressPercent = Math.min((totalAmount / freeShippingThreshold) * 100, 100);
@@ -59,6 +71,13 @@ export const PremiumCart = ({ onClose }) => {
 
   return (
     <div className="premium-cart-container">
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmClearCart}
+        title="Clear Cart"
+        message="Are you sure you want to clear your entire cart? This action cannot be undone."
+      />
       {/* Header */}
       <div className="premium-cart-header">
         <div>
@@ -68,7 +87,7 @@ export const PremiumCart = ({ onClose }) => {
         <div className="header-actions">
           {hasItems && (
             <button
-              onClick={resetCart}
+              onClick={handleClearCart}
               className="clear-cart-btn"
             >
               <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>

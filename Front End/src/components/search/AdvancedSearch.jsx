@@ -10,6 +10,7 @@ import './advanced-search.css';
 
 import { API_BASE_URL } from '../../constants';
 import { COMPANY_INFO } from '../../constants/companyInfo';
+import LinearProgress from '../../common/LinearProgress';
 
 export { SolrFacetedSearch, defaultComponentPack, SolrClient };
 
@@ -45,7 +46,7 @@ const STATS = [
 class AdvancedSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = { test: false };
+    this.state = { test: false, loading: true };
     this.editUser = this.editUser.bind(this);
   }
 
@@ -185,6 +186,7 @@ class AdvancedSearch extends Component {
       sortFields: sortFields,
       pageStrategy: "paginate",
       onChange: (state, handlers) => {
+        this.setState({ loading: state.results.pending });
         if (this.solrRoot) {
           this.solrRoot.render(
             <React.Fragment>
@@ -212,6 +214,7 @@ class AdvancedSearch extends Component {
   render() {
     return (
       <div className="as-page">
+        <LinearProgress loading={this.state.loading} />
         {/* Hero ------------------------------------------------ */}
         <div className="as-hero">
           <h1>Advanced Product Search</h1>

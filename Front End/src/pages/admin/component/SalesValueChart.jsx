@@ -27,7 +27,6 @@ const SalesValueChart = () => {
 
       fetchMonthlySalesSum()
       .then(response => {
-      console.log("data : :"+ JSON.stringify(response.data));
           setData(response.data);
       })
       .catch(error => {
