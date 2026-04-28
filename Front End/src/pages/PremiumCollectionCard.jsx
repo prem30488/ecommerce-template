@@ -10,7 +10,7 @@ import './PremiumCollectionCard.css';
 
 const PremiumCollectionCard = ({ product }) => {
     const navigate = useNavigate();
-    const { addToCart, categories, cartItems, martItems, lartItems } = useContext(ShopContext);
+    const { addToCart, removeFromCart, categories, cartItems, martItems, lartItems } = useContext(ShopContext);
     const { addToWishlist, removeFromWishlist, isInWishlist } = useContext(WishlistContext);
 
     if (!product) return null;
@@ -100,6 +100,32 @@ const PremiumCollectionCard = ({ product }) => {
         addToCart(product.id, bestSize, flavorId);
     };
 
+    const handleRemoveOne = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Find first available size/flavor to remove
+        let removed = false;
+        const maps = [
+            { map: cartItems, size: 'S' },
+            { map: martItems, size: 'M' },
+            { map: lartItems, size: 'L' }
+        ];
+        
+        for (const { map, size } of maps) {
+            for (const key in map) {
+                // Check if key matches product ID (either as exact number/string or as prefix with flavor)
+                if ((key === String(product.id) || key === Number(product.id) || key.startsWith(`${product.id}_`)) && map[key] > 0) {
+                    const flavorId = String(key).includes('_') ? key.split('_')[1] : null;
+                    removeFromCart(product.id, size, flavorId);
+                    removed = true;
+                    break;
+                }
+            }
+            if (removed) break;
+        }
+    };
+
     const handleQuickView = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -146,9 +172,34 @@ const PremiumCollectionCard = ({ product }) => {
                 ) : (
                     <div className="card-overlay">
                         <div className="overlay-top-row">
-                            <button className="overlay-btn overlay-btn-primary" onClick={handleAddToCart}>
-                                {cartCount > 0 ? `In Cart (${cartCount})` : 'Add to Cart'}
-                            </button>
+                            {cartCount > 0 ? (
+                                <div className="overlay-stepper">
+                                    <button
+                                        className="stepper-btn stepper-minus"
+                                        onClick={handleRemoveOne}
+                                    >
+                                        −
+                                    </button>
+                                    <div className="stepper-display">
+                                        <span className="stepper-count">{cartCount}</span>
+                                        <span className="stepper-label">In Cart</span>
+                                    </div>
+                                    <button
+                                        className="stepper-btn stepper-plus"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleAddToCart(e);
+                                        }}
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            ) : (
+                                <button className="overlay-btn overlay-btn-primary" onClick={handleAddToCart}>
+                                    Add to Cart
+                                </button>
+                            )}
                             <button className="overlay-btn overlay-btn-secondary" onClick={handleQuickView}>
                                 View Details
                             </button>
@@ -169,10 +220,10 @@ const PremiumCollectionCard = ({ product }) => {
                 <div className="card-brand-row">
                     <span className="card-brand">{product.brand || 'Elite Healthcare'}</span>
                     {getDisplayCategories() && (
-                        <span className="card-category">  • {getDisplayCategories()}</span>
+                        <span className="card-category">{getDisplayCategories()}</span>
                     )}
                     {getDisplayForm() && (
-                        <span className="card-form">  • {getDisplayForm()}</span>
+                        <span className="card-form">{getDisplayForm()}</span>
                     )}
                 </div>
                 <h3 className="card-title">{product.title}</h3>
@@ -198,6 +249,47 @@ const PremiumCollectionCard = ({ product }) => {
                         <span className="in-stock">In Stock ({product.stock})</span>
                     ) : (
                         <span className="out-of-stock">Out of Stock</span>
+                    )}
+                </div>
+
+                {/* Always-visible Add to Cart / Stepper section */}
+                <div className="card-cta-section" style={{ marginTop: '16px' }}>
+                    {cartCount > 0 ? (
+                        <div className="overlay-stepper" style={{ border: '1px solid #e2e8f0', width: '100%' }}>
+                            <button
+                                className="stepper-btn stepper-minus"
+                                onClick={handleRemoveOne}
+                            >
+                                −
+                            </button>
+                            <div className="stepper-display">
+                                <span className="stepper-count">{cartCount}</span>
+                                <span className="stepper-label">In Cart</span>
+                            </div>
+                            <button
+                                className="stepper-btn stepper-plus"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleAddToCart(e);
+                                }}
+                            >
+                                +
+                            </button>
+                        </div>
+                    ) : (
+                        <button 
+                            className="overlay-btn overlay-btn-primary" 
+                            style={{ 
+                                width: '100%', 
+                                background: 'var(--color-primary)', 
+                                color: 'white',
+                                boxShadow: '0 4px 12px var(--color-primary-shadow)'
+                            }} 
+                            onClick={handleAddToCart}
+                        >
+                            Add to Cart
+                        </button>
                     )}
                 </div>
             </div>

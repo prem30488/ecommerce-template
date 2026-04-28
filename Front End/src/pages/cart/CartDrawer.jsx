@@ -35,10 +35,31 @@ export default function CartDrawer() {
         className="cart-header-trigger"
         onClick={toggleDrawer('right', true)}
         title="View Cart"
-        style={{ fontSize: "24px", cursor: 'pointer', display: 'inline-flex', alignItems: 'center', marginRight: "10px" }}
+        style={{ 
+          fontSize: "24px", 
+          cursor: 'pointer', 
+          display: 'inline-flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          position: 'relative',
+          marginRight: "15px" 
+        }}
       >
         <FaShoppingCart style={{ color: '#0ea5e9' }} />
-        <span className='badge badge-warning' id='lblCartCount' style={{ marginLeft: 6 }}>
+        <span className='badge badge-warning' id='lblCartCount' style={{ 
+          position: 'absolute',
+          top: '-8px',
+          right: '-8px',
+          margin: 0,
+          fontSize: '10px',
+          minWidth: '18px',
+          height: '18px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '50%',
+          padding: '0'
+        }}>
           {totalCount}
         </span>
       </span>

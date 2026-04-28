@@ -446,13 +446,35 @@ export const PremiumProductDetails = () => {
         </div>
       )}
 
-      {/* Breadcrumb */}
-      <div className="ppp-breadcrumb">
-        <Link to="/">Home</Link>
-        <span>›</span>
-        <Link to="/products">Products</Link>
-        <span>›</span>
-        <span>{product.title}</span>
+      {/* Breadcrumbs - Glassmorphism Style */}
+      <div style={{ maxWidth: "1490px", margin: "0 auto", padding: "0 32px" }}>
+        <nav className="premium-breadcrumbs" style={{
+          background: "white",
+          padding: "10px 20px",
+          borderRadius: "12px",
+          width: "fit-content",
+          boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
+          marginBottom: "24px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px"
+        }}>
+          <Link to="/" style={{ color: "#64748b", textDecoration: "none", fontSize: "13px", fontWeight: 500 }}>Home</Link>
+          <span className="premium-breadcrumb-separator" style={{ color: "#94a3b8", fontSize: "16px" }}>›</span>
+          <Link to="/products" style={{ color: "#64748b", textDecoration: "none", fontSize: "13px", fontWeight: 500 }}>Shop</Link>
+          <span className="premium-breadcrumb-separator" style={{ color: "#94a3b8", fontSize: "16px" }}>›</span>
+          {visibleCategories.length > 0 && (
+            <>
+              <Link to={`/products?category=${encodeURIComponent(visibleCategories[0])}`} style={{ color: "#64748b", textDecoration: "none", fontSize: "13px", fontWeight: 500 }}>
+                {visibleCategories[0]}
+              </Link>
+              <span className="premium-breadcrumb-separator" style={{ color: "#94a3b8", fontSize: "16px" }}>›</span>
+            </>
+          )}
+          <span className="premium-breadcrumb-current" style={{ color: "#0f172a", fontWeight: 600, fontSize: "13px" }}>
+            {product.title}
+          </span>
+        </nav>
       </div>
 
       {/* ── MAIN GRID ── */}

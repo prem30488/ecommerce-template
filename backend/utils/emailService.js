@@ -526,7 +526,7 @@ class EmailService {
           </div>
 
           <div class="footer">
-            <p style="margin: 0;">© 2024 Our Store. All rights reserved.</p>
+            <p style="margin: 0;">© ${new Date().getFullYear()} Our Store. All rights reserved.</p>
             <p style="margin: 10px 0 0 0;">
               <a href="${appUrl}/policies/privacy-policy">Privacy</a> | 
               <a href="${appUrl}/policies/terms-of-use">Terms</a> | 

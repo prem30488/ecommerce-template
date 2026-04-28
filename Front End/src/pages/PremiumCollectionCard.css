@@ -329,47 +329,52 @@
 
 
 .card-content {
-  padding: 20px 0;
-  text-align: center;
+  padding: 20px 16px;
+  text-align: left;
 }
 
 .card-brand-row {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0;
-  margin-bottom: 6px;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.card-brand, .card-category, .card-form {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
 }
 
 .card-brand {
-  font-size: 11px;
   color: var(--premium-text-muted);
-  text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: 0.1em;
 }
 
 .card-category {
-  font-size: 11px;
   color: var(--color-chip-category);
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 0.05em;
 }
 
 .card-form {
-  font-size: 11px;
   color: #6d28d9;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+}
+
+/* Inline separator dot */
+.card-brand-row span:not(:last-child)::after {
+  content: "•";
+  margin-left: 8px;
+  color: #cbd5e1;
+  font-size: 8px;
 }
 
 .card-title {
   font-size: 18px;
   font-weight: 700;
   color: var(--premium-text);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -381,10 +386,10 @@
 
 .card-rating {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 
 .card-stars {
@@ -417,15 +422,16 @@
 
 .card-price-row {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 10px;
+  margin-bottom: 10px;
 }
 
 .card-final-price {
   font-size: 17px;
   font-weight: 800;
-  color: var(--premium-text);
+  color: var(--color-primary);
 }
 
 .card-original-price {
@@ -435,7 +441,8 @@
 }
 
 .card-stock-status {
-  margin-top: 8px;
+  margin-top: 0;
+  margin-bottom: 16px;
   font-size: 13px;
   font-weight: 500;
 }
@@ -450,6 +457,68 @@
   /* Red for out-of-stock */
 }
 
+/* Stepper Styles */
+.overlay-stepper {
+  flex: 1.2;
+  display: flex;
+  height: 38px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stepper-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #64748b;
+}
+
+.stepper-minus:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.stepper-plus:hover {
+  background: #e0f2fe;
+  color: #0ea5e9;
+}
+
+.stepper-display {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+  background: #fafafa;
+}
+
+.stepper-count {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.stepper-label {
+  font-size: 7px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  margin-top: 1px;
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .card-overlay {
@@ -458,6 +527,11 @@
     position: relative;
     background: transparent;
     padding: 0 16px 16px;
+  }
+
+  .overlay-stepper {
+    height: 36px;
+    border: 1px solid #e2e8f0;
   }
 
   .overlay-btn {

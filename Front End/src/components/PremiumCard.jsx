@@ -17,7 +17,7 @@ const SIZES = [
 
 const PremiumCard = ({ product }) => {
     const navigate = useNavigate();
-    const { addToCart, cartItems, categories: allCategories } = useContext(ShopContext);
+    const { addToCart, removeFromCart, cartItems, martItems, lartItems, categories: allCategories } = useContext(ShopContext);
     const [quickViewProduct, setQuickViewProduct] = useState(null);
     const [sel, setSel] = useState({ flavorIdx: 0, size: 'S' });
 
@@ -64,15 +64,21 @@ const PremiumCard = ({ product }) => {
         };
     };
 
-    const getCartCount = () =>
-        Object.keys(cartItems).reduce((sum, key) =>
-            key.startsWith(`${product.id}_`) ? sum + (cartItems[key] || 0) : sum, 0);
+    const getCurrentFlavorId = () => {
+        const flavor = product.productFlavors?.[sel.flavorIdx];
+        return flavor?.flavor_id || (product.productFlavors && product.productFlavors.length > 0 ? product.productFlavors[0].flavor_id : null);
+    };
+
+    const getCartCount = () => {
+        const itemMap = sel.size === "M" ? martItems : (sel.size === "L" ? lartItems : cartItems);
+        const flavorId = getCurrentFlavorId();
+        const cartKey = flavorId ? `${product.id}_${flavorId}` : product.id;
+        return itemMap[cartKey] || 0;
+    };
 
     const handleAddToCart = (e) => {
-        e.stopPropagation();
-        const flavor = product.productFlavors?.[sel.flavorIdx];
-        const flavorId = flavor?.flavor_id || (product.productFlavors && product.productFlavors.length > 0 ? product.productFlavors[0].flavor_id : null);
-
+        if (e) e.stopPropagation();
+        const flavorId = getCurrentFlavorId();
         addToCart(product.id, sel.size, flavorId);
     };
 
@@ -208,7 +214,7 @@ const PremiumCard = ({ product }) => {
                                 No immediate offers
                             </div>
                         )}
-                        <div className="frequent-card-image" style={{ minHeight: '100%', height: '100%', width: '100%', display: 'flex', margin: '0 auto', position: "relative", maxHeight: "100%", maxWidth: "100%" }}>
+                        <div className="frequent-card-image" style={{ minHeight: '100%', height: '100%', width: '100%', display: 'flex', position: "relative", maxHeight: "100%", maxWidth: "100%" }}>
                             {(product.cardCarouselImages?.length || product.image || product.img || product.ProductImages?.length) ? (
                                 <div style={{ height: '100%', width: '100%' }}>
                                     <ImageCarousel
@@ -267,74 +273,7 @@ const PremiumCard = ({ product }) => {
                                 />
                             </div>
                         </div>
-                        {/* CTA Row */}
-                        <div className="parth">
-                            {/* Images first */}
-                            <img
-                                src="/images/iso.png"
-                                alt="ISO"
-                                title={COMPANY_INFO.name}
-                                className="pc-badge-img"
-                                style={{ height: '55px', width: 'auto', marginLeft: "10px" }}
-                            />
-                            <img
-                                src="/images/time.png"
-                                alt="Delivery time"
-                                title={COMPANY_INFO.name}
-                                className="pc-badge-img"
-                                style={{ height: '55px', width: 'auto', marginLeft: "10px" }}
-                            />
 
-                            {/* Then View Details Button */}
-                            <button
-                                className="prem group rounded-[0.6rem] box-border bg-transparent transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
-                                style={{
-                                    border: "2px solid var(--color-primary)",
-                                    color: "var(--color-primary)",
-                                    padding: "10px 20px"
-                                }}
-                                onClick={(e) => { e.stopPropagation(); navigate(`/productDetails/${product.id}`); }}
-                            >
-                                <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>View details</span>
-                                <svg className="w-[16px] h-[16px]"
-                                    viewBox="0 0 60 60" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </button>
-
-                            {/* Then Add to Cart Button */}
-                            <button
-                                className="prem group rounded-[0.6rem] box-border transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
-                                style={{
-                                    backgroundColor: "var(--color-primary)",
-                                    color: "white",
-                                    border: "2px solid var(--color-primary)",
-                                    boxShadow: "0 4px 12px var(--color-primary-shadow)",
-                                    padding: "10px 20px"
-                                }}
-                                onClick={handleAddToCart}
-                            >
-                                <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>
-                                    {cartCount > 0 ? `In Cart (${cartCount})` : "Add To Cart"}
-                                </span>
-                                <svg
-                                    className="w-[20px] h-[20px]"
-                                    viewBox="0 0 30 30"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <circle cx="9" cy="21" r="1" />
-                                    <circle cx="20" cy="21" r="1" />
-                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                                </svg>
-                            </button>
-                            <img src="/images/iso.png" alt="ISO" title={COMPANY_INFO.name} style={{ height: '70px', width: '200px', float: "center", marginLeft: "40px", verticalAlign: "top" }} />
-                            <img src="/images/time.png" alt="Delievry time" title={COMPANY_INFO.name} style={{ height: '70px', width: '350px', float: "center", marginLeft: "20px", verticalAlign: "top" }} />
-
-                        </div>
 
                         {/* Flavor and Metas (side by side) */}
                         {flavors.length > 0 && (
@@ -368,7 +307,7 @@ const PremiumCard = ({ product }) => {
                         )}
 
                         {/* Repositioned Gold Rating Section - Below Categories & Form */}
-                        <div className="flex justify-end mb-4">
+                        <div className="flex justify-start mb-4">
                             <div className="fbc-review-pill flex items-center gap-3">
                                 <div className="fbc-stars-gold">
                                     {[...Array(5)].map((_, i) => (
@@ -418,7 +357,7 @@ const PremiumCard = ({ product }) => {
                                         ₹{originalPrice.toLocaleString()}
                                     </span>
                                     <div className="flex items-center gap-2">
-                                        <span style={{ fontSize: '16px', fontWeight: '900', color: '#D4AF37', letterSpacing: '-0.02em' }}>
+                                        <span style={{ fontSize: '16px', fontWeight: '900', color: 'var(--color-primary)', letterSpacing: '-0.02em' }}>
                                             ₹{Math.round(finalPrice).toLocaleString()}
                                         </span>
                                         <span style={{ fontSize: '9px', fontWeight: '900', backgroundColor: '#fffbeb', color: '#d97706', padding: '2px 6px', borderRadius: '4px', border: '1px solid #fef3c7', textTransform: 'uppercase', letterSpacing: '-0.02em' }}>
@@ -427,10 +366,108 @@ const PremiumCard = ({ product }) => {
                                     </div>
                                 </>
                             ) : (
-                                <span className="frequent-card-price">₹{originalPrice.toLocaleString()}</span>
+                                <span className="frequent-card-price" style={{ color: "var(--color-primary)" }}>₹{originalPrice.toLocaleString()}</span>
                             )}
                         </div>
                         <span className="frequent-card-stock">In Stock</span>
+                    </div>
+
+                    {/* CTA Row - Moved below Price & Stock */}
+                    <div className="parth" style={{ marginTop: '16px' }}>
+                        {/* Images first */}
+                        <img
+                            src="/images/iso.png"
+                            alt="ISO"
+                            title={COMPANY_INFO.name}
+                            className="pc-badge-img"
+                            style={{ height: '55px', width: 'auto', marginLeft: "10px" }}
+                        />
+                        <img
+                            src="/images/time.png"
+                            alt="Delivery time"
+                            title={COMPANY_INFO.name}
+                            className="pc-badge-img"
+                            style={{ height: '55px', width: 'auto', marginLeft: "10px" }}
+                        />
+
+                        {/* Then View Details Button */}
+                        <button
+                            className="prem group rounded-[0.6rem] box-border bg-transparent transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
+                            style={{
+                                border: "2px solid var(--color-primary)",
+                                color: "var(--color-primary)",
+                                padding: "10px 20px"
+                            }}
+                            onClick={(e) => { e.stopPropagation(); navigate(`/productDetails/${product.id}`); }}
+                        >
+                            <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>View details</span>
+                            <svg className="w-[16px] h-[16px]"
+                                viewBox="0 0 60 60" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+
+                        {/* Then Add to Cart / Quantity Stepper */}
+                        {cartCount > 0 ? (
+                            <div className="prem flex items-center bg-[#f8fafc] border-2 border-slate-200 rounded-[0.6rem] overflow-hidden h-[38px] min-w-[120px]">
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        const flavorId = getCurrentFlavorId();
+                                        removeFromCart(product.id, sel.size, flavorId);
+                                    }}
+                                    className="flex-1 h-full flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors text-[16px] font-bold text-slate-500"
+                                >
+                                    −
+                                </button>
+                                <div className="flex-1 h-full flex flex-col items-center justify-center bg-white border-x border-slate-100">
+                                    <span className="text-[12px] font-black text-slate-900 leading-none">{cartCount}</span>
+                                    <span className="text-[7px] font-bold text-slate-400 uppercase tracking-tighter">In Cart</span>
+                                </div>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAddToCart(e);
+                                    }}
+                                    className="flex-1 h-full flex items-center justify-center hover:bg-sky-50 hover:text-sky-500 transition-colors text-[16px] font-bold text-slate-500"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                className="prem group rounded-[0.6rem] box-border transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
+                                style={{
+                                    backgroundColor: "var(--color-primary)",
+                                    color: "white",
+                                    border: "2px solid var(--color-primary)",
+                                    boxShadow: "0 4px 12px var(--color-primary-shadow)",
+                                    padding: "10px 20px"
+                                }}
+                                onClick={handleAddToCart}
+                            >
+                                <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>
+                                    Add To Cart
+                                </span>
+                                <svg
+                                    className="w-[20px] h-[20px]"
+                                    viewBox="0 0 30 30"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <circle cx="9" cy="21" r="1" />
+                                    <circle cx="20" cy="21" r="1" />
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                                </svg>
+                            </button>
+                        )}
+                        <img src="/images/iso.png" alt="ISO" title={COMPANY_INFO.name} style={{ height: '70px', width: '200px', marginLeft: "40px", verticalAlign: "top" }} />
+                        <img src="/images/time.png" alt="Delievry time" title={COMPANY_INFO.name} style={{ height: '70px', width: '350px', marginLeft: "20px", verticalAlign: "top" }} />
+
                     </div>
 
                     {/* Elite Trust Metrics: FAQs & Reviews Side-by-Side */}

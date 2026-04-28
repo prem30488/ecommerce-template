@@ -23,7 +23,7 @@ export const NEWSLETTER_TEMPLATES = [
         </div>
     </div>
     <div style="background: #f8fafc; padding: 20px; text-align: center; color: #64748b; font-size: 12px; border-top: 1px solid #e2e8f0;">
-        <p>© 2024 Hanley Healthcare LLP. All rights reserved.</p>
+        <p>© ${new Date().getFullYear()} Hanley Healthcare LLP. All rights reserved.</p>
     </div>
 </div>`
     },
@@ -49,7 +49,7 @@ export const NEWSLETTER_TEMPLATES = [
         </div>
     </div>
     <div style="background: #f8fafc; padding: 20px; text-align: center; color: #64748b; font-size: 12px; border-top: 1px solid #e2e8f0;">
-        <p>© 2024 Hanley Healthcare LLP. All rights reserved.</p>
+        <p>© ${new Date().getFullYear()} Hanley Healthcare LLP. All rights reserved.</p>
     </div>
 </div>`
     },
@@ -78,7 +78,7 @@ export const NEWSLETTER_TEMPLATES = [
         </div>
     </div>
     <div style="background: #f8fafc; padding: 20px; text-align: center; color: #64748b; font-size: 12px; border-top: 1px solid #e2e8f0;">
-        <p>© 2024 Hanley Healthcare LLP. All rights reserved.</p>
+        <p>© ${new Date().getFullYear()} Hanley Healthcare LLP. All rights reserved.</p>
     </div>
 </div>`
     },
@@ -106,7 +106,7 @@ export const NEWSLETTER_TEMPLATES = [
         </div>
     </div>
     <div style="background: #f8fafc; padding: 20px; text-align: center; color: #64748b; font-size: 12px; border-top: 1px solid #e2e8f0;">
-        <p>© 2024 Hanley Healthcare LLP. All rights reserved.</p>
+        <p>© ${new Date().getFullYear()} Hanley Healthcare LLP. All rights reserved.</p>
     </div>
 </div>`
     }

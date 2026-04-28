@@ -101,7 +101,7 @@ export default function Footer() {
             <div className="footer-col footer-newsletter">
               <h4>Sign Up to Newsletter</h4>
               <p>
-                Sign up for our newsletter to receive ₹500 off your first order and exclusive updates on new products and sales.
+                Sign up for our newsletter to receive updates about your first order and exclusive updates on new products and sales.
               </p>
               <form className="newsletter-form" onSubmit={async (e) => {
                 e.preventDefault();

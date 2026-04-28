@@ -153,19 +153,23 @@ const PremiumAllProducts = () => {
                 keywords={`${COMPANY_INFO.seoKeywords}, ${productKeywords}`}
             />
             <div className="premium-container">
-                {/* Breadcrumbs */}
-                <div className="premium-breadcrumbs">
+                {/* Breadcrumbs - Glassmorphism Style */}
+                <nav className="premium-breadcrumbs" style={{
+                    background: "white",
+                    padding: "10px 20px",
+                    borderRadius: "12px",
+                    width: "fit-content",
+                    boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
+                    marginBottom: "24px"
+                }}>
                     <Link to="/">Home</Link>
-                    <span className="separator">/</span>
-                    <Link to="/products">All Products</Link>
-                    {filter === 'comingSoon' && (
-                        <>
-                            <span className="separator">/</span>
-                            <span className="current">Coming Soon</span>
-                        </>
-                    )}
-                    {!filter && <span className="current" style={{ display: 'none' }}></span>}
-                </div>
+                    <span className="premium-breadcrumb-separator">›</span>
+                    <Link to="/products">Shop</Link>
+                    <span className="premium-breadcrumb-separator">›</span>
+                    <span className="premium-breadcrumb-current">
+                        {filter === 'comingSoon' ? 'Coming Soon' : 'All Products'}
+                    </span>
+                </nav>
 
                 {/* Page Header */}
                 <header className="premium-page-header">

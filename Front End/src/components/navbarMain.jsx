@@ -373,9 +373,31 @@ export const NavbarMain = () => {
             </div>
 
             <div className="desktop-only">
-              <Link to="/your-wishlist" className="wishlist-header-trigger desktop-only" title="View Wishlist" style={{ fontSize: "20px", marginRight: "10px", display: 'inline-flex', alignItems: 'center' }}>
+              <Link to="/your-wishlist" className="wishlist-header-trigger desktop-only" title="View Wishlist" style={{ 
+                fontSize: "20px", 
+                marginRight: "15px", 
+                display: 'inline-flex', 
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative' 
+              }}>
                 <FaHeart style={{ color: '#ff4757' }} />
-                <span className='badge' id='lblWishlistCount' style={{ marginLeft: 6, background: '#ff4757', color: 'white' }}>
+                <span className='badge' id='lblWishlistCount' style={{ 
+                  position: 'absolute',
+                  top: '-8px',
+                  right: '-8px',
+                  background: '#ff4757', 
+                  color: 'white',
+                  fontSize: '10px',
+                  minWidth: '18px',
+                  height: '18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  margin: 0,
+                  padding: 0
+                }}>
                   {wishlistItems ? Object.keys(wishlistItems).length : 0}
                 </span>
               </Link>
