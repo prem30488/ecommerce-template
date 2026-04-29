@@ -369,7 +369,7 @@ const PremiumCard = ({ product }) => {
                                 <span className="frequent-card-price" style={{ color: "var(--color-primary)" }}>₹{originalPrice.toLocaleString()}</span>
                             )}
                         </div>
-                        <span className="frequent-card-stock">In Stock</span>
+                        <span className="frequent-card-stock">In Stock ({product.stock})</span>
                     </div>
 
                     {/* CTA Row - Moved below Price & Stock */}
@@ -466,7 +466,7 @@ const PremiumCard = ({ product }) => {
                             </button>
                         )}
                         <img src="/images/iso.png" alt="ISO" title={COMPANY_INFO.name} style={{ height: '70px', width: '200px', marginLeft: "40px", verticalAlign: "top" }} />
-                        <img src="/images/time.png" alt="Delievry time" title={COMPANY_INFO.name} style={{ height: '70px', width: '350px', marginLeft: "20px", verticalAlign: "top" }} />
+                        <img src="/images/time.png" alt="Delievry time" title={COMPANY_INFO.name} style={{ height: '70px', width: '250px', marginLeft: "20px", verticalAlign: "top" }} />
 
                     </div>
 

@@ -33,7 +33,7 @@ const pillClass = (status) => {
 };
 
 /* ── step definitions ────────────────────────────────────────────────────── */
-const buildSteps = (data) => {
+const buildSteps = (data, edd) => {
     const s = normaliseStatus(data.status);
     const isCancelled = s === 'cancelled' || !!data.cancelled_at;
 
@@ -84,7 +84,19 @@ const buildSteps = (data) => {
             done: !!data.delivered_at || s === 'delivered',
         });
     }
-
+    
+    if (edd) {
+        base.push({
+            key: 'expected',
+            label: 'Expected\nDelivery',
+            icon: <FaCalendarAlt />,
+            date: edd,
+            desc: 'Estimated date for your package arrival.',
+            done: false,
+            isExpected: true,
+        });
+    }
+ 
     return base;
 };
 
@@ -116,7 +128,20 @@ const TrackOrder = () => {
     };
 
     /* derived */
-    const steps      = trackingData ? buildSteps(trackingData) : [];
+    const status = trackingData ? normaliseStatus(trackingData.status) : '';
+    const isCancelled = status === 'cancelled' || (trackingData && !!trackingData.cancelled_at);
+    const isDelivered = status === 'delivered' || (trackingData && !!trackingData.delivered_at);
+
+    let estimatedDeliveryDate = null;
+    if (trackingData && !isDelivered && !isCancelled) {
+        if (trackingData.shipped_at) {
+            estimatedDeliveryDate = dayjs(trackingData.shipped_at).add(5, 'day');
+        } else if (trackingData.processing_at) {
+            estimatedDeliveryDate = dayjs(trackingData.processing_at).add(6, 'day');
+        }
+    }
+
+    const steps      = trackingData ? buildSteps(trackingData, estimatedDeliveryDate) : [];
     const doneCount  = steps.filter(s => s.done).length;
     const activeIdx  = doneCount - 1;                    // index of last done step
     /* progress bar width = segments between icons */
@@ -124,7 +149,6 @@ const TrackOrder = () => {
     const segDone    = Math.max(0, doneCount - 1);
     const progressPct = segTotal > 0 ? (segDone / segTotal) * 100 : 0;
 
-    const status = trackingData ? normaliseStatus(trackingData.status) : '';
 
     return (
         <div className="to-page">
@@ -259,6 +283,15 @@ const TrackOrder = () => {
                                 </div>
                             </div>
                         )}
+                        {estimatedDeliveryDate && (
+                            <div className="to-info-chip">
+                                <div className="to-info-chip-icon purple"><FaCalendarAlt /></div>
+                                <div className="to-info-chip-body">
+                                    <small>Estimated Delivery</small>
+                                    <strong>{estimatedDeliveryDate.format('MMM D, YYYY')}</strong>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* ── Stepper ──────────────────────────── */}
@@ -329,7 +362,12 @@ const TrackOrder = () => {
                                                         {fmt(step.date)}
                                                     </span>
                                                 ) : !step.done && (
-                                                    <span className="to-tl-pending-label">Pending…</span>
+                                                    <span className="to-tl-pending-label">
+                                                        {step.isExpected 
+                                                            ? `Expected: ${dayjs(step.date).format('MMM D, YYYY')}` 
+                                                            : 'Pending…'
+                                                        }
+                                                    </span>
                                                 )
                                             }
                                         </div>

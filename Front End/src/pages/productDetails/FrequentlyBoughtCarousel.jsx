@@ -238,7 +238,7 @@ const FrequentlyBoughtCarousel = ({ currentProduct, frequentProducts, onSelectio
                                     {/* Footer: Price + Stock */}
                                     <div className="frequent-card-footer">
                                         <span className="frequent-card-price">₹{price.toLocaleString()}</span>
-                                        <span className="frequent-card-stock">In Stock</span>
+                                        <span className="frequent-card-stock">In Stock ({product.stock})</span>
                                     </div>
                                 </div>
                             </div>

@@ -369,7 +369,7 @@ const PremiumProductCard = ({ product }) => {
                                 <span className="frequent-card-price" style={{ color: "var(--color-primary)" }}>₹{originalPrice.toLocaleString()}</span>
                             )}
                         </div>
-                        <span className="frequent-card-stock">In Stock</span>
+                        <span className="frequent-card-stock">In Stock ({product.stock})</span>
                     </div>
 
                     {/* CTA Row - Moved below Price & Stock */}

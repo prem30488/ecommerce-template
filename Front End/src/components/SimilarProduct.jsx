@@ -104,7 +104,7 @@ const SimilarProduct = ({ product }) => {
 
         <div className="frequent-card-footer">
           <span className="frequent-card-price">₹{price.toLocaleString()}</span>
-          <span className="frequent-card-stock">{stock > 0 ? 'In Stock' : 'Out of Stock'}</span>
+          <span className="frequent-card-stock">{stock > 0 ? `In Stock (${stock})` : 'Out of Stock'}</span>
         </div>
       </div>
     </div>

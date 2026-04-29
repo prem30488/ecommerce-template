@@ -120,7 +120,7 @@ const WeeklyHighlight = () => {
           <div className="wh-price-row">
             <span className="wh-price">₹{parseFloat(price).toLocaleString("en-IN")}</span>
             {!isOutOfStock ? (
-              <span className="wh-stock-badge wh-stock-badge--in">In Stock</span>
+              <span className="wh-stock-badge wh-stock-badge--in">In Stock ({stock})</span>
             ) : (
               <span className="wh-stock-badge wh-stock-badge--out">Out of Stock</span>
             )}

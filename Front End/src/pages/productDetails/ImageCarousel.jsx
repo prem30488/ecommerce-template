@@ -117,6 +117,7 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
                   height: '100%',
                   objectFit: 'fill',   /* stretch to fill — no crop, no letterbox */
                   display: 'block',
+                  marginTop: '10px',
                 }}
                 loading="lazy"
                 onError={(e) => { e.target.style.display = 'none'; }}
