@@ -409,7 +409,7 @@ const PremiumCard = ({ product }) => {
 
                         {/* Then Add to Cart / Quantity Stepper */}
                         {cartCount > 0 ? (
-                            <div className="prem flex items-center bg-[#f8fafc] border-2 border-slate-200 rounded-[0.6rem] overflow-hidden h-[38px] min-w-[120px]">
+                            <div className="prem prem-stepper-container">
                                 <button
                                     onClick={(e) => {
                                         e.preventDefault();
@@ -417,20 +417,20 @@ const PremiumCard = ({ product }) => {
                                         const flavorId = getCurrentFlavorId();
                                         removeFromCart(product.id, sel.size, flavorId);
                                     }}
-                                    className="flex-1 h-full flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors text-[16px] font-bold text-slate-500"
+                                    className="prem-stepper-btn minus"
                                 >
                                     −
                                 </button>
-                                <div className="flex-1 h-full flex flex-col items-center justify-center bg-white border-x border-slate-100">
-                                    <span className="text-[12px] font-black text-slate-900 leading-none">{cartCount}</span>
-                                    <span className="text-[7px] font-bold text-slate-400 uppercase tracking-tighter">In Cart</span>
+                                <div className="prem-stepper-count-wrap">
+                                    <span className="prem-stepper-count">{cartCount}</span>
+                                    <span className="prem-stepper-label">In Cart</span>
                                 </div>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handleAddToCart(e);
                                     }}
-                                    className="flex-1 h-full flex items-center justify-center hover:bg-sky-50 hover:text-sky-500 transition-colors text-[16px] font-bold text-slate-500"
+                                    className="prem-stepper-btn plus"
                                 >
                                     +
                                 </button>

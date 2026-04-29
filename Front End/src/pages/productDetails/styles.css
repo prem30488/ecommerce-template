@@ -33,42 +33,93 @@
   align-items: center;
 }
 
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .premium-main-swiper .swiper-button-next,
+  .premium-main-swiper .swiper-button-prev {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
+  .premium-main-swiper .swiper-button-next:after,
+  .premium-main-swiper .swiper-button-prev:after {
+    font-size: 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .thumbs-scroll {
+    gap: 8px !important;
+  }
+  
+  .premium-main-swiper .swiper-pagination-bullet {
+    width: 4px !important;
+    height: 4px !important;
+  }
+}
+
 .swiper-slide img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
-/* Custom Swiper Navigation Styles */
-.main-swiper .swiper-button-next,
-.main-swiper .swiper-button-prev {
-  width: 30px !important;
-  height: 30px !important;
-  background: rgba(255, 255, 255, 0.8) !important;
-  border-radius: 50% !important;
-  color: #000 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-  backdrop-filter: blur(4px) !important;
+/* Custom Swiper Navigation Styles - Glassmorphism */
+.premium-main-swiper .swiper-button-next,
+.premium-main-swiper .swiper-button-prev {
+  width: 32px !important;
+  height: 32px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 12px !important;
+  color: #1e293b !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  opacity: 0 !important;
+  transform: scale(0.8) !important;
+}
+
+.premium-main-swiper:hover .swiper-button-next,
+.premium-main-swiper:hover .swiper-button-prev {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+.premium-main-swiper .swiper-button-next:after,
+.premium-main-swiper .swiper-button-prev:after {
+  font-size: 10px !important;
+  font-weight: 900 !important;
+}
+
+.premium-main-swiper .swiper-button-next:hover,
+.premium-main-swiper .swiper-button-prev:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: var(--color-primary, #0f172a) !important;
+  border-color: rgba(255, 255, 255, 1) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Custom Swiper Pagination */
+.premium-main-swiper .swiper-pagination-bullet {
+  width: 6px !important;
+  height: 6px !important;
+  background: #cbd5e1 !important;
+  opacity: 0.5 !important;
   transition: all 0.3s ease !important;
 }
 
-.main-swiper .swiper-button-next:after,
-.main-swiper .swiper-button-prev:after {
-  font-size: 12px !important;
-  font-weight: bold !important;
+.premium-main-swiper .swiper-pagination-bullet-active {
+  width: 18px !important;
+  border-radius: 4px !important;
+  background: var(--color-primary, #0f172a) !important;
+  opacity: 1 !important;
 }
 
-.main-swiper .swiper-button-next:hover,
-.main-swiper .swiper-button-prev:hover {
-  background: #fff !important;
-  transform: scale(1.1);
-}
-
-.main-swiper .swiper-button-disabled {
+.premium-main-swiper .swiper-button-disabled {
   opacity: 0 !important;
-  cursor: auto !important;
   pointer-events: none !important;
 }
 
