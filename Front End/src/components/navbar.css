@@ -427,7 +427,7 @@
 
 .mega-menu-carousel .swiper {
   overflow: visible !important;
-  min-height: auto !important;
+  min-height: 0 !important;
 }
 
 .coming-soon-card:hover {
@@ -1023,7 +1023,7 @@
 
 /* Glassmorphism for Mega Menu itself */
 .shop-mega-menu {
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   background: rgba(255, 255, 255, 0.98);
-}
 }

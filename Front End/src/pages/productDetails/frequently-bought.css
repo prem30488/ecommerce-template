@@ -24,7 +24,7 @@
   display: flex !important;
   flex-direction: column !important;
   position: relative;
-  min-height: auto;
+  min-height: 0;
 }
 
 .frequent-card:hover {
@@ -78,6 +78,7 @@
   border-radius: 10px;
   border: 1px solid #e2e8f0;
   background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -335,6 +336,7 @@
   top: 12px;
   left: 12px;
   background: rgba(15, 23, 42, 0.85);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   color: white;
   padding: 4px 8px;

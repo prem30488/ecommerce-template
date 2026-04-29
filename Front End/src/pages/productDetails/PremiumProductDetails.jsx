@@ -705,7 +705,7 @@ export const PremiumProductDetails = () => {
                 height: 54,
               }}>
                 <button
-                  onClick={() => removeFromCart(product.id, selectedSize)}
+                  onClick={() => removeFromCart(product.id, selectedSize, selectedFlavor)}
                   style={{
                     width: 54, height: '100%', border: 'none', background: 'transparent',
                     fontSize: 22, fontWeight: 900, color: '#64748b', cursor: 'pointer',

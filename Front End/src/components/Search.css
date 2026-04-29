@@ -160,25 +160,7 @@
     opacity: 0.6;
 }
 
-/* Breadcrumbs (moved to input section) */
-.search-breadcrumbs {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 15px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #94a3b8;
-}
 
-.search-breadcrumbs a {
-    color: #64748b;
-    text-decoration: none;
-}
-
-.search-breadcrumbs .active {
-    color: var(--color-sky);
-}
 
 /* Animations */
 .search-item-animate {

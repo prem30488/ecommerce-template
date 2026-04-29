@@ -196,7 +196,7 @@
 
 @media (max-width: 576px) {
   .testi-card {
-    min-height: auto;
+    min-height: 0;
     /* Mobile - natural height */
     padding: 2rem 1.25rem;
   }

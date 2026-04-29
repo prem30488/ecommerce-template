@@ -41,6 +41,9 @@
   background: #f8fafc;
   position: relative;
   cursor: pointer;
+  aspect-ratio: 1 / 2;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .frequent-card-image img {
@@ -110,6 +113,7 @@
   border-radius: 10px;
   border: 1px solid #e2e8f0;
   background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -576,7 +580,15 @@
   display: none;
 }
 
+.pc-badge-desktop {
+  display: inline-block;
+}
+
 @media (max-width: 1580px) {
+  .pc-badge-desktop {
+    display: none !important;
+  }
+
   .parth {
     display: flex !important;
     flex-direction: row !important;
@@ -601,8 +613,8 @@
   /* Buttons: 2 columns */
   .prem {
     flex: 1 1 45% !important;
-    min-width: 120px !important;
-    max-width: 160px !important;
+    min-width: 100px !important;
+    max-width: 180px !important;
     margin: 0 !important;
     padding: 10px 5px !important;
     font-size: 9px !important;
@@ -645,8 +657,8 @@
   /* Buttons: 2 columns */
   .prem {
     flex: 1 1 45% !important;
-    min-width: 120px !important;
-    max-width: 160px !important;
+    min-width: 100px !important;
+    max-width: 180px !important;
     margin: 0 !important;
     padding: 10px 5px !important;
     font-size: 9px !important;
@@ -693,8 +705,8 @@
   /* Buttons: 2 columns */
   .prem {
     flex: 1 1 45% !important;
-    min-width: 120px !important;
-    max-width: 160px !important;
+    min-width: 100px !important;
+    max-width: 180px !important;
     margin: 0 !important;
     padding: 10px 5px !important;
     font-size: 9px !important;

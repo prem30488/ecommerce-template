@@ -17,20 +17,22 @@
 
 .frequent-card {
   background: #ffffff;
+  margin: 8px;
   border-radius: 20px;
   border: 1px solid #f1f5f9;
-  overflow: hidden;
+  overflow: visible;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 100% !important;
+  height: max-content !important;
+  min-height: 100%;
   display: flex !important;
   flex-direction: column !important;
   position: relative;
-  min-height: 340px;
 }
 
 .frequent-card:hover {
   border-color: var(--color-sky);
   transform: translateY(-4px);
+  margin: 8px;
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.05);
 }
 
@@ -39,6 +41,9 @@
   background: #f8fafc;
   position: relative;
   cursor: pointer;
+  aspect-ratio: 1 / 2;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .frequent-card-image img {
@@ -48,8 +53,35 @@
   padding: auto;
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: fill !important;
   transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.frequent-card-image .product-carousel-container {
+  width: 100%;
+  height: 100%;
+}
+
+.frequent-card-image .product-carousel-container .main-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+/* Swiper slide — fill the box */
+.frequent-card-image .swiper,
+.frequent-card-image .swiper-wrapper,
+.frequent-card-image .swiper-slide {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Image stretches to fill — no cropping, no letterbox, no aspect ratio */
+.frequent-card-image .swiper-slide img,
+.frequent-card-image .main-swiper .swiper-slide img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: fill !important;
+  display: block;
 }
 
 .frequent-card:hover .frequent-card-image img {
@@ -81,6 +113,7 @@
   border-radius: 10px;
   border: 1px solid #e2e8f0;
   background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -120,6 +153,8 @@
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between;
+  border: var(--color-primary) 2px solid;
+  border-radius: 20px;
 }
 
 .frequent-card-brand {
@@ -428,6 +463,7 @@
   background: #f8fafc;
   border-radius: 14px;
   padding: 10px;
+  margin: 5px;
   border: 1px solid #f1f5f9;
   transition: all 0.3s ease;
 }
@@ -485,6 +521,7 @@
   transform: scale(1.02);
 }
 
+
 .fbc-faq-question {
   font-size: 9px;
   font-weight: 900;
@@ -537,4 +574,152 @@
   border-color: #fbbf24;
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(251, 191, 36, 0.1);
+}
+
+.pc-badge-img {
+  display: none;
+}
+
+.pc-badge-desktop {
+  display: inline-block;
+}
+
+@media (max-width: 1580px) {
+  .pc-badge-desktop {
+    display: none !important;
+  }
+
+  .parth {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px 8px !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+    padding: 0 5px !important;
+  }
+
+  /* Images: 2 columns */
+  .pc-badge-img {
+    width: 45% !important;
+    max-width: 120px !important;
+    height: auto !important;
+    margin: 0 !important;
+    object-fit: contain !important;
+  }
+
+  /* Buttons: 2 columns */
+  .prem {
+    flex: 1 1 45% !important;
+    min-width: 100px !important;
+    max-width: 180px !important;
+    margin: 0 !important;
+    padding: 10px 5px !important;
+    font-size: 9px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Hide the padding-left hack on mobile icons */
+  .prem svg {
+    padding-left: 0 !important;
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .parth {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px 8px !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+    padding: 0 5px !important;
+  }
+
+  /* Images: 2 columns */
+  .pc-badge-img {
+    width: 45% !important;
+    max-width: 120px !important;
+    height: auto !important;
+    margin: 0 !important;
+    object-fit: contain !important;
+  }
+
+  /* Buttons: 2 columns */
+  .prem {
+    flex: 1 1 45% !important;
+    min-width: 100px !important;
+    max-width: 180px !important;
+    margin: 0 !important;
+    padding: 10px 5px !important;
+    font-size: 9px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Hide the padding-left hack on mobile icons */
+  .prem svg {
+    padding-left: 0 !important;
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .frequent-card-image {
+    aspect-ratio: 1/2;
+  }
+
+  .parth {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px 8px !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+    padding: 0 5px !important;
+  }
+
+  /* Images: 2 columns */
+  .pc-badge-img {
+    width: 45% !important;
+    max-width: 120px !important;
+    height: auto !important;
+    margin: 0 !important;
+    object-fit: contain !important;
+  }
+
+  /* Buttons: 2 columns */
+  .prem {
+    flex: 1 1 45% !important;
+    min-width: 100px !important;
+    max-width: 180px !important;
+    margin: 0 !important;
+    padding: 10px 5px !important;
+    font-size: 9px !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Hide the padding-left hack on mobile icons */
+  .prem svg {
+    padding-left: 0 !important;
+    width: 14px !important;
+    height: 14px !important;
+  }
 }

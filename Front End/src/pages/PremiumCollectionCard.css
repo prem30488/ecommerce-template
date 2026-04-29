@@ -232,6 +232,7 @@
   left: 0;
   right: 0;
   background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   padding: 6px 0;
   overflow: hidden;
@@ -302,6 +303,7 @@
 .overlay-btn-secondary {
   background: rgba(0, 0, 0, 0.6);
   color: white;
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
 
@@ -312,6 +314,7 @@
 .overlay-btn-wishlist {
   background: rgba(255, 255, 255, 0.2);
   color: white;
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   width: 100%;

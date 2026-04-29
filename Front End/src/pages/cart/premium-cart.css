@@ -28,6 +28,7 @@
   justify-content: space-between !important;
   align-items: center !important;
   background: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   z-index: 100;
 }
@@ -562,6 +563,7 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
 
@@ -614,6 +616,7 @@
   color: var(--cart-text-muted);
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   position: relative;
   overflow: hidden;

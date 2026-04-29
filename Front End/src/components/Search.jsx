@@ -103,10 +103,17 @@ const Search = () => {
             <div className="search-container">
                 {/* Search Bar Section - TOP */}
                 <div className="search-input-section">
-                    <nav className="search-breadcrumbs">
+                    <nav className="premium-breadcrumbs" style={{
+                        background: "white",
+                        padding: "10px 20px",
+                        borderRadius: "12px",
+                        width: "fit-content",
+                        boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
+                        margin: "0 auto 20px"
+                    }}>
                         <Link to="/">Home</Link>
-                        <span>/</span>
-                        <span className="active">Search results</span>
+                        <span className="premium-breadcrumb-separator">›</span>
+                        <span className="premium-breadcrumb-current">Search results</span>
                     </nav>
                     <h1 className="search-page-title">Refine Your Selection</h1>
                     <form onSubmit={handleSearchSubmit} className="search-form-premium">

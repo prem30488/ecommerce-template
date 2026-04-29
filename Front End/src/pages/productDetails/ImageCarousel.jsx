@@ -95,8 +95,8 @@ const ImageCarousel = ({ id, title, mainImage, additionalImages, imageList, thum
           }}
           loop={false}
           spaceBetween={10}
-          navigation={false}
-          allowTouchMove={false}
+          navigation={true}
+          allowTouchMove={true}
           modules={[Navigation]}
           className="main-swiper"
           onSwiper={(swiper) => { mainSwiperRef.current = swiper; }}
