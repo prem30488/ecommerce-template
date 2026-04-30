@@ -152,8 +152,8 @@
   background: var(--search-card);
   border: 1px solid var(--search-border);
   border-radius: var(--search-radius);
-  backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
   box-shadow: var(--search-shadow);
 }
 
@@ -189,6 +189,7 @@
   background: var(--color-primary-light);
   cursor: pointer;
   gap: 16px;
+  -webkit-user-select: none;
   user-select: none;
   transition: background-color 0.2s ease, border-bottom-color 0.2s ease;
 }
@@ -248,7 +249,7 @@
   grid-template-rows: 0fr;
 }
 
-.as-sidebar-content-wrapper > .solr-search-fields {
+.as-sidebar-content-wrapper>.solr-search-fields {
   overflow: hidden;
   list-style: none;
   margin: 0;
@@ -259,7 +260,7 @@
   transition: padding 0.3s ease, opacity 0.3s ease;
 }
 
-.as-sidebar-wrapper.is-collapsed .as-sidebar-content-wrapper > .solr-search-fields {
+.as-sidebar-wrapper.is-collapsed .as-sidebar-content-wrapper>.solr-search-fields {
   padding-top: 0;
   padding-bottom: 0;
   opacity: 0;
@@ -348,6 +349,7 @@
   border-radius: var(--search-radius-sm);
   display: flex;
   align-items: center;
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -1100,7 +1102,7 @@ select.form-control {
 
 .as-cyber-btn .right::after {
   background-color: var(--search-bg);
-  color: #fff !important;
+  color: #000 !important;
   transition: transform .4s ease-out;
   transform: translate(-50%, -160%) rotate(0deg) !important;
   /* Move mask above by default */

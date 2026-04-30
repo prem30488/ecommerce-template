@@ -591,7 +591,7 @@ app.get('/api/order/track/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const order = await db.Order.findByPk(id, {
-            attributes: ['id', 'status', 'created_at', 'processing_at', 'shipped_at', 'delivered_at', 'cancelled_at', 'latitude', 'longitude']
+            attributes: ['id', 'status', 'created_at', 'processing_at', 'shipped_at', 'delivered_at', 'cancelled_at', 'latitude', 'longitude', 'delieveryAddress']
         });
 
         if (!order) {

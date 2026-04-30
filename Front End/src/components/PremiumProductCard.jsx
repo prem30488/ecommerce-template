@@ -225,7 +225,7 @@ const PremiumProductCard = ({ product }) => {
                                         additionalImages={product.ProductImages}
                                         thumbs={true}
                                         thumbDirection='vertical'
-                                        style={{ height: '100%', width: '100%', objectFit: "contain !important" }}
+                                        style={{ height: '100%', width: '100%', objectFit: "fill !important" }}
                                     />
                                 </div>
                             ) : (

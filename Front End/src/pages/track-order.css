@@ -805,6 +805,49 @@
   border-radius: 10px;
 }
 
+/* ─── Delivery Address Card ────────────────── */
+.to-address-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid #f1f5f9;
+  animation: to-fade-up 0.5s ease both;
+  animation-delay: 0.1s;
+}
+
+.to-address-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.to-address-content {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.to-address-content strong {
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.to-address-content span {
+  color: #64748b;
+}
+
 /* ─── Responsive ───────────────────────────── */
 @media (max-width: 640px) {
   .to-hero {

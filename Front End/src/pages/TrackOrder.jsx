@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import {
     FaTruck, FaBox, FaCheckCircle, FaSearch, FaClock,
     FaExclamationCircle, FaTimesCircle, FaCalendarAlt,
-    FaHashtag, FaHeadset, FaShieldAlt
+    FaHashtag, FaHeadset, FaShieldAlt, FaMapMarkerAlt
 } from 'react-icons/fa';
 import { MdLocalShipping } from 'react-icons/md';
 import SEO from '../components/SEO';
@@ -389,6 +389,32 @@ const TrackOrder = () => {
                             <div className="to-map-footer">
                                 <FaTruck style={{ color: 'var(--primary-color)' }} />
                                 <span>Your order will be delivered to this pinned location.</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ── Delivery Address ────────────────── */}
+                    {trackingData.delieveryAddress && (
+                        <div className="to-address-card">
+                            <p className="to-address-title">
+                                <FaMapMarkerAlt style={{ color: 'var(--color-primary)' }} />
+                                Delivery Address
+                            </p>
+                            <div className="to-address-content">
+                                {typeof trackingData.delieveryAddress === 'object' ? (
+                                    <>
+                                        <strong>{trackingData.delieveryAddress.street}</strong>
+                                        {trackingData.delieveryAddress.addressLine2 && <span>{trackingData.delieveryAddress.addressLine2}</span>}
+                                        <span>
+                                            {trackingData.delieveryAddress.city}, {trackingData.delieveryAddress.state}
+                                        </span>
+                                        <span>
+                                            {trackingData.delieveryAddress.country} - {trackingData.delieveryAddress.zipcode}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <span>{trackingData.delieveryAddress}</span>
+                                )}
                             </div>
                         </div>
                     )}

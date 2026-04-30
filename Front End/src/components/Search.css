@@ -143,6 +143,18 @@
     gap: 40px;
 }
 
+.psr-search-results-grid .frequent-card-image {
+    aspect-ratio: 1 / 1 !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+@media (max-width: 768px) {
+    .psr-search-results-grid .frequent-card-image {
+        aspect-ratio: 1 / 2 !important;
+    }
+}
+
 /* No Results refined */
 .psr-no-results-container {
     padding: 120px 40px;

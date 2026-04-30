@@ -1,13 +1,16 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ShopContext } from "../context/shop-context";
 import PremiumProductCard from "../components/PremiumProductCard";
 import "./Search.css";
+import LinearProgress from "../common/LinearProgress";
+import SEO from "../components/SEO";
+import { COMPANY_INFO } from "../constants/companyInfo";
 
 const Search = () => {
     const { query: urlQuery } = useParams();
     const navigate = useNavigate();
-    const { products } = useContext(ShopContext);
+    const { products, categories } = useContext(ShopContext);
     const [searchTerm, setSearchTerm] = useState(urlQuery || "");
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -38,22 +41,22 @@ const Search = () => {
 
             // Extract Form Label for searching
             const formLabel = (
-                product.Form?.title || 
+                product.Form?.title ||
                 (typeof product.form === 'string' ? product.form : '') ||
                 (product.form && typeof product.form !== 'object' ? `Form #${product.form}` : '')
             ).toLowerCase();
 
             // Aggregate ALL possible category strings for this product
             const categoryKeys = new Set();
-            
+
             // 1. From Category object
             if (product.Category?.title) categoryKeys.add(product.Category.title.toLowerCase());
-            
+
             // 2. From raw category string
             if (product.category) {
                 String(product.category).split(',').forEach(c => categoryKeys.add(c.trim().toLowerCase()));
             }
-            
+
             // 3. From categories array
             if (Array.isArray(product.categories)) {
                 product.categories.forEach(c => {
@@ -87,19 +90,36 @@ const Search = () => {
         }
     };
 
+    const allTitles = useMemo(() => filteredProducts.map(p => p.title).join(", "), [filteredProducts]);
+    const allCategories = useMemo(() => [...new Set(categories
+        ?.filter(cat => filteredProducts.some(p =>
+            String(p.catIds).split(',').map(Number).includes(cat.id) || p.category_id === cat.id
+        ))
+        .map(cat => cat.title)
+    )].join(", "), [categories, filteredProducts]);
+
     if (isLoading) {
         return (
-            <div className="psr-search-page">
-                <div className="psr-search-loading">
-                    <div className="psr-loader-sparkle"></div>
-                    <p className="psr-search-subtitle">Searching boutique collection...</p>
+            <><LinearProgress loading={isLoading} />
+                <div className="psr-search-page">
+                    <div className="psr-search-loading">
+                        <div className="psr-loader-sparkle"></div>
+                        <p className="psr-search-subtitle">Searching boutique collection...</p>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     return (
         <div className="psr-search-page">
+            <LinearProgress loading={isLoading} />
+            <SEO
+                title={`Featured Products | ${COMPANY_INFO.name} | Premium Supplements & Healthcare`}
+                description={`${COMPANY_INFO.seoDescription}, Discover our top-rated collection featuring: ${allTitles.substring(0, 150)}...`}
+                keywords={`${allTitles}, ${allCategories}, ${COMPANY_INFO.seoKeywords}, featured-products`}
+                image="/images/logo.png"
+            />
             <div className="psr-search-container">
                 {/* Search Bar Section - TOP */}
                 <div className="psr-search-input-section">
