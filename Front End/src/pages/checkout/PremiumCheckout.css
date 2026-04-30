@@ -160,6 +160,20 @@
   cursor: pointer;
 }
 
+.checkout-map-section {
+  margin-bottom: 25px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.section-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-main);
+}
+
 /* Payment Box */
 .payment-box {
   border: 1px solid var(--border-color);

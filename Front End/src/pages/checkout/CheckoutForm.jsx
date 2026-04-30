@@ -8,6 +8,7 @@ import { useContext } from 'react';
 import Alert from 'react-s-alert';
 import { API_BASE_URL } from '../../constants/index';
 import { createOrder } from '../../util/APIUtils';
+import LocationPicker from '../../components/maps/LocationPicker';
 
 const CheckoutForm = ({subTotal,total,callbackFn}) => {
   const navigate = useNavigate();
@@ -45,6 +46,8 @@ const CheckoutForm = ({subTotal,total,callbackFn}) => {
       freeCartItems : freeCartItems,
       freeMartItems : freeMartItems,
       freeLartItems : freeLartItems,
+      latitude: null,
+      longitude: null,
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Name is required'),
@@ -108,6 +111,26 @@ const CheckoutForm = ({subTotal,total,callbackFn}) => {
         shippingAddress: { ...prevValues.billingAddress },
       }));
     }
+  };
+
+  const handleLocationSelect = (location) => {
+    // Update Formik fields with the data from the map
+    if (location.street) formik.setFieldValue('shippingAddress.street', location.street);
+    if (location.city) formik.setFieldValue('shippingAddress.city', location.city);
+    if (location.state) formik.setFieldValue('shippingAddress.state', location.state);
+    if (location.zipcode) formik.setFieldValue('shippingAddress.zipcode', location.zipcode);
+    
+    // Also update billing address if "sameAddress" is true
+    if (formik.values.sameAddress) {
+        if (location.street) formik.setFieldValue('billingAddress.street', location.street);
+        if (location.city) formik.setFieldValue('billingAddress.city', location.city);
+        if (location.state) formik.setFieldValue('billingAddress.state', location.state);
+        if (location.zipcode) formik.setFieldValue('billingAddress.zipcode', location.zipcode);
+    }
+
+    // Store coordinates
+    formik.setFieldValue('latitude', location.lat);
+    formik.setFieldValue('longitude', location.lng);
   };
 
   return (
@@ -280,8 +303,11 @@ const CheckoutForm = ({subTotal,total,callbackFn}) => {
 
       {/* Shipping Address */}
       {/* {!formik.values.sameAddress && ( */}
-        <div className="address-section">
-          <label>Shipping Address:</label>
+      <div className="address-section">
+        <label>Shipping Address:</label>
+        <div style={{ marginBottom: '20px' }}>
+          <LocationPicker onLocationSelect={handleLocationSelect} />
+        </div>
           <div>
             <label htmlFor="shippingStreet">Street:</label>
             <input

@@ -9,6 +9,7 @@ import { getCoupons, createOrder, verifyPayment, getCurrentUser } from '../../ut
 import Alert from 'react-s-alert';
 import { COMPANY_INFO } from '../../constants/companyInfo';
 import { API_BASE_URL } from '../../constants';
+import LocationPicker from '../../components/maps/LocationPicker';
 import './PremiumCheckout.css';
 
 const loadRazorpay = () => {
@@ -158,6 +159,8 @@ const PremiumCheckout = () => {
             },
             paymentType: 'Razorpay Secure',
             sameAddress: true,
+            latitude: null,
+            longitude: null,
         },
         validationSchema: Yup.object({
             firstName: Yup.string()
@@ -280,7 +283,9 @@ const PremiumCheckout = () => {
                 cartItems,
                 martItems,
                 lartItems,
-                detailedItems
+                detailedItems,
+                latitude: values.latitude,
+                longitude: values.longitude
             };
 
             if (appliedDiscount) {
@@ -368,6 +373,26 @@ const PremiumCheckout = () => {
             }
         },
     });
+
+    const handleLocationSelect = (location) => {
+        // Update Formik fields with the data from the map
+        if (location.street) formik.setFieldValue('shippingAddress.street', location.street);
+        if (location.city) formik.setFieldValue('shippingAddress.city', location.city);
+        if (location.state) formik.setFieldValue('shippingAddress.state', location.state);
+        if (location.zipcode) formik.setFieldValue('shippingAddress.zipcode', location.zipcode);
+        
+        // Store coordinates
+        formik.setFieldValue('latitude', location.lat);
+        formik.setFieldValue('longitude', location.lng);
+        
+        // Also update billing address if "sameAddress" is true
+        if (formik.values.sameAddress) {
+            if (location.street) formik.setFieldValue('billingAddress.street', location.street);
+            if (location.city) formik.setFieldValue('billingAddress.city', location.city);
+            if (location.state) formik.setFieldValue('billingAddress.state', location.state);
+            if (location.zipcode) formik.setFieldValue('billingAddress.zipcode', location.zipcode);
+        }
+    };
 
     const CheckoutItem = ({ product, sizeLabel, flavor, flavorId, qty, itemTotalPrice }) => {
         const [imageSrc, setImageSrc] = useState("/images/placeholder.png");
@@ -576,6 +601,11 @@ const PremiumCheckout = () => {
                             >
                                 <option value="India">India</option>
                             </select>
+                        </div>
+
+                        <div className="checkout-map-section">
+                            <label className="section-label">Select Delivery Location on Map</label>
+                            <LocationPicker onLocationSelect={handleLocationSelect} />
                         </div>
 
                         <div className="form-row">

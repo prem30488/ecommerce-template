@@ -89,20 +89,20 @@ const Search = () => {
 
     if (isLoading) {
         return (
-            <div className="search-page">
-                <div className="search-loading">
-                    <div className="loader-sparkle"></div>
-                    <p className="search-subtitle">Searching boutique collection...</p>
+            <div className="psr-search-page">
+                <div className="psr-search-loading">
+                    <div className="psr-loader-sparkle"></div>
+                    <p className="psr-search-subtitle">Searching boutique collection...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="search-page">
-            <div className="search-container">
+        <div className="psr-search-page">
+            <div className="psr-search-container">
                 {/* Search Bar Section - TOP */}
-                <div className="search-input-section">
+                <div className="psr-search-input-section">
                     <nav className="premium-breadcrumbs" style={{
                         background: "white",
                         padding: "10px 20px",
@@ -115,18 +115,18 @@ const Search = () => {
                         <span className="premium-breadcrumb-separator">›</span>
                         <span className="premium-breadcrumb-current">Search results</span>
                     </nav>
-                    <h1 className="search-page-title">Refine Your Selection</h1>
-                    <form onSubmit={handleSearchSubmit} className="search-form-premium">
-                        <div className="premium-input-wrapper">
-                            <span className="search-icon-fixed">🔍</span>
+                    <h1 className="psr-search-page-title">Refine Your Selection</h1>
+                    <form onSubmit={handleSearchSubmit} className="psr-search-form-premium">
+                        <div className="psr-premium-input-wrapper">
+                            <span className="psr-search-icon-fixed">🔍</span>
                             <input
                                 type="text"
-                                className="premium-search-input"
+                                className="psr-premium-search-input"
                                 placeholder="Search products by name, category, brand, or form..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
-                            <button type="submit" className="premium-search-btn">
+                            <button type="submit" className="psr-premium-search-btn">
                                 Search
                             </button>
                         </div>
@@ -134,35 +134,35 @@ const Search = () => {
                 </div>
 
                 {/* Results Section - BOTTOM */}
-                <div className="search-results-section">
-                    <header className="results-header">
-                        <div className="results-info">
-                            <h2 className="results-found-text">
+                <div className="psr-search-results-section">
+                    <header className="psr-results-header">
+                        <div className="psr-results-info">
+                            <h2 className="psr-results-found-text">
                                 {filteredProducts.length > 0 ? (
-                                    <>Showing results for <span className="query-highlight">"{urlQuery}"</span></>
+                                    <>Showing results for <span className="psr-query-highlight">"{urlQuery}"</span></>
                                 ) : (
-                                    <>No results found for <span className="query-highlight-err">"{urlQuery}"</span></>
+                                    <>No results found for <span className="psr-query-highlight-err">"{urlQuery}"</span></>
                                 )}
                             </h2>
-                            <p className="results-count">
+                            <p className="psr-results-count">
                                 {filteredProducts.length} {filteredProducts.length === 1 ? 'masterpiece' : 'masterpieces'} identified
                             </p>
                         </div>
                     </header>
 
                     {filteredProducts.length > 0 ? (
-                        <div className="search-results-grid">
+                        <div className="psr-search-results-grid">
                             {filteredProducts.map((product) => (
-                                <div key={product.id} className="search-item-animate">
+                                <div key={product.id} className="psr-search-item-animate">
                                     <PremiumProductCard product={product} />
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="no-results-container">
-                            <span className="no-results-icon">🍃</span>
-                            <h2 className="no-results-title">Our collection is quietly awaiting your next discovery</h2>
-                            <p className="no-results-text">
+                        <div className="psr-no-results-container">
+                            <span className="psr-no-results-icon">🍃</span>
+                            <h2 className="psr-no-results-title">Our collection is quietly awaiting your next discovery</h2>
+                            <p className="psr-no-results-text">
                                 We couldn't find matches for "{urlQuery}". Try broader terms or check our curated bestsellers.
                             </p>
                             <Link to="/products" className="back-btn">

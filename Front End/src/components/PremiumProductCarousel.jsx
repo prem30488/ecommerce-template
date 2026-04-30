@@ -23,7 +23,7 @@ const PremiumProductCarousel = ({ products }) => {
     const uId = useId();
     const swiperRef = useRef(null);
     const navigate = useNavigate();
-    const { addToCart, cartItems } = useContext(ShopContext);
+    const { addToCart, removeFromCart, cartItems } = useContext(ShopContext);
     const [quickViewProduct, setQuickViewProduct] = useState(null);
 
     // Per-card selection state: { [index]: { flavorIdx, size } }
@@ -197,6 +197,71 @@ const PremiumProductCarousel = ({ products }) => {
                                     <div className="frequent-card-footer">
                                         <span className="frequent-card-price">₹{price.toLocaleString()}</span>
                                         <span className="frequent-card-stock">In Stock ({product.stock})</span>
+                                    </div>
+
+                                    {/* CTA Row - Match PremiumCard */}
+                                    <div className="parth" style={{ marginTop: '16px' }}>
+                                        <button
+                                            className="prem group rounded-[0.6rem] box-border bg-transparent transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
+                                            style={{
+                                                border: "2px solid var(--color-primary)",
+                                                color: "var(--color-primary)",
+                                                padding: "10px 20px"
+                                            }}
+                                            onClick={(e) => { e.stopPropagation(); navigate(`/productDetails/${product.id}`); }}
+                                        >
+                                            <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>View details</span>
+                                            <svg className="w-[16px] h-[16px]"
+                                                viewBox="0 0 60 60" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <polyline points="9 18 15 12 9 6"></polyline>
+                                            </svg>
+                                        </button>
+
+                                        {cartCount > 0 ? (
+                                            <div className="prem prem-stepper-container">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        const flavor = product.productFlavors?.[sel.flavorIdx];
+                                                        const flavorId = flavor?.flavor_id;
+                                                        removeFromCart(product.id, sel.size, flavorId);
+                                                    }}
+                                                    className="prem-stepper-btn minus"
+                                                >
+                                                    −
+                                                </button>
+                                                <div className="prem-stepper-count-wrap">
+                                                    <span className="prem-stepper-count">{cartCount}</span>
+                                                    <span className="prem-stepper-label">In Cart</span>
+                                                </div>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleAddToCart(e, product, index);
+                                                    }}
+                                                    className="prem-stepper-btn plus"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                className="prem group rounded-[0.6rem] box-border transition-all duration-200 hover:-translate-y-[2px] flex items-center justify-center gap-2 font-[800] tracking-wide text-[11px]"
+                                                style={{
+                                                    backgroundColor: "var(--color-primary)",
+                                                    color: "white",
+                                                    border: "2px solid var(--color-primary)",
+                                                    boxShadow: "0 4px 12px var(--color-primary-shadow)",
+                                                    padding: "10px 20px"
+                                                }}
+                                                onClick={(e) => handleAddToCart(e, product, index)}
+                                            >
+                                                <span className="whitespace-nowrap" style={{ verticalAlign: "middle" }}>
+                                                    Add To Cart
+                                                </span>
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>

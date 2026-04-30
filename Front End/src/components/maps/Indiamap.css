@@ -1,4 +1,4 @@
-.india-map-wrapper {
+.imp-india-map-wrapper {
   margin-top: 1.5rem;
   padding: 1.5rem;
   height: 600px;
@@ -6,7 +6,7 @@
   flex-direction: column;
 }
 
-.map-container {
+.imp-map-container {
   flex: 1;
   width: 100%;
   border-radius: 16px;
@@ -17,14 +17,14 @@
 }
 
 /* Marker Styling */
-.map-marker-container {
+.imp-map-marker-container {
   position: absolute;
   transform: translate(-50%, -100%);
   cursor: pointer;
   z-index: 1;
 }
 
-.map-marker-icon {
+.imp-map-marker-icon {
   background: white;
   color: #4f46e5;
   width: 32px;
@@ -40,12 +40,12 @@
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.map-marker-icon svg {
+.imp-map-marker-icon svg {
   transform: rotate(45deg);
   font-size: 14px;
 }
 
-.marker-count {
+.imp-marker-count {
   position: absolute;
   top: -8px;
   right: -8px;
@@ -59,13 +59,13 @@
   transform: rotate(45deg);
 }
 
-.map-marker-container:hover .map-marker-icon {
+.imp-map-marker-container:hover .imp-map-marker-icon {
   transform: rotate(-45deg) scale(1.2);
   z-index: 10;
 }
 
 /* Tooltip on Hover */
-.marker-tooltip {
+.imp-marker-tooltip {
   position: absolute;
   bottom: 100%;
   left: 50%;
@@ -82,7 +82,7 @@
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-.marker-tooltip::after {
+.imp-marker-tooltip::after {
   content: '';
   position: absolute;
   top: 100%;
@@ -93,14 +93,14 @@
   border-color: #1e293b transparent transparent transparent;
 }
 
-.map-marker-container:hover .marker-tooltip {
+.imp-map-marker-container:hover .imp-marker-tooltip {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) translateY(-15px);
 }
 
 /* Ping Animation */
-.map-marker-ping {
+.imp-map-marker-ping {
   position: absolute;
   top: -16px;
   left: 0;
@@ -109,22 +109,22 @@
   background: rgba(79, 70, 229, 0.4);
   border-radius: 50%;
   transform: scale(0);
-  animation: marker-ping 2s infinite;
+  animation: imp-marker-ping 2s infinite;
   pointer-events: none;
 }
 
-@keyframes marker-ping {
+@keyframes imp-marker-ping {
   0% { transform: scale(0.5); opacity: 0.8; }
   100% { transform: scale(2.5); opacity: 0; }
 }
 
 /* Legend */
-.map-legend {
+.imp-map-legend {
   display: flex;
   gap: 1rem;
 }
 
-.legend-item {
+.imp-legend-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -133,7 +133,7 @@
   color: #64748b;
 }
 
-.legend-item .dot {
+.imp-legend-item .imp-dot {
   width: 10px;
   height: 10px;
   background: #4f46e5;
@@ -142,7 +142,7 @@
 }
 
 /* Loading Overlay */
-.map-loading-overlay {
+.imp-map-loading-overlay {
   position: absolute;
   inset: 0;
   background: rgba(255, 255, 255, 0.8);
@@ -157,13 +157,13 @@
   z-index: 1000;
 }
 
-.spinner {
+.imp-spinner {
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
   border-top: 4px solid #4f46e5;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: imp-spin 1s linear infinite;
 }
 
 /* Leaflet Specific Adjustments */
@@ -172,29 +172,29 @@
   background: #f8fafc !important;
 }
 
-.premium-popup .leaflet-popup-content-wrapper {
+.imp-premium-popup .leaflet-popup-content-wrapper {
   background: #1e293b;
   color: white;
   border-radius: 8px;
   padding: 5px;
 }
 
-.premium-popup .leaflet-popup-tip {
+.imp-premium-popup .leaflet-popup-tip {
   background: #1e293b;
 }
 
-.popup-content {
+.imp-popup-content {
   text-align: center;
 }
 
-.popup-content p {
+.imp-popup-content p {
   margin: 0;
   color: #94a3b8;
   font-size: 0.8rem;
 }
 
 /* Status Overlay */
-.map-status-overlay {
+.imp-map-status-overlay {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -215,16 +215,16 @@
 
 }
 
-.mini-spinner {
+.imp-mini-spinner {
   width: 12px;
   height: 12px;
   border: 2px solid #e2e8f0;
   border-top: 2px solid #4f46e5;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: imp-spin 0.8s linear infinite;
 }
 
-@keyframes spin {
+@keyframes imp-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }

@@ -97,7 +97,7 @@ const Indiamap = () => {
               if (lat >= 6.0 && lat <= 38.0 && lng >= 68.0 && lng <= 98.0) {
                 if (markersLayerRef.current) {
                   L.marker([lat, lng], { icon: customIcon })
-                    .bindPopup(`<strong>${loc.name}</strong><br/>${loc.count} Orders`)
+                    .bindPopup(`<strong>${loc.name}</strong><br/>${loc.count} Orders`, { className: 'imp-premium-popup' })
                     .addTo(markersLayerRef.current);
                 }
               }
@@ -118,33 +118,33 @@ const Indiamap = () => {
   }, []);
 
   return (
-    <div className="india-map-wrapper section-card">
+    <div className="imp-india-map-wrapper section-card">
       <div className="section-header">
         <div>
           <h3 className="section-title">Order Distribution</h3>
           <p className="text-muted">Customer hotspots across India (Native Leaflet)</p>
         </div>
-        <div className="map-legend">
-          <div className="legend-item">
-            <span className="dot"></span>
+        <div className="imp-map-legend">
+          <div className="imp-legend-item">
+            <span className="imp-dot"></span>
             <span>Delivery Cities</span>
           </div>
         </div>
       </div>
       
-      <div className="map-container" style={{ position: 'relative', height: '450px' }}>
+      <div className="imp-map-container" style={{ position: 'relative', height: '450px' }}>
         <div ref={mapContainerRef} style={{ height: '100%', width: '100%' }}></div>
         
         {isLoading && (
-          <div className="map-loading-overlay">
-            <div className="spinner"></div>
+          <div className="imp-map-loading-overlay">
+            <div className="imp-spinner"></div>
             <span>Analyzing geography...</span>
           </div>
         )}
 
         {!isLoading && geocodedCount < locations.filter(l => l.name !== 'Other' && l.name).length && (
-          <div className="map-status-overlay">
-            <div className="mini-spinner"></div>
+          <div className="imp-map-status-overlay">
+            <div className="imp-mini-spinner"></div>
             <span>Mapping: {geocodedCount} cities resolved...</span>
           </div>
         )}

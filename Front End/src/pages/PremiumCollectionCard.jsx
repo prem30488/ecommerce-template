@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faStarHalfAlt, faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import './PremiumCollectionCard.css';
+import '../components/premiumcard-carousel.css';
 
 const PremiumCollectionCard = ({ product }) => {
     const navigate = useNavigate();
@@ -173,19 +174,19 @@ const PremiumCollectionCard = ({ product }) => {
                     <div className="card-overlay">
                         <div className="overlay-top-row">
                             {cartCount > 0 ? (
-                                <div className="overlay-stepper">
+                                <div className="prem prem-stepper-container">
                                     <button
-                                        className="stepper-btn stepper-minus"
+                                        className="prem-stepper-btn minus"
                                         onClick={handleRemoveOne}
                                     >
                                         −
                                     </button>
-                                    <div className="stepper-display">
-                                        <span className="stepper-count">{cartCount}</span>
-                                        <span className="stepper-label">In Cart</span>
+                                    <div className="prem-stepper-count-wrap">
+                                        <span className="prem-stepper-count">{cartCount}</span>
+                                        <span className="prem-stepper-label">In Cart</span>
                                     </div>
                                     <button
-                                        className="stepper-btn stepper-plus"
+                                        className="prem-stepper-btn plus"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
@@ -255,19 +256,19 @@ const PremiumCollectionCard = ({ product }) => {
                 {/* Always-visible Add to Cart / Stepper section */}
                 <div className="card-cta-section" style={{ marginTop: '16px' }}>
                     {cartCount > 0 ? (
-                        <div className="overlay-stepper" style={{ border: '1px solid #e2e8f0', width: '100%' }}>
+                        <div className="prem prem-stepper-container" style={{ width: '100%' }}>
                             <button
-                                className="stepper-btn stepper-minus"
+                                className="prem-stepper-btn minus"
                                 onClick={handleRemoveOne}
                             >
                                 −
                             </button>
-                            <div className="stepper-display">
-                                <span className="stepper-count">{cartCount}</span>
-                                <span className="stepper-label">In Cart</span>
+                            <div className="prem-stepper-count-wrap">
+                                <span className="prem-stepper-count">{cartCount}</span>
+                                <span className="prem-stepper-label">In Cart</span>
                             </div>
                             <button
-                                className="stepper-btn stepper-plus"
+                                className="prem-stepper-btn plus"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();

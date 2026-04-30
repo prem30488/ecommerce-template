@@ -42,7 +42,9 @@ module.exports = (sequelize, DataTypes) => {
         cancelled_at: DataTypes.DATE,
         razorpay_order_id: DataTypes.STRING,
         razorpay_payment_id: DataTypes.STRING,
-        razorpay_signature: DataTypes.STRING
+        razorpay_signature: DataTypes.STRING,
+        latitude: DataTypes.FLOAT,
+        longitude: DataTypes.FLOAT
     }, {
         sequelize,
         modelName: 'Order',

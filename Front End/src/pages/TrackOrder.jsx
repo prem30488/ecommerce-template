@@ -10,6 +10,8 @@ import { MdLocalShipping } from 'react-icons/md';
 import SEO from '../components/SEO';
 import LinearProgress from '../common/LinearProgress';
 import { COMPANY_INFO } from '../constants/companyInfo';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import './track-order.css';
 
 /* ── helpers ─────────────────────────────────────────────────────────────── */
@@ -377,6 +379,20 @@ const TrackOrder = () => {
                         </div>
                     </div>
 
+                    {/* ── Delivery Location Map ────────────────── */}
+                    {trackingData.latitude && trackingData.longitude && (
+                        <div className="to-map-card">
+                            <p className="to-map-title">Delivery Location</p>
+                            <div className="to-map-container">
+                                <DeliveryMap lat={trackingData.latitude} lng={trackingData.longitude} />
+                            </div>
+                            <div className="to-map-footer">
+                                <FaTruck style={{ color: 'var(--primary-color)' }} />
+                                <span>Your order will be delivered to this pinned location.</span>
+                            </div>
+                        </div>
+                    )}
+                    
                     {/* ── Help Banner ───────────────────────── */}
                     <div className="to-help">
                         <span className="to-help-icon">🎧</span>
@@ -392,6 +408,47 @@ const TrackOrder = () => {
             )}
         </div>
     );
+};
+
+const DeliveryMap = ({ lat, lng }) => {
+    const mapRef = React.useRef(null);
+    const mapInstance = React.useRef(null);
+
+    React.useEffect(() => {
+        if (mapRef.current && !mapInstance.current) {
+            const map = L.map(mapRef.current, {
+                center: [lat, lng],
+                zoom: 16,
+                scrollWheelZoom: false
+            });
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            const customIcon = L.icon({
+                iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+                iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            L.marker([lat, lng], { icon: customIcon }).addTo(map);
+            mapInstance.current = map;
+        }
+
+        return () => {
+            if (mapInstance.current) {
+                mapInstance.current.remove();
+                mapInstance.current = null;
+            }
+        };
+    }, [lat, lng]);
+
+    return <div ref={mapRef} style={{ height: '100%', width: '100%', borderRadius: '8px' }} />;
 };
 
 export default TrackOrder;

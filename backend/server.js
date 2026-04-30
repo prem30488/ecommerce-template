@@ -591,7 +591,7 @@ app.get('/api/order/track/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const order = await db.Order.findByPk(id, {
-            attributes: ['id', 'status', 'created_at', 'processing_at', 'shipped_at', 'delivered_at', 'cancelled_at']
+            attributes: ['id', 'status', 'created_at', 'processing_at', 'shipped_at', 'delivered_at', 'cancelled_at', 'latitude', 'longitude']
         });
 
         if (!order) {
@@ -609,7 +609,7 @@ app.post('/api/order/createOrder', async (req, res) => {
     const {
         firstName, lastName, email, mobileNumber, billingAddress, shippingAddress, paymentType,
         sameAddress, subTotal, total, cartItems, martItems, lartItems,
-        couponCode, discountAmount, detailedItems
+        couponCode, discountAmount, detailedItems, latitude, longitude
     } = req.body;
 
     // Validate total amount
@@ -664,7 +664,9 @@ app.post('/api/order/createOrder', async (req, res) => {
             status: 'Pending',
             created_at: new Date(),
             couponCode: couponCode || null,
-            discountAmount: parseFloat(discountAmount) || 0
+            discountAmount: parseFloat(discountAmount) || 0,
+            latitude: latitude || null,
+            longitude: longitude || null
         }, { transaction: t });
 
         // --- Stock Management Logic ---
