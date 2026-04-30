@@ -782,7 +782,15 @@ export function fetchDashboardProductAudience() {
     return api.get("/api/admin/dashboard-product-audience");
 }
 
+export function fetchOrderLocationsAll() {
+    if (!localStorage.getItem(ACCESS_TOKEN)) {
+        return Promise.reject("No access token set.");
+    }
+    return api.get("/api/admin/order-locations-all");
+}
+
 export function fetchDashboardSalesOverview() {
+
     if (!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");
     }

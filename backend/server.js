@@ -2934,6 +2934,28 @@ app.get('/api/admin/dashboard-product-audience', async (req, res) => {
     }
 });
 
+app.get('/api/admin/order-locations-all', async (req, res) => {
+    try {
+        const locations = await db.sequelize.query(`
+            SELECT 
+                COALESCE("billingAddress"->>'city', "billingAddress"->>'City', 'Other') as name, 
+                count(*) as count 
+            FROM "Orders" 
+            GROUP BY name 
+            ORDER BY count DESC
+        `, { type: db.sequelize.QueryTypes.SELECT });
+
+        res.json(locations.map(l => ({
+            name: l.name,
+            count: parseInt(l.count) || 0
+        })));
+    } catch (error) {
+        console.error('❌ Order Locations API Crash:', error);
+        res.status(500).json({ error: 'Failed to fetch order locations' });
+    }
+});
+
+
 // --------------- Sales Overview (Monthly Daily Data) ---------------
 app.get('/api/admin/dashboard-sales-overview', async (req, res) => {
     try {

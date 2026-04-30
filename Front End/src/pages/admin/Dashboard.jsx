@@ -12,6 +12,8 @@ import DailyTransactionsBarGraph from './component/DailyTransactionsBarGraph';
 import CustomerChurnRateGraph from './component/CustomerChurnRateGraph';
 import RecentOrders from './component/RecentOrders';
 import TopProducts from './component/TopProducts';
+import Indiamap from '../../components/maps/Indiamap';
+
 import { 
   BestsellersWeek, 
   DiscountCodeWeek, 
@@ -181,6 +183,11 @@ const Dashboard = () => {
         <div className="chart-wrapper"><DailyRevenueBarGraph /></div>
         <div className="chart-wrapper"><DailyTransactionsBarGraph /></div>
       </div>
+
+      {/* --- ROW 4.5: GEOGRAPHY --- */}
+      <h2 className="section-divider-title">Customer Geography</h2>
+      <Indiamap />
+
 
       {/* --- ROW 5: PRODUCT & AUDIENCE INSIGHTS --- */}
       <h2 className="section-divider-title">Product & Audience Insights</h2>

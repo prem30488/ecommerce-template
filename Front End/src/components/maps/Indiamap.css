@@ -1,0 +1,232 @@
+.india-map-wrapper {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-container {
+  flex: 1;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  background: #f8fafc;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Marker Styling */
+.map-marker-container {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  cursor: pointer;
+  z-index: 1;
+}
+
+.map-marker-icon {
+  background: white;
+  color: #4f46e5;
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+  border: 2px solid white;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.map-marker-icon svg {
+  transform: rotate(45deg);
+  font-size: 14px;
+}
+
+.marker-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 10px;
+  border: 2px solid white;
+  transform: rotate(45deg);
+}
+
+.map-marker-container:hover .map-marker-icon {
+  transform: rotate(-45deg) scale(1.2);
+  z-index: 10;
+}
+
+/* Tooltip on Hover */
+.marker-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  background: #1e293b;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.marker-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #1e293b transparent transparent transparent;
+}
+
+.map-marker-container:hover .marker-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-15px);
+}
+
+/* Ping Animation */
+.map-marker-ping {
+  position: absolute;
+  top: -16px;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  background: rgba(79, 70, 229, 0.4);
+  border-radius: 50%;
+  transform: scale(0);
+  animation: marker-ping 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes marker-ping {
+  0% { transform: scale(0.5); opacity: 0.8; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Legend */
+.map-legend {
+  display: flex;
+  gap: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.legend-item .dot {
+  width: 10px;
+  height: 10px;
+  background: #4f46e5;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(79, 70, 229, 0.4);
+}
+
+/* Loading Overlay */
+.map-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  z-index: 1000;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Leaflet Specific Adjustments */
+
+.leaflet-container {
+  background: #f8fafc !important;
+}
+
+.premium-popup .leaflet-popup-content-wrapper {
+  background: #1e293b;
+  color: white;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.premium-popup .leaflet-popup-tip {
+  background: #1e293b;
+}
+
+.popup-content {
+  text-align: center;
+}
+
+.popup-content p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+/* Status Overlay */
+.map-status-overlay {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 15px;
+  border-radius: 30px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #4f46e5;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(79, 70, 229, 0.1);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+
+}
+
+.mini-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #e2e8f0;
+  border-top: 2px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
